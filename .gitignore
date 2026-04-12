@@ -1,0 +1,44 @@
+# Environment & Secrets — NEVER commit these
+.env
+*.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+*.egg
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+hsn_dev.db
+
+# Data files (large)
+data/hsn_codes.csv
+data/hsn_codes_full.csv
+
+# Docker
+.dockerignore
+
+# Node / Frontend
+hsn-frontend/node_modules/
+hsn-frontend/.next/
+hsn-frontend/out/
+hsn-frontend/.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db

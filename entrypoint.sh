@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+echo "[entrypoint] Running Alembic migrations..."
+alembic upgrade head
+echo "[entrypoint] Migrations complete. Starting application..."
+
+WORKERS=$(( 2 * $(nproc) + 1 ))
+WORKERS=$(( WORKERS > 8 ? 8 : WORKERS ))
+
+exec gunicorn app.main:app \
+  --worker-class uvicorn.workers.UvicornWorker \
+  --workers "$WORKERS" \
+  --bind 0.0.0.0:8000 \
+  --timeout 120 \
+  --keepalive 5 \
+  --max-requests 1000 \
+  --max-requests-jitter 50 \
+  --access-logfile - \
+  --error-logfile -
