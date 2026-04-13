@@ -16,6 +16,7 @@ pydantic-settings==2.3.0
 sqlalchemy==2.0.30
 aiosqlite==0.20.0          # local dev / SQLite
 asyncpg==0.29.0            # production / Supabase PostgreSQL
+psycopg2-binary
 
 # ── Cache — Upstash Redis (TLS via rediss://) ─────────────────────────────────
 redis==5.0.4
