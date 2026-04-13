@@ -1,0 +1,93 @@
+# render.yaml — HSN Classifier backend deployment on Render (free tier)
+#
+# Usage:
+#   1. Push this file to the root of your GitHub repo.
+#   2. Go to https://dashboard.render.com → New → Blueprint.
+#   3. Connect the repo and Render will detect this file automatically.
+#   4. Fill in every envVar that has `sync: false` in the Render dashboard
+#      (those are the secrets — never commit real values here).
+#
+# Free-tier notes:
+#   - The service sleeps after 15 minutes of inactivity.
+#   - Add a free cron job at https://cron-job.org pointing to
+#     https://<your-service>.onrender.com/health every 14 minutes
+#     to keep it awake during business hours.
+#   - 512 MB RAM on free tier — the sentence-transformers model fits
+#     comfortably; FAISS index is small for 34 HSN codes.
+
+services:
+  - type: web
+    name: hsn-classifier-api
+    runtime: docker          # uses the repo's Dockerfile
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore        # closest free region to India
+    branch: main
+    healthCheckPath: /health
+
+    # ── Environment variables ────────────────────────────────────────────────
+    # Values marked  sync: false  must be set manually in the Render dashboard.
+    # Values with a literal `value:` are safe non-secret defaults.
+    envVars:
+      # ── App ────────────────────────────────────────────────────────────────
+      - key: APP_ENV
+        value: production
+
+      - key: LOG_LEVEL
+        value: INFO
+
+      - key: LOG_FORMAT
+        value: json
+
+      # ── Secrets (fill in Render dashboard → Environment) ──────────────────
+      - key: SECRET_KEY
+        sync: false          # generate: python -c "import secrets; print(secrets.token_hex(32))"
+
+      - key: API_KEY
+        sync: false          # generate same as above
+
+      - key: ADMIN_API_KEY
+        sync: false          # must differ from API_KEY
+
+      # ── Database — Supabase free PostgreSQL ───────────────────────────────
+      # Format: postgresql+asyncpg://<user>:<password>@<host>:5432/<db>
+      # Get from: Supabase dashboard → Settings → Database → Connection string
+      # Choose "URI" mode and swap "postgresql://" → "postgresql+asyncpg://"
+      - key: DATABASE_URL
+        sync: false
+
+      # ── Cache — Upstash Redis ─────────────────────────────────────────────
+      # Format: rediss://:password@host:port   (note: rediss:// for TLS)
+      # Get from: Upstash console → your database → REST URL section (use Redis URL)
+      - key: REDIS_URL
+        sync: false
+
+      # ── CORS ──────────────────────────────────────────────────────────────
+      - key: CORS_ORIGINS
+        value: https://hsn2.vercel.app   # add comma-separated origins if needed
+
+      # ── Model tuning (optional — these match .env.example defaults) ───────
+      - key: EMBEDDING_MODEL
+        value: all-MiniLM-L6-v2
+
+      - key: TOP_K
+        value: "5"
+
+      - key: CONFIDENCE_HIGH
+        value: "0.80"
+
+      - key: CONFIDENCE_MEDIUM
+        value: "0.55"
+
+      - key: REVIEW_THRESHOLD
+        value: "0.55"
+
+      - key: AMBIGUITY_THRESHOLD
+        value: "0.10"
+
+      - key: CACHE_TTL
+        value: "3600"
+
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "60"
