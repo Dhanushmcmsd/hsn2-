@@ -3,7 +3,7 @@ set -e
 
 echo "[entrypoint] Running Alembic migrations..."
 alembic upgrade head
-echo "[entrypoint] Migrations complete. Starting application..."
+echo "[entrypoint] Migrations complete. Starting..."
 
 exec gunicorn app.main:app \
   --worker-class uvicorn.workers.UvicornWorker \
