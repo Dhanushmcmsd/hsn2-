@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     API_KEY: str = DEV_API_KEY
     ADMIN_API_KEY: str = DEV_ADMIN_KEY
 
-    DATABASE_URL: str = "sqlite+aiosqlite:///./hsn_dev.db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./hsn_dev.db"  # raw field, keep as-is
     REDIS_URL: str = "redis://localhost:6379/0"
 
     CORS_ORIGINS: str = "http://localhost:3000"
@@ -36,15 +36,14 @@ class Settings(BaseSettings):
     RATE_LIMIT_PER_MINUTE: int = 60
 
     @property
-def DATABASE_URL(self) -> str:
-    url = self._database_url  # your raw env var field
-    # Render injects postgres:// — fix it for asyncpg
-    if url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
-    elif url.startswith("postgresql://"):
-        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url
-    
+    def async_database_url(self) -> str:        # ← NEW property, separate name
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            return url.replace("postgres://", "postgresql+asyncpg://", 1)
+        if url.startswith("postgresql://"):
+            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url  # sqlite+aiosqlite:// stays unchanged
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
