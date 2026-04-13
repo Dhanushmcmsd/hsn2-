@@ -1,4 +1,5 @@
 from __future__ import annotations
+import hashlib
 import time
 import uuid
 import structlog
@@ -52,7 +53,7 @@ async def predict(
         predicted_hsn=top["hsn_code"],
         confidence=confidence,
         needs_review=needs_review,
-        api_key_hash=hash(api_key),
+        api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
     )
     db.add(record)
     await db.commit()
