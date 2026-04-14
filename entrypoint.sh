@@ -8,10 +8,10 @@ set -e
 # Change to --workers 2 only if you upgrade to a paid Render plan (1 GB+).
 
 echo "[entrypoint] Running Alembic migrations..."
-alembic upgrade head
+timeout 30 alembic upgrade head || exit 1
 echo "[entrypoint] Migrations complete. Starting server..."
 
-exec gunicorn app.main:app \
+exec gunicorn main:app \
   --worker-class uvicorn.workers.UvicornWorker \
   --workers 1 \
   --bind 0.0.0.0:${PORT:-8000} \

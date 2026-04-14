@@ -80,6 +80,11 @@ This guide replaces the paid Railway stack with a **100% free** alternative:
 5. Health Check Path: `/health`.
 6. Add all environment variables from `.env.example` with production values.
 
+> If Render asks for a start command, use the equivalent of:
+> `bash -lc "alembic upgrade head && gunicorn app.main:app"`
+>
+> The repo already uses `entrypoint.sh`, which runs migrations first and then starts the FastAPI app.
+
 ### Keep Render awake (free tier spins down after 15 min of inactivity)
 
 Set up a free cron job at <https://cron-job.org>:

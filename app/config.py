@@ -2,7 +2,6 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import List
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
-from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEV_SECRET = "change-me-32-chars-minimum"
@@ -40,8 +39,8 @@ class Settings(BaseSettings):
     def async_database_url(self) -> str:        # ← NEW property, separate name
         url = self.DATABASE_URL
         if url.startswith("postgres://"):
-            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
-        elif url.startswith("postgresql://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        if url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
         parsed = urlparse(url)
