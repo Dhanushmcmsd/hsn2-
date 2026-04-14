@@ -33,7 +33,11 @@ def do_run_migrations(connection):
 
 
 async def run_migrations_online():
-    connect_args = {"check_same_thread": False} if _is_sqlite else {"statement_cache_size": 0}
+    if _is_sqlite:
+        connect_args = {"check_same_thread": False}
+    else:
+        connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
+
     connectable = create_async_engine(
         _async_url,
         poolclass=pool.NullPool,
