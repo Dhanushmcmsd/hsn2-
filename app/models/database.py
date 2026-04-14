@@ -13,7 +13,7 @@ def _make_async_url(url: str) -> str:
         return url.replace("postgres://", "postgresql+asyncpg://", 1)
     if url.startswith("postgresql://"):
         return url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url
+    return url  # sqlite+aiosqlite stays unchanged
 
 
 _db_url = _make_async_url(settings.DATABASE_URL)
@@ -23,7 +23,11 @@ engine = create_async_engine(
     _db_url,
     echo=False,
     pool_pre_ping=True,
-    connect_args={"check_same_thread": False} if _is_sqlite else {"statement_cache_size": 0},
+    connect_args={
+        "check_same_thread": False
+    } if _is_sqlite else {
+        "statement_cache_size": 0   # required for Supabase PgBouncer transaction pooler
+    },
 )
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
