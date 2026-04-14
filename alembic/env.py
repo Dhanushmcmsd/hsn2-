@@ -1,7 +1,7 @@
 from __future__ import annotations
 import asyncio
 from logging.config import fileConfig
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import pool
 from alembic import context
 import os, sys
@@ -17,6 +17,7 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 _async_url = _make_async_url(settings.DATABASE_URL)
+_is_sqlite = "sqlite" in _async_url
 
 
 def run_migrations_offline():
@@ -32,9 +33,12 @@ def do_run_migrations(connection):
 
 
 async def run_migrations_online():
-    cfg = config.get_section(config.config_ini_section)
-    cfg["sqlalchemy.url"] = _async_url
-    connectable = async_engine_from_config(cfg, prefix="sqlalchemy.", poolclass=pool.NullPool)
+    connect_args = {"check_same_thread": False} if _is_sqlite else {"statement_cache_size": 0}
+    connectable = create_async_engine(
+        _async_url,
+        poolclass=pool.NullPool,
+        connect_args=connect_args,
+    )
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
     await connectable.dispose()
