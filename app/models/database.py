@@ -26,7 +26,8 @@ engine = create_async_engine(
     connect_args={
         "check_same_thread": False
     } if _is_sqlite else {
-        "statement_cache_size": 0   # required for Supabase PgBouncer transaction pooler
+        "statement_cache_size": 0,
+        "prepared_statement_cache_size": 0,
     },
 )
 async_session = async_sessionmaker(engine, expire_on_commit=False)
