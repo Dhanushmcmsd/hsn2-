@@ -20,6 +20,9 @@ engine_kwargs = {
 if _is_sqlite:
     engine_kwargs["connect_args"] = {"check_same_thread": False}
 else:
+    # Render / pgbouncer in transaction/statement mode does not support asyncpg
+    # prepared statement caching. Disable both asyncpg statement cache and the
+    # SQLAlchemy asyncpg prepared statement cache.
     engine_kwargs["poolclass"] = NullPool
     engine_kwargs["connect_args"] = {
         "statement_cache_size": 0,

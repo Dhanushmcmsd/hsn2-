@@ -28,6 +28,8 @@ This guide replaces the paid Railway stack with a **100% free** alternative:
    ```
 7. Save this as your `DATABASE_URL`.
 
+> **Note:** The app automatically appends `statement_cache_size=0&prepared_statement_cache_size=0` to the URL to ensure compatibility with Render's pgbouncer in transaction mode. This prevents `DuplicatePreparedStatementError` during startup and migrations.
+
 > **Free tier limit:** The Supabase database pauses after **7 days of inactivity**.
 > Your Render health-check cron (Step 4) will keep it awake automatically
 > as long as the app is running.

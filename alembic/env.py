@@ -36,6 +36,8 @@ async def run_migrations_online():
     if _is_sqlite:
         connect_args = {"check_same_thread": False}
     else:
+        # Alembic migrations run with asyncpg and should also disable the
+        # asyncpg statement cache when pgbouncer is in transaction/statement mode.
         connect_args = {
             "statement_cache_size": 0,
             "prepared_statement_cache_size": 0,
