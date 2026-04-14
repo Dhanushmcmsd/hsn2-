@@ -4,32 +4,26 @@ from typing import AsyncGenerator
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, func
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.pool import NullPool
 
 from app.config import settings
 
 
-def _make_async_url(url: str) -> str:
-    if url.startswith("postgres://"):
-        return url.replace("postgres://", "postgresql+asyncpg://", 1)
-    if url.startswith("postgresql://"):
-        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url  # sqlite+aiosqlite stays unchanged
-
-
-_db_url = _make_async_url(settings.DATABASE_URL)
+_db_url = settings.async_database_url
 _is_sqlite = "sqlite" in _db_url
 
-engine = create_async_engine(
-    _db_url,
-    echo=False,
-    pool_pre_ping=True,
-    connect_args={
-        "check_same_thread": False
-    } if _is_sqlite else {
-        "statement_cache_size": 0,
-        "prepared_statement_cache_size": 0,
-    },
-)
+engine_kwargs = {
+    "echo": False,
+    "pool_pre_ping": True,
+}
+
+if _is_sqlite:
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+else:
+    engine_kwargs["poolclass"] = NullPool
+    engine_kwargs["connect_args"] = {"statement_cache_size": 0}
+
+engine = create_async_engine(_db_url, **engine_kwargs)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
