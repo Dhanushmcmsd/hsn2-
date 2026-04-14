@@ -1,5 +1,4 @@
 from __future__ import annotations
-from datetime import datetime
 from typing import AsyncGenerator
 
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, func
@@ -8,11 +7,22 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.config import settings
 
+
+def _make_async_url(url: str) -> str:
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql+asyncpg://", 1)
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    return url  # sqlite+aiosqlite stays unchanged
+
+
+_db_url = _make_async_url(settings.DATABASE_URL)
+
 engine = create_async_engine(
-    settings.async_database_url,
+    _db_url,
     echo=False,
     pool_pre_ping=True,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {},
+    connect_args={"check_same_thread": False} if "sqlite" in _db_url else {},
 )
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
