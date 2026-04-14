@@ -36,7 +36,10 @@ async def run_migrations_online():
     if _is_sqlite:
         connect_args = {"check_same_thread": False}
     else:
-        connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
+        connect_args = {
+            "statement_cache_size": 0,
+            "prepared_statement_cache_size": 0,
+        }
 
     connectable = create_async_engine(
         _async_url,
