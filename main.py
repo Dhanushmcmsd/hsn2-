@@ -1,26 +1,28 @@
 from fastapi import FastAPI, Depends, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
-from sqlalchemy import select, String, Float, Integer, Text
+from sqlalchemy import select, String, Float, Integer, Text, Boolean
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from passlib.context import CryptContext
+from jose import jwt, JWTError
+from datetime import datetime, timedelta
 from typing import Optional
 import os, json
 
 # ── Config ────────────────────────────────────────────────────────────────────
-# .get() with fallback means the app boots even if var is missing;
-# a missing DATABASE_URL will fail later at first DB query (clear error)
 DATABASE_URL  = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql+asyncpg://", 1)
-REDIS_URL     = os.environ.get("UPSTASH_REDIS_URL", "")   # optional — caching disabled if blank
+REDIS_URL     = os.environ.get("UPSTASH_REDIS_URL", "")
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "change-me")
 JWT_SECRET    = os.environ.get("JWT_SECRET", "change-me")
+ALGORITHM     = "HS256"
 
 if not DATABASE_URL:
     import sys
     sys.exit("FATAL: DATABASE_URL env var is not set. Add it in Render → Environment.")
 
-# Ensure asyncpg driver is used
 if DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
@@ -41,12 +43,19 @@ class HSNMaster(Base):
     category:    Mapped[str]   = mapped_column(String(100))
     notes:       Mapped[str]   = mapped_column(Text, default="")
 
+class User(Base):
+    __tablename__ = "users"
+    id:               Mapped[int]  = mapped_column(Integer, primary_key=True)
+    email:            Mapped[str]  = mapped_column(String(255), unique=True, index=True)
+    full_name:        Mapped[str]  = mapped_column(String(255), default="")
+    hashed_password:  Mapped[str]  = mapped_column(String(255))
+    is_active:        Mapped[bool] = mapped_column(Boolean, default=True)
+
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
 # ── Redis (optional) ──────────────────────────────────────────────────────────
-# If UPSTASH_REDIS_URL is not set, all cache calls are silent no-ops.
 redis_client = None
 if REDIS_URL:
     try:
@@ -80,6 +89,46 @@ async def cache_delete(key: str):
     except Exception:
         pass
 
+# ── Auth helpers ──────────────────────────────────────────────────────────────
+pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def make_token(sub: str, minutes: int) -> str:
+    exp = datetime.utcnow() + timedelta(minutes=minutes)
+    return jwt.encode({"sub": sub, "exp": exp}, JWT_SECRET, algorithm=ALGORITHM)
+
+def decode_token(token: str) -> str:
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+        return payload["sub"]
+    except JWTError:
+        raise HTTPException(401, "Invalid or expired token")
+
+# ── Pydantic schemas ──────────────────────────────────────────────────────────
+class HSNRow(BaseModel):
+    hsn_code:    str
+    description: str
+    gst_rate:    float
+    chapter:     int
+    category:    str
+    notes:       str = ""
+    class Config:
+        from_attributes = True
+
+class RegisterIn(BaseModel):
+    email:     str
+    password:  str
+    full_name: str = ""
+
+class UserOut(BaseModel):
+    id: int; email: str; full_name: str; is_active: bool
+    class Config: from_attributes = True
+
+class TokenResponse(BaseModel):
+    access_token: str; refresh_token: str; token_type: str = "bearer"
+
+class RefreshIn(BaseModel):
+    refresh_token: str
+
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(title="HSN Classifier API")
 
@@ -100,23 +149,59 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Pydantic schemas ──────────────────────────────────────────────────────────
-class HSNRow(BaseModel):
-    hsn_code:    str
-    description: str
-    gst_rate:    float
-    chapter:     int
-    category:    str
-    notes:       str = ""
-    class Config:
-        from_attributes = True
-
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.get("/health")
 async def health():
-    """Cron-job.org pings this every 10 min to prevent Render cold start."""
     return {"status": "ok", "redis": "connected" if redis_client else "disabled"}
+
+# ── Auth routes ───────────────────────────────────────────────────────────────
+
+@app.post("/auth/register", response_model=UserOut)
+async def register(body: RegisterIn, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == body.email))
+    if result.scalar_one_or_none():
+        raise HTTPException(400, "Email already registered")
+    user = User(
+        email=body.email,
+        full_name=body.full_name,
+        hashed_password=pwd_ctx.hash(body.password),
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+@app.post("/auth/login", response_model=TokenResponse)
+async def login(form: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == form.username))
+    user = result.scalar_one_or_none()
+    if not user or not pwd_ctx.verify(form.password, user.hashed_password):
+        raise HTTPException(401, "Invalid credentials")
+    return TokenResponse(
+        access_token=make_token(user.email, 60),
+        refresh_token=make_token(user.email, 60 * 24 * 7),
+    )
+
+@app.post("/auth/refresh", response_model=TokenResponse)
+async def refresh_token(body: RefreshIn):
+    email = decode_token(body.refresh_token)
+    return TokenResponse(
+        access_token=make_token(email, 60),
+        refresh_token=make_token(email, 60 * 24 * 7),
+    )
+
+@app.get("/auth/me", response_model=UserOut)
+async def me(authorization: str = Header(...), db: AsyncSession = Depends(get_db)):
+    token = authorization.removeprefix("Bearer ")
+    email = decode_token(token)
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(404, "User not found")
+    return user
+
+# ── HSN routes ────────────────────────────────────────────────────────────────
 
 @app.get("/hsn/{code}", response_model=HSNRow)
 async def get_by_code(code: str, db: AsyncSession = Depends(get_db)):
