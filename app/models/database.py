@@ -1,28 +1,7 @@
-# ── Add this class to app/models/database.py ──────────────────────────────────
-from sqlalchemy import Index
-from sqlalchemy.dialects.postgresql import TSVECTOR
-
-class HsnCode(Base):
-    """HSN / HS Code master reference table."""
-    __tablename__ = "hsn_codes"
-
-    id          = Column(Integer, primary_key=True, index=True)
-    hsn_code    = Column(String(10),  unique=True, index=True, nullable=False)
-    description = Column(Text,        nullable=False)
-    source      = Column(String(50),  nullable=False, default="WCO_HS")
-    created_at  = Column(DateTime(timezone=True), server_default=func.now())
-
-    __table_args__ = (
-        Index(
-            "idx_hsn_codes_description_gin",
-            func.to_tsvector("english", description),
-            postgresql_using="gin",
-        ),
-    )
 from __future__ import annotations
 from typing import AsyncGenerator
 
-from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, func
+from sqlalchemy import Boolean, Column, DateTime, Float, Index, Integer, String, Text, func
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -96,6 +75,25 @@ class ApiKey(Base):
     is_active = Column(Boolean, default=True)
     requests_today = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class HsnCode(Base):
+    """HSN / HS Code master reference table."""
+    __tablename__ = "hsn_codes"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    hsn_code    = Column(String(10),  unique=True, index=True, nullable=False)
+    description = Column(Text,        nullable=False)
+    source      = Column(String(50),  nullable=False, default="WCO_HS")
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        Index(
+            "idx_hsn_codes_description_gin",
+            func.to_tsvector("english", description),
+            postgresql_using="gin",
+        ),
+    )
 
 
 async def init_db():
