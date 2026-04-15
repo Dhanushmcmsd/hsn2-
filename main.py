@@ -5,12 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from sqlalchemy import select, String, Float, Integer, Text, Boolean
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from typing import Optional
-import os, json
+import os, json, re
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DATABASE_URL  = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql+asyncpg://", 1)
@@ -128,6 +128,34 @@ class TokenResponse(BaseModel):
 
 class RefreshIn(BaseModel):
     refresh_token: str
+
+# ── Batch schemas ─────────────────────────────────────────────────────────────
+class BatchQuery(BaseModel):
+    queries: list[str]
+
+    @field_validator("queries")
+    @classmethod
+    def check_limit(cls, v):
+        if len(v) > 500:
+            raise ValueError("Maximum 500 queries per request")
+        return v
+
+class HSNBatchResult(BaseModel):
+    query: str
+    hsn_code: Optional[str] = None
+    description: Optional[str] = None
+    gst_rate: Optional[float] = None
+    confidence: float = 0.0
+    confidence_label: str = "low"
+    match_method: str = "none"
+    alternatives: list[dict] = []
+    error: Optional[str] = None
+
+class BatchResponse(BaseModel):
+    results: list[HSNBatchResult]
+    total: int
+    matched: int
+    unmatched: int
 
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(title="HSN Classifier API")
@@ -251,6 +279,164 @@ async def upsert_hsn(
     await db.commit()
     await cache_delete(f"hsn:{data.hsn_code}")
     return data
+
+# ── Batch endpoint ────────────────────────────────────────────────────────────
+
+@app.post("/hsn/batch", response_model=BatchResponse)
+async def batch_predict(
+    body: BatchQuery,
+    authorization: str = Header(...),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Batch classify up to 500 product descriptions into HSN codes.
+    Uses multi-pass matching: exact code → exact description → keyword overlap.
+    Requires: Authorization: Bearer <token>
+    """
+    token = authorization.removeprefix("Bearer ")
+    email = decode_token(token)
+    res = await db.execute(select(User).where(User.email == email))
+    user = res.scalar_one_or_none()
+    if not user or not user.is_active:
+        raise HTTPException(401, "User not found or inactive")
+
+    queries = [q.strip() for q in body.queries if q.strip()]
+    if len(queries) > 500:
+        raise HTTPException(400, "Maximum 500 queries per request")
+
+    results: list[HSNBatchResult] = []
+    BATCH_SIZE = 50
+
+    for batch_start in range(0, len(queries), BATCH_SIZE):
+        batch = queries[batch_start: batch_start + BATCH_SIZE]
+        for query in batch:
+            try:
+                row = await _match_one(query, db)
+                results.append(row)
+            except Exception as e:
+                results.append(HSNBatchResult(query=query, error=str(e)))
+
+    matched = sum(1 for r in results if r.hsn_code)
+    return BatchResponse(
+        results=results,
+        total=len(results),
+        matched=matched,
+        unmatched=len(results) - matched,
+    )
+
+
+async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
+    """
+    Multi-pass HSN matching for a single query string.
+
+    Pass 1 — Exact HSN code (if query is numeric)
+    Pass 2 — Exact description match (case-insensitive)
+    Pass 3 — Keyword overlap: score candidates by how many query tokens appear
+             in the description, normalised to [0, 1].
+    """
+    q_stripped = query.strip()
+
+    # Pass 1: exact HSN code
+    if q_stripped.isdigit():
+        res = await db.execute(
+            select(HSNMaster).where(HSNMaster.hsn_code == q_stripped)
+        )
+        row = res.scalar_one_or_none()
+        if row:
+            return HSNBatchResult(
+                query=query,
+                hsn_code=row.hsn_code,
+                description=row.description,
+                gst_rate=row.gst_rate,
+                confidence=1.0,
+                confidence_label="high",
+                match_method="exact_code",
+            )
+
+    # Pass 2: exact description match
+    res = await db.execute(
+        select(HSNMaster).where(HSNMaster.description.ilike(q_stripped)).limit(1)
+    )
+    row = res.scalar_one_or_none()
+    if row:
+        return HSNBatchResult(
+            query=query,
+            hsn_code=row.hsn_code,
+            description=row.description,
+            gst_rate=row.gst_rate,
+            confidence=0.95,
+            confidence_label="high",
+            match_method="exact_description",
+        )
+
+    # Pass 3: keyword overlap
+    # Extract meaningful tokens (3+ chars) from the query
+    tokens = list(dict.fromkeys(
+        w for w in re.findall(r'\b[a-zA-Z]{3,}\b', q_stripped.lower())
+    ))
+    if not tokens:
+        return HSNBatchResult(
+            query=query, confidence=0.0, confidence_label="low", match_method="none"
+        )
+
+    # Fetch candidates for the most discriminative tokens (up to 5)
+    candidates: dict[str, dict] = {}
+    for token in tokens[:5]:
+        res = await db.execute(
+            select(HSNMaster).where(
+                HSNMaster.description.ilike(f"%{token}%")
+            ).limit(30)
+        )
+        for r in res.scalars().all():
+            if r.hsn_code not in candidates:
+                candidates[r.hsn_code] = {"row": r, "hits": 0}
+            candidates[r.hsn_code]["hits"] += 1
+
+    if not candidates:
+        return HSNBatchResult(
+            query=query, confidence=0.0, confidence_label="low", match_method="none"
+        )
+
+    # Score = hits / total_tokens  (Jaccard-style token recall)
+    total_tokens = max(len(tokens), 1)
+    scored = sorted(
+        [(data["hits"] / total_tokens, data["row"]) for data in candidates.values()],
+        key=lambda x: x[0],
+        reverse=True,
+    )
+
+    top_score, top_row = scored[0]
+
+    if top_score >= 0.80:
+        label = "high"
+    elif top_score >= 0.50:
+        label = "medium"
+    else:
+        label = "low"
+
+    alternatives = [
+        {
+            "hsn_code": r.hsn_code,
+            "description": r.description,
+            "gst_rate": r.gst_rate,
+            "confidence": round(s, 3),
+        }
+        for s, r in scored[1:4]
+        if s > 0
+    ]
+
+    return HSNBatchResult(
+        query=query,
+        hsn_code=top_row.hsn_code,
+        description=top_row.description,
+        gst_rate=top_row.gst_rate,
+        confidence=round(top_score, 3),
+        confidence_label=label,
+        match_method="keyword",
+        alternatives=alternatives,
+    )
+
+# ── Startup ───────────────────────────────────────────────────────────────────
 
 @app.on_event("startup")
 async def startup():
