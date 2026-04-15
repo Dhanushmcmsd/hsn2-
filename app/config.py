@@ -20,7 +20,18 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./hsn_dev.db"  # raw field, keep as-is
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    CORS_ORIGINS: str = "http://localhost:3000"
+    # Comma-separated list of allowed CORS origins.
+    # On Render, set this env var to include all your Vercel URLs:
+    #   https://hsn2.vercel.app,https://hsn2-git-main-krithu.vercel.app,https://hsn2-krithu.vercel.app,https://hsn-app-krithu.vercel.app
+    CORS_ORIGINS: str = (
+        "http://localhost:3000,"
+        "http://localhost:3001,"
+        "https://hsn2.vercel.app,"
+        "https://hsn-app.vercel.app,"
+        "https://hsn2-git-main-krithu.vercel.app,"
+        "https://hsn2-krithu.vercel.app,"
+        "https://hsn-app-krithu.vercel.app"
+    )
 
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
@@ -36,7 +47,7 @@ class Settings(BaseSettings):
     RATE_LIMIT_PER_MINUTE: int = 60
 
     @property
-    def async_database_url(self) -> str:        # ← NEW property, separate name
+    def async_database_url(self) -> str:
         url = self.DATABASE_URL
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql://", 1)
