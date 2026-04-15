@@ -6,13 +6,23 @@ from sqlalchemy import select, String, Float, Integer, Text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from pydantic import BaseModel
 from typing import Optional
-import os, json, redis.asyncio as aioredis
+import os, json
 
 # ── Config ────────────────────────────────────────────────────────────────────
-DATABASE_URL   = os.environ["DATABASE_URL"]          # from Render env vars
-REDIS_URL      = os.environ["UPSTASH_REDIS_URL"]     # from Render env vars
-ADMIN_API_KEY  = os.environ.get("ADMIN_API_KEY", "change-me")
-JWT_SECRET     = os.environ["JWT_SECRET"]
+# .get() with fallback means the app boots even if var is missing;
+# a missing DATABASE_URL will fail later at first DB query (clear error)
+DATABASE_URL  = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql+asyncpg://", 1)
+REDIS_URL     = os.environ.get("UPSTASH_REDIS_URL", "")   # optional — caching disabled if blank
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "change-me")
+JWT_SECRET    = os.environ.get("JWT_SECRET", "change-me")
+
+if not DATABASE_URL:
+    import sys
+    sys.exit("FATAL: DATABASE_URL env var is not set. Add it in Render → Environment.")
+
+# Ensure asyncpg driver is used
+if DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # ── DB setup ──────────────────────────────────────────────────────────────────
 engine = create_async_engine(DATABASE_URL, echo=False)
@@ -35,27 +45,55 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
-# ── Redis ─────────────────────────────────────────────────────────────────────
-redis_client = aioredis.from_url(REDIS_URL, decode_responses=True)
+# ── Redis (optional) ──────────────────────────────────────────────────────────
+# If UPSTASH_REDIS_URL is not set, all cache calls are silent no-ops.
+redis_client = None
+if REDIS_URL:
+    try:
+        import redis.asyncio as aioredis
+        redis_client = aioredis.from_url(REDIS_URL, decode_responses=True)
+    except Exception:
+        redis_client = None
 
 async def cache_get(key: str):
-    val = await redis_client.get(key)
-    return json.loads(val) if val else None
+    if not redis_client:
+        return None
+    try:
+        val = await redis_client.get(key)
+        return json.loads(val) if val else None
+    except Exception:
+        return None
 
 async def cache_set(key: str, data, ttl: int = 86400):
-    await redis_client.setex(key, ttl, json.dumps(data, default=str))
+    if not redis_client:
+        return
+    try:
+        await redis_client.setex(key, ttl, json.dumps(data, default=str))
+    except Exception:
+        pass
+
+async def cache_delete(key: str):
+    if not redis_client:
+        return
+    try:
+        await redis_client.delete(key)
+    except Exception:
+        pass
 
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(title="HSN Classifier API")
 
-# CORS — all Vercel preview URLs + production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://hsn2.vercel.app",
         "https://hsn2-git-main-d3d.vercel.app",
         "https://hsn2-485zotyhz-d3d.vercel.app",
+        "https://hsn2-git-main-krithu.vercel.app",
+        "https://hsn2-krithu.vercel.app",
+        "https://hsn-app-krithu.vercel.app",
         "http://localhost:3000",
+        "http://localhost:3001",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -78,7 +116,7 @@ class HSNRow(BaseModel):
 @app.get("/health")
 async def health():
     """Cron-job.org pings this every 10 min to prevent Render cold start."""
-    return {"status": "ok"}
+    return {"status": "ok", "redis": "connected" if redis_client else "disabled"}
 
 @app.get("/hsn/{code}", response_model=HSNRow)
 async def get_by_code(code: str, db: AsyncSession = Depends(get_db)):
@@ -126,7 +164,7 @@ async def upsert_hsn(
     )
     await db.execute(stmt)
     await db.commit()
-    await redis_client.delete(f"hsn:{data.hsn_code}")
+    await cache_delete(f"hsn:{data.hsn_code}")
     return data
 
 @app.on_event("startup")
