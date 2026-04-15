@@ -1,13 +1,18 @@
 from __future__ import annotations
+import csv
+import os
+from pathlib import Path
 from typing import AsyncGenerator
 
-from sqlalchemy import Boolean, Column, DateTime, Float, Index, Integer, String, Text, func
+from sqlalchemy import Boolean, Column, DateTime, Float, Index, Integer, String, Text, func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 
+import structlog
 from app.config import settings
 
+log = structlog.get_logger()
 
 _db_url = settings.async_database_url
 _is_sqlite = "sqlite" in _db_url
@@ -20,9 +25,6 @@ engine_kwargs = {
 if _is_sqlite:
     engine_kwargs["connect_args"] = {"check_same_thread": False}
 else:
-    # Render / pgbouncer in transaction/statement mode does not support asyncpg
-    # prepared statement caching. Disable both asyncpg statement cache and the
-    # SQLAlchemy asyncpg prepared statement cache.
     engine_kwargs["poolclass"] = NullPool
     engine_kwargs["connect_args"] = {
         "statement_cache_size": 0,
@@ -96,9 +98,44 @@ class HsnCode(Base):
     )
 
 
+_DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
+
+
+async def _seed_hsn_codes(session: AsyncSession) -> None:
+    """Seed hsn_codes table from CSV if the table is empty."""
+    if not _DATA_PATH.exists():
+        log.warning("seed.csv_missing", path=str(_DATA_PATH))
+        return
+
+    result = await session.execute(select(func.count()).select_from(HsnCode))
+    count = result.scalar()
+    if count and count > 0:
+        log.info("seed.already_seeded", count=count)
+        return
+
+    rows = []
+    with open(_DATA_PATH, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            hsn = row.get("hsn_code", "").strip()
+            desc = row.get("description", "").strip()
+            if hsn and desc:
+                rows.append(HsnCode(hsn_code=hsn, description=desc, source="CSV"))
+
+    if not rows:
+        log.warning("seed.no_rows_in_csv")
+        return
+
+    session.add_all(rows)
+    await session.commit()
+    log.info("seed.hsn_codes_done", count=len(rows))
+
+
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    async with async_session() as session:
+        await _seed_hsn_codes(session)
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
