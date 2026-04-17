@@ -603,8 +603,6 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     alternatives=alternatives,
                 )
 
-    return HSNBatchResult(query=query, confidence=0.0, confidence_label="low", match_method="none")
-
 # ── Startup ───────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
@@ -614,7 +612,7 @@ async def startup():
         try:
             await conn.execute(text("""
                 CREATE INDEX IF NOT EXISTS idx_hsn_description_gin
-                ON hsn_master USING gin(to_tsvector('english', description || ' ' || notes))
+                ON hsn_master USING gin(to_tsvector('english', description || ' ' || COALESCE(notes, '')))
             """))
         except Exception:
             pass
