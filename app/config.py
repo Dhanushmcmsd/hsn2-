@@ -59,12 +59,9 @@ class Settings(BaseSettings):
         query_params = dict(parse_qsl(parsed.query, keep_blank_values=True))
         query_params["statement_cache_size"] = "0"
         query_params["prepared_statement_cache_size"] = "0"
-
-        # asyncpg doesn't understand sslmode; convert to ssl=true/false
-        sslmode = query_params.pop("sslmode", None)
-        if sslmode and "ssl" not in query_params:
-            if sslmode != "disable":
-                query_params["ssl"] = "true"
+        # Remove sslmode — asyncpg rejects it as a connect kwarg;
+        # SSL is handled via connect_args in database.py
+        query_params.pop("sslmode", None)
 
         url = urlunparse(parsed._replace(query=urlencode(query_params, doseq=True)))
         return url
