@@ -47,23 +47,29 @@ class Settings(BaseSettings):
     RATE_LIMIT_PER_MINUTE: int = 60
 
     @property
-    def async_database_url(self) -> str:
-        url = self.DATABASE_URL
-        if url.startswith("postgres://"):
-            url = url.replace("postgres://", "postgresql://", 1)
-        if url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
-            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+def async_database_url(self) -> str:
+    url = self.DATABASE_URL
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    if url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-        parsed = urlparse(url)
-        if parsed.scheme != "postgresql+asyncpg":
-            return url
-
-        query_params = dict(parse_qsl(parsed.query, keep_blank_values=True))
-        query_params["statement_cache_size"] = "0"
-        query_params["prepared_statement_cache_size"] = "0"
-        url = urlunparse(parsed._replace(query=urlencode(query_params, doseq=True)))
+    parsed = urlparse(url)
+    if parsed.scheme != "postgresql+asyncpg":
         return url
 
+    query_params = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    query_params["statement_cache_size"] = "0"
+    query_params["prepared_statement_cache_size"] = "0"
+
+    # asyncpg doesn't understand sslmode; convert to ssl=true/false
+    sslmode = query_params.pop("sslmode", None)
+    if sslmode and "ssl" not in query_params:
+        if sslmode != "disable":
+            query_params["ssl"] = "true"
+
+    url = urlunparse(parsed._replace(query=urlencode(query_params, doseq=True)))
+    return url
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
