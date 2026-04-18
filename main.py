@@ -428,12 +428,101 @@ STOPWORDS = {
     '100','200','250','300','400','500','1000','50','25',
 }
 
+BRANDS = {
+    'patanjali', 'nestle', 'amul', 'tata', 'godrej', 'dettol', 'lifebuoy', 'colgate',
+    'pepsodent', 'nivea', 'garnier', 'loreal', 'sony', 'samsung', 'apple',
+    'lg', 'whirlpool', 'philips', 'nike', 'adidas', 'puma', 'reebok',
+    'bajaj', 'marico', 'unilever', 'parle', 'sunrise', 'mogambo', 'mtr',
+    'majestic', 'micromax', 'boat', 'mivi', 'britannia', 'honda', 'suzuki',
+}
+
+SYNONYMS = {
+    'wash': ['soap', 'cleanser'],
+    'phone': ['mobile', 'smartphone'],
+    'tv': ['television'],
+    'fridge': ['refrigerator'],
+    'laptop': ['notebook'],
+    'biscuit': ['cookie'],
+    'shirt': ['tshirt'],
+}
+
+
 def tokenize(text: str) -> list[str]:
     text = text.lower()
     text = re.sub(r'\b\d+\s*(ml|g|gm|kg|l|ltr|mg|oz|lb|pc|pcs|nos)\b', ' ', text)
     text = re.sub(r'\b\d+\b', ' ', text)
     tokens = re.findall(r'[a-z]{2,}', text)
-    return [t for t in tokens if t not in STOPWORDS and len(t) >= 2]
+    return [t for t in tokens if t not in STOPWORDS and t not in BRANDS and len(t) >= 2]
+
+
+DOMAIN_PREFIXES = {
+    'cosmetics': ['33'],
+    'makeup': ['33'],
+    'skincare': ['33'],
+    'skin': ['33'],
+    'soap': ['34'],
+    'cleanser': ['34'],
+    'shampoo': ['33'],
+    'bath': ['33', '34'],
+    'phone': ['85'],
+    'mobile': ['85'],
+    'smartphone': ['85'],
+    'television': ['85'],
+    'tv': ['85'],
+    'camera': ['85'],
+    'computer': ['84'],
+    'notebook': ['84'],
+    'laptop': ['84'],
+    'refrigerator': ['84'],
+    'fridge': ['84'],
+    'washing': ['84'],
+}
+
+
+def build_tsquery_terms(tokens: list[str]) -> list[str]:
+    query_terms: list[str] = []
+    for token in tokens:
+        variants = [token] + SYNONYMS.get(token, [])
+        if len(variants) > 1:
+            query_terms.append("(" + " | ".join(variants) + ")")
+        else:
+            query_terms.append(token)
+    return query_terms
+
+
+def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
+    query_weights: dict[str, int] = {}
+    for token in tokens:
+        query_weights[token] = max(query_weights.get(token, 0), 2)
+        for synonym in SYNONYMS.get(token, []):
+            query_weights[synonym] = max(query_weights.get(synonym, 0), 1)
+
+    intersection_weight = sum(
+        weight for term, weight in query_weights.items() if term in desc_tokens
+    )
+    union_weight = sum(query_weights.values()) + len(desc_tokens) - intersection_weight
+    return intersection_weight / union_weight if union_weight else 0.0
+
+
+def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
+    expanded_tokens = set(tokens)
+    for token in tokens:
+        expanded_tokens.update(SYNONYMS.get(token, []))
+
+    prefixes: list[str] = []
+    for token in expanded_tokens:
+        prefixes.extend(DOMAIN_PREFIXES.get(token, []))
+    prefixes = sorted(set(prefixes))
+    if not prefixes:
+        return "", {}
+
+    clause_parts = []
+    params: dict[str, str] = {}
+    for idx, prefix in enumerate(prefixes):
+        param_name = f"prefix_{idx}"
+        clause_parts.append(f"h.hsn_code LIKE :{param_name}")
+        params[param_name] = f"{prefix}%"
+    return " AND (" + " OR ".join(clause_parts) + ")", params
 
 async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     """
@@ -475,11 +564,15 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     if not tokens:
         return HSNBatchResult(query=query, match_method="none")
 
+    domain_clause, domain_params = build_hsn_prefix_clause(tokens)
+
     # ── Pass 2: Full-text search using hsn_search.search_vector (GIN index) ──
     # Uses the tsvector built from normalized_description + keywords + synonyms
     rows_fts = []
     try:
-        ts_and = " & ".join(tokens[:8])
+        ts_query_terms = build_tsquery_terms(tokens)
+        ts_and = " & ".join(ts_query_terms[:8])
+        query_params = {"q": ts_and, **domain_params}
         res = await db.execute(
             text("""
                 SELECT
@@ -492,11 +585,11 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 JOIN hsn_codes h ON h.hsn_code = s.hsn_code
                 CROSS JOIN to_tsquery('english', :q) query
                 WHERE s.search_vector @@ query
-                  AND h.is_active = TRUE
+                  AND h.is_active = TRUE""" + domain_clause + """
                 ORDER BY rank DESC
                 LIMIT 15
             """),
-            {"q": ts_and}
+            query_params
         )
         rows_fts = res.fetchall()
     except Exception:
@@ -505,7 +598,8 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     # Fallback: OR query if AND returned nothing
     if not rows_fts and len(tokens) > 1:
         try:
-            ts_or = " | ".join(tokens[:8])
+            ts_or = " | ".join(ts_query_terms[:8])
+            query_params = {"q": ts_or, **domain_params}
             res = await db.execute(
                 text("""
                     SELECT
@@ -518,11 +612,11 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     JOIN hsn_codes h ON h.hsn_code = s.hsn_code
                     CROSS JOIN to_tsquery('english', :q) query
                     WHERE s.search_vector @@ query
-                      AND h.is_active = TRUE
+                      AND h.is_active = TRUE""" + domain_clause + """
                     ORDER BY rank DESC
                     LIMIT 15
                 """),
-                {"q": ts_or}
+                query_params
             )
             rows_fts = res.fetchall()
         except Exception:
@@ -532,15 +626,12 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         best = None
         best_score = 0.0
         alts = []
-        query_tokens = set(tokens)
 
         for r in rows_fts:
             desc_tokens = set(tokenize(r.description))
             if not desc_tokens:
                 continue
-            intersection = query_tokens & desc_tokens
-            union = query_tokens | desc_tokens
-            jaccard = len(intersection) / len(union) if union else 0
+            jaccard = compute_weighted_jaccard(tokens, desc_tokens)
             fts_boost = min(float(r.rank) * 2, 0.3)
             final_score = min(jaccard + fts_boost, 1.0)
 
@@ -586,11 +677,11 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 FROM hsn_search s
                 JOIN hsn_codes h ON h.hsn_code = s.hsn_code
                 WHERE s.normalized_description % :q
-                  AND h.is_active = TRUE
+                  AND h.is_active = TRUE""" + domain_clause + """
                 ORDER BY sim DESC
                 LIMIT 10
             """),
-            {"q": trgm_query}
+            {"q": trgm_query, **domain_params}
         )
         rows_trgm = res.fetchall()
     except Exception:
@@ -626,10 +717,10 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             text("""
                 SELECT hsn_code, description, gst_rate, category
                 FROM hsn_codes
-                WHERE description ILIKE :pat AND is_active = TRUE
+                WHERE description ILIKE :pat AND is_active = TRUE""" + domain_clause + """
                 LIMIT 20
             """),
-            {"pat": f"%{token}%"}
+            {"pat": f"%{token}%", **domain_params}
         )
         for r in res.fetchall():
             if r.hsn_code not in candidates:

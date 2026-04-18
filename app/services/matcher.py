@@ -6,6 +6,50 @@ import structlog
 log = structlog.get_logger()
 _matcher_instance = None
 
+STOPWORDS = {
+    'the','a','an','and','or','of','in','is','for','to','with','on','at',
+    'by','from','are','was','be','as','it','its','this','that','per','ml',
+    'gm','kg','ltr','litre','liter','gram','mg','unit','pack','piece','nos',
+    'no','pcs','set','box','bottle','pouch','sachet','can','tin','jar','tube',
+    'strip','tablet','capsule','pkt','packet','roll','sheet','size','new','free',
+    'buy','get','pure','natural','original','brand','best','premium','super',
+    '100','200','250','300','400','500','1000','50','25',
+}
+
+BRANDS = {
+    'patanjali', 'nestle', 'amul', 'tata', 'godrej', 'dettol', 'lifebuoy', 'colgate',
+    'pepsodent', 'nivea', 'garnier', 'loreal', 'sony', 'samsung', 'apple',
+    'lg', 'whirlpool', 'philips', 'nike', 'adidas', 'puma', 'reebok',
+    'bajaj', 'marico', 'unilever', 'parle', 'sunrise', 'mogambo', 'mtr',
+    'majestic', 'micromax', 'boat', 'mivi', 'britannia', 'honda', 'suzuki',
+}
+
+SYNONYMS = {
+    'wash': ['soap', 'cleanser'],
+    'phone': ['mobile', 'smartphone'],
+    'tv': ['television'],
+    'fridge': ['refrigerator'],
+    'laptop': ['notebook'],
+    'biscuit': ['cookie'],
+    'shirt': ['tshirt'],
+}
+
+
+def tokenize(text: str) -> list[str]:
+    text = text.lower()
+    text = re.sub(r'\b\d+\s*(ml|g|gm|kg|l|ltr|mg|oz|lb|pc|pcs|nos)\b', ' ', text)
+    text = re.sub(r'\b\d+\b', ' ', text)
+    tokens = re.findall(r'[a-z]{2,}', text)
+    return [t for t in tokens if t not in STOPWORDS and t not in BRANDS and len(t) >= 2]
+
+
+def expand_tokens(tokens: list[str]) -> list[str]:
+    expanded: list[str] = []
+    for token in tokens:
+        expanded.append(token)
+        expanded.extend(SYNONYMS.get(token, []))
+    return expanded
+
 
 class HybridMatcher:
     def __init__(self):
@@ -45,7 +89,10 @@ class HybridMatcher:
         return results
 
     def _keyword_match(self, text: str, top_k: int) -> list[dict]:
-        words = set(re.findall(r"\b\w{3,}\b", text.lower()))
+        tokens = tokenize(text)
+        if not tokens:
+            return []
+        words = set(expand_tokens(tokens))
         scored = []
         for item in self._dataset:
             desc_words = set(re.findall(r"\b\w{3,}\b", item["description"].lower()))
@@ -62,7 +109,9 @@ class HybridMatcher:
             return []
         try:
             import faiss
-            query = self._model.encode([text], normalize_embeddings=True).astype(np.float32)
+            tokens = tokenize(text)
+            query_text = " ".join(expand_tokens(tokens)) if tokens else text.lower()
+            query = self._model.encode([query_text], normalize_embeddings=True).astype(np.float32)
             scores, indices = self._index.search(query, top_k)
             results = []
             for score, idx in zip(scores[0], indices[0]):
