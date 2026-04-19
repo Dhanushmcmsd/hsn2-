@@ -327,6 +327,17 @@ async def search_hsn(
         for r in result.fetchall()
     ]
 
+# ── FMCG Abbreviation Expansion ──────────────────────────────────────────
+@app.post("/expand-abbreviations")
+async def expand_abbreviations(body: SingleQuery):
+    """Expand FMCG abbreviations in the input text."""
+    expanded = expand_fmcg_abbreviations(body.text)
+    return {
+        "original": body.text,
+        "expanded": expanded,
+        "changed": expanded != body.text
+    }
+
 # ── Single predict (compatible with app/ frontend) ────────────────────────────
 @app.post("/predict")
 async def predict_single(
@@ -426,6 +437,14 @@ STOPWORDS = {
     'strip','tablet','capsule','pkt','packet','roll','sheet','size','new','free',
     'buy','get','pure','natural','original','brand','best','premium','super',
     '100','200','250','300','400','500','1000','50','25',
+    'mixed','colour','assorted','round','square','rectangular','oval','flat',
+    'long','short','small','large','medium','big','tiny','huge','thick','thin',
+    'wide','narrow','high','low','deep','shallow','full','empty','half','quarter',
+    'whole','part','piece','slice','chunk','bit','portion','section','segment',
+    'various','different','multiple','several','many','few','single','double','triple',
+    'regular','extra','special','standard','basic','advanced','simple','complex',
+    'normal','abnormal','usual','unusual','common','rare','unique','ordinary',
+    'general','specific','particular','certain','various','diverse','wide','narrow',
 }
 
 BRANDS = {
@@ -445,6 +464,131 @@ SYNONYMS = {
     'biscuit': ['cookie'],
     'shirt': ['tshirt'],
 }
+
+FMCG_ABBREVIATIONS = {
+    'btrm': 'bathroom',
+    'clnr': 'cleaner',
+    'cookis': 'cookie',
+    'cashw': 'cashew',
+    'jasmne': 'jasmine',
+    'choc': 'chocolate',
+    'van': 'vanilla',
+    'strbry': 'strawberry',
+    'rasbry': 'raspberry',
+    'bluebry': 'blueberry',
+    'blkbry': 'blackberry',
+    'pstr': 'pasta',
+    'nood': 'noodle',
+    'sauc': 'sauce',
+    'ketch': 'ketchup',
+    'must': 'mustard',
+    'mayo': 'mayonnaise',
+    'yog': 'yogurt',
+    'chee': 'cheese',
+    'butr': 'butter',
+    'marg': 'margarine',
+    'milk': 'milk',
+    'cream': 'cream',
+    'yogurt': 'yogurt',
+    'shamp': 'shampoo',
+    'cond': 'conditioner',
+    'soap': 'soap',
+    'det': 'detergent',
+    'fab': 'fabric',
+    'soft': 'softener',
+    'dish': 'dishwasher',
+    'liq': 'liquid',
+    'powd': 'powder',
+    'tab': 'tablet',
+    'cap': 'capsule',
+    'syrup': 'syrup',
+    'oil': 'oil',
+    'vin': 'vinegar',
+    'honey': 'honey',
+    'jam': 'jam',
+    'jelly': 'jelly',
+    'marm': 'marmalade',
+    'pick': 'pickle',
+    'relish': 'relish',
+    'spice': 'spice',
+    'herb': 'herb',
+    'salt': 'salt',
+    'sug': 'sugar',
+    'flour': 'flour',
+    'rice': 'rice',
+    'wheat': 'wheat',
+    'corn': 'corn',
+    'oats': 'oats',
+    'cereal': 'cereal',
+    'bread': 'bread',
+    'toast': 'toast',
+    'bagel': 'bagel',
+    'muffin': 'muffin',
+    'cake': 'cake',
+    'pie': 'pie',
+    'tart': 'tart',
+    'cust': 'custard',
+    'pud': 'pudding',
+    'ice': 'ice cream',
+    'froz': 'frozen',
+    'fresh': 'fresh',
+    'dry': 'dry',
+    'cann': 'canned',
+    'bott': 'bottled',
+    'jar': 'jar',
+    'pack': 'pack',
+    'box': 'box',
+    'cart': 'carton',
+    'tin': 'tin',
+    'tube': 'tube',
+    'spray': 'spray',
+    'aerosol': 'aerosol',
+    'roll': 'roll',
+    'sheet': 'sheet',
+    'foil': 'foil',
+    'wrap': 'wrap',
+    'bag': 'bag',
+    'pouch': 'pouch',
+    'sach': 'sachet',
+    'stick': 'stick',
+    'bar': 'bar',
+    'block': 'block',
+    'cube': 'cube',
+    'slice': 'slice',
+    'piece': 'piece',
+    'whole': 'whole',
+    'half': 'half',
+    'quarter': 'quarter',
+    'mini': 'mini',
+    'maxi': 'maxi',
+    'super': 'super',
+    'ultra': 'ultra',
+    'plus': 'plus',
+    'pro': 'professional',
+    'delux': 'deluxe',
+    'prem': 'premium',
+    'org': 'organic',
+    'nat': 'natural',
+    'pure': 'pure',
+    'fresh': 'fresh',
+    'new': 'new',
+    'imp': 'imported',
+    'loc': 'local',
+    'dom': 'domestic',
+}
+
+
+def expand_fmcg_abbreviations(text: str) -> str:
+    """Expand FMCG abbreviations in the text."""
+    words = text.split()
+    expanded_words = []
+    for word in words:
+        lower_word = word.lower()
+        if lower_word in FMCG_ABBREVIATIONS:
+            expanded_words.append(FMCG_ABBREVIATIONS[lower_word])
+        else:
+            expanded_words.append(word)
+    return ' '.join(expanded_words)
 
 
 def tokenize(text: str) -> list[str]:
@@ -478,8 +622,64 @@ DOMAIN_PREFIXES = {
     'washing': ['84'],
 }
 
+# Priority-ordered category rules with HSN chapter restrictions
+# Higher priority (lower index) rules override lower priority ones
+CATEGORY_RULES = [
+    # High priority: Specific product categories
+    {'keywords': ['tooth', 'paste', 'toothpaste'], 'chapters': ['33'], 'description': 'toothpaste -> chapter 33'},
+    {'keywords': ['note', 'book', 'notebook'], 'chapters': ['48'], 'description': 'notebook -> chapter 48'},
+    {'keywords': ['puja'], 'chapters': ['33'], 'description': 'puja items -> chapter 33 (not edible oil)'},
+    {'keywords': ['cleaning', 'cleaner', 'detergent'], 'chapters': ['34'], 'description': 'cleaning products -> chapter 34'},
+    {'keywords': ['cosmetic', 'makeup', 'skincare'], 'chapters': ['33'], 'description': 'cosmetics -> chapter 33'},
+    {'keywords': ['soap', 'shampoo'], 'chapters': ['33', '34'], 'description': 'soap/shampoo -> chapters 33/34'},
+    {'keywords': ['phone', 'mobile', 'smartphone'], 'chapters': ['85'], 'description': 'phones -> chapter 85'},
+    {'keywords': ['tv', 'television'], 'chapters': ['85'], 'description': 'TV -> chapter 85'},
+    {'keywords': ['computer', 'laptop'], 'chapters': ['84'], 'description': 'computers -> chapter 84'},
+    {'keywords': ['fridge', 'refrigerator'], 'chapters': ['84'], 'description': 'refrigerators -> chapter 84'},
+    # Lower priority: Generic categories (oil rules come after puja/cleaning)
+    {'keywords': ['oil'], 'chapters': ['15'], 'description': 'oil -> chapter 15'},
+    {'keywords': ['food', 'beverage', 'drink'], 'chapters': ['04', '19', '20', '21', '22'], 'description': 'food/beverages -> chapters 04/19-22'},
+    {'keywords': ['clothing', 'garment', 'fabric'], 'chapters': ['61', '62', '63'], 'description': 'clothing -> chapters 61-63'},
+    {'keywords': ['furniture'], 'chapters': ['94'], 'description': 'furniture -> chapter 94'},
+    {'keywords': ['toy', 'game'], 'chapters': ['95'], 'description': 'toys/games -> chapter 95'},
+]
 
-def build_tsquery_terms(tokens: list[str]) -> list[str]:
+
+def detect_category_restrictions(tokens: list[str]) -> list[str]:
+    """Detect category-specific keywords and return restricted HSN chapters."""
+    # Check rules in priority order (first match wins)
+    for rule in CATEGORY_RULES:
+        if any(keyword in tokens for keyword in rule['keywords']):
+            return rule['chapters']
+    return []  # No restrictions
+
+
+def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
+    expanded_tokens = set(tokens)
+    for token in tokens:
+        expanded_tokens.update(SYNONYMS.get(token, []))
+
+    # First check for category-specific restrictions (higher priority)
+    category_chapters = detect_category_restrictions(list(expanded_tokens))
+    if category_chapters:
+        prefixes = category_chapters
+    else:
+        # Fall back to domain prefixes
+        prefixes = []
+        for token in expanded_tokens:
+            prefixes.extend(DOMAIN_PREFIXES.get(token, []))
+
+    prefixes = sorted(set(prefixes))
+    if not prefixes:
+        return "", {}
+
+    clause_parts = []
+    params: dict[str, str] = {}
+    for idx, prefix in enumerate(prefixes):
+        param_name = f"prefix_{idx}"
+        clause_parts.append(f"h.hsn_code LIKE :{param_name}")
+        params[param_name] = f"{prefix}%"
+    return " AND (" + " OR ".join(clause_parts) + ")", params
     query_terms: list[str] = []
     for token in tokens:
         variants = [token] + SYNONYMS.get(token, [])
@@ -560,7 +760,9 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 match_method="exact_code",
             )
 
-    tokens = tokenize(q_stripped)
+    # Expand FMCG abbreviations before tokenizing
+    q_expanded = expand_fmcg_abbreviations(q_stripped)
+    tokens = tokenize(q_expanded)
     if not tokens:
         return HSNBatchResult(query=query, match_method="none")
 
@@ -632,8 +834,10 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             if not desc_tokens:
                 continue
             jaccard = compute_weighted_jaccard(tokens, desc_tokens)
-            fts_boost = min(float(r.rank) * 2, 0.3)
-            final_score = min(jaccard + fts_boost, 1.0)
+            # Better Jaccard scoring: 60% Jaccard + 40% FTS rank
+            fts_score = min(float(r.rank) * 2.5, 0.4)  # Scale FTS to 0-0.4 range
+            jaccard_weighted = jaccard * 0.6  # 60% weight for Jaccard
+            final_score = min(jaccard_weighted + fts_score, 1.0)
 
             entry = {
                 "hsn_code": r.hsn_code,

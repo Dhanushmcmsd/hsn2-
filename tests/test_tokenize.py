@@ -122,3 +122,48 @@ def test_tokenize_filters_brand_names(monkeypatch):
     assert "samsung" not in tokens
     assert "remote" in tokens
     assert "led" in tokens
+
+
+def test_expand_fmcg_abbreviations(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    assert main.expand_fmcg_abbreviations("BTRM CLNR") == "bathroom cleaner"
+    assert main.expand_fmcg_abbreviations("COOKIS") == "cookie"
+    assert main.expand_fmcg_abbreviations("CASHW") == "cashew"
+    assert main.expand_fmcg_abbreviations("JASMNE") == "jasmine"
+    assert main.expand_fmcg_abbreviations("CHOC BAR") == "chocolate bar"
+    assert main.expand_fmcg_abbreviations("normal text") == "normal text"
+
+
+def test_detect_category_restrictions(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    # Test high priority rules
+    assert main.detect_category_restrictions(['tooth', 'paste']) == ['33']
+    assert main.detect_category_restrictions(['note', 'book']) == ['48']
+    assert main.detect_category_restrictions(['puja', 'oil']) == ['33']  # puja overrides oil
+
+    # Test lower priority rules
+    assert main.detect_category_restrictions(['edible', 'oil']) == ['15']
+
+    # Test no restrictions
+    assert main.detect_category_restrictions(['random', 'product']) == []
+
+
+def test_enhanced_stopwords(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    tokens = main.tokenize("mixed colour assorted round chocolate bar 500gm")
+
+    # New stop words should be filtered out
+    assert "mixed" not in tokens
+    assert "colour" not in tokens
+    assert "assorted" not in tokens
+    assert "round" not in tokens
+
+    # Valid tokens should remain
+    assert "chocolate" in tokens
+    assert "bar" in tokens

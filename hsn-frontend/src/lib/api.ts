@@ -57,6 +57,7 @@ export const authApi = {
 
 export const hsnApi = {
   predict: (text: string) => request<PredictResponse>("/predict", { method: "POST", body: JSON.stringify({ text }) }),
+  expandAbbreviations: (text: string) => request<{ original: string; expanded: string; changed: boolean }>("/expand-abbreviations", { method: "POST", body: JSON.stringify({ text }) }),
   health: () => request<{ status: string }>("/health"),
   reviewPending: () => request<unknown[]>("/review/pending"),
 };
