@@ -7,33 +7,33 @@ log = structlog.get_logger()
 _matcher_instance = None
 
 STOPWORDS = {
-    'the','a','an','and','or','of','in','is','for','to','with','on','at',
-    'by','from','are','was','be','as','it','its','this','that','per','ml',
-    'gm','kg','ltr','litre','liter','gram','mg','unit','pack','piece','nos',
-    'no','pcs','set','box','bottle','pouch','sachet','can','tin','jar','tube',
-    'strip','tablet','capsule','pkt','packet','roll','sheet','size','new','free',
-    'buy','get','pure','natural','original','brand','best','premium','super',
-    '100','200','250','300','400','500','1000','50','25',
+    'the', 'a', 'an', 'and', 'or', 'of', 'in', 'is', 'for', 'to', 'with', 'on', 'at',
+    'by', 'from', 'are', 'was', 'be', 'as', 'it', 'its', 'this', 'that', 'per', 'ml',
+    'gm', 'kg', 'ltr', 'litre', 'liter', 'gram', 'mg', 'unit', 'pack', 'piece', 'nos',
+    'no', 'pcs', 'set', 'box', 'bottle', 'pouch', 'sachet', 'can', 'tin', 'jar', 'tube',
+    'strip', 'tablet', 'capsule', 'pkt', 'packet', 'roll', 'sheet', 'size', 'new', 'free',
+    'buy', 'get', 'pure', 'natural', 'original', 'brand', 'best', 'premium', 'super',
+    '100', '200', '250', '300', '400', '500', '1000', '50', '25',
     # Extended stopwords for Kerala trade invoices
-    'mixed','colour','assorted','round','square','rectangular','oval','flat',
-    'long','short','small','large','medium','big','tiny','huge','thick','thin',
-    'wide','narrow','high','low','deep','shallow','full','empty','half','quarter',
-    'whole','part','piece','slice','chunk','bit','portion','section','segment',
-    'various','different','multiple','several','many','few','single','double','triple',
-    'regular','extra','special','standard','basic','advanced','simple','complex',
-    'normal','usual','common','rare','unique','ordinary','general','specific',
-    'no1','no2','grade','quality','type','variety','model','make',
-    'pkt','pouch','cover','wrapper','wt','weight','net','gross',
+    'mixed', 'colour', 'assorted', 'round', 'square', 'rectangular', 'oval', 'flat',
+    'long', 'short', 'small', 'large', 'medium', 'big', 'tiny', 'huge', 'thick', 'thin',
+    'wide', 'narrow', 'high', 'low', 'deep', 'shallow', 'full', 'empty', 'half', 'quarter',
+    'whole', 'part', 'piece', 'slice', 'chunk', 'bit', 'portion', 'section', 'segment',
+    'various', 'different', 'multiple', 'several', 'many', 'few', 'single', 'double', 'triple',
+    'regular', 'extra', 'special', 'standard', 'basic', 'advanced', 'simple', 'complex',
+    'normal', 'usual', 'common', 'rare', 'unique', 'ordinary', 'general', 'specific',
+    'no1', 'no2', 'grade', 'quality', 'type', 'variety', 'model', 'make',
+    'cover', 'wrapper', 'wt', 'weight', 'net', 'gross',
 }
 
 # FIX #2 & #7: VKC (footwear), CB (multi-category Kerala brand) added.
 # "tr" kept OUT — abbreviation expander handles it before tokenisation.
 BRANDS = {
-    'patanjali','nestle','amul','tata','godrej','dettol','lifebuoy','colgate',
-    'pepsodent','nivea','garnier','loreal','sony','samsung','apple',
-    'lg','whirlpool','philips','nike','adidas','puma','reebok',
-    'bajaj','marico','unilever','parle','sunrise','mogambo','mtr',
-    'majestic','micromax','boat','mivi','britannia','honda','suzuki',
+    'patanjali', 'nestle', 'amul', 'tata', 'godrej', 'dettol', 'lifebuoy', 'colgate',
+    'pepsodent', 'nivea', 'garnier', 'loreal', 'sony', 'samsung', 'apple',
+    'lg', 'whirlpool', 'philips', 'nike', 'adidas', 'puma', 'reebok',
+    'bajaj', 'marico', 'unilever', 'parle', 'sunrise', 'mogambo', 'mtr',
+    'majestic', 'micromax', 'boat', 'mivi', 'britannia', 'honda', 'suzuki',
     # Kerala-specific
     'vkc',      # VKC footwear (603 items — largest brand in dataset)
     'cb',       # CB brand — multi-category, do NOT assume any chapter
@@ -48,8 +48,13 @@ SYNONYMS = {
     'tv':        ['television'],
     'fridge':    ['refrigerator'],
     'laptop':    ['notebook'],
-    'biscuit':   ['cookie'],
-    'shirt':     ['tshirt'],
+    # FIX: shirt carries garment/clothing signal for Ch 61-63 routing
+    'biscuit':   ['cookie', 'confectionery'],
+    'cookie':    ['biscuit', 'confectionery'],
+    'shirt':     ['tshirt', 'garment', 'clothing'],
+    # FIX: water/mineral carry drink/beverage signal for Ch 22 routing
+    'water':     ['beverage', 'drink'],
+    'mineral':   ['beverage', 'drink'],
     # FIX #3: footwear synonyms for Ch 64 routing
     'chappal':   ['sandal', 'footwear', 'slipper'],
     'slipper':   ['sandal', 'footwear', 'chappal'],
@@ -66,9 +71,9 @@ SYNONYMS = {
 # FIX #1–#6: Expanded abbreviation table
 FMCG_ABBREVIATIONS = {
     # v2.2.0 additions
-    'tr':     'kitchen treasure',  # FIX #4: Kitchen Treasure masala brand
-    'ftgr':   'fenugreek',         # FIX #5: fenugreek / methi seeds
-    'ss':     'stainless steel',   # FIX #6: SS PLATE, SS OVAL etc.
+    'tr':     'kitchen treasure',   # FIX #4: Kitchen Treasure masala brand prefix
+    'ftgr':   'fenugreek',          # FIX #5: fenugreek / methi seeds
+    'ss':     'stainless steel',    # FIX #6: SS PLATE, SS OVAL etc.
     'ss.':    'stainless steel',
     # Cleaning
     'btrm':   'bathroom',
@@ -82,7 +87,7 @@ FMCG_ABBREVIATIONS = {
     'van':    'vanilla',
     'strbry': 'strawberry',
     'rasbry': 'raspberry',
-    'bluebry':'blueberry',
+    'bluebry': 'blueberry',
     'blkbry': 'blackberry',
     'pstr':   'pasta',
     'nood':   'noodle',
@@ -108,12 +113,18 @@ FMCG_ABBREVIATIONS = {
     'syrup':  'syrup',
     # Condiments
     'vin':    'vinegar',
-    'sug':    'sugar',
+    'jam':    'jam',
+    'jelly':  'jelly',
+    'marm':   'marmalade',
     'pick':   'pickle',
-    'sach':   'sachet',
+    'spice':  'spice',
+    'herb':   'herb',
+    'sug':    'sugar',
+    # Packaging descriptors
     'cann':   'canned',
     'bott':   'bottled',
     'cart':   'carton',
+    'sach':   'sachet',
     # Trade
     'prem':   'premium',
     'org':    'organic',
@@ -222,7 +233,7 @@ class HybridMatcher:
         if not self._ready:
             return []
         try:
-            import faiss
+            import faiss  # noqa: F401
             # Expand abbreviations before encoding
             text = expand_fmcg_abbreviations(text)
             tokens = tokenize(text)
