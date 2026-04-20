@@ -456,6 +456,7 @@ async def batch_predict(
             row = await _match_one(query, db)
             results.append(row)
         except Exception as e:
+            await db.rollback()
             results.append(HSNBatchResult(query=query, error=str(e)))
 
     matched = sum(1 for r in results if r.hsn_code)
@@ -737,7 +738,7 @@ def detect_category_restrictions(tokens: list[str]) -> list[str]:
     return []
 
 
-def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
+def build_hsn_prefix_clause(tokens: list[str], table_alias: str = "h") -> tuple[str, dict]:
     """Build a SQL WHERE clause fragment restricting to relevant HSN chapters."""
     expanded_tokens = set(tokens)
     for token in tokens:
@@ -759,7 +760,7 @@ def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
     params: dict[str, str] = {}
     for idx, prefix in enumerate(prefixes):
         param_name = f"prefix_{idx}"
-        clause_parts.append(f"h.hsn_code LIKE :{param_name}")
+        clause_parts.append(f"{table_alias}.hsn_code LIKE :{param_name}")
         params[param_name] = f"{prefix}%"
     return " AND (" + " OR ".join(clause_parts) + ")", params
 
@@ -990,27 +991,32 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             )
 
     candidates: dict[str, dict] = {}
+    ilike_clause, ilike_params = build_hsn_prefix_clause(tokens, table_alias="hsn_codes")
     for token in tokens[:4]:
         if len(token) < 3:
             continue
-        res = await db.execute(
-            text("""
-                SELECT hsn_code, description, gst_rate, category
-                FROM hsn_codes
-                WHERE description ILIKE :pat AND is_active = TRUE""" + domain_clause + """
-                LIMIT 20
-            """),
-            {"pat": f"%{token}%", **domain_params},
-        )
-        for r in res.fetchall():
-            if r.hsn_code not in candidates:
-                candidates[r.hsn_code] = {
-                    "hsn_code": r.hsn_code,
-                    "description": r.description,
-                    "gst_rate": float(r.gst_rate or 0),
-                    "hits": 0,
-                }
-            candidates[r.hsn_code]["hits"] += 1
+        try:
+            res = await db.execute(
+                text("""
+                    SELECT hsn_code, description, gst_rate, category
+                    FROM hsn_codes
+                    WHERE description ILIKE :pat AND is_active = TRUE""" + ilike_clause + """
+                    LIMIT 20
+                """),
+                {"pat": f"%{token}%", **ilike_params},
+            )
+            for r in res.fetchall():
+                if r.hsn_code not in candidates:
+                    candidates[r.hsn_code] = {
+                        "hsn_code": r.hsn_code,
+                        "description": r.description,
+                        "gst_rate": float(r.gst_rate or 0),
+                        "hits": 0,
+                    }
+                candidates[r.hsn_code]["hits"] += 1
+        except Exception:
+            await db.rollback()
+            break
 
     if candidates:
         total_tokens = max(len(tokens), 1)
