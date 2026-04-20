@@ -37,3 +37,27 @@ class ReviewItem(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ImportantProduct(BaseModel):
+    product_name: str
+    hsn_code: str = ""
+    source_name: str = ""
+    cleaned_description: str = ""
+    pack_or_size: str = ""
+    status: str = "pending"
+    confidence: float = 0.0
+
+
+class ProductAnalysisRequest(BaseModel):
+    product_index: int
+    force_update: bool = False
+
+
+class ProductAnalysisResponse(BaseModel):
+    product_index: int
+    original_name: str
+    cleaned_description: str
+    hsn_analysis: dict
+    auto_updated: bool
+    message: str
