@@ -1288,14 +1288,14 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         if len(token) < 3:
             continue
         res = await db.execute(
-            text("""
-                SELECT hsn_code, description, gst_rate, category
-                FROM hsn_codes
-                WHERE description ILIKE :pat AND is_active = TRUE""" + domain_clause + """
-                LIMIT 20
-            """),
-            {"pat": f"%{token}%", **domain_params}
-        )
+    text("""
+        SELECT h.hsn_code, h.description, h.gst_rate, h.category
+        FROM hsn_codes h
+        WHERE h.description ILIKE :pat AND h.is_active = TRUE""" + domain_clause + """
+        LIMIT 20
+    """),
+    {"pat": f"%{token}%", **domain_params}
+)
         for r in res.fetchall():
             key = normalize_hsn(r.hsn_code)  # FIX: normalize key
             if key not in candidates:
