@@ -155,7 +155,7 @@ def expand_fmcg_abbreviations(text: str) -> str:
     for word in words:
         lower = word.lower().rstrip('.')
         expanded.append(FMCG_ABBREVIATIONS.get(lower, word))
-    return ' '.join(expanded)
+    return ' '.join(expanded).lower()
 
 
 def tokenize(text: str) -> list[str]:

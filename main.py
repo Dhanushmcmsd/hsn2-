@@ -617,7 +617,7 @@ def expand_fmcg_abbreviations(text: str) -> str:
     for word in words:
         lower = word.lower().rstrip('.')
         expanded.append(FMCG_ABBREVIATIONS.get(lower, word))
-    return ' '.join(expanded)
+    return ' '.join(expanded).lower()
 
 
 def tokenize(text: str) -> list[str]:
@@ -743,7 +743,7 @@ def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
     for token in tokens:
         expanded_tokens.update(SYNONYMS.get(token, []))
 
-    category_chapters = detect_category_restrictions(list(expanded_tokens))
+    category_chapters = detect_category_restrictions(tokens)
     if category_chapters:
         prefixes = category_chapters
     else:

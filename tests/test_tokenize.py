@@ -152,6 +152,17 @@ def test_detect_category_restrictions(monkeypatch):
     assert main.detect_category_restrictions(['random', 'product']) == []
 
 
+def test_laptop_does_not_map_to_notebook(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    clause, params = main.build_hsn_prefix_clause(['laptop'])
+
+    assert params.get('prefix_0') == '84%'
+    assert '48%' not in params.values()
+    assert 'notebook' not in clause
+
+
 def test_enhanced_stopwords(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
     main = _load_main_with_stubs()
