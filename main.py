@@ -351,6 +351,17 @@ async def search_hsn(
     ]
 
 
+# ── HSN Code Normalization ────────────────────────────────────────────────────
+def normalize_hsn_code(hsn_code: Optional[str]) -> Optional[str]:
+    """Normalize HSN code to 8 digits with leading zeros. e.g. '8013220' → '08013220'"""
+    if not hsn_code:
+        return None
+    try:
+        return str(int(float(hsn_code))).zfill(8)
+    except (ValueError, TypeError):
+        return hsn_code
+
+
 @app.post("/expand-abbreviations")
 async def expand_abbreviations_endpoint(body: SingleQuery):
     expanded = expand_fmcg_abbreviations(body.text)
@@ -382,14 +393,14 @@ async def predict_single(
         "request_id": str(uuid.uuid4()),
         "input_text": body.text,
         "top_match": {
-            "hsn_code": result.hsn_code or "9999",
+            "hsn_code": normalize_hsn_code(result.hsn_code) or "00009999",
             "description": result.description or "Not classified",
             "score": result.confidence,
             "method": result.match_method,
         },
         "alternatives": [
             {
-                "hsn_code": a.get("hsn_code", ""),
+                "hsn_code": normalize_hsn_code(a.get("hsn_code", "")),
                 "description": a.get("description", ""),
                 "score": a.get("confidence", 0),
                 "method": "search",
@@ -755,6 +766,22 @@ def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
 
 async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     q_stripped = query.strip()
+
+    # Step 0: Exact lookup in verified products
+    desc_normalized = q_stripped.upper().strip()
+    try:
+        res = await db.execute(
+            text("SELECT hsn_code, description, gst_rate FROM verified_products WHERE description_normalized = :d"),
+            {"d": desc_normalized}
+        )
+        row = res.fetchone()
+        if row:
+            gst_val = float(row.gst_rate) if row.gst_rate else 0.0
+            return HSNBatchResult(query=query, hsn_code=row.hsn_code, description=row.description, 
+                                  gst_rate=gst_val, confidence=1.0, 
+                                  confidence_label="high", match_method="exact_verified")
+    except Exception:
+        pass
 
     if re.match(r'^\d{4,8}$', q_stripped):
         res = await db.execute(

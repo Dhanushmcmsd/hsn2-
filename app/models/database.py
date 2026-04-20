@@ -98,7 +98,24 @@ class HsnCode(Base):
     )
 
 
+class VerifiedProduct(Base):
+    """Pre-verified products from correct_datas for exact lookup."""
+    __tablename__ = "verified_products"
+
+    id = Column(Integer, primary_key=True, index=True)
+    description = Column(Text, nullable=False)
+    description_normalized = Column(String(500), unique=True, index=True, nullable=False)
+    hsn_code = Column(String(10), nullable=False, index=True)
+    gst_rate = Column(String(20), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_verified_desc", "description_normalized"),
+    )
+
+
 _DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
+_VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.xlsx"))
 
 
 async def _seed_hsn_codes(session: AsyncSession) -> None:
@@ -131,11 +148,54 @@ async def _seed_hsn_codes(session: AsyncSession) -> None:
     log.info("seed.hsn_codes_done", count=len(rows))
 
 
+async def _seed_verified_products(session: AsyncSession) -> None:
+    """Seed verified_products table from Excel if the table is empty."""
+    if not _VERIFIED_DATA_PATH.exists():
+        log.warning("seed.verified_data_missing", path=str(_VERIFIED_DATA_PATH))
+        return
+
+    result = await session.execute(select(func.count()).select_from(VerifiedProduct))
+    count = result.scalar()
+    if count and count > 0:
+        log.info("seed.verified_already_seeded", count=count)
+        return
+
+    try:
+        import pandas as pd
+        df = pd.read_excel(_VERIFIED_DATA_PATH)
+        rows = []
+        for _, row in df.iterrows():
+            desc = str(row.get("description", "")).strip() if pd.notna(row.get("description")) else ""
+            hsn = str(row.get("hsn_code", "")).strip() if pd.notna(row.get("hsn_code")) else ""
+            gst = str(row.get("gst_rate", "")).strip() if pd.notna(row.get("gst_rate")) else None
+            
+            if desc and hsn:
+                desc_normalized = desc.upper().strip()
+                rows.append(VerifiedProduct(
+                    description=desc,
+                    description_normalized=desc_normalized,
+                    hsn_code=hsn,
+                    gst_rate=gst
+                ))
+        
+        if rows:
+            session.add_all(rows)
+            await session.commit()
+            log.info("seed.verified_products_done", count=len(rows))
+        else:
+            log.warning("seed.verified_no_rows_in_excel")
+    except ImportError:
+        log.warning("seed.pandas_not_installed", msg="Install pandas and openpyxl to seed verified products")
+    except Exception as e:
+        log.error("seed.verified_products_error", error=str(e))
+
+
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     async with async_session() as session:
         await _seed_hsn_codes(session)
+        await _seed_verified_products(session)
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
