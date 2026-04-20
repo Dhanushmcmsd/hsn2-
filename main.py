@@ -1049,62 +1049,96 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     q_stripped = query.strip()
 
     # ── Pass 0: Verified products lookup ──────────────────────────────────────
-    # Exact match first, then trigram fallback at similarity >= 0.6
-    # This covers all 13,864 products from correct_datas.xlsx with ground-truth
-    # HSN codes (column 5 = HSN As per GST) and GST rates (column 6 = GST As per GST).
+    #
+    # Three sub-passes in priority order:
+    #   0A. Exact uppercase match on description_normalized        → 1.0 confidence
+    #   0B. Size-stripped match on description_no_size             → 0.95 confidence
+    #   0C. Trigram similarity (pg_trgm %) on description_no_size  → sim-based
+    #
+    # This table is seeded from correct_datas.xlsx (13,862 ground-truth rows)
+    # and covers every product in your POS/invoice system at full accuracy.
+    # ──────────────────────────────────────────────────────────────────────────
     try:
-        q_lower = q_stripped.lower()
-        # Exact description match
+        # Normalise the incoming query the same way the seeder does
+        q_exact   = q_stripped.upper().strip()          # e.g. "HORLICKS WOMENS CHOCO PET 400G"
+        q_no_size = _strip_sizes(q_stripped)            # e.g. "HORLICKS WOMENS CHOCO PET"
+
+        # ── 0A: Exact match ───────────────────────────────────────────────────
         vp_res = await db.execute(
             text("""
                 SELECT
                     vp.hsn_code,
-                    h.description,
-                    h.gst_rate,
-                    h.category,
-                    1.0 AS sim
+                    vp.gst_rate,
+                    vp.description AS matched_description,
+                    1.0            AS sim
                 FROM verified_products vp
-                JOIN hsn_codes h ON h.hsn_code = vp.hsn_code
-                WHERE lower(vp.description_normalized) = :q
+                WHERE vp.description_normalized = :q
                 LIMIT 1
             """),
-            {"q": q_lower}
+            {"q": q_exact},
         )
         vp_row = vp_res.fetchone()
 
-        if not vp_row:
-            # Trigram similarity match against verified products
+        # ── 0B: Size-stripped exact match ────────────────────────────────────
+        if not vp_row and q_no_size:
             vp_res = await db.execute(
                 text("""
                     SELECT
                         vp.hsn_code,
-                        h.description,
-                        h.gst_rate,
-                        h.category,
-                        similarity(vp.description_normalized, :q) AS sim
+                        vp.gst_rate,
+                        vp.description AS matched_description,
+                        0.95           AS sim
                     FROM verified_products vp
-                    JOIN hsn_codes h ON h.hsn_code = vp.hsn_code
-                    WHERE vp.description_normalized % :q
-                    ORDER BY sim DESC
+                    WHERE vp.description_no_size = :q
+                    ORDER BY vp.id          -- first inserted = most common variant
                     LIMIT 1
                 """),
-                {"q": q_lower}
+                {"q": q_no_size},
             )
             vp_row = vp_res.fetchone()
 
-        if vp_row and float(vp_row.sim) >= 0.6:
-            return HSNBatchResult(
-                query=query,
-                hsn_code=normalize_hsn(vp_row.hsn_code),
-                description=vp_row.description,
-                gst_rate=float(vp_row.gst_rate or 0),
-                confidence=round(float(vp_row.sim), 3),
-                confidence_label="high" if float(vp_row.sim) >= 0.85 else "medium",
-                match_method="verified_products",
+        # ── 0C: Trigram similarity on no-size form ───────────────────────────
+        if not vp_row and q_no_size:
+            vp_res = await db.execute(
+                text("""
+                    SELECT
+                        vp.hsn_code,
+                        vp.gst_rate,
+                        vp.description AS matched_description,
+                        similarity(vp.description_no_size, :q) AS sim
+                    FROM verified_products vp
+                    WHERE vp.description_no_size % :q        -- uses GiST/GIN pg_trgm index
+                    ORDER BY sim DESC
+                    LIMIT 1
+                """),
+                {"q": q_no_size},
             )
-    except Exception:
-        # verified_products table may not exist yet — fall through gracefully
-        pass
+            vp_row = vp_res.fetchone()
+
+        if vp_row:
+            sim = float(vp_row.sim)
+            if sim >= 0.50:
+                gst_rate_str = vp_row.gst_rate or "0%"
+                gst_float = float(re.sub(r'[^0-9.]', '', gst_rate_str) or 0)
+                return HSNBatchResult(
+                    query=query,
+                    hsn_code=normalize_hsn(vp_row.hsn_code),
+                    description=vp_row.matched_description,
+                    gst_rate=gst_float,
+                    confidence=round(sim, 3),
+                    confidence_label=(
+                        "high"   if sim >= 0.90 else
+                        "medium" if sim >= 0.70 else
+                        "low"
+                    ),
+                    match_method="verified_exact" if sim >= 0.99 else
+                                 "verified_no_size" if sim >= 0.94 else
+                                 "verified_trigram",
+                )
+
+    except Exception as _vp_err:
+        # verified_products table may not be seeded yet — fall through gracefully
+        log.warning("pass0.verified_products_error", error=str(_vp_err))
 
     # ── Pass 1: exact HSN code lookup ─────────────────────────────────────────
     if re.match(r'^\d{4,8}$', q_stripped):
