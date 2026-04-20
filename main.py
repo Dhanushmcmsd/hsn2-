@@ -523,6 +523,9 @@ FMCG_ABBREVIATIONS = {
     'sambrani':'benzoin incense','pooja':'puja',
     'halwa':'sweet preparation','ladoo':'sweet ball confection',
     'burfi':'sweet confection','mithai':'sweet confection',
+    'machne':'machine','mat':'mat','spatule':'spatula','bend':'bend',
+    'brut':'brut','db':'db','gents':'mens','ladies':'womens',
+    'stainer':'strainer',
 }
 
 
@@ -531,6 +534,7 @@ def expand_fmcg_abbreviations(text: str) -> str:
     text = re.sub(r'\bFTGR\b', 'fenugreek', text, flags=re.IGNORECASE)
     text = re.sub(r'\bTR\.\s*', 'kitchen treasure ', text, flags=re.IGNORECASE)
     text = re.sub(r'\bTR\b', 'kitchen treasure', text, flags=re.IGNORECASE)
+    text = re.sub(r'\bSTAINER\b', 'strainer', text, flags=re.IGNORECASE)
     words = text.split()
     expanded = [FMCG_ABBREVIATIONS.get(w.lower().rstrip('.'), w) for w in words]
     return ' '.join(expanded).lower()
@@ -545,30 +549,16 @@ def tokenize(text: str) -> list[str]:
 
 
 PRODUCT_TYPE_RULES: list[dict] = [
-    {'keywords':['popcorn'], 'chapters':['19'], 'search_terms':['popcorn prepared food swelling cereal roasted'], 'confidence_boost':0.28},
-    {'keywords':['cookie','cookies','biscuit','biscuits'], 'chapters':['19'], 'search_terms':['biscuit cookie sweet biscuits pastry'], 'confidence_boost':0.28},
-    {'keywords':['wafer','wafers','cracker','crackers'], 'chapters':['19'], 'search_terms':['wafer cracker biscuits bread'], 'confidence_boost':0.22},
-    {'keywords':['pappadam','papad','pappad'], 'chapters':['19'], 'search_terms':['pappadam papad bread food preparation'], 'confidence_boost':0.32},
-    {'keywords':['noodle','noodles','pasta','vermicelli','macaroni','spaghetti'], 'chapters':['19'], 'search_terms':['pasta noodles vermicelli macaroni'], 'confidence_boost':0.22},
-    {'keywords':['bread','rusk','toast','crispbread'], 'chapters':['19'], 'search_terms':['bread rusk toast crispbread'], 'confidence_boost':0.22},
-    {'keywords':['cake','pastry','muffin','doughnut','cupcake'], 'chapters':['19'], 'search_terms':['cake pastry muffin doughnut'], 'confidence_boost':0.20},
-    {'keywords':['chips','crisps','namkeen','bhujia','chakli','mixture','farsan','murukku','sev','chivda'], 'chapters':['19','20'], 'search_terms':['snack cereal preparation prepared food'], 'confidence_boost':0.20},
-    {'keywords':['idli','dosa','appam','puttu','upma'], 'chapters':['11','19'], 'search_terms':['semolina cereal flour food preparation'], 'confidence_boost':0.18},
-    {'keywords':['squash','cordial'], 'chapters':['22'], 'search_terms':['squash fruit drink concentrate waters flavoured sugar'], 'confidence_boost':0.32},
-    {'keywords':['juice'], 'chapters':['20','22'], 'search_terms':['fruit juice vegetable juice'], 'confidence_boost':0.22},
-    {'keywords':['drink','drinks','beverage','beverages'], 'chapters':['22'], 'search_terms':['beverage drink waters'], 'confidence_boost':0.18},
-    {'keywords':['soda','cola','lemonade','sherbet','sharbat'], 'chapters':['22'], 'search_terms':['waters sugar flavour aerated soda'], 'confidence_boost':0.22},
-    {'keywords':['water'], 'chapters':['22'], 'search_terms':['mineral water drinking waters'], 'confidence_boost':0.18},
-    {'keywords':['tea','chai'], 'chapters':['09'], 'search_terms':['tea green black'], 'confidence_boost':0.26},
-    {'keywords':['coffee'], 'chapters':['09','21'], 'search_terms':['coffee roasted unroasted'], 'confidence_boost':0.24},
-    {'keywords':['milk','dairy','curd','yogurt','yoghurt','dahi','lassi','buttermilk','paneer','ghee'], 'chapters':['04'], 'search_terms':['milk dairy curd yogurt butter'], 'confidence_boost':0.22},
-    {'keywords':['pickle','pickles','achar','achaar'], 'chapters':['20','21'], 'search_terms':['pickle prepared preserved vegetable vinegar acid'], 'confidence_boost':0.35},
-    {'keywords':['chutney','relish'], 'chapters':['20','21'], 'search_terms':['chutney sauce preparation'], 'confidence_boost':0.28},
-    {'keywords':['jam','jelly','marmalade'], 'chapters':['20'], 'search_terms':['jam jelly marmalade fruit'], 'confidence_boost':0.26},
-    {'keywords':['sauce','ketchup'], 'chapters':['21'], 'search_terms':['sauce preparations condiment ketchup tomato'], 'confidence_boost':0.22},
-    {'keywords':['candy','toffee','lollipop'], 'chapters':['17'], 'search_terms':['sugar confectionery candy toffee'], 'confidence_boost':0.24},
-    {'keywords':['chocolate'], 'chapters':['18'], 'search_terms':['chocolate cocoa food preparations'], 'confidence_boost':0.24},
-    {'keywords':['ladoo','laddoo','burfi','halwa','mithai','peda','barfi','modak','jalebi'], 'chapters':['17','21'], 'search_terms':['sugar confectionery sweet preparation'], 'confidence_boost':0.20},
+    # HIGH PRIORITY - SPECIFIC PRODUCT TYPES FIRST
+    {'keywords':['salt','himalayan','pink salt','rock salt','sea salt','iodised salt','iodized salt'], 'chapters':['25'], 'search_terms':['salt edible table cooking himalayan pink'], 'confidence_boost':0.35},
+    {'keywords':['mat','mosquito mat','repellent mat','good knight'], 'chapters':['38'], 'search_terms':['mosquito repellent mat insecticide chemical'], 'confidence_boost':0.32},
+    {'keywords':['strainer','sieve','colander','juice strainer','soup strainer'], 'chapters':['39','73'], 'search_terms':['strainer sieve colander kitchen utensil plastic metal'], 'confidence_boost':0.30},
+    {'keywords':['utensil','utensils','kitchen utensil','cookware','lid','nob lid'], 'chapters':['73'], 'search_terms':['utensil kitchen cookware lid stainless steel iron'], 'confidence_boost':0.28},
+    {'keywords':['spatula','icing spatula','baking tool','kitchen tool'], 'chapters':['82'], 'search_terms':['spatula kitchen tool baking utensil'], 'confidence_boost':0.30},
+    {'keywords':['car spray','car freshener','brut','automotive spray'], 'chapters':['33','34'], 'search_terms':['car freshener spray deodorant automotive'], 'confidence_boost':0.28},
+    {'keywords':['spray','aerosol','perfume spray','body spray','deodorant spray'], 'chapters':['33'], 'search_terms':['spray aerosol perfume deodorant'], 'confidence_boost':0.25},
+    {'keywords':['milk','dairy','curd','yogurt','yoghurt','dahi','lassi','buttermilk','paneer','ghee','fermented milk'], 'chapters':['04'], 'search_terms':['milk dairy curd yogurt butter fermented'], 'confidence_boost':0.22},
+    {'keywords':['prawn','shrimp','fish','crab','lobster','squid','pomfret','salmon','tuna','sardine','mackerel','netholi','konju'], 'chapters':['03','16'], 'search_terms':['fish prawn crustacean seafood frozen fresh'], 'confidence_boost':0.22},
     {'keywords':['cumin','jeerakam','jeera','zeera'], 'chapters':['09'], 'search_terms':['cumin seeds anise fennel seeds'], 'confidence_boost':0.38},
     {'keywords':['fenugreek','methi','uluva'], 'chapters':['09'], 'search_terms':['fenugreek seeds spice'], 'confidence_boost':0.35},
     {'keywords':['coriander','malli','dhania'], 'chapters':['09'], 'search_terms':['coriander seeds'], 'confidence_boost':0.30},
@@ -580,6 +570,16 @@ PRODUCT_TYPE_RULES: list[dict] = [
     {'keywords':['pepper','peppercorn','kurumulaku'], 'chapters':['09'], 'search_terms':['pepper genus piper dried crushed'], 'confidence_boost':0.28},
     {'keywords':['nutmeg','mace','jathikka'], 'chapters':['09'], 'search_terms':['nutmeg mace cardamoms'], 'confidence_boost':0.30},
     {'keywords':['masala','spice mix','curry powder','garam masala','sambar powder','rasam powder'], 'chapters':['09','21'], 'search_terms':['mixed condiments spice preparations masala'], 'confidence_boost':0.22},
+    {'keywords':['pickle','pickles','achar','achaar'], 'chapters':['20','21'], 'search_terms':['pickle prepared preserved vegetable vinegar acid'], 'confidence_boost':0.35},
+    {'keywords':['pappadam','papad','pappad'], 'chapters':['19'], 'search_terms':['pappadam papad bread food preparation'], 'confidence_boost':0.32},
+    {'keywords':['popcorn'], 'chapters':['19'], 'search_terms':['popcorn prepared food swelling cereal roasted puffed'], 'confidence_boost':0.28},
+    {'keywords':['cookie','cookies','biscuit','biscuits'], 'chapters':['19'], 'search_terms':['biscuit cookie sweet biscuits pastry'], 'confidence_boost':0.28},
+    {'keywords':['wafer','wafers','cracker','crackers'], 'chapters':['19'], 'search_terms':['wafer cracker biscuits bread'], 'confidence_boost':0.22},
+    {'keywords':['bread','rusk','toast','crispbread'], 'chapters':['19'], 'search_terms':['bread rusk toast crispbread'], 'confidence_boost':0.22},
+    {'keywords':['cake','pastry','muffin','doughnut','cupcake'], 'chapters':['19'], 'search_terms':['cake pastry muffin doughnut'], 'confidence_boost':0.20},
+    {'keywords':['chips','crisps','namkeen','bhujia','chakli','mixture','farsan','murukku','sev','chivda'], 'chapters':['19','20'], 'search_terms':['snack cereal preparation prepared food'], 'confidence_boost':0.20},
+    {'keywords':['idli','dosa','appam','puttu','upma'], 'chapters':['11','19'], 'search_terms':['semolina cereal flour food preparation'], 'confidence_boost':0.18},
+    {'keywords':['protein powder','whey protein','protein shake','health drink','supplement','multivitamin'], 'chapters':['21','30'], 'search_terms':['food preparation protein nutritional supplement'], 'confidence_boost':0.20},
     {'keywords':['coconut oil','thenga oil','palm oil','sunflower oil','groundnut oil','mustard oil','sesame oil','refined oil','cooking oil','edible oil','vegetable oil'], 'chapters':['15'], 'search_terms':['coconut oil palm sunflower edible vegetable oil fats'], 'confidence_boost':0.28},
     {'keywords':['soap','bathing bar','toilet soap','handwash','body wash','face wash','shower gel'], 'chapters':['34'], 'search_terms':['soap toilet organic surface active'], 'confidence_boost':0.26},
     {'keywords':['shampoo'], 'chapters':['33'], 'search_terms':['shampoo preparations hair'], 'confidence_boost':0.28},
@@ -599,8 +599,19 @@ PRODUCT_TYPE_RULES: list[dict] = [
     {'keywords':['rice','basmati','matta'], 'chapters':['10'], 'search_terms':['rice'], 'confidence_boost':0.26},
     {'keywords':['wheat','atta','maida','flour'], 'chapters':['10','11'], 'search_terms':['wheat flour atta meslin'], 'confidence_boost':0.22},
     {'keywords':['dal','dhal','lentil','moong','urad','toor','chana','masoor','rajma','kadala'], 'chapters':['07'], 'search_terms':['dried leguminous vegetables dal lentil peas'], 'confidence_boost':0.26},
-    {'keywords':['prawn','shrimp','fish','crab','lobster','squid','pomfret','salmon','tuna','sardine','mackerel','netholi','konju'], 'chapters':['03','16'], 'search_terms':['fish prawn crustacean seafood frozen fresh'], 'confidence_boost':0.22},
-    {'keywords':['protein powder','whey protein','protein shake','health drink','supplement','multivitamin'], 'chapters':['21','30'], 'search_terms':['food preparation protein nutritional supplement'], 'confidence_boost':0.20},
+    {'keywords':['chutney','relish'], 'chapters':['20','21'], 'search_terms':['chutney sauce preparation'], 'confidence_boost':0.28},
+    {'keywords':['jam','jelly','marmalade'], 'chapters':['20'], 'search_terms':['jam jelly marmalade fruit'], 'confidence_boost':0.26},
+    {'keywords':['sauce','ketchup'], 'chapters':['21'], 'search_terms':['sauce preparations condiment ketchup tomato'], 'confidence_boost':0.22},
+    {'keywords':['candy','toffee','lollipop'], 'chapters':['17'], 'search_terms':['sugar confectionery candy toffee'], 'confidence_boost':0.24},
+    {'keywords':['chocolate'], 'chapters':['18'], 'search_terms':['chocolate cocoa food preparations'], 'confidence_boost':0.24},
+    {'keywords':['ladoo','laddoo','burfi','halwa','mithai','peda','barfi','modak','jalebi'], 'chapters':['17','21'], 'search_terms':['sugar confectionery sweet preparation'], 'confidence_boost':0.20},
+    {'keywords':['tea','chai'], 'chapters':['09'], 'search_terms':['tea green black'], 'confidence_boost':0.26},
+    {'keywords':['coffee'], 'chapters':['09','21'], 'search_terms':['coffee roasted unroasted'], 'confidence_boost':0.24},
+    {'keywords':['squash','cordial'], 'chapters':['22'], 'search_terms':['squash fruit drink concentrate waters flavoured sugar'], 'confidence_boost':0.32},
+    {'keywords':['juice'], 'chapters':['20','22'], 'search_terms':['fruit juice vegetable juice'], 'confidence_boost':0.22},
+    {'keywords':['drink','drinks','beverage','beverages'], 'chapters':['22'], 'search_terms':['beverage drink waters'], 'confidence_boost':0.18},
+    {'keywords':['soda','cola','lemonade','sherbet','sharbat'], 'chapters':['22'], 'search_terms':['waters sugar flavour aerated soda'], 'confidence_boost':0.22},
+    {'keywords':['water'], 'chapters':['22'], 'search_terms':['mineral water drinking waters'], 'confidence_boost':0.18},
 ]
 
 
@@ -635,6 +646,10 @@ SYNONYMS = {
     'popcorn':['corn','cereal','snack'],'squash':['drink','beverage','concentrate'],
     'cookie':['biscuit','confectionery'],'biscuit':['cookie','confectionery'],
     'pappadam':['papad','flatbread'],'papad':['pappadam','flatbread'],
+    'salt':['himalayan','pink','rock','sea','iodised','iodized'],
+    'mat':['mosquito','repellent','good knight'],'strainer':['sieve','colander'],
+    'utensil':['cookware','kitchen tool'],'spatula':['baking tool','kitchen tool'],
+    'spray':['aerosol','freshener'],'car':['automotive'],
 }
 
 DOMAIN_PREFIXES: dict[str, list[str]] = {
@@ -647,7 +662,10 @@ DOMAIN_PREFIXES: dict[str, list[str]] = {
     'squash':['22'],'soap':['34'],'handwash':['34'],'shampoo':['33'],
     'cream':['33'],'pickle':['20'],'achar':['20'],'jam':['20'],
     'phone':['85'],'mobile':['85'],'tv':['85'],'computer':['84'],
-    'laptop':['84'],'notebook':['48'],
+    'laptop':['84'],'notebook':['48'],'salt':['25'],'himalayan':['25'],
+    'mat':['38'],'mosquito':['38'],'repellent':['38'],'strainer':['39','73'],
+    'sieve':['39','73'],'colander':['39','73'],'utensil':['73'],'cookware':['73'],
+    'spatula':['82'],'baking':['82'],'spray':['33','34'],'car':['33','34'],
 }
 
 CATEGORY_RULES = [
@@ -670,6 +688,12 @@ CATEGORY_RULES = [
     {'keywords':['masala','spice'],'chapters':['09','21']},
     {'keywords':['drink','beverage','juice','water'],'chapters':['22']},
     {'keywords':['pickle','jam','preserve'],'chapters':['20']},
+    {'keywords':['salt','himalayan','pink salt'],'chapters':['25']},
+    {'keywords':['mat','mosquito','repellent'],'chapters':['38']},
+    {'keywords':['strainer','sieve','colander'],'chapters':['39','73']},
+    {'keywords':['utensil','cookware','lid'],'chapters':['73']},
+    {'keywords':['spatula','baking','kitchen tool'],'chapters':['82']},
+    {'keywords':['spray','car','freshener'],'chapters':['33','34']},
 ]
 
 PLACEHOLDER_BOOST_CHAPTERS = {'33','34','39','96'}
