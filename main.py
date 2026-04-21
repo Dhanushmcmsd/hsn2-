@@ -11,6 +11,13 @@ from datetime import datetime, timedelta
 from typing import Optional
 import os, json, re, uuid
 
+# ── Logging ───────────────────────────────────────────────────────────────────
+# FIX #1: main.py is standalone — structlog lives in app/ only.
+# Define a standard-library logger so log.warning() calls never crash.
+import logging
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
+log = logging.getLogger("hsn_main")
+
 # ── Config ────────────────────────────────────────────────────────────────────
 DATABASE_URL  = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql+asyncpg://", 1)
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "change-me")
@@ -126,17 +133,33 @@ def decode_token(token: str) -> str:
         raise HTTPException(401, "Invalid or expired token")
 
 # ── HSN code normalizer ───────────────────────────────────────────────────────
-# FIX: Leading zero normalization — "8013220" → "08013220"
-# Applies everywhere an hsn_code is returned to the client.
 def normalize_hsn(code: str) -> str:
-    """Zero-pad HSN codes to 8 digits. Handles '8471', '84710000', '08471000' etc."""
-    if not code or not code.strip():
+    """Zero-pad HSN codes to 8 digits. e.g. '8471' → '08471000' is wrong;
+    '8013220' → '08013220' is right (preserve all digits, just left-pad)."""
+    if not code or not str(code).strip():
         return code
-    stripped = code.strip()
-    # Only normalize numeric codes
+    stripped = str(code).strip()
     if re.match(r'^\d+$', stripped):
-        return str(int(stripped)).zfill(8)
+        return stripped.zfill(8)
     return stripped
+
+# ── FIX #2: _strip_sizes was called in _match_one Pass 0 but never defined ────
+# Copied verbatim from app/models/database.py so main.py is fully self-contained.
+_SIZE_PAT = re.compile(
+    r'\b\d+(?:\.\d+)?\s*(?:G|GM|GMS|KG|KGS|ML|L|LTR|LITRE|LITER|'
+    r'PC|PCS|NOS|NO|N|P|IN|MG|OZ|LB)\b'
+    r'|\b\d+\s*X\s*\d+\b'
+    r'|\b\d+\s*\+\s*\d+\b'
+    r'|\b\d+S\b|\b\d+N\b|\b\d+P\b'
+    r'|\b\d+\b',
+    re.IGNORECASE,
+)
+
+def _strip_sizes(text: str) -> str:
+    """Remove weight/volume/count tokens; collapse whitespace; return UPPERCASE."""
+    t = _SIZE_PAT.sub(' ', text.upper())
+    t = re.sub(r'[^A-Z\s]', ' ', t)
+    return re.sub(r'\s+', ' ', t).strip()
 
 # ── Pydantic schemas ──────────────────────────────────────────────────────────
 class HSNRow(BaseModel):
@@ -193,7 +216,7 @@ class BatchResponse(BaseModel):
     unmatched: int
 
 # ── App ───────────────────────────────────────────────────────────────────────
-app = FastAPI(title="HSN Classifier API", version="2.2.0")
+app = FastAPI(title="HSN Classifier API", version="2.2.1")
 
 ALLOWED_ORIGINS = [
     "https://hsn2.vercel.app",
@@ -243,7 +266,7 @@ async def health(db: AsyncSession = Depends(get_db)):
         "hsn_records": hsn_count,
         "hsn_search_records": search_count,
         "verified_products": vp_count,
-        "version": "2.2.0",
+        "version": "2.2.1",
     }
 
 # ── Auth routes ───────────────────────────────────────────────────────────────
@@ -294,7 +317,6 @@ async def me(authorization: str = Header(...), db: AsyncSession = Depends(get_db
 # ── HSN lookup routes ─────────────────────────────────────────────────────────
 @app.get("/hsn/{code}", response_model=HSNRow)
 async def get_by_code(code: str, db: AsyncSession = Depends(get_db)):
-    # FIX: normalize before cache lookup so "8471" and "00008471" hit same key
     normalized_code = normalize_hsn(code)
     cached = await cache_get(f"hsn:{normalized_code}")
     if cached:
@@ -343,7 +365,7 @@ async def search_hsn(
     result = await db.execute(text(stmt), params)
     return [
         {
-            "hsn_code": normalize_hsn(r.hsn_code),   # FIX: normalize output
+            "hsn_code": normalize_hsn(r.hsn_code),
             "description": r.description,
             "gst_rate": float(r.gst_rate or 0),
             "category": r.category,
@@ -354,7 +376,6 @@ async def search_hsn(
 # ── FMCG Abbreviation Expansion ───────────────────────────────────────────────
 @app.post("/expand-abbreviations")
 async def expand_abbreviations_endpoint(body: SingleQuery):
-    """Expand FMCG abbreviations in the input text."""
     expanded = expand_fmcg_abbreviations(body.text)
     return {
         "original": body.text,
@@ -370,7 +391,6 @@ async def predict_single(
     x_api_key: str = Header(default="", alias="x-api-key"),
     db: AsyncSession = Depends(get_db),
 ):
-    """Single item prediction — compatible with the hsn-frontend."""
     if authorization.startswith("Bearer "):
         token = authorization[7:]
         try:
@@ -385,8 +405,6 @@ async def predict_single(
         raise HTTPException(422, "Provide Authorization: Bearer <token> or X-API-Key header")
 
     result = await _match_one(body.text, db)
-
-    # FIX: normalize HSN code before returning
     top_hsn = normalize_hsn(result.hsn_code) if result.hsn_code else "99999999"
 
     return {
@@ -400,7 +418,7 @@ async def predict_single(
         },
         "alternatives": [
             {
-                "hsn_code": normalize_hsn(a.get("hsn_code", "")),  # FIX: normalize alts too
+                "hsn_code": normalize_hsn(a.get("hsn_code", "")),
                 "description": a.get("description", ""),
                 "score": a.get("confidence", 0),
                 "method": "search",
@@ -421,7 +439,6 @@ async def batch_predict(
     x_api_key: str = Header(default="", alias="x-api-key"),
     db: AsyncSession = Depends(get_db),
 ):
-    """Batch classify up to 1000 product descriptions into HSN codes."""
     if authorization.startswith("Bearer "):
         token = authorization[7:]
         email = decode_token(token)
@@ -442,7 +459,6 @@ async def batch_predict(
     for query in queries:
         try:
             row = await _match_one(query, db)
-            # FIX: normalize HSN code in batch results
             if row.hsn_code:
                 row.hsn_code = normalize_hsn(row.hsn_code)
             for alt in row.alternatives:
@@ -450,6 +466,7 @@ async def batch_predict(
                     alt["hsn_code"] = normalize_hsn(alt["hsn_code"])
             results.append(row)
         except Exception as e:
+            log.error("batch.match_failed", query=query[:60], error=str(e))
             results.append(HSNBatchResult(query=query, error=str(e)))
 
     matched = sum(1 for r in results if r.hsn_code)
@@ -480,14 +497,7 @@ STOPWORDS = {
     'general','specific','particular','certain','various','diverse','wide','narrow',
 }
 
-# UPDATED: Full brand list from 13,864-product dataset
-# NOTE: 'cb' is intentionally NOT in this set — CB is a local Kerala brand
-# appearing across many categories; do NOT assume a chapter for it.
-# NOTE: 'vkc' IS kept here so it is filtered in tokenize() but SYNONYMS maps
-# 'vkc' → ['footwear', 'sandal'...] so the chapter routing still works correctly
-# via build_hsn_prefix_clause → detect_category_restrictions.
 BRANDS = {
-    # Dataset-specific brands
     'vkc', 'cello', 'manak', 'lemam', 'apaar', 'gebi', 'nolta',
     'bees', 'polyset', 'nakoda', 'esquire', 'real1', 'brillar',
     'orgello', 'lazza', 'jaipet', 'sithas', 'skei', 'ustraa',
@@ -497,7 +507,6 @@ BRANDS = {
     'colombo', 'flair', 'camlin', 'classmate', 'navneet',
     'kangaro', 'bakers', 'chozen', 'grandmas',
     'diva', 'brahmins', 'eastern',
-    # Common national brands
     'patanjali', 'nestle', 'amul', 'tata', 'godrej', 'dettol',
     'lifebuoy', 'colgate', 'pepsodent', 'nivea', 'garnier', 'loreal',
     'sony', 'samsung', 'apple', 'lg', 'whirlpool', 'philips',
@@ -529,424 +538,261 @@ BRANDS = {
     'everest', 'mdh', 'catch', 'badshah',
     'mcvities', 'oreo',
     'prestige', 'hawkins', 'pigeon', 'butterfly',
-    # NOTE: 'tr' is NOT here — "KITCHEN TR" = "Kitchen Treasure" brand (masala/spice),
-    # but 'tr' alone appears as abbreviation in many unrelated items.
-    # NOTE: 'ss' is NOT here — "SS PLATE" means Stainless Steel, handled by FMCG_ABBREVIATIONS.
 }
 
-# UPDATED: Full FMCG abbreviation map from real POS/billing data
-# Key additions vs old version:
-#   ftgr → fenugreek  (very common Kerala spice abbreviation)
-#   ss   → stainless steel  (SS PLATE, SS OVAL etc.)
-#   tr   → treasure  (KITCHEN TR = Kitchen Treasure masala brand)
-#   nb, sc, mr → notebook/school/margin ruled (stationery)
-#   butrscotch, jasmne, rsln, rsnlmn → food/puja items
 FMCG_ABBREVIATIONS = {
-    # Cleaning / household
-    'btrm':       'bathroom',
-    'clnr':       'cleaner',
-    'clng':       'cleaning',
-    'cnctrtd':    'concentrated',
-    'disinftnt':  'disinfectant',
-    'disnftnt':   'disinfectant',
-    'lqd':        'liquid',
-    'lm':         'lime',
-    'grs':        'grease',
-    'blk':        'black',
-    'thndr':      'thunder',
-    'florl':      'floral',
-    'antibctrl':  'antibacterial',
-    'xtra':       'extra',
-    'tugh':       'tough',
-    'det':        'detergent',
-    'fab':        'fabric',
-    'phnyl':      'phenyl',
-    'dsinfct':    'disinfectant',
-    'airfsh':     'air freshener',
-    # Food / biscuits
-    'cookis':     'cookies',
-    'cashw':      'cashew',
-    'digestve':   'digestive',
-    'choco':      'chocolate',
-    'van':        'vanilla',
-    'vnlla':      'vanilla',
-    'strbry':     'strawberry',
-    'rasbry':     'raspberry',
-    'bluebry':    'blueberry',
-    'blkbry':     'blackberry',
-    'butrscotch': 'butterscotch',
-    'jasmne':     'jasmine',
-    'ketch':      'ketchup',
-    'rsln':       'rasalnu',
-    'rsnlmn':     'rasalnu lemon',
-    'ftgr':       'fenugreek',   # very common Kerala spice — methi seeds
-    'podi':       'powder',
-    'puttu':      'puttu flour',
-    'matta':      'matta rice',
-    # Personal care / cosmetics
-    'shmp':       'shampoo',
-    'shavng':     'shaving',
-    'razr':       'razor',
-    'wmn':        'women',
-    'cndtnr':     'conditioner',
-    'essnce':     'essence',
-    'deo':        'deodorant',
-    'ltn':        'lotion',
-    # Containers / packaging
-    'pch':        'pouch',
-    'pckt':       'packet',
-    'btl':        'bottle',
-    'btf':        'bottle',
-    'pet':        'plastic bottle',
-    # Personal care (cream/lotion)
-    'crm':        'cream',
-    'pdr':        'powder',
-    'clr':        'colour',
-    # Stainless steel — SS prefix means Stainless Steel (SS PLATE, SS OVAL etc.)
-    'ss':         'stainless steel',
-    # Garments
-    'plzz':       'palazzo',
-    'dsgnr':      'designer',
-    'mltclr':     'multicolour',
-    'mutl':       'multicolour',
-    'insltd':     'insulated',
-    'lnchbag':    'lunch bag',
-    # Footwear
-    'dl':         'design',
-    # Bags / accessories
-    'kj':         'kids',
-    # Umbrella
-    'umbrla':     'umbrella',
-    'telescop':   'telescopic',
-    # Books / stationery
-    'nb':         'notebook',
-    'sc':         'school',
-    'mr':         'margin ruled',
-    'unrld':      'unruled',
-    'pgs':        'pages',
-    # Chicken / food
-    'chkn':       'chicken',
-    'brkfst':     'breakfast',
-    # Floor / mat
-    'flr':        'floor',
-    'mat':        'floor mat',
-    'mas':        'masala',
-    # "KITCHEN TR" = Kitchen Treasure brand (masala/spice Ch 09)
-    'tr':         'treasure',
-    # Misc common
-    'asstd':      'assorted',
-    'asst':       'assorted',
-    'refil':      'refill',
-    'ltr':        'litre',
-    'pks':        'packs',
-    'assrtd':     'assorted',
-    'fgr':        'finger',
-    'agrbtti':    'agarbatti',
-    'agrbati':    'agarbatti',
-    'chand':      'chandan',
-    'chndn':      'chandan sandalwood',
-    'lnch':       'lunch',
-    'kdu':        'kadukkai',
-    'pck':        'pack',
-    'sprng':      'spring',
-    'nuggt':      'nugget',
+    'btrm': 'bathroom', 'clnr': 'cleaner', 'clng': 'cleaning',
+    'cnctrtd': 'concentrated', 'disinftnt': 'disinfectant',
+    'disnftnt': 'disinfectant', 'lqd': 'liquid', 'lm': 'lime',
+    'grs': 'grease', 'blk': 'black', 'thndr': 'thunder',
+    'florl': 'floral', 'antibctrl': 'antibacterial', 'xtra': 'extra',
+    'tugh': 'tough', 'det': 'detergent', 'fab': 'fabric',
+    'phnyl': 'phenyl', 'dsinfct': 'disinfectant', 'airfsh': 'air freshener',
+    'cookis': 'cookies', 'cashw': 'cashew', 'digestve': 'digestive',
+    'choco': 'chocolate', 'van': 'vanilla', 'vnlla': 'vanilla',
+    'strbry': 'strawberry', 'rasbry': 'raspberry', 'bluebry': 'blueberry',
+    'blkbry': 'blackberry', 'butrscotch': 'butterscotch', 'jasmne': 'jasmine',
+    'ketch': 'ketchup', 'rsln': 'rasalnu', 'rsnlmn': 'rasalnu lemon',
+    'ftgr': 'fenugreek', 'podi': 'powder', 'puttu': 'puttu flour',
+    'matta': 'matta rice', 'shmp': 'shampoo', 'shavng': 'shaving',
+    'razr': 'razor', 'wmn': 'women', 'cndtnr': 'conditioner',
+    'essnce': 'essence', 'deo': 'deodorant', 'ltn': 'lotion',
+    'pch': 'pouch', 'pckt': 'packet', 'btl': 'bottle', 'btf': 'bottle',
+    'pet': 'plastic bottle', 'crm': 'cream', 'pdr': 'powder',
+    'clr': 'colour', 'ss': 'stainless steel', 'plzz': 'palazzo',
+    'dsgnr': 'designer', 'mltclr': 'multicolour', 'mutl': 'multicolour',
+    'insltd': 'insulated', 'lnchbag': 'lunch bag', 'dl': 'design',
+    'kj': 'kids', 'umbrla': 'umbrella', 'telescop': 'telescopic',
+    'nb': 'notebook', 'sc': 'school', 'mr': 'margin ruled',
+    'unrld': 'unruled', 'pgs': 'pages', 'chkn': 'chicken',
+    'brkfst': 'breakfast', 'flr': 'floor', 'mat': 'floor mat',
+    'mas': 'masala', 'tr': 'treasure', 'asstd': 'assorted',
+    'asst': 'assorted', 'refil': 'refill', 'ltr': 'litre',
+    'pks': 'packs', 'assrtd': 'assorted', 'fgr': 'finger',
+    'agrbtti': 'agarbatti', 'agrbati': 'agarbatti', 'chand': 'chandan',
+    'chndn': 'chandan sandalwood', 'lnch': 'lunch', 'kdu': 'kadukkai',
+    'pck': 'pack', 'sprng': 'spring', 'nuggt': 'nugget',
 }
 
-# UPDATED: Rich synonym map covering all major categories
 SYNONYMS = {
-    # Basic common mappings
-    'wash':       ['soap', 'cleanser', 'liquid'],
-    'phone':      ['mobile', 'smartphone'],
-    'tv':         ['television'],
-    'fridge':     ['refrigerator'],
-    'laptop':     ['notebook', 'computer'],
-    'biscuit':    ['cookie', 'cracker', 'wafer', 'bakery'],
-    'shirt':      ['tshirt', 'top', 'garment'],
-    # FOOTWEAR (Ch 64) — 617 VKC items; vkc maps to footwear chapter
-    'vkc':        ['footwear', 'sandal', 'slipper', 'shoe', 'chappal'],
-    'footwear':   ['shoe', 'sandal', 'slipper', 'chappal', 'slippers'],
-    'sandal':     ['slipper', 'footwear', 'chappal', 'hawai'],
-    'slipper':    ['sandal', 'footwear', 'chappal', 'hawai'],
-    'chappal':    ['sandal', 'slipper', 'footwear'],
-    # PLASTICS (Ch 39)
-    'container':  ['box', 'storage', 'jar', 'vessel', 'casserole'],
-    'basket':     ['container', 'storage', 'laundry'],
-    'hanger':     ['hook', 'clothes hanger'],
-    'casserole':  ['container', 'insulated'],
-    # STEEL / UTENSILS (Ch 73)
-    'stainless':  ['steel', 'ss', 'inox', 'metal'],
-    'steel':      ['stainless', 'metal', 'ss'],
-    'utensil':    ['cookware', 'vessel', 'pan', 'pot', 'ladle'],
-    'ladle':      ['spoon', 'spatula', 'utensil'],
-    'spatula':    ['ladle', 'spoon', 'utensil'],
-    'strainer':   ['sieve', 'filter', 'jali', 'colander'],
-    # GLASS / DINNERWARE (Ch 70)
-    'glassware':  ['dinner set', 'bowl', 'plate', 'mug', 'glass'],
-    'cello':      ['glassware', 'dinner set', 'bowl', 'container'],
-    # ALUMINIUM (Ch 76)
-    'aluminium':  ['aluminum', 'alu', 'fry pan', 'mould', 'cookware'],
-    # COSMETICS / PERSONAL CARE (Ch 33)
-    'lipstick':   ['lip color', 'lip balm', 'lip gloss'],
-    'fairness':   ['face cream', 'skin whitening', 'face wash'],
-    'cream':      ['lotion', 'moisturizer', 'fairness', 'face'],
-    'deodorant':  ['deo', 'body spray', 'antiperspirant', 'roll on'],
-    'perfume':    ['fragrance', 'body spray', 'cologne', 'attar', 'fogg'],
-    'fogg':       ['deodorant', 'body spray', 'perfume'],
-    'agarbatti':  ['incense', 'dhoop', 'sambrani', 'agarbathi'],
-    'agarbathi':  ['incense', 'agarbatti', 'dhoop'],
-    # CLEANING (Ch 34)
-    'detergent':  ['cleaner', 'washing powder', 'liquid', 'surf'],
-    'phenyl':     ['floor cleaner', 'disinfectant', 'harpic', 'lysol'],
-    'harpic':     ['toilet cleaner', 'bathroom cleaner', 'disinfectant'],
+    'wash': ['soap', 'cleanser', 'liquid'],
+    'phone': ['mobile', 'smartphone'],
+    'tv': ['television'],
+    'fridge': ['refrigerator'],
+    'laptop': ['notebook', 'computer'],
+    'biscuit': ['cookie', 'cracker', 'wafer', 'bakery'],
+    'shirt': ['tshirt', 'top', 'garment'],
+    'vkc': ['footwear', 'sandal', 'slipper', 'shoe', 'chappal'],
+    'footwear': ['shoe', 'sandal', 'slipper', 'chappal', 'slippers'],
+    'sandal': ['slipper', 'footwear', 'chappal', 'hawai'],
+    'slipper': ['sandal', 'footwear', 'chappal', 'hawai'],
+    'chappal': ['sandal', 'slipper', 'footwear'],
+    'container': ['box', 'storage', 'jar', 'vessel', 'casserole'],
+    'basket': ['container', 'storage', 'laundry'],
+    'hanger': ['hook', 'clothes hanger'],
+    'casserole': ['container', 'insulated'],
+    'stainless': ['steel', 'ss', 'inox', 'metal'],
+    'steel': ['stainless', 'metal', 'ss'],
+    'utensil': ['cookware', 'vessel', 'pan', 'pot', 'ladle'],
+    'ladle': ['spoon', 'spatula', 'utensil'],
+    'spatula': ['ladle', 'spoon', 'utensil'],
+    'strainer': ['sieve', 'filter', 'jali', 'colander'],
+    'glassware': ['dinner set', 'bowl', 'plate', 'mug', 'glass'],
+    'cello': ['glassware', 'dinner set', 'bowl', 'container'],
+    'aluminium': ['aluminum', 'alu', 'fry pan', 'mould', 'cookware'],
+    'lipstick': ['lip color', 'lip balm', 'lip gloss'],
+    'fairness': ['face cream', 'skin whitening', 'face wash'],
+    'cream': ['lotion', 'moisturizer', 'fairness', 'face'],
+    'deodorant': ['deo', 'body spray', 'antiperspirant', 'roll on'],
+    'perfume': ['fragrance', 'body spray', 'cologne', 'attar', 'fogg'],
+    'fogg': ['deodorant', 'body spray', 'perfume'],
+    'agarbatti': ['incense', 'dhoop', 'sambrani', 'agarbathi'],
+    'agarbathi': ['incense', 'agarbatti', 'dhoop'],
+    'detergent': ['cleaner', 'washing powder', 'liquid', 'surf'],
+    'phenyl': ['floor cleaner', 'disinfectant', 'harpic', 'lysol'],
+    'harpic': ['toilet cleaner', 'bathroom cleaner', 'disinfectant'],
     'disinfectant': ['phenyl', 'cleaner', 'antiseptic', 'dettol'],
-    # SHAMPOO (Ch 33)
-    'shampoo':    ['hair wash', 'shmp', 'hair cleanser', 'hair care'],
-    # FOOD GRAINS (Ch 10)
-    'rice':       ['chawal', 'arisi', 'basmati', 'matta', 'sona masoori'],
-    'basmati':    ['rice', 'long grain', 'biryani rice'],
-    'matta':      ['rice', 'red rice', 'kerala rice', 'brown rice'],
-    'wheat':      ['atta', 'flour', 'chakki', 'maida'],
-    'atta':       ['wheat flour', 'chakki', 'whole wheat'],
-    # SPICES (Ch 09)
-    'turmeric':   ['haldi', 'manjal', 'curcuma', 'yellow powder'],
-    'chilli':     ['chili', 'mirchi', 'red pepper', 'chilli powder'],
-    'masala':     ['spice mix', 'powder', 'spices', 'blend'],
-    'pepper':     ['peppercorn', 'kali mirch', 'milagu'],
-    'cardamom':   ['elaichi', 'elakkai'],
-    'cinnamon':   ['dalchini', 'pattai'],
-    'fenugreek':  ['methi', 'vendayam', 'ftgr'],
-    # OILS (Ch 15)
-    'sesame':     ['gingelly', 'til oil', 'ellu', 'nallennai'],
-    'gingelly':   ['sesame', 'til', 'ellu'],
-    'coconut':    ['copra', 'narikela', 'thengai'],
-    'sunflower':  ['saffola', 'sunflower oil'],
-    'mustard':    ['sarson', 'kadugu', 'mustard oil'],
-    'castor':     ['arandi', 'castor oil'],
-    'puja':       ['oil', 'jasmine', 'sesame', 'lamp oil', 'pooja'],
-    'pooja':      ['puja', 'oil', 'jasmine', 'lamp'],
-    # DAIRY (Ch 04)
-    'ghee':       ['clarified butter', 'fat', 'butter ghee'],
-    'milk':       ['dairy', 'whitener', 'full cream', 'toned'],
-    'butter':     ['dairy', 'fat'],
-    'cheese':     ['dairy', 'paneer', 'processed cheese'],
-    'paneer':     ['cheese', 'cottage cheese', 'dairy'],
-    'yogurt':     ['curd', 'dahi', 'set curd'],
-    'curd':       ['yogurt', 'dahi', 'set curd'],
-    # BISCUITS / SNACKS (Ch 19)
-    'cookie':     ['biscuit', 'wafer', 'cracker', 'digestive'],
-    'wafer':      ['biscuit', 'cookie', 'chocolate wafer'],
-    'chips':      ['snack', 'crisps', 'puff', 'extruded snack'],
-    'puff':       ['chips', 'snack', 'corn puff', 'extruded'],
-    # CHOCOLATE / CONFECTIONERY (Ch 17/18)
-    'chocolate':  ['choco', 'cocoa', 'candy', 'bar'],
-    'candy':      ['toffee', 'sweet', 'confectionery'],
-    'jaggery':    ['gur', 'brown sugar', 'cane jaggery'],
-    'sugar':      ['sucrose', 'cane sugar', 'jaggery'],
-    # BEVERAGES (Ch 22)
-    'aerated':    ['soft drink', 'pepsi', 'cola', 'soda'],
-    'juice':      ['fruit juice', 'real juice', 'nectar'],
-    # FISH / MEAT (Ch 02/03)
-    'fish':       ['seafood', 'prawn', 'shrimp', 'kozhuva', 'sardine'],
-    'prawn':      ['shrimp', 'fish', 'seafood'],
-    'chicken':    ['poultry', 'meat', 'chkn', 'broiler'],
-    # TOYS (Ch 95)
-    'toy':        ['plaything', 'game', 'play set', 'doll', 'vehicle'],
-    'doll':       ['toy', 'figurine', 'play'],
-    'xmas':       ['christmas', 'x-mas', 'decoration', 'festive'],
-    # STATIONERY (Ch 48/96)
-    'notebook':   ['note book', 'exercise book', 'writing book', 'nb'],
-    'pen':        ['ball pen', 'writing pen', 'gel pen', 'ink pen'],
-    'pencil':     ['drawing pencil', 'hb pencil', 'graphite'],
-    'eraser':     ['rubber eraser', 'correction'],
-    # UMBRELLA (Ch 66)
-    'umbrella':   ['rain umbrella', 'telescopic umbrella', 'umbrla'],
-    # ICE CREAM (Ch 21)
-    'ice cream':  ['kulfi', 'ice lolly', 'frozen dessert', 'fundae'],
-    'lazza':      ['ice cream', 'frozen dessert', 'kulfi'],
-    # PICKLE / CONDIMENTS (Ch 20/21)
-    'pickle':     ['achar', 'pickled', 'brined', 'mango pickle'],
-    'jam':        ['jelly', 'marmalade', 'fruit spread'],
-    'ketchup':    ['sauce', 'tomato sauce', 'chilli sauce'],
-    # SALT (Ch 25)
-    'salt':       ['iodised salt', 'rock salt', 'pink salt', 'namak'],
-    # CAMPHOR (Ch 29)
-    'camphor':    ['karpoor', 'kapur', 'naphthalene'],
-    # MATCH BOX (Ch 36)
-    'match':      ['matchbox', 'safety match', 'fire match'],
-    # CHRISTMAS (Ch 95)
-    'christmas':  ['xmas', 'decoration', 'festive', 'x-mas tree'],
+    'shampoo': ['hair wash', 'shmp', 'hair cleanser', 'hair care'],
+    'rice': ['chawal', 'arisi', 'basmati', 'matta', 'sona masoori'],
+    'basmati': ['rice', 'long grain', 'biryani rice'],
+    'matta': ['rice', 'red rice', 'kerala rice', 'brown rice'],
+    'wheat': ['atta', 'flour', 'chakki', 'maida'],
+    'atta': ['wheat flour', 'chakki', 'whole wheat'],
+    'turmeric': ['haldi', 'manjal', 'curcuma', 'yellow powder'],
+    'chilli': ['chili', 'mirchi', 'red pepper', 'chilli powder'],
+    'masala': ['spice mix', 'powder', 'spices', 'blend'],
+    'pepper': ['peppercorn', 'kali mirch', 'milagu'],
+    'cardamom': ['elaichi', 'elakkai'],
+    'cinnamon': ['dalchini', 'pattai'],
+    'fenugreek': ['methi', 'vendayam', 'ftgr'],
+    'sesame': ['gingelly', 'til oil', 'ellu', 'nallennai'],
+    'gingelly': ['sesame', 'til', 'ellu'],
+    'coconut': ['copra', 'narikela', 'thengai'],
+    'sunflower': ['saffola', 'sunflower oil'],
+    'mustard': ['sarson', 'kadugu', 'mustard oil'],
+    'castor': ['arandi', 'castor oil'],
+    'puja': ['oil', 'jasmine', 'sesame', 'lamp oil', 'pooja'],
+    'pooja': ['puja', 'oil', 'jasmine', 'lamp'],
+    'ghee': ['clarified butter', 'fat', 'butter ghee'],
+    'milk': ['dairy', 'whitener', 'full cream', 'toned'],
+    'butter': ['dairy', 'fat'],
+    'cheese': ['dairy', 'paneer', 'processed cheese'],
+    'paneer': ['cheese', 'cottage cheese', 'dairy'],
+    'yogurt': ['curd', 'dahi', 'set curd'],
+    'curd': ['yogurt', 'dahi', 'set curd'],
+    'cookie': ['biscuit', 'wafer', 'cracker', 'digestive'],
+    'wafer': ['biscuit', 'cookie', 'chocolate wafer'],
+    'chips': ['snack', 'crisps', 'puff', 'extruded snack'],
+    'puff': ['chips', 'snack', 'corn puff', 'extruded'],
+    'chocolate': ['choco', 'cocoa', 'candy', 'bar'],
+    'candy': ['toffee', 'sweet', 'confectionery'],
+    'jaggery': ['gur', 'brown sugar', 'cane jaggery'],
+    'sugar': ['sucrose', 'cane sugar', 'jaggery'],
+    'aerated': ['soft drink', 'pepsi', 'cola', 'soda'],
+    'juice': ['fruit juice', 'real juice', 'nectar'],
+    'fish': ['seafood', 'prawn', 'shrimp', 'kozhuva', 'sardine'],
+    'prawn': ['shrimp', 'fish', 'seafood'],
+    'chicken': ['poultry', 'meat', 'chkn', 'broiler'],
+    'toy': ['plaything', 'game', 'play set', 'doll', 'vehicle'],
+    'doll': ['toy', 'figurine', 'play'],
+    'xmas': ['christmas', 'x-mas', 'decoration', 'festive'],
+    'notebook': ['note book', 'exercise book', 'writing book', 'nb'],
+    'pen': ['ball pen', 'writing pen', 'gel pen', 'ink pen'],
+    'pencil': ['drawing pencil', 'hb pencil', 'graphite'],
+    'eraser': ['rubber eraser', 'correction'],
+    'umbrella': ['rain umbrella', 'telescopic umbrella', 'umbrla'],
+    'ice cream': ['kulfi', 'ice lolly', 'frozen dessert', 'fundae'],
+    'lazza': ['ice cream', 'frozen dessert', 'kulfi'],
+    'pickle': ['achar', 'pickled', 'brined', 'mango pickle'],
+    'jam': ['jelly', 'marmalade', 'fruit spread'],
+    'ketchup': ['sauce', 'tomato sauce', 'chilli sauce'],
+    'salt': ['iodised salt', 'rock salt', 'pink salt', 'namak'],
+    'camphor': ['karpoor', 'kapur', 'naphthalene'],
+    'match': ['matchbox', 'safety match', 'fire match'],
+    'christmas': ['xmas', 'decoration', 'festive', 'x-mas tree'],
 }
 
-# UPDATED: Full domain prefix map — chapter hints from product tokens
 DOMAIN_PREFIXES = {
-    # FOOTWEAR (Ch 64) — 617 VKC items in dataset
     'footwear': ['64'], 'shoe': ['64'], 'sandal': ['64'],
     'slipper': ['64'], 'chappal': ['64'], 'vkc': ['64'],
     'hawai': ['64'], 'flipflop': ['64'],
-    # PLASTICS (Ch 39)
     'container': ['39'], 'basket': ['39'], 'hanger': ['39'],
     'plastic': ['39'], 'casserole': ['39'], 'laundry': ['39'],
     'dustbin': ['39'], 'bucket': ['39'],
-    # STEEL UTENSILS (Ch 73)
     'stainless': ['73'], 'steel': ['73'],
     'utensil': ['73', '76', '69', '70'],
     'ladle': ['73', '82'], 'spatula': ['73', '82'],
     'strainer': ['73', '82'], 'tongs': ['73', '82'],
-    # ALUMINIUM (Ch 76)
     'aluminium': ['76'], 'aluminum': ['76'],
-    # GLASS / DINNER SET (Ch 70)
     'glassware': ['70'], 'ceramic': ['69'], 'porcelain': ['69'],
-    # COSMETICS / PERSONAL CARE (Ch 33)
     'cosmetic': ['33'], 'makeup': ['33'], 'skincare': ['33'],
     'skin': ['33'], 'toothpaste': ['33'], 'agarbatti': ['33'],
     'agarbathi': ['33'], 'incense': ['33'], 'perfume': ['33'],
     'deodorant': ['33'], 'fogg': ['33'], 'lipstick': ['33'],
     'fairness': ['33'], 'shampoo': ['33'], 'conditioner': ['33'],
-    'hair oil': ['33'], 'body lotion': ['33'],
-    # SOAP / DETERGENT (Ch 34)
     'soap': ['34', '33'], 'detergent': ['34'], 'phenyl': ['34'],
     'disinfectant': ['34'], 'bleach': ['34'], 'harpic': ['34'],
     'cleaning': ['34'], 'cleaner': ['34'],
     'dishwash': ['34'], 'dishwasher': ['34'],
-    # TOOTHBRUSH / PEN / BRUSH (Ch 96)
     'toothbrush': ['96'], 'brush': ['96'], 'pen': ['96'],
     'pencil': ['96'], 'eraser': ['96'], 'sharpener': ['96'],
     'marker': ['96'],
-    # TOYS (Ch 95)
     'toy': ['95'], 'doll': ['95'], 'game': ['95'],
     'christmas': ['95'], 'xmas': ['95'], 'balloon': ['95'],
     'puzzle': ['95'],
-    # NOTEBOOK / PAPER (Ch 48)
     'notebook': ['48'], 'paper': ['48'], 'envelope': ['48'],
     'stationery': ['48', '96'],
-    # BOOKS (Ch 49)
     'book': ['48', '49'], 'textbook': ['49'],
-    # FOOD GRAINS (Ch 10)
     'rice': ['10'], 'basmati': ['10'], 'matta': ['10'],
     'wheat': ['10', '11'], 'oats': ['10', '11'], 'barley': ['10'],
-    # FLOUR / CEREAL (Ch 11)
     'atta': ['11'], 'flour': ['11'], 'maida': ['11'],
     'suji': ['11'], 'rava': ['11'], 'poha': ['11'],
     'aval': ['11'], 'puttupodi': ['11'],
-    # DAIRY (Ch 04)
     'milk': ['04'], 'ghee': ['04'], 'butter': ['04'],
     'cheese': ['04'], 'paneer': ['04'], 'yogurt': ['04'],
     'curd': ['04'], 'cream': ['04', '33'], 'egg': ['04'],
     'dairy': ['04'],
-    # SPICES (Ch 09)
     'masala': ['09'], 'spice': ['09'], 'turmeric': ['09'],
     'chilli': ['09'], 'pepper': ['09'], 'cardamom': ['09'],
     'cinnamon': ['09'], 'fenugreek': ['09'], 'ginger': ['09'],
     'coriander': ['09'],
-    # OILS (Ch 15) — puja oil included; 'puja' alone → Ch15/33 via CATEGORY_RULES
     'oil': ['15'], 'sesame': ['15'], 'gingelly': ['15'],
-    'sunflower': ['15'], 'mustard oil': ['15'], 'castor': ['15'],
+    'sunflower': ['15'], 'castor': ['15'],
     'vanaspati': ['15'], 'palm oil': ['15'],
-    # BISCUITS / BAKERY (Ch 19)
     'biscuit': ['19'], 'cookie': ['19'], 'wafer': ['19'],
     'chips': ['19'], 'puff': ['19'], 'snack': ['19'],
     'cereal': ['19'], 'popcorn': ['19'], 'noodle': ['19'],
     'pasta': ['19'], 'bread': ['19'],
-    # CHOCOLATE / COCOA (Ch 18)
     'chocolate': ['18'], 'cocoa': ['18'],
-    # CONFECTIONERY (Ch 17)
     'sugar': ['17'], 'jaggery': ['17'], 'candy': ['17'], 'toffee': ['17'],
-    # PICKLE / JAM (Ch 20)
     'pickle': ['20'], 'jam': ['20'], 'jelly': ['20'], 'preserve': ['20'],
-    # SAUCES / CONDIMENTS / ICE CREAM (Ch 21)
     'ketchup': ['21'], 'sauce': ['21'], 'mayonnaise': ['21'],
     'vinegar': ['21'], 'ice cream': ['21'],
-    # BEVERAGES (Ch 22)
-    'aerated': ['22'], 'soft drink': ['22'], 'juice': ['20', '22'],
+    'aerated': ['22'], 'juice': ['20', '22'],
     'water': ['22'], 'soda': ['22'],
-    # FISH / SEAFOOD (Ch 03)
     'fish': ['03'], 'prawn': ['03'], 'seafood': ['03'], 'shrimp': ['03'],
-    # MEAT / POULTRY (Ch 02)
     'chicken': ['02'], 'meat': ['02'],
-    # SALT (Ch 25)
     'salt': ['25'],
-    # CAMPHOR (Ch 29)
     'camphor': ['29'],
-    # MATCH BOX (Ch 36)
     'match': ['36'], 'matchbox': ['36'],
-    # BLADES / KNIVES (Ch 82)
     'razor': ['82'], 'blade': ['82'], 'knife': ['82'],
     'scissors': ['82'], 'cutter': ['82'],
-    # COMPUTER / MACHINES (Ch 84)
     'computer': ['84'], 'laptop': ['84'], 'stapler': ['84'],
-    # ELECTRONICS (Ch 85)
     'phone': ['85'], 'mobile': ['85'], 'smartphone': ['85'],
     'television': ['85'],
-    # LIGHTS / LAMPS (Ch 94)
     'bulb': ['94'], 'led': ['94'], 'light': ['94'],
-    # UMBRELLA (Ch 66)
     'umbrella': ['66'],
-    # FOOTWEAR PARTS (Ch 64)
     'insole': ['64'],
 }
 
-# UPDATED: Priority-ordered category rules — first match wins
-# Key fixes vs old version:
-#   • puja/pooja now → Ch15/33 (was Ch33 only — puja oil should be Ch15)
-#   • agarbatti → Ch33 added (was missing)
-#   • footwear (vkc, sandal, chappal, hawai) → Ch64 added
-#   • toys/xmas/balloon → Ch95 added
-#   • steel/aluminium/plastic → Ch73/76/39 added
-#   • Kerala-specific: matta, aval, puttupodi → Ch10/11
-#   • camphor → Ch29, matchbox → Ch36 (was incorrectly Ch39)
 CATEGORY_RULES = [
-    # HIGH PRIORITY (first match wins)
-    {'keywords': ['tooth', 'paste', 'toothpaste', 'dentifrice'],   'chapters': ['33'], 'description': 'toothpaste -> Ch33'},
-    {'keywords': ['toothbrush', 'tbrush'],                          'chapters': ['96'], 'description': 'toothbrush -> Ch96'},
-    {'keywords': ['note', 'book', 'notebook', 'copybook'],          'chapters': ['48'], 'description': 'notebook -> Ch48'},
-    # puja oil → Ch15 (not Ch33) — "PUJA OIL" is lamp oil, not cosmetic
-    {'keywords': ['puja', 'pooja', 'thiri', 'wick', 'lamp oil'],    'chapters': ['15', '33'], 'description': 'puja items -> Ch15/33'},
-    {'keywords': ['agarbatti', 'agarbathi', 'incense', 'sambrani'], 'chapters': ['33'], 'description': 'incense -> Ch33'},
-    {'keywords': ['cleaning', 'cleaner', 'detergent', 'phenyl', 'disinfectant', 'harpic'], 'chapters': ['34'], 'description': 'cleaning -> Ch34'},
-    {'keywords': ['cosmetic', 'makeup', 'skincare', 'foundation', 'kajal', 'eyeshadow'], 'chapters': ['33'], 'description': 'cosmetics -> Ch33'},
-    {'keywords': ['soap', 'toilet soap'],                           'chapters': ['34', '33'], 'description': 'soap -> Ch34/33'},
-    {'keywords': ['shampoo', 'conditioner', 'hair wash'],           'chapters': ['33'], 'description': 'shampoo -> Ch33'},
-    {'keywords': ['phone', 'mobile', 'smartphone'],                 'chapters': ['85'], 'description': 'phones -> Ch85'},
-    {'keywords': ['television', 'tv'],                              'chapters': ['85'], 'description': 'TV -> Ch85'},
-    {'keywords': ['computer', 'laptop'],                            'chapters': ['84'], 'description': 'computers -> Ch84'},
-    {'keywords': ['fridge', 'refrigerator'],                        'chapters': ['84'], 'description': 'refrigerators -> Ch84'},
-    # VKC footwear — largest single brand (603 items) — must route to Ch64
-    {'keywords': ['vkc', 'footwear', 'sandal', 'slipper', 'chappal', 'shoe', 'hawai'], 'chapters': ['64'], 'description': 'footwear -> Ch64'},
-    {'keywords': ['toy', 'doll', 'puzzle', 'balloon', 'xmas', 'christmas'], 'chapters': ['95'], 'description': 'toys -> Ch95'},
-    {'keywords': ['pen', 'pencil', 'eraser', 'marker', 'highlighter'], 'chapters': ['96'], 'description': 'stationery pen -> Ch96'},
-    {'keywords': ['umbrella', 'umbrla'],                            'chapters': ['66'], 'description': 'umbrella -> Ch66'},
-    {'keywords': ['match', 'matchbox', 'safety match'],             'chapters': ['36'], 'description': 'matchbox -> Ch36 (NOT Ch39)'},
-    {'keywords': ['camphor', 'karpoor'],                            'chapters': ['29'], 'description': 'camphor -> Ch29 (NOT Ch33)'},
-    # LOWER PRIORITY
-    {'keywords': ['oil'],                                           'chapters': ['15'], 'description': 'oil -> Ch15 (default)'},
-    {'keywords': ['food', 'beverage', 'drink'],                     'chapters': ['04', '19', '20', '21', '22'], 'description': 'food/bev -> Ch04/19-22'},
-    {'keywords': ['clothing', 'garment', 'fabric', 'pants', 'shirt', 'palazzo'], 'chapters': ['61', '62', '63'], 'description': 'clothing -> Ch61-63'},
-    {'keywords': ['furniture', 'sofa', 'chair', 'table'],          'chapters': ['94'], 'description': 'furniture -> Ch94'},
-    {'keywords': ['steel', 'stainless'],                            'chapters': ['73'], 'description': 'steel -> Ch73'},
-    {'keywords': ['aluminium', 'aluminum'],                         'chapters': ['76'], 'description': 'aluminium -> Ch76'},
-    {'keywords': ['plastic', 'container', 'basket', 'hanger'],     'chapters': ['39'], 'description': 'plastics -> Ch39'},
-    {'keywords': ['glass', 'ceramic', 'porcelain'],                 'chapters': ['70', '69'], 'description': 'glass/ceramic -> Ch70/69'},
-    {'keywords': ['rice', 'basmati', 'matta'],                      'chapters': ['10'], 'description': 'rice -> Ch10'},
-    {'keywords': ['atta', 'flour', 'maida', 'suji', 'rava', 'puttupodi', 'aval', 'poha'], 'chapters': ['11'], 'description': 'flour -> Ch11'},
-    {'keywords': ['spice', 'masala', 'turmeric', 'chilli', 'pepper', 'cardamom'], 'chapters': ['09'], 'description': 'spices -> Ch09'},
-    {'keywords': ['chocolate', 'cocoa', 'choco'],                   'chapters': ['18'], 'description': 'chocolate -> Ch18'},
-    {'keywords': ['biscuit', 'cookie', 'wafer', 'chips', 'puff', 'snack', 'cereal', 'popcorn'], 'chapters': ['19'], 'description': 'snacks -> Ch19'},
-    {'keywords': ['sugar', 'jaggery', 'candy', 'toffee'],           'chapters': ['17'], 'description': 'sugar/candy -> Ch17'},
-    {'keywords': ['dairy', 'milk', 'ghee', 'butter', 'cheese', 'paneer', 'curd', 'yogurt'], 'chapters': ['04'], 'description': 'dairy -> Ch04'},
-    {'keywords': ['fish', 'prawn', 'seafood', 'shrimp'],            'chapters': ['03'], 'description': 'seafood -> Ch03'},
-    {'keywords': ['chicken', 'meat', 'poultry'],                    'chapters': ['02'], 'description': 'meat -> Ch02'},
-    {'keywords': ['knife', 'scissors', 'razor', 'blade', 'cutter'], 'chapters': ['82'], 'description': 'blades -> Ch82'},
-    {'keywords': ['salt', 'iodised salt'],                          'chapters': ['25'], 'description': 'salt -> Ch25'},
-    {'keywords': ['pickle', 'achar'],                               'chapters': ['20'], 'description': 'pickle -> Ch20'},
-    {'keywords': ['jam', 'jelly', 'marmalade'],                     'chapters': ['20'], 'description': 'jam -> Ch20'},
-    {'keywords': ['ketchup', 'sauce', 'ice cream', 'supplement'],   'chapters': ['21'], 'description': 'condiments/icecream -> Ch21'},
-    {'keywords': ['juice', 'aerated', 'soft drink', 'water', 'soda'], 'chapters': ['22'], 'description': 'beverages -> Ch22'},
+    {'keywords': ['tooth', 'paste', 'toothpaste', 'dentifrice'],   'chapters': ['33']},
+    {'keywords': ['toothbrush', 'tbrush'],                          'chapters': ['96']},
+    {'keywords': ['note', 'book', 'notebook', 'copybook'],          'chapters': ['48']},
+    {'keywords': ['puja', 'pooja', 'thiri', 'wick', 'lamp oil'],    'chapters': ['15', '33']},
+    {'keywords': ['agarbatti', 'agarbathi', 'incense', 'sambrani'], 'chapters': ['33']},
+    {'keywords': ['cleaning', 'cleaner', 'detergent', 'phenyl', 'disinfectant', 'harpic'], 'chapters': ['34']},
+    {'keywords': ['cosmetic', 'makeup', 'skincare', 'foundation', 'kajal', 'eyeshadow'], 'chapters': ['33']},
+    {'keywords': ['soap', 'toilet soap'],                           'chapters': ['34', '33']},
+    {'keywords': ['shampoo', 'conditioner', 'hair wash'],           'chapters': ['33']},
+    {'keywords': ['phone', 'mobile', 'smartphone'],                 'chapters': ['85']},
+    {'keywords': ['television', 'tv'],                              'chapters': ['85']},
+    {'keywords': ['computer', 'laptop'],                            'chapters': ['84']},
+    {'keywords': ['fridge', 'refrigerator'],                        'chapters': ['84']},
+    {'keywords': ['vkc', 'footwear', 'sandal', 'slipper', 'chappal', 'shoe', 'hawai'], 'chapters': ['64']},
+    {'keywords': ['toy', 'doll', 'puzzle', 'balloon', 'xmas', 'christmas'], 'chapters': ['95']},
+    {'keywords': ['pen', 'pencil', 'eraser', 'marker', 'highlighter'], 'chapters': ['96']},
+    {'keywords': ['umbrella', 'umbrla'],                            'chapters': ['66']},
+    {'keywords': ['match', 'matchbox', 'safety match'],             'chapters': ['36']},
+    {'keywords': ['camphor', 'karpoor'],                            'chapters': ['29']},
+    {'keywords': ['oil'],                                           'chapters': ['15']},
+    {'keywords': ['food', 'beverage', 'drink'],                     'chapters': ['04', '19', '20', '21', '22']},
+    {'keywords': ['clothing', 'garment', 'fabric', 'pants', 'shirt', 'palazzo'], 'chapters': ['61', '62', '63']},
+    {'keywords': ['furniture', 'sofa', 'chair', 'table'],          'chapters': ['94']},
+    {'keywords': ['steel', 'stainless'],                            'chapters': ['73']},
+    {'keywords': ['aluminium', 'aluminum'],                         'chapters': ['76']},
+    {'keywords': ['plastic', 'container', 'basket', 'hanger'],     'chapters': ['39']},
+    {'keywords': ['glass', 'ceramic', 'porcelain'],                 'chapters': ['70', '69']},
+    {'keywords': ['rice', 'basmati', 'matta'],                      'chapters': ['10']},
+    {'keywords': ['atta', 'flour', 'maida', 'suji', 'rava', 'puttupodi', 'aval', 'poha'], 'chapters': ['11']},
+    {'keywords': ['spice', 'masala', 'turmeric', 'chilli', 'pepper', 'cardamom'], 'chapters': ['09']},
+    {'keywords': ['chocolate', 'cocoa', 'choco'],                   'chapters': ['18']},
+    {'keywords': ['biscuit', 'cookie', 'wafer', 'chips', 'puff', 'snack', 'cereal', 'popcorn'], 'chapters': ['19']},
+    {'keywords': ['sugar', 'jaggery', 'candy', 'toffee'],           'chapters': ['17']},
+    {'keywords': ['dairy', 'milk', 'ghee', 'butter', 'cheese', 'paneer', 'curd', 'yogurt'], 'chapters': ['04']},
+    {'keywords': ['fish', 'prawn', 'seafood', 'shrimp'],            'chapters': ['03']},
+    {'keywords': ['chicken', 'meat', 'poultry'],                    'chapters': ['02']},
+    {'keywords': ['knife', 'scissors', 'razor', 'blade', 'cutter'], 'chapters': ['82']},
+    {'keywords': ['salt', 'iodised salt'],                          'chapters': ['25']},
+    {'keywords': ['pickle', 'achar'],                               'chapters': ['20']},
+    {'keywords': ['jam', 'jelly', 'marmalade'],                     'chapters': ['20']},
+    {'keywords': ['ketchup', 'sauce', 'ice cream', 'supplement'],   'chapters': ['21']},
+    {'keywords': ['juice', 'aerated', 'soft drink', 'water', 'soda'], 'chapters': ['22']},
 ]
 
 # ── Helper functions ───────────────────────────────────────────────────────────
 
 def expand_fmcg_abbreviations(text: str) -> str:
-    """Expand FMCG abbreviations word-by-word (case-insensitive)."""
     words = text.split()
     expanded_words = []
     for word in words:
@@ -967,7 +813,6 @@ def tokenize(text: str) -> list[str]:
 
 
 def detect_category_restrictions(tokens: list[str]) -> list[str]:
-    """Return restricted HSN chapters for the first matching category rule."""
     for rule in CATEGORY_RULES:
         if any(keyword in tokens for keyword in rule['keywords']):
             return rule['chapters']
@@ -975,12 +820,10 @@ def detect_category_restrictions(tokens: list[str]) -> list[str]:
 
 
 def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
-    """Build a SQL WHERE clause fragment to restrict results to likely HSN chapters."""
     expanded_tokens = set(tokens)
     for token in tokens:
         expanded_tokens.update(SYNONYMS.get(token, []))
 
-    # Category rules take priority over generic domain prefixes
     category_chapters = detect_category_restrictions(list(expanded_tokens))
     if category_chapters:
         prefixes = category_chapters
@@ -1003,11 +846,9 @@ def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
 
 
 def build_tsquery_terms(tokens: list[str]) -> list[str]:
-    """Build tsquery terms with synonym expansion."""
     query_terms: list[str] = []
     for token in tokens:
         variants = [token] + SYNONYMS.get(token, [])
-        # tsquery tokens must be single words; skip multi-word synonyms
         single_word_variants = [v for v in variants if ' ' not in v]
         if len(single_word_variants) > 1:
             query_terms.append("(" + " | ".join(single_word_variants) + ")")
@@ -1017,7 +858,6 @@ def build_tsquery_terms(tokens: list[str]) -> list[str]:
 
 
 def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
-    """Weighted Jaccard similarity — query tokens weighted 2x, synonyms 1x."""
     query_weights: dict[str, int] = {}
     for token in tokens:
         query_weights[token] = max(query_weights.get(token, 0), 2)
@@ -1031,46 +871,60 @@ def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
     return intersection_weight / union_weight if union_weight else 0.0
 
 
+# ── FIX #3: Probe once at startup whether description_no_size column exists ───
+# If the column was never added via ALTER TABLE, Pass 0B/0C queries crash.
+# This flag lets us skip those sub-passes gracefully without touching every query.
+_VP_HAS_NO_SIZE_COL: Optional[bool] = None  # None = not yet probed
+
+async def _probe_vp_schema(db: AsyncSession) -> bool:
+    """Return True if verified_products.description_no_size column exists."""
+    global _VP_HAS_NO_SIZE_COL
+    if _VP_HAS_NO_SIZE_COL is not None:
+        return _VP_HAS_NO_SIZE_COL
+    try:
+        await db.execute(text(
+            "SELECT description_no_size FROM verified_products LIMIT 0"
+        ))
+        _VP_HAS_NO_SIZE_COL = True
+    except Exception:
+        _VP_HAS_NO_SIZE_COL = False
+        log.warning(
+            "verified_products.description_no_size column missing — "
+            "run the Neon ALTER TABLE migration. Pass 0B/0C disabled until then."
+        )
+    return _VP_HAS_NO_SIZE_COL
+
+
 # ── Core matching logic ────────────────────────────────────────────────────────
 async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     """
     Multi-pass HSN matching.
 
-    Pass 0: Verified products table (exact + trigram) — highest accuracy,
-            covers all 13,864 known trade invoice products.
-    Pass 1: Exact HSN code match (numeric input).
-    Pass 2: Full-text search via hsn_search.search_vector (GIN index).
-    Pass 3: Trigram similarity on hsn_search.normalized_description.
-    Pass 4: ILIKE keyword fallback on hsn_codes.description.
-
-    GST rate is always taken from hsn_codes.gst_rate (the corrected column),
-    never from the original product data column which may have errors.
+    Pass 0A: verified_products exact uppercase match        → confidence 1.0
+    Pass 0B: verified_products size-stripped exact match    → confidence 0.95
+             (skipped if description_no_size column absent)
+    Pass 0C: verified_products pg_trgm similarity           → sim-based
+             (skipped if description_no_size column absent)
+    Pass 1:  Exact HSN code lookup (numeric input)
+    Pass 2:  Full-text search via hsn_search.search_vector
+    Pass 3:  Trigram similarity on hsn_search.normalized_description
+    Pass 4:  ILIKE keyword fallback
     """
     q_stripped = query.strip()
 
     # ── Pass 0: Verified products lookup ──────────────────────────────────────
-    #
-    # Three sub-passes in priority order:
-    #   0A. Exact uppercase match on description_normalized        → 1.0 confidence
-    #   0B. Size-stripped match on description_no_size             → 0.95 confidence
-    #   0C. Trigram similarity (pg_trgm %) on description_no_size  → sim-based
-    #
-    # This table is seeded from correct_datas.xlsx (13,862 ground-truth rows)
-    # and covers every product in your POS/invoice system at full accuracy.
-    # ──────────────────────────────────────────────────────────────────────────
     try:
-        # Normalise the incoming query the same way the seeder does
-        q_exact   = q_stripped.upper().strip()          # e.g. "HORLICKS WOMENS CHOCO PET 400G"
-        q_no_size = _strip_sizes(q_stripped)            # e.g. "HORLICKS WOMENS CHOCO PET"
+        q_exact   = q_stripped.upper().strip()
+        q_no_size = _strip_sizes(q_stripped)  # now defined above — no NameError
 
-        # ── 0A: Exact match ───────────────────────────────────────────────────
+        # ── 0A: Exact normalised match ────────────────────────────────────────
         vp_res = await db.execute(
             text("""
                 SELECT
                     vp.hsn_code,
                     vp.gst_rate,
                     vp.description AS matched_description,
-                    1.0            AS sim
+                    1.0::float     AS sim
                 FROM verified_products vp
                 WHERE vp.description_normalized = :q
                 LIMIT 1
@@ -1079,26 +933,29 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         )
         vp_row = vp_res.fetchone()
 
-        # ── 0B: Size-stripped exact match ────────────────────────────────────
-        if not vp_row and q_no_size:
+        # ── 0B & 0C: Size-stripped passes (only if column exists) ─────────────
+        vp_has_col = await _probe_vp_schema(db)
+
+        if not vp_row and q_no_size and vp_has_col:
+            # 0B: exact on no-size form
             vp_res = await db.execute(
                 text("""
                     SELECT
                         vp.hsn_code,
                         vp.gst_rate,
                         vp.description AS matched_description,
-                        0.95           AS sim
+                        0.95::float    AS sim
                     FROM verified_products vp
                     WHERE vp.description_no_size = :q
-                    ORDER BY vp.id          -- first inserted = most common variant
+                    ORDER BY vp.id
                     LIMIT 1
                 """),
                 {"q": q_no_size},
             )
             vp_row = vp_res.fetchone()
 
-        # ── 0C: Trigram similarity on no-size form ───────────────────────────
-        if not vp_row and q_no_size:
+        if not vp_row and q_no_size and vp_has_col:
+            # 0C: trigram on no-size form
             vp_res = await db.execute(
                 text("""
                     SELECT
@@ -1107,7 +964,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                         vp.description AS matched_description,
                         similarity(vp.description_no_size, :q) AS sim
                     FROM verified_products vp
-                    WHERE vp.description_no_size % :q        -- uses GiST/GIN pg_trgm index
+                    WHERE vp.description_no_size % :q
                     ORDER BY sim DESC
                     LIMIT 1
                 """),
@@ -1118,8 +975,8 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         if vp_row:
             sim = float(vp_row.sim)
             if sim >= 0.50:
-                gst_rate_str = vp_row.gst_rate or "0%"
-                gst_float = float(re.sub(r'[^0-9.]', '', gst_rate_str) or 0)
+                gst_raw = vp_row.gst_rate or "0"
+                gst_float = float(re.sub(r'[^0-9.]', '', str(gst_raw)) or 0)
                 return HSNBatchResult(
                     query=query,
                     hsn_code=normalize_hsn(vp_row.hsn_code),
@@ -1131,14 +988,17 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                         "medium" if sim >= 0.70 else
                         "low"
                     ),
-                    match_method="verified_exact" if sim >= 0.99 else
-                                 "verified_no_size" if sim >= 0.94 else
-                                 "verified_trigram",
+                    match_method=(
+                        "verified_exact"    if sim >= 0.99 else
+                        "verified_no_size"  if sim >= 0.94 else
+                        "verified_trigram"
+                    ),
                 )
 
     except Exception as _vp_err:
-        # verified_products table may not be seeded yet — fall through gracefully
-        log.warning("pass0.verified_products_error", error=str(_vp_err))
+        # FIX: was crashing here because log was undefined — now safe
+        log.warning("pass0.verified_products_error query=%s error=%s",
+                    q_stripped[:60], str(_vp_err))
 
     # ── Pass 1: exact HSN code lookup ─────────────────────────────────────────
     if re.match(r'^\d{4,8}$', q_stripped):
@@ -1155,7 +1015,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         if row:
             return HSNBatchResult(
                 query=query,
-                hsn_code=normalize_hsn(row.hsn_code),   # FIX: normalize
+                hsn_code=normalize_hsn(row.hsn_code),
                 description=row.description,
                 gst_rate=float(row.gst_rate or 0),
                 confidence=1.0,
@@ -1241,7 +1101,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             final_score = min(jaccard_weighted + fts_score, 1.0)
 
             entry = {
-                "hsn_code": normalize_hsn(r.hsn_code),  # FIX: normalize
+                "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
                 "gst_rate": float(r.gst_rate or 0),
                 "confidence": round(final_score, 3),
@@ -1296,7 +1156,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         sim_score = float(best.sim)
         alts = [
             {
-                "hsn_code": normalize_hsn(r.hsn_code),  # FIX: normalize
+                "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
                 "gst_rate": float(r.gst_rate or 0),
                 "confidence": round(float(r.sim), 3),
@@ -1307,7 +1167,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             label = "high" if sim_score >= 0.60 else ("medium" if sim_score >= 0.30 else "low")
             return HSNBatchResult(
                 query=query,
-                hsn_code=normalize_hsn(best.hsn_code),  # FIX: normalize
+                hsn_code=normalize_hsn(best.hsn_code),
                 description=best.description,
                 gst_rate=float(best.gst_rate or 0),
                 confidence=round(sim_score, 3),
@@ -1322,16 +1182,17 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         if len(token) < 3:
             continue
         res = await db.execute(
-    text("""
-        SELECT h.hsn_code, h.description, h.gst_rate, h.category
-        FROM hsn_codes h
-        WHERE h.description ILIKE :pat AND h.is_active = TRUE""" + domain_clause + """
-        LIMIT 20
-    """),
-    {"pat": f"%{token}%", **domain_params}
-)
+            text("""
+                SELECT h.hsn_code, h.description, h.gst_rate, h.category
+                FROM hsn_codes h
+                WHERE h.description ILIKE :pat AND h.is_active = TRUE"""
+                + domain_clause + """
+                LIMIT 20
+            """),
+            {"pat": f"%{token}%", **domain_params}
+        )
         for r in res.fetchall():
-            key = normalize_hsn(r.hsn_code)  # FIX: normalize key
+            key = normalize_hsn(r.hsn_code)
             if key not in candidates:
                 candidates[key] = {
                     "hsn_code": key,
