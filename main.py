@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from typing import Optional
-import os, json, re, uuid
+import os, json, re, uuid, math
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 # FIX #1: main.py is standalone — structlog lives in app/ only.
@@ -548,7 +548,8 @@ FMCG_ABBREVIATIONS = {
     'florl': 'floral', 'antibctrl': 'antibacterial', 'xtra': 'extra',
     'tugh': 'tough', 'det': 'detergent', 'fab': 'fabric',
     'phnyl': 'phenyl', 'dsinfct': 'disinfectant', 'airfsh': 'air freshener',
-    'cookis': 'cookies', 'cashw': 'cashew', 'digestve': 'digestive',
+    'cookis': 'cookie', 'cashw': 'cashew', 'digestve': 'digestive',
+    'choc': 'chocolate',
     'choco': 'chocolate', 'van': 'vanilla', 'vnlla': 'vanilla',
     'strbry': 'strawberry', 'rasbry': 'raspberry', 'bluebry': 'blueberry',
     'blkbry': 'blackberry', 'butrscotch': 'butterscotch', 'jasmne': 'jasmine',
@@ -579,7 +580,7 @@ SYNONYMS = {
     'phone': ['mobile', 'smartphone'],
     'tv': ['television'],
     'fridge': ['refrigerator'],
-    'laptop': ['notebook', 'computer'],
+    'laptop': ['computer'],
     'biscuit': ['cookie', 'cracker', 'wafer', 'bakery'],
     'shirt': ['tshirt', 'top', 'garment'],
     'vkc': ['footwear', 'sandal', 'slipper', 'shoe', 'chappal'],
@@ -749,7 +750,7 @@ CATEGORY_RULES = [
     {'keywords': ['tooth', 'paste', 'toothpaste', 'dentifrice'],   'chapters': ['33']},
     {'keywords': ['toothbrush', 'tbrush'],                          'chapters': ['96']},
     {'keywords': ['note', 'book', 'notebook', 'copybook'],          'chapters': ['48']},
-    {'keywords': ['puja', 'pooja', 'thiri', 'wick', 'lamp oil'],    'chapters': ['15', '33']},
+    {'keywords': ['puja', 'pooja', 'thiri', 'wick', 'lamp oil'],    'chapters': ['33']},
     {'keywords': ['agarbatti', 'agarbathi', 'incense', 'sambrani'], 'chapters': ['33']},
     {'keywords': ['cleaning', 'cleaner', 'detergent', 'phenyl', 'disinfectant', 'harpic'], 'chapters': ['34']},
     {'keywords': ['cosmetic', 'makeup', 'skincare', 'foundation', 'kajal', 'eyeshadow'], 'chapters': ['33']},
@@ -800,16 +801,37 @@ def expand_fmcg_abbreviations(text: str) -> str:
         if lower_word in FMCG_ABBREVIATIONS:
             expanded_words.append(FMCG_ABBREVIATIONS[lower_word])
         else:
-            expanded_words.append(word)
+            expanded_words.append(lower_word)
     return ' '.join(expanded_words)
 
 
-def tokenize(text: str) -> list[str]:
+def _extract_alpha_tokens(text: str) -> list[str]:
     text = text.lower()
     text = re.sub(r'\b\d+\s*(ml|g|gm|kg|l|ltr|mg|oz|lb|pc|pcs|nos)\b', ' ', text)
     text = re.sub(r'\b\d+\b', ' ', text)
-    tokens = re.findall(r'[a-z]{2,}', text)
-    return [t for t in tokens if t not in STOPWORDS and t not in BRANDS and len(t) >= 2]
+    return re.findall(r'[a-z]{2,}', text)
+
+
+def tokenize(text: str, *, include_brands: bool = False) -> list[str]:
+    tokens = _extract_alpha_tokens(text)
+    return [
+        t for t in tokens
+        if t not in STOPWORDS and len(t) >= 2 and (include_brands or t not in BRANDS)
+    ]
+
+
+def split_query_fields(text: str) -> dict[str, list[str]]:
+    expanded = expand_fmcg_abbreviations(text)
+    raw_tokens = _extract_alpha_tokens(expanded)
+    brand_tokens = [t for t in raw_tokens if t in BRANDS]
+    product_tokens = tokenize(expanded)
+    domain_tokens = [t for t in product_tokens if t in DOMAIN_PREFIXES]
+    return {
+        "brand_tokens": list(dict.fromkeys(brand_tokens)),
+        "product_tokens": list(dict.fromkeys(product_tokens)),
+        "domain_tokens": list(dict.fromkeys(domain_tokens)),
+        "all_tokens": list(dict.fromkeys(tokenize(expanded, include_brands=True))),
+    }
 
 
 def detect_category_restrictions(tokens: list[str]) -> list[str]:
@@ -869,6 +891,124 @@ def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
     )
     union_weight = sum(query_weights.values()) + len(desc_tokens) - intersection_weight
     return intersection_weight / union_weight if union_weight else 0.0
+
+
+def _build_candidate_lexical_index(
+    query: str,
+    rows,
+    *,
+    description_attr: str = "description",
+    category_attr: str = "category",
+):
+    query_fields = split_query_fields(query)
+    documents = []
+    token_docs: dict[str, set[int]] = {}
+
+    for idx, row in enumerate(rows):
+        description = str(getattr(row, description_attr, "") or "")
+        category = str(getattr(row, category_attr, "") or "")
+        desc_expanded = expand_fmcg_abbreviations(description)
+        raw_desc_tokens = _extract_alpha_tokens(desc_expanded)
+        brand_tokens = set(t for t in raw_desc_tokens if t in BRANDS)
+        desc_tokens = set(tokenize(desc_expanded))
+        category_tokens = set(tokenize(category))
+        doc_tokens = desc_tokens | category_tokens | brand_tokens
+
+        documents.append({
+            "brand_tokens": brand_tokens,
+            "desc_tokens": desc_tokens,
+            "category_tokens": category_tokens,
+            "doc_tokens": doc_tokens,
+            "text_lower": description.lower(),
+        })
+
+        for token in doc_tokens:
+            token_docs.setdefault(token, set()).add(idx)
+
+    return {
+        "query_fields": query_fields,
+        "documents": documents,
+        "token_docs": token_docs,
+        "doc_count": len(documents),
+    }
+
+
+def _token_rarity_weight(token: str, lexical_index) -> float:
+    doc_count = max(int(lexical_index["doc_count"]), 1)
+    df = len(lexical_index["token_docs"].get(token, ()))
+    return math.log((doc_count + 1.0) / (df + 0.5)) + 1.0
+
+
+def compute_inverted_index_score(
+    query: str,
+    row,
+    lexical_index,
+    *,
+    doc_idx: int,
+    base_db_score: float = 0.0,
+) -> float:
+    query_fields = lexical_index["query_fields"]
+    document = lexical_index["documents"][doc_idx]
+    query_brand_tokens = query_fields["brand_tokens"]
+    query_product_tokens = query_fields["product_tokens"]
+    query_domain_tokens = set(query_fields["domain_tokens"])
+
+    if not query_product_tokens and not query_brand_tokens:
+        return max(0.0, min(base_db_score, 1.0))
+
+    score = 0.0
+    weight_total = 0.0
+
+    for token in query_product_tokens:
+        rarity = _token_rarity_weight(token, lexical_index)
+        token_weight = rarity + (0.25 if len(token) >= 5 else 0.0)
+        if token in query_domain_tokens:
+            token_weight += 0.35
+        if token in document["desc_tokens"]:
+            score += token_weight
+        elif token in document["category_tokens"]:
+            score += token_weight * 0.75
+        else:
+            for synonym in SYNONYMS.get(token, []):
+                if synonym in document["doc_tokens"]:
+                    score += token_weight * 0.55
+                    break
+        weight_total += token_weight
+
+    for brand_token in query_brand_tokens:
+        brand_weight = 2.8 + _token_rarity_weight(brand_token, lexical_index)
+        if brand_token in document["brand_tokens"]:
+            score += brand_weight * 1.25
+        elif brand_token in document["desc_tokens"]:
+            score += brand_weight * 0.9
+        weight_total += brand_weight
+
+    lexical_score = score / weight_total if weight_total else 0.0
+
+    if query_brand_tokens and document["brand_tokens"] and not (
+        set(query_brand_tokens) & document["brand_tokens"]
+    ):
+        lexical_score -= 0.16
+
+    ordered_product_tokens = [t for t in query_product_tokens if len(t) >= 3]
+    if ordered_product_tokens:
+        phrase = " ".join(ordered_product_tokens[:4])
+        if phrase and phrase in document["text_lower"]:
+            lexical_score += 0.12
+        elif all(t in document["doc_tokens"] for t in ordered_product_tokens[:3]):
+            lexical_score += 0.06
+
+    restriction_tokens = query_fields["all_tokens"] or query_product_tokens
+    preferred_prefixes = detect_category_restrictions(restriction_tokens)
+    row_hsn = normalize_hsn(getattr(row, "hsn_code", "") or "")
+    if preferred_prefixes and row_hsn:
+        if any(row_hsn.startswith(prefix) for prefix in preferred_prefixes):
+            lexical_score += 0.08
+        else:
+            lexical_score -= 0.06
+
+    final_score = lexical_score * 0.74 + max(base_db_score, 0.0) * 0.26
+    return max(0.0, min(final_score, 1.0))
 
 
 # ── FIX #3: Probe once at startup whether description_no_size column exists ───
@@ -1279,26 +1419,34 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             rows_fts = []
 
     if rows_fts:
-        best      = None
+        best = None
         best_score = 0.0
-        alts      = []
-        for r in rows_fts:
+        alts = []
+        lexical_index = _build_candidate_lexical_index(q_expanded, rows_fts)
+        for idx, r in enumerate(rows_fts):
             desc_tokens = set(tokenize(r.description))
             if not desc_tokens:
                 continue
-            jaccard    = compute_weighted_jaccard(tokens, desc_tokens)
-            fts_score  = min(float(r.rank) * 2.5, 0.4)
-            final_score = min(jaccard * 0.6 + fts_score, 1.0)
+            jaccard = compute_weighted_jaccard(tokens, desc_tokens)
+            fts_score = min(float(r.rank) * 2.5, 0.4)
+            db_score = min(jaccard * 0.45 + fts_score, 1.0)
+            final_score = compute_inverted_index_score(
+                q_expanded,
+                r,
+                lexical_index,
+                doc_idx=idx,
+                base_db_score=db_score,
+            )
             entry = {
-                "hsn_code":   normalize_hsn(r.hsn_code),
+                "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
-                "gst_rate":   float(r.gst_rate or 0),
+                "gst_rate": float(r.gst_rate or 0),
                 "confidence": round(final_score, 3),
             }
             if final_score > best_score:
                 if best:
                     alts.append(best)
-                best       = entry
+                best = entry
                 best_score = final_score
             else:
                 alts.append(entry)
@@ -1337,25 +1485,38 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         rows_trgm = []
 
     if rows_trgm:
-        best      = rows_trgm[0]
-        sim_score = float(best.sim)
+        lexical_index = _build_candidate_lexical_index(q_expanded, rows_trgm)
+        ranked_trgm = []
+        for idx, r in enumerate(rows_trgm):
+            sim_score = min(float(r.sim), 1.0)
+            final_score = compute_inverted_index_score(
+                q_expanded,
+                r,
+                lexical_index,
+                doc_idx=idx,
+                base_db_score=sim_score,
+            )
+            ranked_trgm.append((final_score, r))
+        ranked_trgm.sort(key=lambda item: item[0], reverse=True)
+        best_score, best = ranked_trgm[0]
+        best_base_score = min(float(best.sim), 1.0)
         alts = [
             {
-                "hsn_code":   normalize_hsn(r.hsn_code),
+                "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
-                "gst_rate":   float(r.gst_rate or 0),
-                "confidence": round(float(r.sim), 3),
+                "gst_rate": float(r.gst_rate or 0),
+                "confidence": round(score, 3),
             }
-            for r in rows_trgm[1:4]
+            for score, r in ranked_trgm[1:4]
         ]
-        if sim_score > 0.15:
-            label = "high" if sim_score >= 0.60 else ("medium" if sim_score >= 0.30 else "low")
+        if best_score > 0.15:
+            label = "high" if best_base_score >= 0.60 else ("medium" if best_base_score >= 0.30 else "low")
             return HSNBatchResult(
                 query=query,
                 hsn_code=normalize_hsn(best.hsn_code),
                 description=best.description,
                 gst_rate=float(best.gst_rate or 0),
-                confidence=round(sim_score, 3),
+                confidence=round(best_score, 3),
                 confidence_label=label,
                 match_method="trigram",
                 alternatives=alts,
@@ -1384,6 +1545,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                         "hsn_code":   key,
                         "description": r.description,
                         "gst_rate":   float(r.gst_rate or 0),
+                        "category":   r.category,
                         "hits":       0,
                     }
                 candidates[key]["hits"] += 1
@@ -1391,9 +1553,37 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             pass
 
     if candidates:
+        candidate_rows = []
+        for candidate in candidates.values():
+            candidate_rows.append(
+                type(
+                    "CandidateRow",
+                    (),
+                    {
+                        "hsn_code": candidate["hsn_code"],
+                        "description": candidate["description"],
+                        "gst_rate": candidate["gst_rate"],
+                        "category": candidate.get("category", ""),
+                    },
+                )()
+            )
+
+        lexical_index = _build_candidate_lexical_index(q_expanded, candidate_rows)
         total_tokens = max(len(tokens), 1)
         scored = sorted(
-            [(c["hits"] / total_tokens, c) for c in candidates.values()],
+            [
+                (
+                    compute_inverted_index_score(
+                        q_expanded,
+                        row,
+                        lexical_index,
+                        doc_idx=idx,
+                        base_db_score=candidates[row.hsn_code]["hits"] / total_tokens,
+                    ),
+                    candidates[row.hsn_code],
+                )
+                for idx, row in enumerate(candidate_rows)
+            ],
             key=lambda x: x[0],
             reverse=True,
         )

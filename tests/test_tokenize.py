@@ -1,6 +1,7 @@
 import importlib
 import importlib.util
 import sys
+from types import SimpleNamespace
 from pathlib import Path
 
 
@@ -178,3 +179,95 @@ def test_enhanced_stopwords(monkeypatch):
     # Valid tokens should remain
     assert "chocolate" in tokens
     assert "bar" in tokens
+
+
+def test_split_query_fields_keeps_brand_tokens_separate(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    fields = main.split_query_fields("Harpic bathroom cleaner")
+
+    assert "harpic" in fields["brand_tokens"]
+    assert "harpic" in fields["all_tokens"]
+    assert "harpic" not in fields["product_tokens"]
+    assert "cleaner" in fields["product_tokens"]
+
+
+def test_inverted_index_score_prefers_jam_over_fruit_cocktail(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    rows = [
+        SimpleNamespace(
+            hsn_code="20079990",
+            description="mixed fruit jam",
+            gst_rate=12,
+            category="jam",
+            rank=0.08,
+        ),
+        SimpleNamespace(
+            hsn_code="20089991",
+            description="fruit cocktail",
+            gst_rate=12,
+            category="prepared fruit",
+            rank=0.11,
+        ),
+    ]
+
+    lexical_index = main._build_candidate_lexical_index("FRUIT JAM 350g", rows)
+    jam_score = main.compute_inverted_index_score(
+        "FRUIT JAM 350g",
+        rows[0],
+        lexical_index,
+        doc_idx=0,
+        base_db_score=0.28,
+    )
+    cocktail_score = main.compute_inverted_index_score(
+        "FRUIT JAM 350g",
+        rows[1],
+        lexical_index,
+        doc_idx=1,
+        base_db_score=0.31,
+    )
+
+    assert jam_score > cocktail_score
+
+
+def test_inverted_index_score_prefers_puja_oil_over_palm_oil(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+    main = _load_main_with_stubs()
+
+    rows = [
+        SimpleNamespace(
+            hsn_code="15180040",
+            description="jasmine puja oil",
+            gst_rate=5,
+            category="religious oils",
+            rank=0.06,
+        ),
+        SimpleNamespace(
+            hsn_code="15119090",
+            description="palm oil and fractions",
+            gst_rate=5,
+            category="edible oils",
+            rank=0.09,
+        ),
+    ]
+
+    lexical_index = main._build_candidate_lexical_index("PURE PUJA OIL", rows)
+    puja_score = main.compute_inverted_index_score(
+        "PURE PUJA OIL",
+        rows[0],
+        lexical_index,
+        doc_idx=0,
+        base_db_score=0.25,
+    )
+    palm_score = main.compute_inverted_index_score(
+        "PURE PUJA OIL",
+        rows[1],
+        lexical_index,
+        doc_idx=1,
+        base_db_score=0.30,
+    )
+
+    assert puja_score > palm_score
