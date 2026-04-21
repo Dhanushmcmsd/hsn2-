@@ -6,9 +6,9 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.database import get_db, Prediction
+from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
-from app.services.matcher import get_matcher
+from app.services.matcher import get_matcher, strip_sizes
 from app.services.confidence import score_result
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
@@ -34,18 +34,51 @@ async def predict(
         return PredictResponse(**cached)
 
     start = time.perf_counter()
-    matcher = get_matcher()
-    matches = matcher.match(body.text, top_k=5)
-    if not matches:
-        raise HTTPException(status_code=422, detail="No HSN matches found for this description")
 
-    top = matches[0]
-    alternatives = matches[1:]
-    confidence, label = score_result(top["score"])
-    needs_review = top["score"] < 0.55
+    # Pass 0: Check verified_products for exact match
+    from sqlalchemy import select
+    verified_query = select(VerifiedProduct).where(VerifiedProduct.description_normalized == body.text.upper().strip())
+    verified_result = await db.execute(verified_query)
+    verified = verified_result.scalar_one_or_none()
+    if verified:
+        top = {
+            "hsn_code": verified.hsn_code,
+            "description": verified.description,
+            "score": 1.0,
+            "method": "verified_exact",
+        }
+        alternatives = []
+        confidence, label = score_result(1.0)
+        needs_review = False
+        elapsed = (time.perf_counter() - start) * 1000
+    else:
+        # Pass 0B: Check for no-size match
+        verified_no_size_query = select(VerifiedProduct).where(VerifiedProduct.description_no_size == strip_sizes(body.text))
+        verified_no_size_result = await db.execute(verified_no_size_query)
+        verified = verified_no_size_result.scalar_one_or_none()
+        if verified:
+            top = {
+                "hsn_code": verified.hsn_code,
+                "description": verified.description,
+                "score": 0.95,
+                "method": "verified_no_size",
+            }
+            alternatives = []
+            confidence, label = score_result(0.95)
+            needs_review = False
+            elapsed = (time.perf_counter() - start) * 1000
+        else:
+            # Pass 1+: AI matching
+            matcher = get_matcher()
+            matches = matcher.match(body.text, top_k=5)
+            if not matches:
+                raise HTTPException(status_code=422, detail="No HSN matches found for this description")
 
-    request_id = str(uuid.uuid4())
-    elapsed = (time.perf_counter() - start) * 1000
+            top = matches[0]
+            alternatives = matches[1:]
+            confidence, label = score_result(top["score"])
+            needs_review = top["score"] < 0.55
+            elapsed = (time.perf_counter() - start) * 1000
 
     record = Prediction(
         request_id=request_id,
