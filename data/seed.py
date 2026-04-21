@@ -179,11 +179,14 @@ if args.dry_run:
 
 # ── Ensure schema has description_no_size column ──────────────────────────────
 with engine.begin() as conn:
-    # Add column if it doesn't exist (idempotent)
-    conn.execute(text("""
-        ALTER TABLE verified_products
-        ADD COLUMN IF NOT EXISTS description_no_size VARCHAR(500)
-    """))
+    # Check if column exists
+    result = conn.execute(text("PRAGMA table_info(verified_products)"))
+    columns = [row[1] for row in result.fetchall()]
+    if 'description_no_size' not in columns:
+        conn.execute(text("""
+            ALTER TABLE verified_products
+            ADD COLUMN description_no_size VARCHAR(500)
+        """))
     conn.execute(text("""
         CREATE INDEX IF NOT EXISTS idx_verified_no_size
         ON verified_products (description_no_size)
@@ -209,7 +212,7 @@ inserted = 0
 
 with engine.begin() as conn:
     if args.truncate:
-        conn.execute(text("TRUNCATE TABLE verified_products RESTART IDENTITY"))
+        conn.execute(text("DELETE FROM verified_products"))
         print("    Truncated existing records.")
 
     for i in range(0, len(records), BATCH):
