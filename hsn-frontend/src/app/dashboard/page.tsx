@@ -41,8 +41,6 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const PAGE_SIZE = 20;
 
 // ── HSN zero-padding helper ───────────────────────────────────────────────────
-// FIX: "8013220" → "08013220"  (8-digit left-zero-padded string)
-// Must be a STRING in Excel, not a number, or leading zeros are stripped.
 function padHsn(code: string | undefined): string {
   if (!code) return "";
   const trimmed = code.trim();
@@ -177,10 +175,6 @@ export default function Dashboard() {
     if (bulkResults.length === 0) return;
     const rows = bulkResults.map((r) => ({
       "Product Description": r.query,
-      // FIX: force text type in Excel so "08013220" is not stored as number 8013220
-      // Using a cell object with type "s" (string) via sheet_add_aoa later,
-      // or simplest fix: prefix with a tab char trick is ugly — instead we set
-      // the cell format explicitly via XLSX after building the sheet.
       "HSN Code": padHsn(r.hsn_code),
       "Matched Description": r.description ?? "",
       "GST Rate (%)": r.gst_rate ?? "",
@@ -196,16 +190,14 @@ export default function Dashboard() {
 
     const ws = XLSX.utils.json_to_sheet(rows);
 
-    // FIX: Force HSN code columns to text format so Excel preserves leading zeros.
-    // XLSX cell format "z" = text. We override every data row (skip header row 0).
-    const hsnColIndices = [1, 7, 9]; // "HSN Code", "Alt 1 HSN", "Alt 2 HSN"
-    const totalRows = rows.length + 1; // +1 for header
+    const hsnColIndices = [1, 7, 9];
+    const totalRows = rows.length + 1;
     hsnColIndices.forEach((colIdx) => {
       const colLetter = XLSX.utils.encode_col(colIdx);
       for (let rowIdx = 1; rowIdx < totalRows; rowIdx++) {
         const cellRef = `${colLetter}${rowIdx + 1}`;
         if (ws[cellRef]) {
-          ws[cellRef].t = "s"; // type: string — prevents Excel auto-converting to number
+          ws[cellRef].t = "s";
         }
       }
     });
@@ -213,7 +205,6 @@ export default function Dashboard() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "HSN Results");
 
-    // Column widths
     ws["!cols"] = [
       { wch: 40 }, { wch: 12 }, { wch: 40 }, { wch: 14 },
       { wch: 12 }, { wch: 16 }, { wch: 14 },
@@ -297,7 +288,6 @@ export default function Dashboard() {
                 <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      {/* FIX: display zero-padded HSN code */}
                       <div className="text-4xl font-bold text-blue-600 font-mono">
                         {padHsn(result.top_match.hsn_code)}
                       </div>
@@ -320,7 +310,6 @@ export default function Dashboard() {
                     <div className="space-y-2">
                       {result.alternatives.map((alt) => (
                         <div key={alt.hsn_code} className="flex items-center justify-between bg-white rounded-xl border border-gray-100 px-4 py-3 text-sm">
-                          {/* FIX: display zero-padded alternatives */}
                           <span className="font-mono font-semibold text-gray-700 w-20">{padHsn(alt.hsn_code)}</span>
                           <span className="text-gray-500 flex-1 mx-4 truncate">{alt.description}</span>
                           <span className="text-gray-400 text-xs">{(alt.score * 100).toFixed(0)}%</span>
@@ -490,7 +479,6 @@ export default function Dashboard() {
                             </td>
                             <td className="px-4 py-3">
                               {r.hsn_code ? (
-                                /* FIX: display zero-padded HSN code in table */
                                 <span className="font-mono font-semibold text-blue-600 text-sm">{padHsn(r.hsn_code)}</span>
                               ) : (
                                 <span className="text-gray-300 text-xs italic">{isError ? "error" : "—"}</span>
@@ -570,5 +558,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-}
 }
