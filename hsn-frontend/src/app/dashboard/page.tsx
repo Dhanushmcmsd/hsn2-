@@ -5,13 +5,6 @@ import { hsnApi, authApi, type PredictResponse, type UserOut } from "@/lib/api";
 import * as XLSX from "xlsx";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-interface HSNBatchResult {"use client";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { hsnApi, authApi, type PredictResponse, type UserOut } from "@/lib/api";
-import * as XLSX from "xlsx";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 interface HSNBatchResult {
   query: string;
   hsn_code?: string;
@@ -578,45 +571,6 @@ export default function Dashboard() {
     </div>
   );
 }
-
-  query: string;
-  hsn_code?: string;
-  description?: string;
-  gst_rate?: number;
-  confidence: number;
-  confidence_label: "high" | "medium" | "low";
-  match_method: string;
-  alternatives: { hsn_code: string; description: string; gst_rate: number; confidence: number }[];
-  error?: string;
-}
-
-interface BatchResponse {
-  results: HSNBatchResult[];
-  total: number;
-  matched: number;
-  unmatched: number;
-}
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-const CONFIDENCE_COLOR: Record<string, string> = {
-  high:   "bg-emerald-50 text-emerald-700 border-emerald-200",
-  medium: "bg-amber-50 text-amber-700 border-amber-200",
-  low:    "bg-red-50 text-red-600 border-red-200",
-};
-
-const CONFIDENCE_DOT: Record<string, string> = {
-  high:   "bg-emerald-500",
-  medium: "bg-amber-400",
-  low:    "bg-red-400",
-};
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const PAGE_SIZE = 20;
-
-// ── Main component ─────────────────────────────────────────────────────────────
-export default function Dashboard() {
-  const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auth
   const [user, setUser] = useState<UserOut | null>(null);
