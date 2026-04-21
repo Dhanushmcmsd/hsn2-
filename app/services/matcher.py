@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 import numpy as np
 import structlog
+from collections import defaultdict
 from functools import lru_cache
 
 log = structlog.get_logger()
@@ -109,6 +110,9 @@ FMCG_ABBREVIATIONS = {
     'dish':   'dishwasher',
     'liq':    'liquid',
     'powd':   'powder',
+    'powdr':  'powder',
+    'pwdr':   'powder',
+    'pdr':    'powder',
     'tab':    'tablet',
     'cap':    'capsule',
     'syrup':  'syrup',
@@ -156,7 +160,12 @@ def expand_fmcg_abbreviations(text: str) -> str:
     for word in words:
         lower = word.lower().rstrip('.')
         expanded.append(FMCG_ABBREVIATIONS.get(lower, word))
-    return ' '.join(expanded).lower()
+    deduped: list[str] = []
+    for word in expanded:
+        if deduped and deduped[-1].lower() == str(word).lower():
+            continue
+        deduped.append(word)
+    return ' '.join(deduped).lower()
 
 
 def tokenize(text: str) -> list[str]:
@@ -182,6 +191,12 @@ def strip_sizes(text: str) -> str:
     text = re.sub(r'\b\d+\b', ' ', text)
     text = re.sub(r'[^A-Za-z\s]', ' ', text)
     return re.sub(r'\s+', ' ', text).strip().upper()
+
+
+def _normalize_for_match(text: str) -> str:
+    text = expand_fmcg_abbreviations(text).upper()
+    text = re.sub(r'[^A-Z0-9\s]', ' ', text)
+    return re.sub(r'\s+', ' ', text).strip()
 
 
 @lru_cache(maxsize=1)
@@ -242,6 +257,8 @@ class HybridMatcher:
         self._embeddings = None
         self._model = None
         self._ready = False
+        self._exact_map: dict[str, list[dict]] = {}
+        self._no_size_map: dict[str, list[dict]] = {}
         self._load()
 
     def _load(self):
@@ -251,6 +268,18 @@ class HybridMatcher:
         if not self._dataset:
             log.warning("matcher.empty_dataset")
             return
+        self._exact_map = defaultdict(list)
+        self._no_size_map = defaultdict(list)
+        for row in self._dataset:
+            self._exact_map[row["description_normalized"]].append(row)
+            expanded_norm = _normalize_for_match(row["description"])
+            if expanded_norm != row["description_normalized"]:
+                self._exact_map[expanded_norm].append(row)
+            if row.get("description_no_size"):
+                self._no_size_map[row["description_no_size"]].append(row)
+            expanded_no_size = strip_sizes(expand_fmcg_abbreviations(row["description"]))
+            if expanded_no_size and expanded_no_size != row.get("description_no_size"):
+                self._no_size_map[expanded_no_size].append(row)
         try:
             from sentence_transformers import SentenceTransformer
             import faiss
@@ -265,7 +294,7 @@ class HybridMatcher:
         except Exception as e:
             log.warning("matcher.load_error", error=str(e))
 
-    def _exact_match(self, text: str) -> list[dict]:
+    def _exact_code_match(self, text: str) -> list[dict]:
         text_lower = text.lower()
         results = []
         for item in self._dataset:
@@ -273,23 +302,108 @@ class HybridMatcher:
                 results.append({**item, "score": 1.0, "method": "exact_code"})
         return results
 
-    def _keyword_match(self, text: str, top_k: int) -> list[dict]:
-        # Expand abbreviations before tokenising
-        text = expand_fmcg_abbreviations(text)
-        tokens = tokenize(text)
-        if not tokens:
-            return []
-        words = set(expand_tokens(tokens))
-        scored = []
+    def _source_bonus(self, item: dict) -> float:
+        return {
+            "correct_datas": 0.18,
+            "product_batch": 0.14,
+            "hsn_codes": 0.04,
+        }.get(item.get("source", ""), 0.0)
+
+    def _rank_grouped_matches(self, matches: list[dict], top_k: int) -> list[dict]:
+        grouped: dict[str, dict] = {}
+        for item in matches:
+            key = item["hsn_code"]
+            current = grouped.get(key)
+            if not current or item["score"] > current["score"]:
+                grouped[key] = item
+
+        ranked = sorted(grouped.values(), key=lambda item: item["score"], reverse=True)
+        return ranked[:top_k]
+
+    def _exact_description_match(self, text: str, top_k: int) -> list[dict]:
+        normalized = strip_sizes(text)
+        exact_rows = list(self._exact_map.get(_normalize_for_match(text), []))
+        if exact_rows:
+            matches = []
+            for row in exact_rows:
+                matches.append({
+                    **row,
+                    "score": round(min(1.0, 0.82 + self._source_bonus(row)), 4),
+                    "method": f"{row['source']}_exact",
+                })
+            return self._rank_grouped_matches(matches, top_k)
+
+        no_size_rows = list(self._no_size_map.get(normalized, []))
+        if no_size_rows:
+            matches = []
+            for row in no_size_rows:
+                matches.append({
+                    **row,
+                    "score": round(min(0.99, 0.76 + self._source_bonus(row)), 4),
+                    "method": f"{row['source']}_no_size",
+                })
+            return self._rank_grouped_matches(matches, top_k)
+
+        return []
+
+    def _token_score(self, query_tokens: list[str], item_tokens: set[str], source: str, core_product: str) -> float:
+        if not query_tokens or not item_tokens:
+            return 0.0
+        overlap = len(set(query_tokens) & item_tokens)
+        if overlap == 0:
+            return 0.0
+        coverage = overlap / max(len(set(query_tokens)), 1)
+        precision = overlap / max(len(item_tokens), 1)
+        score = (coverage * 0.68) + (precision * 0.20)
+        if core_product and core_product in item_tokens:
+            score += 0.10
+        score += self._source_bonus({"source": source})
+        return min(score, 0.94)
+
+    def _phrase_match(self, text: str, top_k: int) -> list[dict]:
+        normalized = _normalize_for_match(text)
+        no_size = strip_sizes(text)
+        query_tokens = tokenize(expand_fmcg_abbreviations(text))
+        expanded_tokens = expand_tokens(query_tokens)
+        core_product = extract_core_product(text)
+        scored: list[dict] = []
+
         for item in self._dataset:
-            desc_words = set(re.findall(r"\b\w{3,}\b", item["description"].lower()))
-            if not desc_words:
+            desc_norm = _normalize_for_match(item["description"])
+            desc_no_size = strip_sizes(expand_fmcg_abbreviations(item["description"]))
+            item_tokens = set(tokenize(expand_fmcg_abbreviations(item["description"])))
+
+            score = self._token_score(expanded_tokens, item_tokens, item.get("source", ""), core_product)
+            method = "token"
+
+            if normalized and normalized == desc_norm:
+                score = max(score, min(1.0, 0.84 + self._source_bonus(item)))
+                method = "exact_phrase"
+            elif no_size and no_size == desc_no_size:
+                score = max(score, min(0.98, 0.78 + self._source_bonus(item)))
+                method = "no_size_phrase"
+            elif normalized and normalized in desc_norm:
+                score = max(score, min(0.88, 0.60 + self._source_bonus(item)))
+                method = "contains_phrase"
+            elif no_size and no_size and no_size in desc_no_size:
+                score = max(score, min(0.84, 0.56 + self._source_bonus(item)))
+                method = "contains_no_size"
+            elif core_product and core_product in item_tokens:
+                method = "core_product"
+
+            if score <= 0.0:
                 continue
-            overlap = len(words & desc_words) / max(len(words), 1)
-            if overlap > 0:
-                scored.append({**item, "score": round(overlap * 0.75, 4), "method": "keyword"})
-        scored.sort(key=lambda x: x["score"], reverse=True)
-        return scored[:top_k]
+
+            scored.append({
+                **item,
+                "score": round(score, 4),
+                "method": f"{item['source']}_{method}",
+            })
+
+        return self._rank_grouped_matches(scored, top_k)
+
+    def _keyword_match(self, text: str, top_k: int) -> list[dict]:
+        return self._phrase_match(text, top_k)
 
     def _semantic_match(self, text: str, top_k: int) -> list[dict]:
         if not self._ready:
@@ -314,21 +428,31 @@ class HybridMatcher:
             return []
 
     def _match_once(self, text: str, top_k: int = 5) -> list[dict]:
-        exact = self._exact_match(text)
-        if exact:
-            return exact[:top_k]
+        exact_code = self._exact_code_match(text)
+        if exact_code:
+            return exact_code[:top_k]
+
+        exact_desc = self._exact_description_match(text, top_k)
+        if exact_desc:
+            return exact_desc[:top_k]
+
         semantic = self._semantic_match(text, top_k * 2)
         keyword = self._keyword_match(text, top_k * 2)
         merged: dict[str, dict] = {}
-        for item in semantic:
-            merged[item["hsn_code"]] = item
         for item in keyword:
-            if item["hsn_code"] not in merged:
-                merged[item["hsn_code"]] = item
-            else:
-                merged[item["hsn_code"]]["score"] = max(
-                    merged[item["hsn_code"]]["score"], item["score"]
-                )
+            merged[item["hsn_code"]] = item
+        for item in semantic:
+            existing = merged.get(item["hsn_code"])
+            if not existing:
+                merged[item["hsn_code"]] = dict(item)
+                continue
+            semantic_score = round(item["score"] * 0.9, 4)
+            if semantic_score > existing["score"]:
+                merged[item["hsn_code"]] = {
+                    **item,
+                    "score": semantic_score,
+                    "method": f"{item['method']}_blended",
+                }
         results = sorted(merged.values(), key=lambda x: x["score"], reverse=True)
         return results[:top_k]
 
