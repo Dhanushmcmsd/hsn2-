@@ -1,5 +1,6 @@
 from __future__ import annotations
 import hashlib
+import inspect
 import time
 import uuid
 import structlog
@@ -18,6 +19,19 @@ router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
 
 
+async def _scalar_one_or_none(result):
+    value = result.scalar_one_or_none()
+    if inspect.isawaitable(value):
+        value = await value
+    return value
+
+
+def _is_verified_product_match(candidate) -> bool:
+    return isinstance(getattr(candidate, "hsn_code", None), str) and isinstance(
+        getattr(candidate, "description", None), str
+    )
+
+
 @router.post("/predict", response_model=PredictResponse)
 async def predict(
     body: PredictRequest,
@@ -26,6 +40,7 @@ async def predict(
     db: AsyncSession = Depends(get_db),
 ):
     await check_rate_limit(api_key)
+    request_id = str(uuid.uuid4())
 
     cache_key = f"predict:{body.text.strip().lower()}"
     cached = await get_cache(cache_key)
@@ -39,8 +54,8 @@ async def predict(
     from sqlalchemy import select
     verified_query = select(VerifiedProduct).where(VerifiedProduct.description_normalized == body.text.upper().strip())
     verified_result = await db.execute(verified_query)
-    verified = verified_result.scalar_one_or_none()
-    if verified:
+    verified = await _scalar_one_or_none(verified_result)
+    if _is_verified_product_match(verified):
         top = {
             "hsn_code": verified.hsn_code,
             "description": verified.description,
@@ -55,8 +70,8 @@ async def predict(
         # Pass 0B: Check for no-size match
         verified_no_size_query = select(VerifiedProduct).where(VerifiedProduct.description_no_size == strip_sizes(body.text))
         verified_no_size_result = await db.execute(verified_no_size_query)
-        verified = verified_no_size_result.scalar_one_or_none()
-        if verified:
+        verified = await _scalar_one_or_none(verified_no_size_result)
+        if _is_verified_product_match(verified):
             top = {
                 "hsn_code": verified.hsn_code,
                 "description": verified.description,

@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 import numpy as np
 import structlog
+from functools import lru_cache
 
 log = structlog.get_logger()
 _matcher_instance = None
@@ -166,6 +167,67 @@ def tokenize(text: str) -> list[str]:
     return [t for t in tokens if t not in STOPWORDS and t not in BRANDS and len(t) >= 2]
 
 
+def strip_sizes(text: str) -> str:
+    """Normalize text for size-insensitive verified-product lookups."""
+    text = re.sub(
+        r'\b\d+(?:\.\d+)?\s*(?:g|gm|gms|kg|kgs|ml|l|ltr|litre|liter|'
+        r'pc|pcs|nos|no|n|p|in|mg|oz|lb)\b',
+        ' ',
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(r'\b\d+\s*x\s*\d+\b', ' ', text, flags=re.IGNORECASE)
+    text = re.sub(r'\b\d+\s*\+\s*\d+\b', ' ', text, flags=re.IGNORECASE)
+    text = re.sub(r'\b\d+[snp]\b', ' ', text, flags=re.IGNORECASE)
+    text = re.sub(r'\b\d+\b', ' ', text)
+    text = re.sub(r'[^A-Za-z\s]', ' ', text)
+    return re.sub(r'\s+', ' ', text).strip().upper()
+
+
+@lru_cache(maxsize=1)
+def _load_spacy_model():
+    """Best-effort spaCy loader; returns None when spaCy/model is unavailable."""
+    try:
+        import spacy
+        return spacy.load("en_core_web_sm")
+    except Exception as exc:
+        log.info("matcher.spacy_unavailable", error=str(exc))
+        return None
+
+
+def extract_core_product(text: str) -> str:
+    """
+    Extract the most product-like term from the query.
+
+    Preferred path uses spaCy to capture the last noun/proper noun.
+    Fallback path uses the last meaningful token after abbreviation expansion.
+    """
+    expanded = expand_fmcg_abbreviations(text)
+    nlp = _load_spacy_model()
+    if nlp is not None:
+        try:
+            doc = nlp(expanded)
+            nouns = [
+                token.lemma_.lower()
+                for token in doc
+                if token.pos_ in {"NOUN", "PROPN"}
+                and token.is_alpha
+                and token.lemma_.lower() not in STOPWORDS
+                and token.lemma_.lower() not in BRANDS
+            ]
+            if nouns:
+                return nouns[-1]
+        except Exception as exc:
+            log.warning("matcher.spacy_extract_failed", error=str(exc))
+
+    fallback_tokens = re.findall(r'[a-z]{2,}', expanded.lower())
+    meaningful = [
+        token for token in fallback_tokens
+        if token not in STOPWORDS and token not in BRANDS
+    ]
+    return meaningful[-1] if meaningful else ""
+
+
 def expand_tokens(tokens: list[str]) -> list[str]:
     expanded: list[str] = []
     for token in tokens:
@@ -251,7 +313,7 @@ class HybridMatcher:
             log.warning("matcher.semantic_error", error=str(e))
             return []
 
-    def match(self, text: str, top_k: int = 5) -> list[dict]:
+    def _match_once(self, text: str, top_k: int = 5) -> list[dict]:
         exact = self._exact_match(text)
         if exact:
             return exact[:top_k]
@@ -269,6 +331,49 @@ class HybridMatcher:
                 )
         results = sorted(merged.values(), key=lambda x: x["score"], reverse=True)
         return results[:top_k]
+
+    def _should_retry_with_core_product(self, text: str, matches: list[dict]) -> bool:
+        if not text.strip():
+            return False
+        if not matches:
+            return True
+        return matches[0].get("score", 0.0) < 0.35
+
+    def _tag_retry_matches(self, matches: list[dict], core_product: str) -> list[dict]:
+        tagged = []
+        for item in matches:
+            updated = dict(item)
+            method = updated.get("method", "unknown")
+            updated["method"] = f"{method}_last_noun_retry"
+            updated["retry_query"] = core_product
+            tagged.append(updated)
+        return tagged
+
+    def match(self, text: str, top_k: int = 5) -> list[dict]:
+        primary_results = self._match_once(text, top_k=top_k)
+        if not self._should_retry_with_core_product(text, primary_results):
+            return primary_results
+
+        core_product = extract_core_product(text)
+        normalized_text = expand_fmcg_abbreviations(text).strip().lower()
+        if not core_product or core_product == normalized_text:
+            return primary_results
+
+        retry_results = self._match_once(core_product, top_k=top_k)
+        if not retry_results:
+            return primary_results
+
+        if not primary_results or retry_results[0].get("score", 0.0) > primary_results[0].get("score", 0.0):
+            log.info(
+                "matcher.last_noun_retry_used",
+                original_text=text[:80],
+                retry_query=core_product,
+                original_score=primary_results[0].get("score", 0.0) if primary_results else 0.0,
+                retry_score=retry_results[0].get("score", 0.0),
+            )
+            return self._tag_retry_matches(retry_results, core_product)
+
+        return primary_results
 
 
 def get_matcher() -> HybridMatcher:
