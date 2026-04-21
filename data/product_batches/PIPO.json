@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "PIPO POPCORN BUTTER LOVERS 60G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PIPO POPCORN B.BUTR N SPIC 70G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PIPO POPCORN CLASSIC SALTED 150G",
+    "HSN_Ref": "20081920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PIPO POPCORN S.THEATR BUTR 70G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PIPO POPCRN W.W.WNDR MASALA70G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  }
+]

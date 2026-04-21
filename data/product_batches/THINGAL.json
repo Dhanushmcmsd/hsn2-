@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "THINGAL CURD CHILLY 40G",
+    "HSN_Ref": "07149090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "THINGAL MEDIUM SOUR CURD 300ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "THINGAL TIC TIC SOUR CURD 300ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "THINGAL BUTTER MILK 200ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THINGAL IDLY/DOSA MAVU 1KG",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

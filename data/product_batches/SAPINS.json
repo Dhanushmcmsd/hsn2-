@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "SAPINS GHEE 200ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "SAPINS CURD REGULAR 500ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "SAPINS PULISSERY SPECIAL CURD 450G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "SAPINS RICH CREAMY CURD 450G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "SAPINS SET CURD TUB 1KG",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "SAPINS SET CURD TUB 500G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SAPINS THICK MILK 450ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAPINS PANEER 200G",
+    "HSN_Ref": "4061000",
+    "GST_Ref": "GST 5%"
+  }
+]

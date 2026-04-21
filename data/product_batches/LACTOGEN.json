@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LACTOGEN 1 INFANT UPTO 6MNTH BIB 400G",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LACTOGEN 2 FOLLOW UP AFTER 6M BIB 400G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LACTOGEN AFTER 12M FOLLOW UP BIB 400G",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LACTOGEN AFTER 18 UPTO 24 FU PWR 400G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  }
+]

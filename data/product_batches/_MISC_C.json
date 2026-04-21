@@ -1,0 +1,416 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "COFFEE MATE COFFEE CREAMER 400G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "COLAGTE ZIGZAG TOOTH BRUSH B2G1 S",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "CHINNAR PREMIUM TEA 250G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "CHINNAR PREMIUM TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "COOKIE CUTTER ASSORTED",
+    "HSN_Ref": "39264019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "CANDYMAN FRUITE FILLS 350G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CERAMICO MILK MUG 1PCS PKT",
+    "HSN_Ref": "69120040",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CEREGROW2-6 CEREAL WITH MILK N FRUIT300G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "COCOYUM COCONUT OIL POUCH 900ML",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "CLEAR ACTV CARE A.DNDRF HAIR OIL 150ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "CHEK DETERGENT BAR 200G",
+    "HSN_Ref": "34011940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "COSMIQE DETERGENT POWDER 6KG",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "C-WASH WASHING SOAP 150G",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "C19 DISHWASH CONCENTRATE 500ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CABBAGE",
+    "HSN_Ref": "07041000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CABBAGE RED",
+    "HSN_Ref": "07041000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAKE ACC NOZZLE DECORATING SET 8 PC",
+    "HSN_Ref": "73239110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAKE TRAY",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAMAY CLASSIC SOAP RED 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAMAY NATURAL SOAP WHITE 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAPSICUM COLOUR",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAPSICUM GREEN",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAPTAIN OXO BIODEGRDBL GARBAGE BAG-LRG",
+    "HSN_Ref": "39232990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CARTINI FINE DICING KNIFE 7152",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CASHEW REGULAR 350GM",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CASHEW SPLIT REGULAR 100G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAULIFLOWER",
+    "HSN_Ref": "07041000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELARY",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELERY",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHAITHRAM JAYA RICE 10KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHEMBA RAW RICE LOOSE",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHEMBU BIG",
+    "HSN_Ref": "07011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHEMBU SMALL",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHETTAN'S GRATED COCONUT 150G/200G",
+    "HSN_Ref": "08011100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHILLY HYBRID",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHINESE CABBAGE",
+    "HSN_Ref": "07041000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHOW CHOW",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHOWARI REGULAR 100G",
+    "HSN_Ref": "19030000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CINNAMON REGULAR 25G",
+    "HSN_Ref": "09061990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CITI NOVA GL.VERONCA TUMBLR BW",
+    "HSN_Ref": "70133700",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CITRUS PLUS DISHWASH BAR",
+    "HSN_Ref": "34011941",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLEANNCLEAR BHC DAILY SCRB 40G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLEANNCLEAR FACE WSH LEMN 50ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLING FILM KC1573",
+    "HSN_Ref": "39201012",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLING FILM ROLL",
+    "HSN_Ref": "39204900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLOROX LIQUID BLEACH ORG 500ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLOVE REGULAR 25G",
+    "HSN_Ref": "09071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CLUSTER BEANS",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COBRA ST.JOHN DEO COOL N LIVE 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COBRA ST.JOHN SPORT BDY SPRAY MEN150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COCCINIA",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COLGTAE PAIN OUT DENTAL GEL 10G",
+    "HSN_Ref": "33049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CONTAINER SEAL",
+    "HSN_Ref": "84807900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COWPEA WHITE LONG",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COWPEA WHITE SHORT",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CPC MIRACLE SLIPPERS 5-10 INCH",
+    "HSN_Ref": "64022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUSTCRUMB BROASTED CHIC. MIX 350G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUSTNCRUMB CUSTARD POWDER 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUSTNCRUMB VANILA CAKE MIX 300G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUCUMBER LOCAL",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUCUMBER SALAD",
+    "HSN_Ref": "07070000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUMIN REGULAR 50G",
+    "HSN_Ref": "09093200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUMIN/JEERAKAM LOOSE",
+    "HSN_Ref": "09093200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURRY LEAF",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUSTARD APPLE",
+    "HSN_Ref": "08101000",
+    "GST_Ref": NaN
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUT MANGO PICKLE LOOSE",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUTTING BOARD KC1725",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CUTTING BOARD KC2323",
+    "HSN_Ref": "44199020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Extruded",
+    "Description": "CHEETOS MASALA BALLS 30G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  }
+]

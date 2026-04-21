@@ -1,0 +1,488 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY DAIRY MILK CHOCOLATE 46G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY DAIRYMILK SILK CHOCOLATE60G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY FIVE STAR CHOCOLATE 18G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY FIVE STAR CHOCOLATE BAR 33G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY FUSE CHOCOLATE 21G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY FUSE CHOCOLATE 43G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY GEMS CHOCOLATE 15.8/21.36G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY GEMS CHOCOLATE CARTON 28.48G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY GEMS SURPRSE CHOCOLATE17.8G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CADBURY HOT CHOCOLATE 200G",
+    "HSN_Ref": "18069040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "CADBURY CHOC.BAKE CHOC.CHIP COOKIE 83G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "CADBURY CHOC.BAKE CHOC.CHIP COOKIE167G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "CADBURY CHOCOBAKE CHOC FILD COOKIE 20G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "CADBURY CHOCOBAKES COOKIES 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "CADBURY CHOCOBAKES COOKIES 300G CRTN",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "CADBURY CHOCOBAKES COOKIES 57.5G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK 11G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK CHOCOLT 18G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK CRACKLE 36G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK FAMILY PK 126G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK FRIT NUT 36G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK FRUIT NUT 55G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK FRUIT NUT 75G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK LICKABLES 18.5G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK ROAST ALMOND 58G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK SILK BUBBLY 112G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK SILK BUBBLY 46G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK SILK OREO 124G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRY MILK SILK OREO 58.5G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRYMILK CRISPELO CHOC 33/35G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRYMILK R.ALMOND CHOC 36G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY DAIRYMILK SILK CHOCO 150G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY IMP DAIRY MILK CHOCOLTE 160G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY IMP DAIRY MILK FRUTNUT 160G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CADBURY IMP DAIRY MILK RST ALMND 160G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY B.VITA 5 STAR MAGIC 500GPCH",
+    "HSN_Ref": "18069040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY B.VITA 5STAR MAGIC JAR 500G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY BOURNVILLE RICH COCOA 31G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY BOURNVITA BISCT 250G TIFFIN PK",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY BOURNVITA BISCUIT 120G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY BOURNVITA BISCUIT 46.5G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CELEB 126.2G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CELEBRATION 120.2G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOC.LYRD CAKE 6P 114G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOCLAIR GLD COFFE 5.5G 100+5U",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOCLAIRS GLD COFFE5.2GX60P",
+    "HSN_Ref": "18069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOCLAIRS GOLD 5.5GX 25UPCH",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOCLAIRS GOLD 525G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOCOBAKES CAKE 21G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY CHOCOBAKES CAKE 228G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY D.M SILK ALMOND134G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY D.M SILK HAZELNUT 54G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY D.M SILK HOME TRT 135G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY DM CHOC.FAMILY PK 105G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY DM CRISPELLO 13G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY DM SILK FRTNUT 129G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY DM SILK HAZELNUT 134G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY FIVE STAR 3D CHOC 40G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY FIVE STAR HOME TREATS 144G 15U",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY FIVE STAR OREO 40G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY FUSE CHOC.HOME TREATS 156G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY GANACHE 137G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY GEMS BDAY PACK 3.56G X50U",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY NUTTIES 30G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO CHOC.BISCT 41.75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO CHOC.CRM BISCUIT 120/125G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO CHOC.CRM BISCUIT 300G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO ORI.VANILLA CREME46.3G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO ORIGINAL VANILLA 120/125G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO STRAWBERRY CREME 41.75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO STRWBERY CRM.BISC 120G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO VANLA CRM 876.75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY OREO VANLA J.P 459.25G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY PERK 20G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY PERK MINI TREAT 115.5G/126G",
+    "HSN_Ref": "19053290",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY SHOTS 18G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY SILK GANACHE 58G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY SILK MOUSSE LARGE 110G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY SILK MOUSSE SMALL 48.5G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY TEMPTATION RUM RAISIN 70G CRTN",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CADBURY WH.ALMOND 40G/54G PCH",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  }
+]

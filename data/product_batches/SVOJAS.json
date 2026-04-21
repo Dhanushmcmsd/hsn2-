@@ -1,0 +1,68 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "SVOJAS FARMS WAYANADAN COFFEE 250G",
+    "HSN_Ref": "09012190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "SVOJAS FARMS WAYAND GINGER COFFEE 100G",
+    "HSN_Ref": "21013010",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS CRUSHED PEPPER 100G",
+    "HSN_Ref": "09041150",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS FOXT.MILLET DOSA MIX 350G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS HONEY 350G",
+    "HSN_Ref": "04090000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS MILLET NUTRI DOSA MIX350G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS PRL MILLET PUTTU FLR 350G",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS RAGI MILLET DOSA MIX 350G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS SOR.MILLET PUTTU FLR 350G",
+    "HSN_Ref": "10082039",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS SORGHUM MILLET UPMA 350G",
+    "HSN_Ref": "19042000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SVOJAS FARMS WHOLE PEPPER WAYANAD 100G",
+    "HSN_Ref": "09071030",
+    "GST_Ref": "GST 5%"
+  }
+]

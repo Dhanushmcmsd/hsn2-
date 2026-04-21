@@ -1,0 +1,158 @@
+[
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "THALOLAM PEANUT CANDY DOUBLE 200G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "THALOLAM PEANUT CANDY SINGLE 100G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM ACHAPPAM BIG 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM ACHAPPAM SMALL 200G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM CUP CAKE 200G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM FLOURY PEANUT 100G",
+    "HSN_Ref": "20081920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM KERALA MADAKKU SAN 250G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM KERALA MURUKKU 250G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM KUZHALAPPAM 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM MADHURASEVA 200G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM OVAL CAKE 200G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM PAKKAVADA 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM SESAME BALL 100G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM SPICY PEANUTS 100G",
+    "HSN_Ref": "20081930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM SWEET BANANA 160G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "THALOLAM SWEET KUZHALAPPAM 170G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "THALOLAM CORN FLAKES MIXTURE 150G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "THALOLAM MIXTURE CHILLI 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "THALOLAM MIXTURE CHILLI 400G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "THALOLAM MIXTURE CHILLI FREE 400G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "THALOLAM MIXTURE CHILLY FREE 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "THALOLAM MIXTURE DAL 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "THALOLAM BANANA CHIPS 200G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "THALOLAM BANANA CHIPS 500G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "THALOLAM TAPIOCA CHIPS CHILLI 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "THALOLAM TAPIOCA CHIPS CHILLI FREE150G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  }
+]

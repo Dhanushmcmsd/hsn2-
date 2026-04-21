@@ -1,0 +1,242 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "ELANADU GUAVA FRUIT JUICE 200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "ELANADU MANGO FRUIT JUICE 200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "ELANADU MILK SHAKE CHOCOLATE 200ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELANADU BUTTER SALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELANADU BUTTER UNSALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELANADU GHEE 100ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELANADU GHEE 200ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELANADU GHEE 500ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELANADU GHEE 50ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU CUP CURD 1000ML CONTAINER",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU CUP CURD 100ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU CUP CURD 200ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU CUP CURD 400ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU CUP CURD 500ML CONTAINER",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU FR.YOGURT STRWBRY 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU FRUT YOGURT MANGO 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU PACKET CURD 140ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU PACKET CURD 400ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU PACKET CURD 500ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU PROBIOTIC CURD 1000ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU PROBIOTIC CURD 400ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ELANADU THICK CURD 450ML POUCH",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU BOTTLE MILK 1000ML",
+    "HSN_Ref": "04011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU BOTTLE MILK 500ML",
+    "HSN_Ref": "04011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU COW MILK 475ML",
+    "HSN_Ref": "04011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU MILK SHAKE ALMOND 200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU MILK SHAKE STRAWBERRY 200ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU MILK SHAKE VANILLA 200ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "ELANADU STANDERDISED MILK 475ML",
+    "HSN_Ref": "04011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU CHOCO BAR 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU FROZEN PANEER 200G",
+    "HSN_Ref": "04061090",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU HALF COOKED CHAPATHI 10NOS",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU IDLY DOSA BATTER 1KG",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU KATTIMORU 450ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU MANGO BAR 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU MANGO ICE CREAM 1000ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU PANEER 200G",
+    "HSN_Ref": "04061090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU PISTA ICE CREAM 500ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU SIPUP VANILA 50ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELANADU STRAWBRY ICE CRM 500ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  }
+]

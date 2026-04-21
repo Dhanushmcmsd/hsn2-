@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MURALYA CURD 500G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MURALYA PROBIOTIC SET CURD 400G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MURALYA HOMOG.TOND MILK450ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MURALYA HOMOG.TONED MILK 1LTR",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  }
+]

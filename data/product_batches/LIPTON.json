@@ -1,0 +1,86 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON CLEAR GREEN TEA BAGS 10S 13G",
+    "HSN_Ref": "09023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON CLEAR LGT G.TEA BG50S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON DARJEELING TEA LEAVES 250G CRT",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON HONEY LEMON GREEN TEA 50S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON HONEY LEMON GREEN TEA BAGS 10S",
+    "HSN_Ref": "09023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON HONEY LEMON GREEN TEA BAGS 25S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON LEMON ZEST GREEN TEA BAGS 20S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON PURE LIGHT GREEN TEA BAGS 25S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON PURELIGHT LOOSE GREEN TEA 100G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON SIPDIGEST GREEN TEA BAG 10S",
+    "HSN_Ref": "09023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON SIPDIGEST GREEN TEA BAG 25S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON TULSI NATURA GREEN TEA BAGS 25N",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LIPTON YELLOW LABEL TEA LEAVES CRT250G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LIPTON GREEN HONY LMN 100G CRT",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  }
+]

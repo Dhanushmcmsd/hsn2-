@@ -1,0 +1,188 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "B+D BXCM0401IN 4CUP COFFEE MKR",
+    "HSN_Ref": "85169000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "B NATURAL APPLE JUICE 1000ML",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "B NATURAL CRANBERRY JUICE 1LTR",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "B NATURAL GUAVA JUICE 980ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "B NATURAL LITCHI JUICE 980ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "B NATURAL MIXED FRUIT JUICE 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "B NATURAL MIXED FRUIT JUICE 980ML",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B FIZZ CAN 250ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B FIZZ PET 250ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B NATURAL APPLE AWE 180ML",
+    "HSN_Ref": "20097900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B NATURAL GUAVA GUSH 200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B NATURAL LITCHI LUSCIOUS 200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B NATURAL ORANGE OOMPH 980ML",
+    "HSN_Ref": "22029020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXBL6002IN H.BLENDR W.CHPR",
+    "HSN_Ref": "85094090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXEG2801IN EGG COOKER",
+    "HSN_Ref": "85169000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXGS1501IN 1500W GR.STEAMR",
+    "HSN_Ref": "85167920",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXIC0101IN INDUCTN COOKTOP",
+    "HSN_Ref": "85169000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXIR1801IN 1800W S.IRON BX",
+    "HSN_Ref": "85164000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXIR2001IN 2000W S.IRON BX",
+    "HSN_Ref": "85164000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXIR2201IN 2200W S.IRON BX",
+    "HSN_Ref": "85164000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXIR2202IN 2200W S.IRON BX",
+    "HSN_Ref": "85164000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXKE1703IN 1.7L D.P.KETTLE",
+    "HSN_Ref": "85161000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXMX3001IN H.MXR 5SPD M350",
+    "HSN_Ref": "85094090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXMX3002IN H.MXR W.BWL M700",
+    "HSN_Ref": "85094090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXSA0201IN 2SLC SNDWCH MKR",
+    "HSN_Ref": "85167200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXTO0401IN 4SL POPUP TOAST",
+    "HSN_Ref": "85169000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B+D BXTO1901IN 19L OTG",
+    "HSN_Ref": "85169000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B. FIT ADULT DIAPERS ECONOMY LARGE 10S",
+    "HSN_Ref": "96190040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B. FIT ADULT DIAPERS ECONOMY MEDIUM 10S",
+    "HSN_Ref": "96190040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B. FIT ADULT PANTS LARGE 10S",
+    "HSN_Ref": "96190040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "B. FIT ADULT PANTS MEDIUM 10S",
+    "HSN_Ref": "96190040",
+    "GST_Ref": "GST 5%"
+  }
+]

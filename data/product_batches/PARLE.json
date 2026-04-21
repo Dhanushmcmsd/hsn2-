@@ -1,0 +1,284 @@
+[
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE 20-20 BUTTER COOKIE 150G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE 20-20 CASHEW BUTTER COOKIES 150G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE FAB BOURBON 500G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE HAPPY CHOCO CHIP COOKIES 400G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE HS BLACK BOURBON CHOCO 300G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE HS BLACK BOURBON CHOCOLATE 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE HS BLACK BOURBON VAN 300G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE HS BLACK BOURBON VANILLA 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE HS MILANO CHO.COOKIE75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE MILANO MIXED BERRIES COOKIES 75G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "PARLE NUTRICRUNCH GINGER COOKIES 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Crackers",
+    "Description": "PARLE NUTRICRUNCH LITE CRACKERS 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "PARLE MARIE 250G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "PARLE MARIE 800G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "PARLE KRACK JACK BUTTER MASALA 120G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "PARLE MILK SHAKTI 350G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE 20-20 GLD CAS.ALMD 604.8G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE 20-20 GOLD CHOC.CHIP400G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE 20-20 NICE 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE G GOLD 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE G GOLD 80G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE G OATS BERRIES 93.75G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE G ORGINAL GLUCO BISCUITS 110G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HIDE SEEK 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HIDE SEEK 33G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HIDE SEEK CHOCO ALMOND 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HIDE SEEK CHOCO ROLLS 120G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HIDE N SEEK 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HIDE N SEEK MILANO 250G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HS CHOCO ROLLS 250G",
+    "HSN_Ref": "19053211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HS CREME SANDWICHES ORANGE 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HS CREME SANDWICHES VANILA 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HS CRM SANDWICHS STRAWBERY 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE HS CRM SNW.CHOC100G+25G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE KRACK JACK 113.4G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE KRACK JACK 200G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE KRACK JACK 63G/75.6G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE LONDONDERRY PCH 260.38G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MAGIX CHOCLT BISC 183.6G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MILANO 120G/150G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MILANO 75G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MONACO 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MONACO 52G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MONACO PIZZA 311.04G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE MONACO SIXER SALTED JAR 200G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE POPPINS MAZELO 25G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PARLE RUSK ELACHI 182G",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  }
+]

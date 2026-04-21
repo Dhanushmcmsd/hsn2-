@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SOMETHING GOOD MILK CHOCLATE 18X12X20G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SOMETHING GOOD MOOD MILK CHOC 18X25X8G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOMETHING GOOD DARK CHOCLATE 18X12X20G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOMETHING GOOD MOOD DARK CHOC 18X24X8G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  }
+]

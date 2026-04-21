@@ -1,0 +1,794 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "LEMAM JUICE STRAINER SIZE 4",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "LEMAM JUICE STRAINER SIZE 6",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO IMPRS TEA SPN22 1P",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO IMPRS TEA SPOON 20",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO IMPRS TEA SPOON 22",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO KENT TEA SPOON 20",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO KENT TEA SPOON 22",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO SIGMA TEA SPN22 1P",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO SIGMA TEA SPOON 20",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM FOLIO SIGMA TEA SPOON 22",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM PEARL TEA SPOON 1PCS",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM PEARL TEA SPOON 6PCS TAG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM TEA STRAINER SIZE 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM WH TEA STRAINER SIZE 1",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM WH TEA STRAINER SIZE 2",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM WH TEA STRAINER SIZE 3",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LEMAM WH TEA STRAINER SIZE 4",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM 3BASTING LADDLE SIZE 2",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM AMERICAN LADDLE SINGLE",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM AMERICAN PAN LADDLE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM AMERICAN ZARA SKIMMER",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM APPACHATTY 2.7",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING LADDLE SIZE 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING LADDLE SIZE 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING LADDLE SIZE 4",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING LADDLE SIZE 5",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING OVAL SIZE 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING OVAL SIZE 2",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING OVAL SIZE 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING PAN SIZE 1",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING PAN SIZE 2",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING PAN SIZE 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING PAN SIZE 4",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING PAN SIZE 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING TAVETA SIZE 4",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING TAVETA SIZE 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING TAVETA SIZE 6",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING TAVETA SIZE 7",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING ZARA SIZE 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING ZARA SIZE 4",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING ZARA SIZE 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING ZARA SIZE 6",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BASTING ZARA SIZE 7",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.10",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.12",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.13",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.14",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.15",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.16",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.17",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM BIDDING DABBA NO.18",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM CHIRATTA PUTTU",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM CUTLERY COMBO 1 (L,P,Z)",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM CUTLERY COMBO 2 (O,P,Z)",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM CUTLERY COMBO 3(L,P,R.T)",
+    "HSN_Ref": "82159990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM DOSA LADDLE 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM EGG WHISK 1.4MM 12",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM FRY TURNER",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM GRAN.KADAI 240CMIB G.LID",
+    "HSN_Ref": "76151021",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM GRANITE BIRIYANI POT 8L",
+    "HSN_Ref": "68029300",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM HANDY CHOPPER 450ML",
+    "HSN_Ref": "82100000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM HOT POT MRVL5500 2500ML",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM KNIFE SHARPNER",
+    "HSN_Ref": "82055100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM LIFTER JMB MIRROR POLISH",
+    "HSN_Ref": "34059090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM MULTPRPS SCISSORS W.CVR",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM NS PATHIRI TAWA FOLD SQ",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PANJA SIZE 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PANJA SIZE 4",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL BABY FORK 1PCS",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL BABY FORK 6PCS TAG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL BABY SOUP SPN 6PTG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL BABY SOUP SPOON 1P",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL BABY SPOON 6P TAG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL COFEE SPOON 6P TAG",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL DESERT FORK 6P TAG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL DESERT KINIFE 3",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL DESERT SOUP 6P TAG",
+    "HSN_Ref": "69111019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL DESRT SPOON 6P TAG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PEARL ICECRM SPOON 6P TG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PUSH CHOPPER 750ML",
+    "HSN_Ref": "82100000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM PUTTU KUDAM",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RICE PAN SIZE 2",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RICE PAN SIZE 3",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RICE PAN SIZE 4",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RUBY EL.BABY SPOON 6P TG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RUBY KG.BABY SPOON 6P TG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RUBY MS.BABY SPOON 6P TG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RUBY PLS.BABY SPN 6P TAG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RUBY PR.BABY SPOON 6P TG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM RUBY QN BABY SPOON 6P TG",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM S S KALAM NO.2",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM S S KALAM NO.3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM S.WTCH BOTOM KADAI NO.14",
+    "HSN_Ref": "73239490",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM S.WTCH BOTOM KADAI NO.15",
+    "HSN_Ref": "73239490",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS GLASS INDICA",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS GLASS NEW JET 7",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS GLASS RITZ",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS GLASS ROYAL",
+    "HSN_Ref": "70133700",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS GLASS SPICE",
+    "HSN_Ref": "70139900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS LIGHTER",
+    "HSN_Ref": "96138090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS LIGHTER PREMIUM COMBO",
+    "HSN_Ref": "96138090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS MUG 10",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS MUG 7",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS MUG 8",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS MUG 9",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PAKAD (LIFTER) JUMBO",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PAKAD (LIFTER) MEDIUM",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PAKAD (LIFTER) SMALL",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PLATE 10 MIROR P.PRM",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PLATE 11 MIROR P.PRM",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PLATE 6 MIRROR P.PRM",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PLATE 8 MIRROR P.PRM",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PRABHUCHETTY NO.10",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PRABHUCHETTY NO.11",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PRABHUCHETTY NO.12",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PRABHUCHETTY NO.8",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS PRABHUCHETTY NO.9",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS SAUCE PAN 14",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS TOPE SIZE 13",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS TOPE SIZE 14",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS TOPE SIZE 15",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS TOPE SIZE 16",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS TOPE SIZE 17",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS TOPE SIZE 18",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS VENNACHETTY NO.10",
+    "HSN_Ref": "73239490",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS VENNACHETTY NO.11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS VENNACHETTY NO.12",
+    "HSN_Ref": "73239490",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS VENNACHETTY NO.8",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SS VENNACHETTY NO.9",
+    "HSN_Ref": "73239490",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM STEEL HOTPOT PEARL2500ML",
+    "HSN_Ref": "73239420",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LEMAM SUPER PLUS LADDLE 2",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  }
+]

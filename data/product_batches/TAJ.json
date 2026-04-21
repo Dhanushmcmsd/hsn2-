@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TAJ MAHAL LEAF TEA BAGS 25S 50G",
+    "HSN_Ref": "09023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TAJ MAHAL RICH TEA 250/275G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TAJ MAHAL RICH TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TAJ MAHAL TEA BAGS 100S",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TAJ MAHAL TEA CRT 100/110G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  }
+]

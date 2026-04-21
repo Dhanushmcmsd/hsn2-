@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "ENSURE CHOCOLATE FLAVOUR 400G REFILL",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ENSURE ADULT NUTRTNL PDR CHOC 200G RFL",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ENSURE DIABETES CARE VANILLA 200G REFL",
+    "HSN_Ref": "21069091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ENSURE DIABETIC VANILLA 1KG REFILL",
+    "HSN_Ref": "21069091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ENSURE DIABETIC VANILLA 400G REFILL",
+    "HSN_Ref": "21069091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ENSURE NUTRITNL POWDER VANILA 200G RFL",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ENSURE VANILA FLAVOUR 400G REFILL",
+    "HSN_Ref": "95059090",
+    "GST_Ref": "GST 18%"
+  }
+]

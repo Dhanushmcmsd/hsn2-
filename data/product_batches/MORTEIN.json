@@ -1,0 +1,56 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MORTEIN DEEP MSQT COIL RED 10P",
+    "HSN_Ref": "38089191",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MORTEIN P.B MQT COIL 12H 10+4P",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MORTEIN P.G MSQT COIL GRN 10P",
+    "HSN_Ref": "38089191",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORTEIN 2 IN 1 INSECT KILLER 200ML",
+    "HSN_Ref": "38089191",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORTEIN 2 IN 1 INSECT KILLER 400ML",
+    "HSN_Ref": "38089199",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORTEIN MOSQUITO KILLER 200ML+ 50ML FR",
+    "HSN_Ref": "38089191",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORTEIN MOSQUITO KILLER 425ML",
+    "HSN_Ref": "38089191",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORTEIN POWERGARD RAT KILL CAKE 100G",
+    "HSN_Ref": "38089910",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORTEIN POWERGARD RAT KILL CAKE 25G",
+    "HSN_Ref": "38089191",
+    "GST_Ref": "GST 18%"
+  }
+]

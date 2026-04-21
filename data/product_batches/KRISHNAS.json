@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "KRISHNAS FRENCH COFFEE 250GBX",
+    "HSN_Ref": "09011119",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "KRISHNAS P.DG.COFFEE 250G BOX",
+    "HSN_Ref": "09011119",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "KRISHNAS ASSAM LEAF TEA 250GBX",
+    "HSN_Ref": "09024040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRISHNAS CHUKKUKAPPI 100G JAR",
+    "HSN_Ref": "09011119",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRISHNAS IDLY PODI 100G JAR",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  }
+]

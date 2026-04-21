@@ -1,0 +1,68 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "JAYA COFFEE 100G",
+    "HSN_Ref": "09019020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "JAYA COFFEE 250G",
+    "HSN_Ref": "09019020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA PREMIUM RICE LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE 5 STAR LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE 7STAR 1KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE 7STAR 2KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE 7STAR 5KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE 7STAR LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE REGULAR 1KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE REGULAR 2KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYA RICE REGULAR 5KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  }
+]

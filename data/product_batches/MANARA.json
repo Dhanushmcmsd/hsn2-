@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "MANARA TEA TREE FACE WASH 200ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "MANARA HERBAL HAIR OIL 200ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "MANARA HERBAL SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANARA CHARCOAL FACE WASH 200ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANARA TURMERIC FACE WASH 200ML",
+    "HSN_Ref": "34013000",
+    "GST_Ref": "GST 5%"
+  }
+]

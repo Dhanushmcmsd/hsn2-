@@ -1,0 +1,488 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "BAKERS CHOCOLATE SYRUP 1KG BTL",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "BAKERS DRINKING CHOCOLATE 100G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "BAKERS FANTASY VERMICELLY 100G",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "BAKERS ICE CREAM POWDER CHOCOLATE 100G",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "BAKERS MILKSHAKE MIX CHOCOLATE 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BAKERS FALOODA MIX BUTTERSCOTCH 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX BUTTERSCOTCH 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX PDR STRAWBRY 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX PDR VANILLA 100G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX POWDER BADAM 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX POWDER MANGO 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX POWDER PISTA 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BAKERS MILKSHAKE MIX POWDER ROSE 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS AL FAHAM MASALA 80G",
+    "HSN_Ref": "09109990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS BAKING POWDER 100G",
+    "HSN_Ref": "21023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS BAKING SODA 100G",
+    "HSN_Ref": "28363000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS BARBEQUE SAUCE 250G",
+    "HSN_Ref": "21039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS BIRIYANI FLAVOUR 20/28ML",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS BLACK SALT PDR 200G JAR",
+    "HSN_Ref": "25010090",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS BREAD CRUMBS 50G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CAKE MIX BLACK FOREST 225G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CAKE MIX RED VELVET 225G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CAKE MIX WHITE FOREST 225G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CHAT MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CHICKEN 65 SPICE MIX 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CHINA GRASS 10G",
+    "HSN_Ref": "13023100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS COCOA POWDER 50G",
+    "HSN_Ref": "18050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS COLOURED BALLS 100G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CORNFLAKES 250G(1+1)",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CORNFLOUR 100G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS CUSTARD POWDER 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS DRIED YEAST 25G",
+    "HSN_Ref": "21021020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS EGG MAYONNAISE 220G",
+    "HSN_Ref": "21039030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS EGGLESS MAYONNAISE 220G",
+    "HSN_Ref": "21039030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS EGGLESS MAYONNAISE 85G",
+    "HSN_Ref": "21039030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS FALOODA MIX MANGO 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS FALOODA MIX PISTA 200G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS FALOODA MIX ROSE 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS FALOODA MIX STRAWBERRY 200G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS GELATINE 50G",
+    "HSN_Ref": "35030020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS GINGER GARLIC PASTE 200G",
+    "HSN_Ref": "21039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS GREEN CHILLI SAUCE 85G",
+    "HSN_Ref": "21039020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS ICE CREAM POWDER VANILA 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS ICING SUGAR 100G",
+    "HSN_Ref": "17019990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS IN.CHEF APPLE CIDER VINEGR500ML",
+    "HSN_Ref": "22090010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS INDIAN CHEF SOYA SAUSE 200/230G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JALJIRA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JELLY CRYSTAL LEMON 85G/90G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JELLY CRYSTAL MANGO 85G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JELLY CRYSTAL ORANGE 90G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JELLY CRYSTAL PINEAPPLE 90G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JELLY CRYSTAL STRAWBERRY 85G/90G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS JIGARTHANDA MIX POWDER 80G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS KABAB MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS KABSA MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS KASOORI METHI 25G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR APPLE GREEN 20/25ML",
+    "HSN_Ref": "32041989",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR BLUE 20/25ML",
+    "HSN_Ref": "32041989",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR LEMON YELLOW 20ML",
+    "HSN_Ref": "32041989",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR ORANGE RED 25ML",
+    "HSN_Ref": "32041989",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR RASBERRY RED 20ML",
+    "HSN_Ref": "32041989",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR ROSE PINK 25ML",
+    "HSN_Ref": "32041989",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR TOMATTO RED 20ML",
+    "HSN_Ref": "32149090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS LIQUID COLOUR VANILLA 20ML",
+    "HSN_Ref": "33021010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS MACARONI PASTA 500G(1+1)",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS MANDI MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS P.APL N MINT COOLR 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS PENNE PASTA 500G(1+1)",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS PINEAPPLE FLAVOUR 28ML",
+    "HSN_Ref": "33021010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS PIZZA PASTA SAUCE 250G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS RED CHILLI SAUSE 85G",
+    "HSN_Ref": "21039020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS SCHEZWAN CHUTNEY 250G",
+    "HSN_Ref": "21039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS SOYA SAUCE 85G",
+    "HSN_Ref": "21031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS TOMATO SAUCE 200G (1+1) COMBO",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS TOMATO SAUCE 85G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS WHIPPING CREAM PDR CHOCLT 50G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS WHIPPING CREAM PDR STRWBRY 50G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAKERS WIPPING CREAM POWDER 50G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "BAKERS CHOCO CHIPS 100G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "BAKERS TWIN CHOCO CHIPS 100G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "BAKERS WHITE CHOCO CHIPS 100G",
+    "HSN_Ref": "18069000",
+    "GST_Ref": "GST 5%"
+  }
+]

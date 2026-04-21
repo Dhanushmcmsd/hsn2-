@@ -1,0 +1,386 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "BEES FRUITS JUICER KC 2162",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "BEES FRUITS JUICER KC 2298",
+    "HSN_Ref": "8210 00 00",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BINDER CLIP 1PCS KC 2036",
+    "HSN_Ref": "83059010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BIRTHDAY PAPER CUP KC2308",
+    "HSN_Ref": "48239090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BIRTHDAY PAPER PLATE KC2307",
+    "HSN_Ref": "48239090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BODY BATH BRUSH SILICON",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOOK CVR.ROL KAKI 33CM*8M",
+    "HSN_Ref": "39261019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOOK CVR.ROL KAKI 39CM*8M",
+    "HSN_Ref": "48081000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOOK CVR.ROL KAKI 52CM*8M",
+    "HSN_Ref": "48110000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOOK CVR.ROLL PINK BIG 8M",
+    "HSN_Ref": "48114100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOOK CVR.ROLL PINK MED 8M",
+    "HSN_Ref": "39204900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOOK CVR.ROLL PINK SML 8M",
+    "HSN_Ref": "48110000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES BOTTLE OPNER KC 2037",
+    "HSN_Ref": "82055100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE BRWN 36MM X50M",
+    "HSN_Ref": "39191020",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE BRWN 48MM X50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE BRWN 72MM X50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE CLR 12MM X 50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE CLR 18MM X 50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE CLR 24MM X 50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE CLR 36MM X 50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CELLO TAPE CLR 48MM X 50M",
+    "HSN_Ref": "39191000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES CLOTH CLIP KC 1950",
+    "HSN_Ref": "39269099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES COMB DIAMOND 9",
+    "HSN_Ref": "96150000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES COMB MAGIC 9000",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES DOUBLE SIDE TAPE BIG",
+    "HSN_Ref": "39199090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES DOUBLE SIDE TAPE SMALL",
+    "HSN_Ref": "39199090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES EAR BUDS WOODN JAR KC2527",
+    "HSN_Ref": "56012100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES EGG TIMER KC2411",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES EGG WHITE SEPERATOR KC 2000",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES EXAM BOARD PLASTIC EXEL",
+    "HSN_Ref": "48239019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES EXPANDING SPONGE FOR CLEANING",
+    "HSN_Ref": "39211310",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES FRUIT CUTTER KC2275",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES FRY CLIPPER KC1855",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES GARLIC CHOPPER KC2274",
+    "HSN_Ref": "82055190",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES GARLIC GRINDER KC2442",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES GEM CLIP BOX KC 2028",
+    "HSN_Ref": "83050000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES KITCHEN CABINET HOOK KC2409",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES KITCHEN SPATULA KC 1924",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES LEMON SQUIZER KC 1997",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES LOCK KAI-HONG 25MM KC 25",
+    "HSN_Ref": "83011000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES LOCK KAIXING 38MM LONG",
+    "HSN_Ref": "83011000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES LOCK MEIBAO 50MM KC 50",
+    "HSN_Ref": "83010000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES LOCK TRI-MOON 20MM KC 20",
+    "HSN_Ref": "83011000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES MIRROR SHINE 8X6",
+    "HSN_Ref": "70090000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES MULTIPURPOSE HANGER KC2407",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES MULTIPURPOSE STAND GRASS",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES MUTTU PIN ROLL 3P SET PCK",
+    "HSN_Ref": "73194090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PAPER KNIFE KC 1844",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PEELER KNIFE KC1977",
+    "HSN_Ref": "82119390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL BOX FIVE STAR BIG",
+    "HSN_Ref": "39260000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL BOX TOM BIG GAME",
+    "HSN_Ref": "42029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH 1",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH 26",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH 4",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH KC2703",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH KC2704",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH KC2709",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL POUCH KC2716",
+    "HSN_Ref": "42029290",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES PENCIL PUOCH 2",
+    "HSN_Ref": "42020000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES POT HEAT MAT KC 2218",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES ROUND HANGER 8 HOOK",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES TAPE DISPENCER KC 2221",
+    "HSN_Ref": "84720000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES WALL HANGER 4HOOK KC 2544",
+    "HSN_Ref": "83025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BEES WALL HANGER 6 HOOK",
+    "HSN_Ref": "83021010",
+    "GST_Ref": "GST 18%"
+  }
+]

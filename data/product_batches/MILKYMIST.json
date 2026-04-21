@@ -1,0 +1,416 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MILKYMIST CHEESE SLICE 100G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MILKYMIST CHEESE SLICE 200G",
+    "HSN_Ref": "04069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MILKYMIST CHEESE SLICE 480G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "MILKYMIST MILK SHAKE CHOCOLATE 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST BUTTER CHIPLET SALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEDDAR CHEESE 200G",
+    "HSN_Ref": "04064000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEESE BOCK 200G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEESE CUBES 120G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEESE CUBES 200G",
+    "HSN_Ref": "04069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEESE SPREAD GARLIC 200G",
+    "HSN_Ref": "04069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEESE SPREAD NATURAL 200G",
+    "HSN_Ref": "4069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CHEESE SPREAD PEPPER 200G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST COOKING BUTTER UNSALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST COOKING BUTTER UNSALTED 200G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST COOKING BUTTER UNSALTED 500G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CREAM CHEESE 200G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CREAM CHEESE 400G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CURD 400G PCH",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CURD PCH 1KG",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST CURD PCH 200G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST FRESH CREAM PCH 200G",
+    "HSN_Ref": "04014000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST FRUIT YOGHURT BLUEBERRY 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST FRUIT YOGHURT MANGO 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST FRUIT YOGURT PEACH 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GHEE 100ML PET BTL",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GHEE 1LTR PET BTL",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GHEE 500ML PET BTL",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GHEE 50ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GR.YOGRT BLUBRY 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GR.YOGRT CEREAL 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GR.YOGT HNYFIG 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GREEK YOGURT 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GULAB JAMUN MIX 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GULAB JAMUN MIX 500G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST GULAB JAMUN TIN 500G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST LACTOS FREE TONED MILK 250ML",
+    "HSN_Ref": "04014000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST LASSI BLUEBERRY 150/180ML",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST LASSI GREEN APPLE 150/180ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST LASSI MANGO 150/180ML",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST MILK SHAKE STRAWBERRY 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST MILK SHAKE VANILLA 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST MOZZARELLA CHEESE 200G",
+    "HSN_Ref": "04061010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST PANEER 200G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST PANEER 500G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST PANEER CUBES FROZEN 200G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST PIZZA CHEESE BLK200G",
+    "HSN_Ref": "04061010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST PROBIOTIC CURD 200G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST PROBIOTIC CURD 400G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SET CURD 200G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SET CURD 400G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SET CURD 85G",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SET CURD BUCKET 1KG",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SHRIKHAND BADAM PISTA 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SHRIKHAND ELAICHI 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SHRIKHAND MANGO 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SKYR PROTN PLAIN YOGURT 100G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SKYR PROTN PLAIN YOGURT 250G",
+    "HSN_Ref": "04032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SPICED BUTTER MILK 180ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST STIRD FRUIT YOGRT BLUBRY 1KG",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST STIRD FRUT YOGRT STRBRY 100G",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST STIRD FRUT YOGRT STRWBRY 1KG",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SWEET LASSI 150/180ML",
+    "HSN_Ref": "04039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST SWT.CONDNS.MILK 400G",
+    "HSN_Ref": "04029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST TABLE BUTTER 200GM TUB",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST TABLE BUTTER SALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST TABLE BUTTER SALTED 200G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST TABLE BUTTER SALTED 500G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST UHT CREAM 1LTR",
+    "HSN_Ref": "4015000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKYMIST UHT CREAM 200ML",
+    "HSN_Ref": "4015000",
+    "GST_Ref": "GST 5%"
+  }
+]

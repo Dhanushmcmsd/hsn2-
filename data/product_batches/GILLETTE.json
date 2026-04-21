@@ -1,0 +1,356 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE 7O' CLOCK PERMASHARP STAINLES",
+    "HSN_Ref": "82122019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE 7O' CLOCK PII CARTRIDGE 200",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE 7O' CLOCK READY II RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE 7O' CLOCK STERLING RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE FSN PRO GLIDE RAZR 1P+CART 4P",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE FUSION CARTRIDGE 2PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE FUSION CARTRIDGE 4PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE FUSION POWER CARTRIDGE 2PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE FUSION RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GRD CAT 6/8P+ 1 RAZOR",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD 3 CARTRIDGE 1PC",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD 3 RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD 3 REFILL CARTRIDGS 3PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD CARTRIDGES 3/4PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD CARTRIDGES 6PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD RAZOR CARTRIDGE 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE GUARD SHAVING CREAM 25G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE LEMON LIME SHAVE FOAM 196G",
+    "HSN_Ref": "33071090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MACH 3 CARTRIDGE 2PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MACH 3 TURBO CARTRIDGE 4PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MACH3 CARTRIDGES 8PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MACH3 CATRIDGE 4PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MACH3 RAZOR 1NO",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MACH3 TURBO 2 CATRIDGES",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE MOIST.SHAVE GEL VITAMIN E 60G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE PRESTO 1 PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE PRESTO READYSHAVER 5PCS",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE PROGLIDE CARTRIDGE 4S",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE REGULAR SHAVING CREAM 30G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE REGULAR SHAVING CREAM 70G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE REGULAR SHAVING FOAM 196G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE REGULAR SHAVING FOAM 418G",
+    "HSN_Ref": "33071090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE REGULAR SHAVING FOAM 50G",
+    "HSN_Ref": "33071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SENS.SHAVEGEL WITH ALOE25G",
+    "HSN_Ref": "33071090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SENSITIVE SHAVING FOAM 418G",
+    "HSN_Ref": "33071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SERIES C.WAVE AFTER SHV 100ML",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SHAVE BRUSH",
+    "HSN_Ref": "96032900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SHAVING CREAM LIME 30G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SHAVING CREAM LIME 70G",
+    "HSN_Ref": "33071090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SHAVING GEL NEEM SEED EXT 80G",
+    "HSN_Ref": "33071090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SHAVNG CRM NEEM SEED EXT 125G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SIMPLY VENUS RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SIMPLY VENUS RAZORS 5PCS",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SKINGUARD SENSITIVE RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SKINGUARD SENSTV CARTRIDGE 2P",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE SKINGUARD SENSTV CARTRIDGE 4P",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VECTOR 3 CARTRIDGES 4PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VECTOR 3 RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VECTOR CARTRIDGE 2PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VECTOR CARTRIDGE 4S",
+    "HSN_Ref": "82122019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VECTOR CARTRIDGE 6S",
+    "HSN_Ref": "82122019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VECTOR RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VENUS 2 CATRIDGE",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VENUS BREEZE 2 CATRIDGE",
+    "HSN_Ref": "82122019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VENUS BREEZE RAZOR",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VENUS CARTRIDGES 4PCS",
+    "HSN_Ref": "82122011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE VENUS RAZOR 1PC",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GILLETTE WILKINSON SWORD BLADE 10NOS",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  }
+]

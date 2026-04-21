@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "COMPLAN ROYALE CHOCOLATE JAR 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "COMPLAN ROYALE CHOCOLATE REFILL 200G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "COMPLAN ROYALE CHOCOLATE REFILL 500G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COMPLAN CREAMY CLASSIC BOX 500G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "COMPLAN CREAMY CLASSIC REFILL 200G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  }
+]

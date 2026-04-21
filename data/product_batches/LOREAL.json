@@ -1,0 +1,146 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "LOREAL E.O.OIL NRSH.SHMP 650ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "LOREAL PARIS 6 OIL NOURISH CONDTR 65ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "LOREAL PARIS 6 OIL NOURSH CONDTR 175ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "LOREAL PARIS 6OIL SHMP BTL 192.5ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "LOREAL PARIS SHMP 6OIL NOURSH 75ML BTL",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "LOREAL CLAY SHAMPOO 360/396ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "LOREAL HYALURON MOISTURE SHAMPOO 180ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "LOREAL T.REPAIR5 SHAMPOO 650ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "LOREAL TOTAL REPAIR 5 SHAMPOO 75ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL CAST.CRM G200 EB.BLK 87.5G+72ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL CAST.CRM G3.16 BRGDY 87.5G+72ML",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL CAST.CRM G300 DRK.BRN 21G +24ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL CAST.CRM GLS200 EB.BLK 21G+24ML",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL CREME SHADE3 D.BROWN 25G+25ML",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL HYALURON MOISTURE CONDNR 71.5ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL PARIS PRFT SKIN 30+ DAY CRM50ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL PRS FALL RST A.DNDRF SHMP 180ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL REVITALIFT HA CLEANSER 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL REVITALIFT HA CREAM 15ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL T.REPAIR 5 SHMP 175/192.5ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL TOTAL REPAIR 5 CONDITIONER 65ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL TOTAL REPAIR 5 SERUM 40ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL TOTAL REPAIR 5 SERUM 80ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOREAL TOTAL REPAIR 5CONDR.192.5ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  }
+]

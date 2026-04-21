@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AZHAGU MILKY ALMOND SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AZHAGU MILKYALMNDSOAP 75G*3+1",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AZHAGU LAVENDER SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AZHAGU LAVENDER SOAP 75G*3+1",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AZHAGU PAPAYA SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AZHAGU PAPAYA SOAP 75G*3+1",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AZHAGU SANDAL SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AZHAGU SANDAL SOAP 75G*3+1",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  }
+]

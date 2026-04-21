@@ -1,0 +1,20 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "RKG GHEE 100ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "RKG GHEE 200ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "RKG GHEE 500ML",
+    "HSN_Ref": "4059020",
+    "GST_Ref": "GST 5%"
+  }
+]

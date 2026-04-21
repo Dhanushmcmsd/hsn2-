@@ -1,0 +1,56 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE BRY VAC.CONT 3P BOGO",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE CHOPNG BOARD MED.BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE CL.HNG AL.A 5P BOGO",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE CL.HNG AL.B5P BOGO",
+    "HSN_Ref": "39269099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE CL.HNG BETA 5P BOGO",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE K.ORGNSR M 1.1L BOGO",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE NYLON SPOON SL BOGO",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE PEAR CK SRV 3P BOGO",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRANOWARE SYMPHONY CSS 3P BOGO",
+    "HSN_Ref": "39241000",
+    "GST_Ref": "GST 18%"
+  }
+]

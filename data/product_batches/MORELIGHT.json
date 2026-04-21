@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MORELIGHT DETERGENT CAKE 225G",
+    "HSN_Ref": "34011990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MORELIGHT DETERGENT POWDER 1KG",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MORELIGHT DETERGENT POWDER 4KG",
+    "HSN_Ref": "34022000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MORELIGHT DETERGENT POWDER 500G",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MORELIGHT LD 1L REFILL POUCH",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  }
+]

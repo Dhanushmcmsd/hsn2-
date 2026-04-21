@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU LITCHI JUICE 1000ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU LITCHI JUICE 300ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU MANGO JUICE 300ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU ORANGE JUICE 300ML",
+    "HSN_Ref": "20091900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU PINEAPPLE JUICE 300ML",
+    "HSN_Ref": "22029020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU STRAWBERRY JUICE 1000ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MOGU MOGU STRAWBERRY JUICE 300ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  }
+]

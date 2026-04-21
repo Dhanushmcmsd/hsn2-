@@ -1,0 +1,146 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "MILMA BUTTER SALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "MILMA BUTTER UNSALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "MILMA GHEE BTL 100ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "MILMA GHEE BTL 200ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "MILMA GHEE BTL 500ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "MILMA GHEE BTL 50ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA BOTTLE CURD 500ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA CURD 500G",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA CURD IN CUPS 200G",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA CURD IN CUPS 400G",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA SET CURD 1KG TUB",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA SLIM CURD 500ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA SPECIAL CURD 500G",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "MILMA YOGURT MANGO FLAVRD 80G",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILMA BOTTLE COW MILK 1LTR",
+    "HSN_Ref": "04012000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILMA HOMGNSD.TONED MILK 525ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILMA TONED MILK (LIGHT BLUE) 500ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA PANEER 200G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA PEDA 110G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA PRIDE (ORANGE)520ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA RICH (GREEN)500ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA SAMBARAM 200/250ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA SMART (YELLOW)500ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MILMA TONED (BLUE)500ML/525ML",
+    "HSN_Ref": "04011010",
+    "GST_Ref": "GST 0%"
+  }
+]

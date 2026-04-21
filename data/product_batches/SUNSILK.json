@@ -1,0 +1,104 @@
+[
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK BLACK SHINE SHAMPOO 80ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK BLACKSHINE SHAMPOO 360ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK HAIRFALL SOLTN SHAMPOO360ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK PERFECT STRAIGHT SHAMPOO 360ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK SOFT N SMOOTH SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK STUNNING BLK SHAMPOO 180ML",
+    "HSN_Ref": "33051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SUNSILK THICKNLONG SHAMPOO 80ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK COCONT WATRNALOVERA SHMP 195ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK LONG N HEALTH GRWTH SHMP 180ML",
+    "HSN_Ref": "33051010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK LSY THKNLONG COND 80ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK LUSCISLY THICKNLONG COND 340ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK LUSCISLY THICKNLONG SHMP 180ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK LUSCISLY THICKNLONG SHMP 340ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK ONIONNJOJOBA HAIRFL SHMP 195ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK ONIONNJOJOBA HAIRFL SHMP 370ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK SOFT N SMOOTH CONDITIONR 180ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNSILK THICK N LONG CONDITIONER 180ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  }
+]

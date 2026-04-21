@@ -1,0 +1,296 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "DEV SNACKS TEA TIME TEA CAKE 175G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "DEV SESAME CANDY CUBE BLK 150G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "DEV SESAME CANDY CUBE WHT 150G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "DEV SEVA CANDY CUBE 150G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "DEV SNACKS PEANUT CANDY 8PCS",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "DEV SNACKS PEANUT CANDY CUBES 150G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "DEV SNACKS BUTTER MURUKKU 350G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "DEV SNACKS GHEE ROAST PEANUT 150G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS ACHAPPAM 10NOS",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS FRIED CHANA 150G",
+    "HSN_Ref": "20081920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS KADALAMV MIXTR 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS KARASEVA 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS KUZHAL MURUKKU 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS KUZHALAPPAM 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS MADURASEVA 175G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS MASALA PEANUT 150G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS MASALA THENKUZL MURUKK 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS MULLU MURUKKU 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS PAKKAVADA 175G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS PEANUT 250G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS PEANUT 500G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS PEANUT BALL 125G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS POPCORN 50G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS PUFFED RICE BALL 125G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS RAGI ACHAPPAM 10NOS",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS RICE MURUKKU SM 225G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS ROASTED PEANUT 150G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS SALT DIAMOND 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS SESAME BALL 125G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS SHARKARAVARATTY 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS SPRING MULLU MURUKKU 250G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS TAPIOCA STICK 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS THATTA 150G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV SNACKS THENKUZHAL MURUKKU 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DEV TOMATO MURUKKU 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "DEV SNACKS CORN MIXTURE 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "DEV SNACKS MIXTURE 400G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS BANANA CHIPS 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS BANANA CHIPS COMBO300G+150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS CHIPS 300G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS CUT CHIPS 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS JACK CHIPS 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS MASALA BANANA CHIPS 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS MASALA POTATO CHIPS 100G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS MASALA TAPIOCA CHIPS150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS PL.POTATO CHIPS100G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS SWEET CHIPS 175G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS SWT BANANA SPRNG CHIPS 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DEV SNACKS TAPIOCA CHIPS 150G",
+    "HSN_Ref": "20089990",
+    "GST_Ref": "GST 5%"
+  }
+]

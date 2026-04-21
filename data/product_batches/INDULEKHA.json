@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "INDULEKHA BRINGHA OIL 100ML",
+    "HSN_Ref": "30049000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "INDULEKHA SVETAKUTAJA OIL 50ML",
+    "HSN_Ref": "30049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "INDULEKHA SVETAKUTAJA OIL100ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "INDULEKHA BRINGHA AYURVD HAIR OIL 50ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "INDULEKHA BRING.H.F SHMP 200ML",
+    "HSN_Ref": "33051010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "INDULEKHA BRINGHA HAIR CLEANSER 340ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "INDULEKHA BRINGHA HAIR CLNSR 100ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "INDULEKHA MEDICINAL SOAP 100GM",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  }
+]

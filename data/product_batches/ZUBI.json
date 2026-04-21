@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "ZUBI CANDY ROCKS LOLLY 20G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ZUBI ICECREAM LOLLY 80G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ZUBI LOLLIES SWIRL BIG 80G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ZUBI ROSE LOLLIES 50G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ZUBI SWIRL SMALL LOLLY 30G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ZUBI SWIRL STICK LOLLY 40G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ZUBI WATERMELON LOLLY 80G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  }
+]

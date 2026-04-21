@@ -1,0 +1,146 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR ABC BISCUIT 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR BABY SEV 150G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR BEAN BISCUIT 125G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR BOONDI 125G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR CHUTTU MURUKKU 150G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR FRIED GREEN PEAS 125G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR KOILA MURUKK 150G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR MADHURA SEVA 150G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR MAS KURKUR 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR MASALA KADALA 125G",
+    "HSN_Ref": "07132000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR NICE SEV 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR ONION MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR PAKKAVADA 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR POTATO STICKS 150G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR RING MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR TAPIOCA STICKS 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR THAKKALI MURUKKU 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR THUNDU MURUKK 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR TIKKLI MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KR UPPUKADALA 125G",
+    "HSN_Ref": "07134000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "KR GARLIC MIXTURE 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "KR KERALA MIXTURE 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "KR MUNTHIRI MIXTURE 150G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "KR MASALA TAPIOCA CHIPS 150G",
+    "HSN_Ref": "20059000",
+    "GST_Ref": "GST 5%"
+  }
+]

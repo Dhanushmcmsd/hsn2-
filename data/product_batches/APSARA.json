@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA COLOUR PENCIL 12 SHADE",
+    "HSN_Ref": "96091000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA ERASER 20P",
+    "HSN_Ref": "40169200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA NON DUST ERASER RS3",
+    "HSN_Ref": "40169200",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA PENCIL",
+    "HSN_Ref": "96091000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA SHARPNER",
+    "HSN_Ref": "82141010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA WAX CRAYONS",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "APSARA WAX CRAYONS 24SHADE",
+    "HSN_Ref": "96091000",
+    "GST_Ref": "GST 0%"
+  }
+]

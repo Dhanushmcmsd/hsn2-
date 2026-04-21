@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BASMATI GOLDEN SELA LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BASMATI PREMIUM LOOSE",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BASMATI RICE REGULAR 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BASMATI SELA LOOSE",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BASMATI WHITE SELA LOOSE",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  }
+]

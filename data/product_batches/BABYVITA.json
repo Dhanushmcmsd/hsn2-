@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BABYVITA BANANA POWDER 300G RFL",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BABYVITA KANNANKAYA POWDER 300G JAR",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BABYVITA RAGI POWDER 300G RFL",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BABYVITA RICE BANANA 300G RFL",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BABYVITA WHEAT APPLE 300G RFL",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BABYVITA WHEAT BANANA 300G RFL",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  }
+]

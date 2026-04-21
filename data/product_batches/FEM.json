@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "FEM PEARLMILK BLEACH CREAM 24G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "FEM SAFFRONNMILK BLEACH CREAM 24G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "FEM SAFFRONNMILK BLEACH CREAM 64G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "FEM TURMERICNMILK HERBAL BLEACH 24G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "FEM ANTI DARKNG HAIR RMVR CRM ROSE 40G",
+    "HSN_Ref": "33079010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "FEM HAIR REMOVER CREAM CHANDAN 40G",
+    "HSN_Ref": "33079010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "FEM OXY LIFE BLEACH 25G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  }
+]

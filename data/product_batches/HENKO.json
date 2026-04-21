@@ -1,0 +1,86 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "HENKO DETERGENT BAR 400G",
+    "HSN_Ref": "34011900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "HENKO STAIN CARE DETERGENT POWDER 1KG",
+    "HSN_Ref": "34025010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "HENKO STAIN CARE DETERGENT POWDER 500G",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATC LQD DET FRNT LD2LTR RFL PCH",
+    "HSN_Ref": "34029019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATC LQD DET TOP LD 2LTR RFL PCH",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATIC FRNT LOAD DET PDR 1KG",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATIC FRONT LOAD DET.PDR 2KG+1KG",
+    "HSN_Ref": "34025090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATIC LIQUID FRONT LOAD",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATIC LQD.DET.FRONT LOAD 1LTR",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATIC TOP LOAD DET.PDR 1KG+500G",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO MATIC TOP LOAD DET.PDR 2KG+1KG",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO STAIN BAR 88G+8G FREE",
+    "HSN_Ref": "34011900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO STAIN CARE DT.PDR 4KG VP",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HENKO STAIN CHAMPION BAR 250G",
+    "HSN_Ref": "34011941",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,98 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HERSHEYS BLUBERRYACAI CHOCOLATE33G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HERSHEYS HOT CHOCOLATE 250G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HERSHEYS KISSES M.CHOCOLATE 108.8G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HERSHEYS KISSES MILK CHOCOLATE 36G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HERSHEYS POMEGRANATE CHOCOLATE 33G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HERSHEYS RASPBERYGOJI CHOCOLATE33G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HERSHEYS SPREAD ALMOND N COCOA150G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HERSHEYS SPREAD ALMOND N COCOA350G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HERSHEYS SPREAD COCOA 150G",
+    "HSN_Ref": "18069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HERSHEYS SPREAD COCOA 350G",
+    "HSN_Ref": "18069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HERSHEYS BAR CHOC.COOKICREAM 33G",
+    "HSN_Ref": "18063200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HERSHEYS COCOA POWDER 225G",
+    "HSN_Ref": "18050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HERSHEYS KISSES ALMOND 100.8G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HERSHEYS KISSES ALMOND 33.6G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HERSHEYS KISSES COOK N CREAM 33.6G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HERSHEYS SYRUP STRAWBERY 200ML",
+    "HSN_Ref": "21069040",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,134 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "KISSAN PEANUT BUTTER 100G PET JAR",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "KISSAN PEANUT BUTTER 350G",
+    "HSN_Ref": "20081930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN HAZELNT CHOCO PEANT SPREAD 350G",
+    "HSN_Ref": "18069030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN MANGO JAM 200G",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN MANGO JAM BTL 490G",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN MIXED FRUIT JAM 100G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN MIXED FRUIT JAM 200G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN MIXED FRUIT JAM 500G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN MIXED FRUIT JAM 700G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN ORANGE MARMALADE JAM 500G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KISSAN PINEAPPLE JAM 500G",
+    "HSN_Ref": "20079930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN FRESH TOMATO KETCHUP 1KG",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN FRESH TOMATO KETCHUP 200G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN FRESH TOMATO KETCHUP 500G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN FRESH TOMATO KETCHUP PCH 130G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN FRESH TOMATO KETCHUP950G PCH",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN NO ONION GRLC TOMATO SAUCE 415G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN PEA.BUTR CRNCH 350G JAR",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN SWEET SPICY 900G DOY",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN SWEET SPICY SAUCE 425G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN TWST CHILI TOMAT SAUCE 200G BTL",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KISSAN TWST CHILI TOMAT SAUCE 500G BTL",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  }
+]

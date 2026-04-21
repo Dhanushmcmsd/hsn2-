@@ -1,0 +1,932 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "CELLO DAZZLE COFFEE MUGS CARAFE SET 7P",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "CELLO IMPERIAL HIGH TEA SET 17PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "CELLO BUTTERFLOW BALL PEN 10S",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "CELLO BUTTERFLOW METALICA BALL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CELLO MILK MUG 1 PC",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CELLO MILK MUG 2 PC",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO AQUA GEL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO ARIANA 29PCS DINNER SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO BLING BALL PEN",
+    "HSN_Ref": "96081010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO CLIK IT SS TIFFIN CR.SQR",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO COLOUR BOMBS PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO CORRECT-X",
+    "HSN_Ref": "96082000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO CORRECT-X MINI",
+    "HSN_Ref": "96082000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO CURVY SS FRDGE BTL 750ML",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DAZZLE DINNER SET 23PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DAZZLE RAGALIA GIFT SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DAZZLE WHITE PLATE 11INCH",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DECO PLATE 11\" 1PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DESSERT SET DECO 5PC SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DESSERT SET DECO 7PC SET",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DINNER SET WITH RICE PLATE 21PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DIVINE 27PCS DINNER SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DIVINE COFFE MUG",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DURO CUP SS FLASK 750ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DURO FLIP SS FLASK 1LTR",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DURO FLIP SS FLASK 500ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DURO FLIP SS FLASK 750ML",
+    "HSN_Ref": "96170011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO DURO SWFT SS FLASK 500ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO EASY STY SS FLASK 500ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO FALCON SS BOTTLE 750ML",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO FEATHER COFFE MUG",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO FEATURE CUP/SAUCER 12PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO FLIP STY SS FLASK 500ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO GELTECH FUNGLITTER GEL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO GRIPPER BALL PEN 10S",
+    "HSN_Ref": "96081000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO H2O SS SLIM BOTLE 1000ML",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO HI-LIGHTER",
+    "HSN_Ref": "96082000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMP 20P DINNR SET KERALA",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMP.COF.MUG STELLA 6PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL 27PC DINNER SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL 33PC DINNER SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL 7INCH SERV.BOWL",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL 8INCH SERV.BOWL",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL 9INCH SERV.BOWL",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL BOWL DECO 2PSET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL BOWL PLN 170MM",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DECO 11 INCH PLATE",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DESSERT SET 7PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DINNER SET 10PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DINNER SET 13PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DINNER SET 19PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DINNER SET 21P WITH CUP",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL DINNER SET 6PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL QUICK BITE SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO IMPERIAL SINGLE PIECE MUG",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO INSTYLE SS FLASK 750ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO LOTUS SS FLASK 500ML",
+    "HSN_Ref": "96170019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MAXRITER BALL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.8.4 AR.SML SPOON BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.9.6 ART.S.SPOON BLK",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.9.6 ART.S.SPOON WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.ARIST S.SPOON 9.5BLK",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.ARIST S.SPOON 9.5WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.ART.D.PLATE DECO AST",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.ART.DIN.PLATE 11 BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.ART.DIN.PLATE 11 WHT",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.BAT PLATR 14 M/F BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.BAT PLATR 14 M/F WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.BAT PLATR 16 M/F BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.BELLISA MUG",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.DEL.CASSEROLE 1500ML",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.DEL.CASSEROLE 2000ML",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.DELUXE SPOON WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.HANDI 5 INCH M/F BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.HANDI 5 INCH M/F WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.HANDI 6 INCH M/F BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.HANDI 6 INCH M/F WHT",
+    "HSN_Ref": "69111011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.KADAI 6.25 BLACK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.KADAI 6.25 WHITE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.KADAI 7.1 BLACK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.KADAI 7.1 WHITE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.LEAF PLATTER 11 BLK",
+    "HSN_Ref": "39221000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.LEAF PLATTER 11 WHT",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.LEAF PLATTER 14 BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.LEAF PLATTER 14 WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MAGNA MUG",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MAR.S.SPOON 9.75 BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MAR.S.SPOON 9.75 WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MARAV.DECO PLATE AST",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MARV.SQ/RD PLATE BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MARV.SQ/RD PLATE WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.MINI MORNING SET 2P",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.PASTELLA MUG",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.PLAIN KATORI 3 BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.PLAIN KATORI 3 WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.ROC.CLR DIN.PLATE 6P",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SERVNG PAN 6.5 BLACK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SERVNG PAN 6.5 WHITE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SERVNG PAN 7.5 WHITE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SPICE JAR BLACK 2PCS",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SPICE JAR SET BLK 3P",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SPICE JAR SET WHT 3P",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SPICE JAR WHITE 2PCS",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.STACK.KATORI 3.5 BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.STACK.KATORI 3.5 WHT",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.STACKBL KATORI 4 BLK",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.STACKBL KATORI 4 WHT",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SUGAR SACHET HLD BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.SUGAR SACHET HLD WHT",
+    "HSN_Ref": "69120010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.TABLE MAT SET",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.TABLE SPOON 7.25 BLK",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.TABLE SPOON 7.25 WHT",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.VERONICA MUG",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MEL.VOGUE MUG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMINE FAB TRAY LARGE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMINE FAB TRAY MEDIUM",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMINE FAB TRAY SMALL",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN CAPIRI TRAY LARGE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN CAPIRI TRAY MED",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN CAPIRI TRAY SMALL",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN FIESTA LARGE TRAY",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN FIESTA MEDM TRAY",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN FIESTA SMALL TRAY",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN FRESCO TRAY LARGE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN FRESCO TRAY MED",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN FRESCO TRAY SMALL",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN MARBELOW TRAY LRG",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN MARBELOW TRAY MED",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN MARBELOW TRAY SML",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN ORION TRAY LARGE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN ORION TRAY MEDIUM",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MELAMN ORION TRAY SMALL",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MILANO MUG PLAIN",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MIXING BOWL MEDIUM WITH LID 3PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO MUG RICCA 6PCS",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO PAPERSOFT BALL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO PENCIL LEAD 0.5MM",
+    "HSN_Ref": "96092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO PENCIL LEAD 0.7MM",
+    "HSN_Ref": "96092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO PERMANENT MARKER",
+    "HSN_Ref": "96082000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO PINPOINT BALL PEN 10PC",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO POINTEC GEL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO REGALE SELECT BALL PEN",
+    "HSN_Ref": "96081099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO ROYAL MIXING BOWL 1P LRG",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO ROYAL MIXING BOWL 1P MED",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO ROYAL SERV.BOWL PLAIN MD",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO ROYAL SERV.BOWL PLN LRG",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO SOLIT.CUP/SAUCR 12P SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO SOLITAIRE 27P DINNER SET",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO SUPREME MECHANICAL PENCIL 0.7",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO SUPREME MECHANICAL PENCIL0.5",
+    "HSN_Ref": "96084000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO TECHNOTIP BALL PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO TRAV.P.DINNR SET 14P AST",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO TRIMATE COLOUR PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO WHITE PLATE 10INCH 1PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CELLO X-CALIBER PEN",
+    "HSN_Ref": "96081019",
+    "GST_Ref": "GST 18%"
+  }
+]

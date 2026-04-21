@@ -1,0 +1,116 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "TN GINGER COFFEE 150G",
+    "HSN_Ref": "21013010",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "TN KERALA FISH CURRY W.COCONT MILK185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "TN L.M.TUNA FLAKES IN SF.OIL 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "TN L.MEAT TUNA CHUNK IN OLIVE OIL 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "TN L.MEAT TUNA FLAKE IN OLIVE OIL 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "TN TUNA CHUNKS IN SF.OIL CANNED185G",
+    "HSN_Ref": "16041400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN CHILLI TUNA FLAKES 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN KERALA FISH CURRY WITH CHILLI 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN KERALA FISH SHAPPILE CURRY 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN KERALA INST.SADHYA PALADA MIX 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN L.M.TUNA CHUNK IN WATER+SALT185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN L.MEAT TUNA CHUNKS IN WATER 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN LIGHT MEAT TUNA IN MAYO 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN LIME PICKLE 400G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN MALABAR TAMARIND 200G",
+    "HSN_Ref": "08134010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN RICE POWDER 1KG",
+    "HSN_Ref": "11029022",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN W.MEAT TUNA CHUNKS IN WATER 185G",
+    "HSN_Ref": "16041410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN WHITE PUTTU PODI 1KG PCH",
+    "HSN_Ref": "11029022",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TN WHITE PUTTU PODI 500G PCH",
+    "HSN_Ref": "11029022",
+    "GST_Ref": "GST 5%"
+  }
+]

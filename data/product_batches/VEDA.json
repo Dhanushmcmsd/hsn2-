@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "VEDA CASTOR OIL 100ML",
+    "HSN_Ref": "15153090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "VEDA NEEM OIL 100ML",
+    "HSN_Ref": "15159020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VEDA LOTES SEED",
+    "HSN_Ref": "12099990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VEDA WATERMELON SEED 150GM",
+    "HSN_Ref": "12077090",
+    "GST_Ref": "GST 5%"
+  }
+]

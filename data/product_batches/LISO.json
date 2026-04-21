@@ -1,0 +1,62 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "LISO PEBBLES CHOCOLATE 90G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO ALMOND SPREAD WITH COCOA 190G",
+    "HSN_Ref": "18069030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO ALMOND SPREAD WITH COCOA 350G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO COCOA SPREAD 190G",
+    "HSN_Ref": "18069040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO COCOA SPREAD 350G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO HAZELNUT SPREAD WITH COCOA190G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO VANILA HAZELNUT SPREAD 190G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "LISO VANILA HAZELNUT SPREAD 350G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LISO CHOC.PEBBLES CELB BOX240G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LISO CHOCLATE PEBBLES MINI 40G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  }
+]

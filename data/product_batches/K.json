@@ -1,0 +1,434 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "K C JUICE SOUP STAINER 7",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "K C TEA STAINER NO3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "K C TEA STAINER NO4",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "K C NUMBERS ALU FOIL KC2447",
+    "HSN_Ref": "95059090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "K.P.NAM.AYURVEDIC HAIR CARE OIL 100ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "K.P.N HAIR N SCALP SHAMPOO 100ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "K.P.N HAIR N SCALP SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "K.P.NAM.ANTI DANDRUFF SHAMPOO 100ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "K.P.NAM.ANTI DANDRUFF SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.ALOEVERA TOOTHPASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.GEL TOOTHPASTE 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.GEL TOOTHPASTE 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.HERBAL TOOTHPASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.HERBAL TOOTHPASTE 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.HERBAL TOOTHPASTE 150G*2",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.NATURAL SALT TOOTHPASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "K.P.NAM.NATURAL SALT TOOTHPASTE 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BALOON PRINTED KC2438",
+    "HSN_Ref": "95059090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BALOONS 10PS KC2108",
+    "HSN_Ref": "95059000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BALOONS 5P GUILT KC2640",
+    "HSN_Ref": "95059000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BALOONS 5PS PRINT KC2639",
+    "HSN_Ref": "95059090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BALOONS KC2638",
+    "HSN_Ref": "95030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BIRTH DAY CAP KC1402",
+    "HSN_Ref": "95059000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BIRTHDAY AIR BANER KC2448",
+    "HSN_Ref": "95050000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BIRTHDAY CANDLE NO KC2773",
+    "HSN_Ref": "34060010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BIRTHDAY CAP KC1401",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C BIRTHDAY DECORATN KC2506",
+    "HSN_Ref": "95059000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C CANDLE DELUXEÁKC482",
+    "HSN_Ref": "34060010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C CLOTH CLIP 10PCSÁKC2538",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C CLOTH CLIP 12PCSÁKC2539",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C CLOTH CLIPÁ KC1454",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C CUTTING BRD BAMBOO KC2322",
+    "HSN_Ref": "44191100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C DELUX CANDLE SET KC2280",
+    "HSN_Ref": "34060010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C DUSTER LONG KC737",
+    "HSN_Ref": "63071090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C EAR BUDS WOODN JAR KC2526",
+    "HSN_Ref": "56012100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C EXAM BOARD SILVER",
+    "HSN_Ref": "48239019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C FINGER CAP PKT",
+    "HSN_Ref": "40169920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C HOT WTR BAG 1000ML KC2094",
+    "HSN_Ref": "40149010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C LOTUS CANDLE SML KC1169",
+    "HSN_Ref": "34060010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C M.F CAR CLN CLOTH KC02758",
+    "HSN_Ref": "63071010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C M.F CAR CLN CLOTH KC2759",
+    "HSN_Ref": "63071090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C M.F CLEANING CLOTH KC2763",
+    "HSN_Ref": "63071090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C MIRROR SHINE 10*8",
+    "HSN_Ref": "70090000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C MIRROR SHINE 7*5",
+    "HSN_Ref": "70090000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C ROPE 5 MM 5METER RP570",
+    "HSN_Ref": "56075040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C ROPE 6 MM 5METER RP670",
+    "HSN_Ref": "56075040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C RUBERBAND EXP QLTY 50G",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C SCISSORS KC928",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C SCISSORS S004 KC1848",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C SCRUBER DBL CLR BIG SRDCB",
+    "HSN_Ref": "73231000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C STICKER HOOK 4PC KC2096",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C STICKER HOOK KC1960",
+    "HSN_Ref": "39269099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C STICKER HOOK KC2401",
+    "HSN_Ref": "39269099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C TOOTH PIC KC921",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C VEGETABLE GRATERÁKC2282",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C WASHING BRUSH GOVERNOR",
+    "HSN_Ref": "96030000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C WASHING BRUSH MAYOR",
+    "HSN_Ref": "39240000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C WATER SPRAYER KC1671",
+    "HSN_Ref": "84244100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K C WATER SPRAYERÁKC1285",
+    "HSN_Ref": "84248990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.CHEMP.THAALI 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.CHEMPARATHI THAALI 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.DAHAMUKTHI 25G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.DANTADHAVANACHOOR.STRONG 40G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.DANTADHAVANACHOOR.STRONG 80G",
+    "HSN_Ref": "33061010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.DANTADHAVANACHOORNAM 40G",
+    "HSN_Ref": "33061010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.DANTADHAVANACHOORNAM 80G",
+    "HSN_Ref": "33061010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.DASAPUSHPAM HERBAL SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.GLYCER.AROMA BATHSOAP100G*3",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.HERBAL MOUTH WASH 250ML",
+    "HSN_Ref": "33069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.HERBAL T.PASTE 200G+T.B FREE",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.NEEMNTULSI HERB.SOAP100G*4",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "K.P.NAM.PATHIMUGHAM 15G",
+    "HSN_Ref": "12119099",
+    "GST_Ref": "GST 5%"
+  }
+]

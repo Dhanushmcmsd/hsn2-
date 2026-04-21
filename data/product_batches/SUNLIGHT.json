@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SUNLIGHT DETERGENT BAR 150G",
+    "HSN_Ref": "34011900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SUNLIGHT DETERGENT POWDER 1KG",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SUNLIGHT DETERGENT POWDER 500G",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SUNLIGHT LIQUID DETERGENT 430ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SUNLIGHT LIQUID DETERGENT 800ML",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNLIGHT WASHING POWDER 4KG",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  }
+]

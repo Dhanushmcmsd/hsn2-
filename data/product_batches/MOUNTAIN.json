@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "MOUNTAIN MIST TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOUNTAIN DEW S.DRNK 250ML+150ML BTL",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOUNTAIN DEW SOFT DRINK 750ML BTL",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOUNTAIN DEW SOFT DRINK CAN 250/330ML",
+    "HSN_Ref": "22021010",
+    "GST_Ref": "GST 40%"
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL CRYSTAL SALT 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL MATTA SORTED UNDA 10KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL MATTA SORTED UNDA 5KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL MATTA SORTED VADI 10KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL MATTA SORTED VADI 5KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL POWDER SALT 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL SORTED JAYA 10KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL SORTED JAYA 5KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL SORTED KURUVA 10KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL SORTED SUREKHA 10KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRMAL SORTED SUREKHA 5KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  }
+]

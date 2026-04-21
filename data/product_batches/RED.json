@@ -1,0 +1,74 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL DUST TEA 100G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL DUST TEA 250G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL DUST TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL NATURAL CARE TEA CRT 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL TEA LEAF 100G CARTON",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL TEA LEAF 250/275G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RED LABEL TEA LEAF 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RED GUNTUR CHILLI REGULAR 100G",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RED GUNTUR CHILLI REGULAR 500G",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RED LABEL NATURAL CARE 100G CRT",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RED LABEL NATURAL CARE 250G CRT",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RED/GUNTUR CHILLI LOOSE",
+    "HSN_Ref": "09109990",
+    "GST_Ref": "GST 5%"
+  }
+]

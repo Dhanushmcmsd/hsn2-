@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "BAJAJ ALMOND DROPS HAIR OIL 100ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "BAJAJ ALMOND DROPS HAIR OIL 200ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAJAJ SAVORY FRT CORDIAL 710ML",
+    "HSN_Ref": "20089919",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAJAJ SAVORY LEMON POWDER 400G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAJAJ SAVORY LEMON POWDER 750G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAJAJ SAVORY MANGO POWDER 400G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAJAJ SAVORY MANGO POWDER 750G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BAJAJ SAVORY ORANGE POWDR 750G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "ORANGE JAM LOOSE",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORANGE GLASS ST 5.5",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORANGE IMPORTED",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORANGE KINNOW",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORANGE NAGPUR",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 0%"
+  }
+]

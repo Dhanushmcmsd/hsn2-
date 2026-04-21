@@ -1,0 +1,332 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SUNFEAST FANTASTICK 360G",
+    "HSN_Ref": "19053290",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST D.F BOURBON 465G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST D.F BOURBON 55.8G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST D.F BOURBON 600G(3+1)",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST D.F BOURBON BISCUITS 100/120G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST D.F CHOCOFILLS COOKIES 300G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST MOM'S MG CASWNALMD COOKIE200G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST MOM'S MG.CASWALMD COOKIE600G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "SUNFEAST MOM'S MG.RICH BUTR COOKIE150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST GLUCOSE BISCUITS 250G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST GLUCOSE BISCUITS 92G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST MARIE LIGHT ACT 66.9G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST MARIE LIGHT ACTIVE TASTE 186G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST MARIE LT ACTIVE TASTE 1KG",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST MARIE LT ACTIVE TASTE 250G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST MARIELIGHT ACTIVE",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "SUNFEAST VEDA MARIE LIGHT BISCUTS 250G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SUNFEAST CHOC.MILKSHAKE 125ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SUNFEAST MILKSHAKE STRAWBERRY 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SUNFEAST MILKSHAKE VANILLA 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SUNFEAST MILKSHAKES KESAR BADAM180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SUNFEAST MOM'S MAGIC FRUIT MILK 200G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SUNFEAST VANILLA MILKSHK 125ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST ARROWROOT",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST BNC ORANGE CRM BIS58G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST BNC P.APL CRM BIS 62G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST BOUNCE CHOCO CREAM BISCUT 58G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST BOUNCE DRM CRM CHOCO VAN 120G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCO CREME 300G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCO CREME 83G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCO FILLS 18G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCO FILLS 69/75G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCO FILLS+NUT 75G (4+1)",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCO NUT FILLS 75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F CHOCOFILLS LUXURIA 150G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F SHAKE B.CHOC180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F VANILLA CREME 249G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F VANILLA CREME 83G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F YUMFILLS WHOOPIE PIE 138G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST D.F YUMFILLS WHP PIE VEG 242G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST MOM'S CASHWNALMD 896G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST MOM'S MG CASNALM CKIE91G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST MOMS CAS.ALMD COOK56G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST WOWZERS CHEESE 128G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST WOWZERS CHEESE 16G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST WOWZERS LEMON 128G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST WOWZERS LEMON 16G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MAGIC MASALA 280G",
+    "HSN_Ref": "19023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MASALA NOODLES 405/420G",
+    "HSN_Ref": "19023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MASALA NOODLES 70G",
+    "HSN_Ref": "19023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MD MASALA NOODLES 280G",
+    "HSN_Ref": "19023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MD MASALA NOODLES67.5G",
+    "HSN_Ref": "19023090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MGC MASALA NOODLE 560G",
+    "HSN_Ref": "19023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE MGC MASALA NOODLES140G",
+    "HSN_Ref": "19023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNFEAST YIPPEE PWR UP ATTA NOODLES70G",
+    "HSN_Ref": "19023010",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,3234 @@
+{
+  "2PM": {
+    "file": "2PM.json",
+    "count": 5
+  },
+  "3": {
+    "file": "3.json",
+    "count": 4
+  },
+  "404": {
+    "file": "404.json",
+    "count": 16
+  },
+  "4E": {
+    "file": "4E.json",
+    "count": 3
+  },
+  "555": {
+    "file": "555.json",
+    "count": 3
+  },
+  "7UP": {
+    "file": "7UP.json",
+    "count": 7
+  },
+  "916": {
+    "file": "916.json",
+    "count": 3
+  },
+  "A4": {
+    "file": "A4.json",
+    "count": 4
+  },
+  "AACHI": {
+    "file": "AACHI.json",
+    "count": 25
+  },
+  "AALA": {
+    "file": "AALA.json",
+    "count": 4
+  },
+  "AASHIRVAAD": {
+    "file": "AASHIRVAAD.json",
+    "count": 8
+  },
+  "ABAAN": {
+    "file": "ABAAN.json",
+    "count": 3
+  },
+  "ACT": {
+    "file": "ACT.json",
+    "count": 8
+  },
+  "ACTURE": {
+    "file": "ACTURE.json",
+    "count": 6
+  },
+  "ADOR": {
+    "file": "ADOR.json",
+    "count": 9
+  },
+  "AER": {
+    "file": "AER.json",
+    "count": 15
+  },
+  "AHARA": {
+    "file": "AHARA.json",
+    "count": 4
+  },
+  "AIRWICK": {
+    "file": "AIRWICK.json",
+    "count": 6
+  },
+  "AJMAL": {
+    "file": "AJMAL.json",
+    "count": 10
+  },
+  "AJMI": {
+    "file": "AJMI.json",
+    "count": 22
+  },
+  "ALFA": {
+    "file": "ALFA.json",
+    "count": 60
+  },
+  "ALL": {
+    "file": "ALL.json",
+    "count": 12
+  },
+  "ALLTIME": {
+    "file": "ALLTIME.json",
+    "count": 40
+  },
+  "ALPHA": {
+    "file": "ALPHA.json",
+    "count": 5
+  },
+  "AMBI": {
+    "file": "AMBI.json",
+    "count": 10
+  },
+  "AMERICAN": {
+    "file": "AMERICAN.json",
+    "count": 3
+  },
+  "AMERICANO": {
+    "file": "AMERICANO.json",
+    "count": 3
+  },
+  "AMRUTANJAN": {
+    "file": "AMRUTANJAN.json",
+    "count": 10
+  },
+  "AMRUTVENI": {
+    "file": "AMRUTVENI.json",
+    "count": 4
+  },
+  "AMUL": {
+    "file": "AMUL.json",
+    "count": 96
+  },
+  "AMULYA": {
+    "file": "AMULYA.json",
+    "count": 5
+  },
+  "ANANDA": {
+    "file": "ANANDA.json",
+    "count": 27
+  },
+  "APAAR": {
+    "file": "APAAR.json",
+    "count": 99
+  },
+  "APPLE": {
+    "file": "APPLE.json",
+    "count": 25
+  },
+  "APPY": {
+    "file": "APPY.json",
+    "count": 5
+  },
+  "APSARA": {
+    "file": "APSARA.json",
+    "count": 8
+  },
+  "ARIEL": {
+    "file": "ARIEL.json",
+    "count": 29
+  },
+  "ARISTO": {
+    "file": "ARISTO.json",
+    "count": 11
+  },
+  "ARUN": {
+    "file": "ARUN.json",
+    "count": 7
+  },
+  "ASHAN": {
+    "file": "ASHAN.json",
+    "count": 3
+  },
+  "ASHTAPATHY": {
+    "file": "ASHTAPATHY.json",
+    "count": 20
+  },
+  "ASIAN": {
+    "file": "ASIAN.json",
+    "count": 33
+  },
+  "AURA": {
+    "file": "AURA.json",
+    "count": 3
+  },
+  "AVEES": {
+    "file": "AVEES.json",
+    "count": 10
+  },
+  "AVIEL": {
+    "file": "AVIEL.json",
+    "count": 3
+  },
+  "AVT": {
+    "file": "AVT.json",
+    "count": 21
+  },
+  "AXE": {
+    "file": "AXE.json",
+    "count": 20
+  },
+  "AZHAGU": {
+    "file": "AZHAGU.json",
+    "count": 8
+  },
+  "B": {
+    "file": "B.json",
+    "count": 31
+  },
+  "BABY": {
+    "file": "BABY.json",
+    "count": 4
+  },
+  "BABYVITA": {
+    "file": "BABYVITA.json",
+    "count": 6
+  },
+  "BAHAR": {
+    "file": "BAHAR.json",
+    "count": 4
+  },
+  "BAILLEY": {
+    "file": "BAILLEY.json",
+    "count": 3
+  },
+  "BAJAJ": {
+    "file": "BAJAJ.json",
+    "count": 8
+  },
+  "BAKERS": {
+    "file": "BAKERS.json",
+    "count": 81
+  },
+  "BALLOON": {
+    "file": "BALLOON.json",
+    "count": 3
+  },
+  "BAMBINO": {
+    "file": "BAMBINO.json",
+    "count": 8
+  },
+  "BANANA": {
+    "file": "BANANA.json",
+    "count": 12
+  },
+  "BANJARAS": {
+    "file": "BANJARAS.json",
+    "count": 30
+  },
+  "BASMATI": {
+    "file": "BASMATI.json",
+    "count": 5
+  },
+  "BAULI": {
+    "file": "BAULI.json",
+    "count": 4
+  },
+  "BEES": {
+    "file": "BEES.json",
+    "count": 64
+  },
+  "BELLA": {
+    "file": "BELLA.json",
+    "count": 18
+  },
+  "BELOCOPIA": {
+    "file": "BELOCOPIA.json",
+    "count": 5
+  },
+  "BEST": {
+    "file": "BEST.json",
+    "count": 83
+  },
+  "BGOOD": {
+    "file": "BGOOD.json",
+    "count": 3
+  },
+  "BHARAT": {
+    "file": "BHARAT.json",
+    "count": 3
+  },
+  "BINDER": {
+    "file": "BINDER.json",
+    "count": 3
+  },
+  "BINGO": {
+    "file": "BINGO.json",
+    "count": 11
+  },
+  "BIODEGRADABLE": {
+    "file": "BIODEGRADABLE.json",
+    "count": 4
+  },
+  "BIOTIQUE": {
+    "file": "BIOTIQUE.json",
+    "count": 12
+  },
+  "BIRTHDAY": {
+    "file": "BIRTHDAY.json",
+    "count": 10
+  },
+  "BISLERI": {
+    "file": "BISLERI.json",
+    "count": 5
+  },
+  "BISMI": {
+    "file": "BISMI.json",
+    "count": 15
+  },
+  "BLACK": {
+    "file": "BLACK.json",
+    "count": 3
+  },
+  "BLUE": {
+    "file": "BLUE.json",
+    "count": 8
+  },
+  "BLUEBERRY": {
+    "file": "BLUEBERRY.json",
+    "count": 17
+  },
+  "BLUEBERRYS": {
+    "file": "BLUEBERRYS.json",
+    "count": 28
+  },
+  "BODHINI": {
+    "file": "BODHINI.json",
+    "count": 8
+  },
+  "BOOST": {
+    "file": "BOOST.json",
+    "count": 10
+  },
+  "BOROPLUS": {
+    "file": "BOROPLUS.json",
+    "count": 3
+  },
+  "BOROSIL": {
+    "file": "BOROSIL.json",
+    "count": 5
+  },
+  "BOTTLE": {
+    "file": "BOTTLE.json",
+    "count": 3
+  },
+  "BOUNTY": {
+    "file": "BOUNTY.json",
+    "count": 3
+  },
+  "BOYS": {
+    "file": "BOYS.json",
+    "count": 30
+  },
+  "BRAHMINS": {
+    "file": "BRAHMINS.json",
+    "count": 47
+  },
+  "BRILLAR": {
+    "file": "BRILLAR.json",
+    "count": 46
+  },
+  "BRINJAL": {
+    "file": "BRINJAL.json",
+    "count": 5
+  },
+  "BRITANNIA": {
+    "file": "BRITANNIA.json",
+    "count": 113
+  },
+  "BROWN": {
+    "file": "BROWN.json",
+    "count": 8
+  },
+  "BRU": {
+    "file": "BRU.json",
+    "count": 11
+  },
+  "BSY": {
+    "file": "BSY.json",
+    "count": 3
+  },
+  "BULK": {
+    "file": "BULK.json",
+    "count": 82
+  },
+  "BUSH": {
+    "file": "BUSH.json",
+    "count": 4
+  },
+  "CADBURY": {
+    "file": "CADBURY.json",
+    "count": 81
+  },
+  "CAMERRY": {
+    "file": "CAMERRY.json",
+    "count": 8
+  },
+  "CAMLIN": {
+    "file": "CAMLIN.json",
+    "count": 49
+  },
+  "CARNET": {
+    "file": "CARNET.json",
+    "count": 20
+  },
+  "CARROT": {
+    "file": "CARROT.json",
+    "count": 3
+  },
+  "CARTON": {
+    "file": "CARTON.json",
+    "count": 6
+  },
+  "CASIO": {
+    "file": "CASIO.json",
+    "count": 4
+  },
+  "CAVINS": {
+    "file": "CAVINS.json",
+    "count": 9
+  },
+  "CB": {
+    "file": "CB.json",
+    "count": 148
+  },
+  "CBGM": {
+    "file": "CBGM.json",
+    "count": 7
+  },
+  "CELLO": {
+    "file": "CELLO.json",
+    "count": 155
+  },
+  "CERELAC": {
+    "file": "CERELAC.json",
+    "count": 12
+  },
+  "CETAPHIL": {
+    "file": "CETAPHIL.json",
+    "count": 5
+  },
+  "CHAKKA": {
+    "file": "CHAKKA.json",
+    "count": 6
+  },
+  "CHANDRIKA": {
+    "file": "CHANDRIKA.json",
+    "count": 23
+  },
+  "CHATTAS": {
+    "file": "CHATTAS.json",
+    "count": 34
+  },
+  "CHECK": {
+    "file": "CHECK.json",
+    "count": 4
+  },
+  "CHEFS": {
+    "file": "CHEFS.json",
+    "count": 5
+  },
+  "CHERRY": {
+    "file": "CHERRY.json",
+    "count": 7
+  },
+  "CHERUMANI": {
+    "file": "CHERUMANI.json",
+    "count": 3
+  },
+  "CHERUPAYAR": {
+    "file": "CHERUPAYAR.json",
+    "count": 3
+  },
+  "CHILLI": {
+    "file": "CHILLI.json",
+    "count": 3
+  },
+  "CHINGS": {
+    "file": "CHINGS.json",
+    "count": 15
+  },
+  "CHIPO": {
+    "file": "CHIPO.json",
+    "count": 31
+  },
+  "CHOZEN": {
+    "file": "CHOZEN.json",
+    "count": 18
+  },
+  "CHRISTOFIN": {
+    "file": "CHRISTOFIN.json",
+    "count": 21
+  },
+  "CINTHOL": {
+    "file": "CINTHOL.json",
+    "count": 13
+  },
+  "CLARO": {
+    "file": "CLARO.json",
+    "count": 9
+  },
+  "CLASSMATE": {
+    "file": "CLASSMATE.json",
+    "count": 27
+  },
+  "CLASSMATES": {
+    "file": "CLASSMATES.json",
+    "count": 3
+  },
+  "CLAY": {
+    "file": "CLAY.json",
+    "count": 14
+  },
+  "CLEAN": {
+    "file": "CLEAN.json",
+    "count": 24
+  },
+  "CLINIC": {
+    "file": "CLINIC.json",
+    "count": 12
+  },
+  "CLIQ": {
+    "file": "CLIQ.json",
+    "count": 4
+  },
+  "CLOSE": {
+    "file": "CLOSE.json",
+    "count": 5
+  },
+  "CLOTH": {
+    "file": "CLOTH.json",
+    "count": 12
+  },
+  "COCA": {
+    "file": "COCA.json",
+    "count": 9
+  },
+  "COCHIN": {
+    "file": "COCHIN.json",
+    "count": 29
+  },
+  "COCONUT": {
+    "file": "COCONUT.json",
+    "count": 7
+  },
+  "COLGATE": {
+    "file": "COLGATE.json",
+    "count": 89
+  },
+  "COLIN": {
+    "file": "COLIN.json",
+    "count": 3
+  },
+  "COLLEEN": {
+    "file": "COLLEEN.json",
+    "count": 3
+  },
+  "COLOMBO": {
+    "file": "COLOMBO.json",
+    "count": 19
+  },
+  "COLORESNC": {
+    "file": "COLORESNC.json",
+    "count": 4
+  },
+  "COMFORT": {
+    "file": "COMFORT.json",
+    "count": 19
+  },
+  "COMPLAN": {
+    "file": "COMPLAN.json",
+    "count": 5
+  },
+  "COOKMAID": {
+    "file": "COOKMAID.json",
+    "count": 11
+  },
+  "CORAL": {
+    "file": "CORAL.json",
+    "count": 5
+  },
+  "CORIANDER": {
+    "file": "CORIANDER.json",
+    "count": 4
+  },
+  "CORN": {
+    "file": "CORN.json",
+    "count": 4
+  },
+  "CORNITOS": {
+    "file": "CORNITOS.json",
+    "count": 8
+  },
+  "COTTON": {
+    "file": "COTTON.json",
+    "count": 4
+  },
+  "CRAZE": {
+    "file": "CRAZE.json",
+    "count": 24
+  },
+  "CREAM": {
+    "file": "CREAM.json",
+    "count": 3
+  },
+  "CREMBERIE": {
+    "file": "CREMBERIE.json",
+    "count": 10
+  },
+  "CROWN": {
+    "file": "CROWN.json",
+    "count": 69
+  },
+  "CRUNCHY": {
+    "file": "CRUNCHY.json",
+    "count": 34
+  },
+  "CUPID": {
+    "file": "CUPID.json",
+    "count": 30
+  },
+  "CURREASE": {
+    "file": "CURREASE.json",
+    "count": 14
+  },
+  "CUTEE": {
+    "file": "CUTEE.json",
+    "count": 13
+  },
+  "CUTICURA": {
+    "file": "CUTICURA.json",
+    "count": 5
+  },
+  "CYCLE": {
+    "file": "CYCLE.json",
+    "count": 21
+  },
+  "DAAWAT": {
+    "file": "DAAWAT.json",
+    "count": 8
+  },
+  "DABUR": {
+    "file": "DABUR.json",
+    "count": 29
+  },
+  "DACE": {
+    "file": "DACE.json",
+    "count": 7
+  },
+  "DAILEECO": {
+    "file": "DAILEECO.json",
+    "count": 36
+  },
+  "DAILY": {
+    "file": "DAILY.json",
+    "count": 12
+  },
+  "DALDA": {
+    "file": "DALDA.json",
+    "count": 4
+  },
+  "DAZLLER": {
+    "file": "DAZLLER.json",
+    "count": 22
+  },
+  "DAZZL": {
+    "file": "DAZZL.json",
+    "count": 3
+  },
+  "DEEPAM": {
+    "file": "DEEPAM.json",
+    "count": 3
+  },
+  "DELI": {
+    "file": "DELI.json",
+    "count": 5
+  },
+  "DELICIOUS": {
+    "file": "DELICIOUS.json",
+    "count": 3
+  },
+  "DELIS": {
+    "file": "DELIS.json",
+    "count": 4
+  },
+  "DELMONTE": {
+    "file": "DELMONTE.json",
+    "count": 12
+  },
+  "DENTO": {
+    "file": "DENTO.json",
+    "count": 20
+  },
+  "DERMDOC": {
+    "file": "DERMDOC.json",
+    "count": 3
+  },
+  "DETTOL": {
+    "file": "DETTOL.json",
+    "count": 36
+  },
+  "DEV": {
+    "file": "DEV.json",
+    "count": 49
+  },
+  "DEVON": {
+    "file": "DEVON.json",
+    "count": 4
+  },
+  "DH": {
+    "file": "DH.json",
+    "count": 4
+  },
+  "DHATHRI": {
+    "file": "DHATHRI.json",
+    "count": 21
+  },
+  "DHEEDHI": {
+    "file": "DHEEDHI.json",
+    "count": 15
+  },
+  "DISANO": {
+    "file": "DISANO.json",
+    "count": 12
+  },
+  "DISH": {
+    "file": "DISH.json",
+    "count": 18
+  },
+  "DNH": {
+    "file": "DNH.json",
+    "count": 4
+  },
+  "DOMEX": {
+    "file": "DOMEX.json",
+    "count": 8
+  },
+  "DOMS": {
+    "file": "DOMS.json",
+    "count": 12
+  },
+  "DOSA": {
+    "file": "DOSA.json",
+    "count": 3
+  },
+  "DOUBLE": {
+    "file": "DOUBLE.json",
+    "count": 79
+  },
+  "DOUBLEMINT": {
+    "file": "DOUBLEMINT.json",
+    "count": 6
+  },
+  "DOVE": {
+    "file": "DOVE.json",
+    "count": 46
+  },
+  "DR": {
+    "file": "DR.json",
+    "count": 85
+  },
+  "DRISH": {
+    "file": "DRISH.json",
+    "count": 9
+  },
+  "DROOLS": {
+    "file": "DROOLS.json",
+    "count": 12
+  },
+  "DUKES": {
+    "file": "DUKES.json",
+    "count": 6
+  },
+  "DURACELL": {
+    "file": "DURACELL.json",
+    "count": 4
+  },
+  "DUREX": {
+    "file": "DUREX.json",
+    "count": 14
+  },
+  "E1ED": {
+    "file": "E1ED.json",
+    "count": 8
+  },
+  "EASTEA": {
+    "file": "EASTEA.json",
+    "count": 5
+  },
+  "EASTERN": {
+    "file": "EASTERN.json",
+    "count": 52
+  },
+  "EC": {
+    "file": "EC.json",
+    "count": 13
+  },
+  "EGG": {
+    "file": "EGG.json",
+    "count": 4
+  },
+  "EL": {
+    "file": "EL.json",
+    "count": 5
+  },
+  "ELANADU": {
+    "file": "ELANADU.json",
+    "count": 40
+  },
+  "ELEPHANT": {
+    "file": "ELEPHANT.json",
+    "count": 17
+  },
+  "ELITE": {
+    "file": "ELITE.json",
+    "count": 61
+  },
+  "ELKOS": {
+    "file": "ELKOS.json",
+    "count": 9
+  },
+  "ELOT": {
+    "file": "ELOT.json",
+    "count": 10
+  },
+  "EMAAN": {
+    "file": "EMAAN.json",
+    "count": 3
+  },
+  "ENCHANTEUR": {
+    "file": "ENCHANTEUR.json",
+    "count": 21
+  },
+  "ENGAGE": {
+    "file": "ENGAGE.json",
+    "count": 35
+  },
+  "ENSURE": {
+    "file": "ENSURE.json",
+    "count": 7
+  },
+  "ESQUIRE": {
+    "file": "ESQUIRE.json",
+    "count": 119
+  },
+  "EVEREADY": {
+    "file": "EVEREADY.json",
+    "count": 11
+  },
+  "EVERYDAY": {
+    "file": "EVERYDAY.json",
+    "count": 4
+  },
+  "EXO": {
+    "file": "EXO.json",
+    "count": 15
+  },
+  "EYETEX": {
+    "file": "EYETEX.json",
+    "count": 32
+  },
+  "FABER": {
+    "file": "FABER.json",
+    "count": 55
+  },
+  "FACKELMN": {
+    "file": "FACKELMN.json",
+    "count": 15
+  },
+  "FAIR": {
+    "file": "FAIR.json",
+    "count": 4
+  },
+  "FAMILY": {
+    "file": "FAMILY.json",
+    "count": 4
+  },
+  "FANTA": {
+    "file": "FANTA.json",
+    "count": 4
+  },
+  "FARM": {
+    "file": "FARM.json",
+    "count": 10
+  },
+  "FARMERS": {
+    "file": "FARMERS.json",
+    "count": 4
+  },
+  "FEM": {
+    "file": "FEM.json",
+    "count": 7
+  },
+  "FERRERO": {
+    "file": "FERRERO.json",
+    "count": 4
+  },
+  "FEVI": {
+    "file": "FEVI.json",
+    "count": 5
+  },
+  "FEVICOL": {
+    "file": "FEVICOL.json",
+    "count": 9
+  },
+  "FEVICRYL": {
+    "file": "FEVICRYL.json",
+    "count": 7
+  },
+  "FEVIKWIK": {
+    "file": "FEVIKWIK.json",
+    "count": 7
+  },
+  "FEVISTICK": {
+    "file": "FEVISTICK.json",
+    "count": 3
+  },
+  "FFE": {
+    "file": "FFE.json",
+    "count": 11
+  },
+  "FIAMA": {
+    "file": "FIAMA.json",
+    "count": 17
+  },
+  "FINE": {
+    "file": "FINE.json",
+    "count": 5
+  },
+  "FIRMER": {
+    "file": "FIRMER.json",
+    "count": 19
+  },
+  "FISH": {
+    "file": "FISH.json",
+    "count": 3
+  },
+  "FLAIR": {
+    "file": "FLAIR.json",
+    "count": 46
+  },
+  "FLAVOUR": {
+    "file": "FLAVOUR.json",
+    "count": 5
+  },
+  "FLOOR": {
+    "file": "FLOOR.json",
+    "count": 3
+  },
+  "FLOORINE": {
+    "file": "FLOORINE.json",
+    "count": 4
+  },
+  "FNF": {
+    "file": "FNF.json",
+    "count": 13
+  },
+  "FOGG": {
+    "file": "FOGG.json",
+    "count": 19
+  },
+  "FOOLSCAP": {
+    "file": "FOOLSCAP.json",
+    "count": 4
+  },
+  "FORMA": {
+    "file": "FORMA.json",
+    "count": 7
+  },
+  "FROOTI": {
+    "file": "FROOTI.json",
+    "count": 4
+  },
+  "FRUIT": {
+    "file": "FRUIT.json",
+    "count": 3
+  },
+  "FRUITOMAN": {
+    "file": "FRUITOMAN.json",
+    "count": 6
+  },
+  "FRUITOMANS": {
+    "file": "FRUITOMANS.json",
+    "count": 30
+  },
+  "FRUITTELLA": {
+    "file": "FRUITTELLA.json",
+    "count": 3
+  },
+  "FUN": {
+    "file": "FUN.json",
+    "count": 11
+  },
+  "FUNSKOOL": {
+    "file": "FUNSKOOL.json",
+    "count": 3
+  },
+  "G": {
+    "file": "G.json",
+    "count": 36
+  },
+  "GABRY": {
+    "file": "GABRY.json",
+    "count": 6
+  },
+  "GALA": {
+    "file": "GALA.json",
+    "count": 35
+  },
+  "GALAXY": {
+    "file": "GALAXY.json",
+    "count": 12
+  },
+  "GARLIC": {
+    "file": "GARLIC.json",
+    "count": 3
+  },
+  "GARNIER": {
+    "file": "GARNIER.json",
+    "count": 42
+  },
+  "GASTONE": {
+    "file": "GASTONE.json",
+    "count": 10
+  },
+  "GAYATHRI": {
+    "file": "GAYATHRI.json",
+    "count": 4
+  },
+  "GDS": {
+    "file": "GDS.json",
+    "count": 9
+  },
+  "GEBI": {
+    "file": "GEBI.json",
+    "count": 79
+  },
+  "GIGGLES": {
+    "file": "GIGGLES.json",
+    "count": 5
+  },
+  "GILLETTE": {
+    "file": "GILLETTE.json",
+    "count": 59
+  },
+  "GINGER": {
+    "file": "GINGER.json",
+    "count": 4
+  },
+  "GIRLS": {
+    "file": "GIRLS.json",
+    "count": 24
+  },
+  "GLARE": {
+    "file": "GLARE.json",
+    "count": 9
+  },
+  "GLEZ": {
+    "file": "GLEZ.json",
+    "count": 23
+  },
+  "GLOWNLOVELY": {
+    "file": "GLOWNLOVELY.json",
+    "count": 9
+  },
+  "GNG": {
+    "file": "GNG.json",
+    "count": 33
+  },
+  "GODREJ": {
+    "file": "GODREJ.json",
+    "count": 7
+  },
+  "GOLD": {
+    "file": "GOLD.json",
+    "count": 7
+  },
+  "GOLDEN": {
+    "file": "GOLDEN.json",
+    "count": 13
+  },
+  "GOOD": {
+    "file": "GOOD.json",
+    "count": 25
+  },
+  "GOODDAY": {
+    "file": "GOODDAY.json",
+    "count": 9
+  },
+  "GOODIES": {
+    "file": "GOODIES.json",
+    "count": 43
+  },
+  "GOURMETS": {
+    "file": "GOURMETS.json",
+    "count": 3
+  },
+  "GRANDMAS": {
+    "file": "GRANDMAS.json",
+    "count": 58
+  },
+  "GRANOWARE": {
+    "file": "GRANOWARE.json",
+    "count": 9
+  },
+  "GRANOWARES": {
+    "file": "GRANOWARES.json",
+    "count": 44
+  },
+  "GRAPE": {
+    "file": "GRAPE.json",
+    "count": 10
+  },
+  "GRAPES": {
+    "file": "GRAPES.json",
+    "count": 6
+  },
+  "GRB": {
+    "file": "GRB.json",
+    "count": 5
+  },
+  "GREEN": {
+    "file": "GREEN.json",
+    "count": 18
+  },
+  "GREENMOUNT": {
+    "file": "GREENMOUNT.json",
+    "count": 22
+  },
+  "GREENTAG": {
+    "file": "GREENTAG.json",
+    "count": 25
+  },
+  "GREENWD": {
+    "file": "GREENWD.json",
+    "count": 6
+  },
+  "GS": {
+    "file": "GS.json",
+    "count": 4
+  },
+  "HAEAL": {
+    "file": "HAEAL.json",
+    "count": 6
+  },
+  "HAIR": {
+    "file": "HAIR.json",
+    "count": 6
+  },
+  "HALDIRAMS": {
+    "file": "HALDIRAMS.json",
+    "count": 31
+  },
+  "HAMAM": {
+    "file": "HAMAM.json",
+    "count": 4
+  },
+  "HANIA": {
+    "file": "HANIA.json",
+    "count": 5
+  },
+  "HANSAPLAST": {
+    "file": "HANSAPLAST.json",
+    "count": 4
+  },
+  "HAPPINESS": {
+    "file": "HAPPINESS.json",
+    "count": 4
+  },
+  "HAPPY": {
+    "file": "HAPPY.json",
+    "count": 35
+  },
+  "HARPIC": {
+    "file": "HARPIC.json",
+    "count": 26
+  },
+  "HAVELLS": {
+    "file": "HAVELLS.json",
+    "count": 9
+  },
+  "HAWALKER": {
+    "file": "HAWALKER.json",
+    "count": 13
+  },
+  "HEAD": {
+    "file": "HEAD.json",
+    "count": 22
+  },
+  "HELLO": {
+    "file": "HELLO.json",
+    "count": 4
+  },
+  "HENKO": {
+    "file": "HENKO.json",
+    "count": 14
+  },
+  "HERBAL": {
+    "file": "HERBAL.json",
+    "count": 7
+  },
+  "HERITAGE": {
+    "file": "HERITAGE.json",
+    "count": 3
+  },
+  "HERSHEYS": {
+    "file": "HERSHEYS.json",
+    "count": 16
+  },
+  "HEYDAY": {
+    "file": "HEYDAY.json",
+    "count": 44
+  },
+  "HIMALAYA": {
+    "file": "HIMALAYA.json",
+    "count": 140
+  },
+  "HIT": {
+    "file": "HIT.json",
+    "count": 16
+  },
+  "HOME": {
+    "file": "HOME.json",
+    "count": 9
+  },
+  "HOMWOW": {
+    "file": "HOMWOW.json",
+    "count": 22
+  },
+  "HONEY": {
+    "file": "HONEY.json",
+    "count": 3
+  },
+  "HOPPLE": {
+    "file": "HOPPLE.json",
+    "count": 8
+  },
+  "HORLICKS": {
+    "file": "HORLICKS.json",
+    "count": 25
+  },
+  "HOSTAR": {
+    "file": "HOSTAR.json",
+    "count": 7
+  },
+  "HUGGIES": {
+    "file": "HUGGIES.json",
+    "count": 9
+  },
+  "IBELL": {
+    "file": "IBELL.json",
+    "count": 3
+  },
+  "ICING": {
+    "file": "ICING.json",
+    "count": 5
+  },
+  "ID": {
+    "file": "ID.json",
+    "count": 5
+  },
+  "IDHAYAM": {
+    "file": "IDHAYAM.json",
+    "count": 5
+  },
+  "IMPERIAL": {
+    "file": "IMPERIAL.json",
+    "count": 4
+  },
+  "IMPEX": {
+    "file": "IMPEX.json",
+    "count": 24
+  },
+  "IMPORTED": {
+    "file": "IMPORTED.json",
+    "count": 7
+  },
+  "IMPRTD": {
+    "file": "IMPRTD.json",
+    "count": 3
+  },
+  "INDIAGATE": {
+    "file": "INDIAGATE.json",
+    "count": 8
+  },
+  "INDOMIE": {
+    "file": "INDOMIE.json",
+    "count": 6
+  },
+  "INDULEKHA": {
+    "file": "INDULEKHA.json",
+    "count": 8
+  },
+  "INST": {
+    "file": "INST.json",
+    "count": 4
+  },
+  "IODEX": {
+    "file": "IODEX.json",
+    "count": 3
+  },
+  "JAIPET": {
+    "file": "JAIPET.json",
+    "count": 49
+  },
+  "JATIN": {
+    "file": "JATIN.json",
+    "count": 4
+  },
+  "JAYA": {
+    "file": "JAYA.json",
+    "count": 11
+  },
+  "JEWEL": {
+    "file": "JEWEL.json",
+    "count": 4
+  },
+  "JHORR": {
+    "file": "JHORR.json",
+    "count": 4
+  },
+  "JIMMY": {
+    "file": "JIMMY.json",
+    "count": 43
+  },
+  "JO": {
+    "file": "JO.json",
+    "count": 4
+  },
+  "JOCKEY": {
+    "file": "JOCKEY.json",
+    "count": 10
+  },
+  "JOHNSONS": {
+    "file": "JOHNSONS.json",
+    "count": 41
+  },
+  "JOINER": {
+    "file": "JOINER.json",
+    "count": 3
+  },
+  "JOVEES": {
+    "file": "JOVEES.json",
+    "count": 43
+  },
+  "JOYFUL": {
+    "file": "JOYFUL.json",
+    "count": 9
+  },
+  "JOYO": {
+    "file": "JOYO.json",
+    "count": 6
+  },
+  "JULIES": {
+    "file": "JULIES.json",
+    "count": 6
+  },
+  "K": {
+    "file": "K.json",
+    "count": 72
+  },
+  "KABANI": {
+    "file": "KABANI.json",
+    "count": 4
+  },
+  "KADALA": {
+    "file": "KADALA.json",
+    "count": 9
+  },
+  "KAI": {
+    "file": "KAI.json",
+    "count": 13
+  },
+  "KANAN": {
+    "file": "KANAN.json",
+    "count": 10
+  },
+  "KANCHANA": {
+    "file": "KANCHANA.json",
+    "count": 6
+  },
+  "KANGARO": {
+    "file": "KANGARO.json",
+    "count": 11
+  },
+  "KARTHIKA": {
+    "file": "KARTHIKA.json",
+    "count": 4
+  },
+  "KELI": {
+    "file": "KELI.json",
+    "count": 35
+  },
+  "KELLOGGS": {
+    "file": "KELLOGGS.json",
+    "count": 39
+  },
+  "KENSTAR": {
+    "file": "KENSTAR.json",
+    "count": 3
+  },
+  "KERA": {
+    "file": "KERA.json",
+    "count": 4
+  },
+  "KERALA": {
+    "file": "KERALA.json",
+    "count": 9
+  },
+  "KEVENTER": {
+    "file": "KEVENTER.json",
+    "count": 7
+  },
+  "KEYA": {
+    "file": "KEYA.json",
+    "count": 21
+  },
+  "KGN": {
+    "file": "KGN.json",
+    "count": 3
+  },
+  "KIDS": {
+    "file": "KIDS.json",
+    "count": 22
+  },
+  "KINDER": {
+    "file": "KINDER.json",
+    "count": 7
+  },
+  "KINGFISHER": {
+    "file": "KINGFISHER.json",
+    "count": 4
+  },
+  "KINLEY": {
+    "file": "KINLEY.json",
+    "count": 5
+  },
+  "KINZA": {
+    "file": "KINZA.json",
+    "count": 4
+  },
+  "KISSAN": {
+    "file": "KISSAN.json",
+    "count": 22
+  },
+  "KITCHEN": {
+    "file": "KITCHEN.json",
+    "count": 73
+  },
+  "KITKAT": {
+    "file": "KITKAT.json",
+    "count": 15
+  },
+  "KIWI": {
+    "file": "KIWI.json",
+    "count": 16
+  },
+  "KK": {
+    "file": "KK.json",
+    "count": 7
+  },
+  "KLF": {
+    "file": "KLF.json",
+    "count": 5
+  },
+  "KNORR": {
+    "file": "KNORR.json",
+    "count": 19
+  },
+  "KOHE": {
+    "file": "KOHE.json",
+    "count": 9
+  },
+  "KOHINOOR": {
+    "file": "KOHINOOR.json",
+    "count": 7
+  },
+  "KOKA": {
+    "file": "KOKA.json",
+    "count": 12
+  },
+  "KOYAS": {
+    "file": "KOYAS.json",
+    "count": 22
+  },
+  "KPL": {
+    "file": "KPL.json",
+    "count": 5
+  },
+  "KPN": {
+    "file": "KPN.json",
+    "count": 6
+  },
+  "KR": {
+    "file": "KR.json",
+    "count": 24
+  },
+  "KRAFT": {
+    "file": "KRAFT.json",
+    "count": 8
+  },
+  "KRISH": {
+    "file": "KRISH.json",
+    "count": 4
+  },
+  "KRISHNAS": {
+    "file": "KRISHNAS.json",
+    "count": 5
+  },
+  "KS": {
+    "file": "KS.json",
+    "count": 3
+  },
+  "KSHETHRA": {
+    "file": "KSHETHRA.json",
+    "count": 13
+  },
+  "KSK": {
+    "file": "KSK.json",
+    "count": 41
+  },
+  "KUMARIKA": {
+    "file": "KUMARIKA.json",
+    "count": 3
+  },
+  "KURKURE": {
+    "file": "KURKURE.json",
+    "count": 11
+  },
+  "KVG": {
+    "file": "KVG.json",
+    "count": 26
+  },
+  "L": {
+    "file": "L.json",
+    "count": 4
+  },
+  "LA": {
+    "file": "LA.json",
+    "count": 10
+  },
+  "LACTOGEN": {
+    "file": "LACTOGEN.json",
+    "count": 4
+  },
+  "LAKME": {
+    "file": "LAKME.json",
+    "count": 34
+  },
+  "LAUNDRY": {
+    "file": "LAUNDRY.json",
+    "count": 4
+  },
+  "LAYERS": {
+    "file": "LAYERS.json",
+    "count": 7
+  },
+  "LAYS": {
+    "file": "LAYS.json",
+    "count": 18
+  },
+  "LAZER": {
+    "file": "LAZER.json",
+    "count": 3
+  },
+  "LAZZA": {
+    "file": "LAZZA.json",
+    "count": 46
+  },
+  "LEAF": {
+    "file": "LEAF.json",
+    "count": 33
+  },
+  "LEMAM": {
+    "file": "LEMAM.json",
+    "count": 132
+  },
+  "LEMON": {
+    "file": "LEMON.json",
+    "count": 3
+  },
+  "LEONZ": {
+    "file": "LEONZ.json",
+    "count": 20
+  },
+  "LIA": {
+    "file": "LIA.json",
+    "count": 13
+  },
+  "LIANA": {
+    "file": "LIANA.json",
+    "count": 5
+  },
+  "LIBERTY": {
+    "file": "LIBERTY.json",
+    "count": 14
+  },
+  "LIFEBUOY": {
+    "file": "LIFEBUOY.json",
+    "count": 15
+  },
+  "LIMCA": {
+    "file": "LIMCA.json",
+    "count": 3
+  },
+  "LION": {
+    "file": "LION.json",
+    "count": 8
+  },
+  "LIPTON": {
+    "file": "LIPTON.json",
+    "count": 14
+  },
+  "LIRIL": {
+    "file": "LIRIL.json",
+    "count": 3
+  },
+  "LISO": {
+    "file": "LISO.json",
+    "count": 10
+  },
+  "LISTERINE": {
+    "file": "LISTERINE.json",
+    "count": 10
+  },
+  "LITTLE": {
+    "file": "LITTLE.json",
+    "count": 11
+  },
+  "LIVA": {
+    "file": "LIVA.json",
+    "count": 3
+  },
+  "LIVON": {
+    "file": "LIVON.json",
+    "count": 3
+  },
+  "LIYA": {
+    "file": "LIYA.json",
+    "count": 22
+  },
+  "LIZA": {
+    "file": "LIZA.json",
+    "count": 20
+  },
+  "LIZOL": {
+    "file": "LIZOL.json",
+    "count": 21
+  },
+  "LOCK": {
+    "file": "LOCK.json",
+    "count": 3
+  },
+  "LOCO": {
+    "file": "LOCO.json",
+    "count": 6
+  },
+  "LOOSE": {
+    "file": "LOOSE.json",
+    "count": 4
+  },
+  "LORA": {
+    "file": "LORA.json",
+    "count": 3
+  },
+  "LOREAL": {
+    "file": "LOREAL.json",
+    "count": 24
+  },
+  "LOTTE": {
+    "file": "LOTTE.json",
+    "count": 17
+  },
+  "LOTUS": {
+    "file": "LOTUS.json",
+    "count": 18
+  },
+  "LUCKY": {
+    "file": "LUCKY.json",
+    "count": 16
+  },
+  "LUMINARC": {
+    "file": "LUMINARC.json",
+    "count": 23
+  },
+  "LUX": {
+    "file": "LUX.json",
+    "count": 11
+  },
+  "M": {
+    "file": "M.json",
+    "count": 3
+  },
+  "MAA": {
+    "file": "MAA.json",
+    "count": 5
+  },
+  "MAGGI": {
+    "file": "MAGGI.json",
+    "count": 45
+  },
+  "MAGIC": {
+    "file": "MAGIC.json",
+    "count": 6
+  },
+  "MAJOR": {
+    "file": "MAJOR.json",
+    "count": 6
+  },
+  "MALANADU": {
+    "file": "MALANADU.json",
+    "count": 3
+  },
+  "MALAS": {
+    "file": "MALAS.json",
+    "count": 4
+  },
+  "MALAYIL": {
+    "file": "MALAYIL.json",
+    "count": 5
+  },
+  "MALKIST": {
+    "file": "MALKIST.json",
+    "count": 4
+  },
+  "MAMAEARTH": {
+    "file": "MAMAEARTH.json",
+    "count": 32
+  },
+  "MAMYPOKO": {
+    "file": "MAMYPOKO.json",
+    "count": 31
+  },
+  "MANAK": {
+    "file": "MANAK.json",
+    "count": 150
+  },
+  "MANARA": {
+    "file": "MANARA.json",
+    "count": 5
+  },
+  "MANCHESTER": {
+    "file": "MANCHESTER.json",
+    "count": 3
+  },
+  "MANGALDEEP": {
+    "file": "MANGALDEEP.json",
+    "count": 27
+  },
+  "MANGO": {
+    "file": "MANGO.json",
+    "count": 16
+  },
+  "MANNA": {
+    "file": "MANNA.json",
+    "count": 6
+  },
+  "MAPED": {
+    "file": "MAPED.json",
+    "count": 39
+  },
+  "MARACA": {
+    "file": "MARACA.json",
+    "count": 4
+  },
+  "MARAYOOR": {
+    "file": "MARAYOOR.json",
+    "count": 3
+  },
+  "MATTA": {
+    "file": "MATTA.json",
+    "count": 7
+  },
+  "MAYA": {
+    "file": "MAYA.json",
+    "count": 4
+  },
+  "MAYBELLINE": {
+    "file": "MAYBELLINE.json",
+    "count": 6
+  },
+  "MAYIL": {
+    "file": "MAYIL.json",
+    "count": 4
+  },
+  "MAZHAVIL": {
+    "file": "MAZHAVIL.json",
+    "count": 8
+  },
+  "MCCAIN": {
+    "file": "MCCAIN.json",
+    "count": 24
+  },
+  "MCVITIES": {
+    "file": "MCVITIES.json",
+    "count": 11
+  },
+  "ME": {
+    "file": "ME.json",
+    "count": 9
+  },
+  "MEDIMIX": {
+    "file": "MEDIMIX.json",
+    "count": 26
+  },
+  "MEGA": {
+    "file": "MEGA.json",
+    "count": 32
+  },
+  "MELAM": {
+    "file": "MELAM.json",
+    "count": 13
+  },
+  "MEN": {
+    "file": "MEN.json",
+    "count": 4
+  },
+  "MENS": {
+    "file": "MENS.json",
+    "count": 29
+  },
+  "MERCELYS": {
+    "file": "MERCELYS.json",
+    "count": 48
+  },
+  "MERON": {
+    "file": "MERON.json",
+    "count": 7
+  },
+  "MESWAK": {
+    "file": "MESWAK.json",
+    "count": 3
+  },
+  "MF": {
+    "file": "MF.json",
+    "count": 10
+  },
+  "MILI": {
+    "file": "MILI.json",
+    "count": 7
+  },
+  "MILKYMIST": {
+    "file": "MILKYMIST.json",
+    "count": 69
+  },
+  "MILMA": {
+    "file": "MILMA.json",
+    "count": 24
+  },
+  "MINDZ": {
+    "file": "MINDZ.json",
+    "count": 9
+  },
+  "MINUTE": {
+    "file": "MINUTE.json",
+    "count": 6
+  },
+  "MIRAS": {
+    "file": "MIRAS.json",
+    "count": 12
+  },
+  "MIRINDA": {
+    "file": "MIRINDA.json",
+    "count": 4
+  },
+  "MISS": {
+    "file": "MISS.json",
+    "count": 11
+  },
+  "MODERN": {
+    "file": "MODERN.json",
+    "count": 24
+  },
+  "MOGU": {
+    "file": "MOGU.json",
+    "count": 7
+  },
+  "MOMS": {
+    "file": "MOMS.json",
+    "count": 3
+  },
+  "MOODS": {
+    "file": "MOODS.json",
+    "count": 4
+  },
+  "MOOV": {
+    "file": "MOOV.json",
+    "count": 5
+  },
+  "MORELIGHT": {
+    "file": "MORELIGHT.json",
+    "count": 5
+  },
+  "MORTEIN": {
+    "file": "MORTEIN.json",
+    "count": 9
+  },
+  "MOTHERS": {
+    "file": "MOTHERS.json",
+    "count": 34
+  },
+  "MOUNTAIN": {
+    "file": "MOUNTAIN.json",
+    "count": 4
+  },
+  "MR": {
+    "file": "MR.json",
+    "count": 14
+  },
+  "MTR": {
+    "file": "MTR.json",
+    "count": 24
+  },
+  "MULLA": {
+    "file": "MULLA.json",
+    "count": 6
+  },
+  "MUNIX": {
+    "file": "MUNIX.json",
+    "count": 6
+  },
+  "MURALYA": {
+    "file": "MURALYA.json",
+    "count": 4
+  },
+  "MYSORE": {
+    "file": "MYSORE.json",
+    "count": 4
+  },
+  "NAALU": {
+    "file": "NAALU.json",
+    "count": 15
+  },
+  "NAKODA": {
+    "file": "NAKODA.json",
+    "count": 54
+  },
+  "NALPAMARA": {
+    "file": "NALPAMARA.json",
+    "count": 5
+  },
+  "NAMBISANS": {
+    "file": "NAMBISANS.json",
+    "count": 5
+  },
+  "NAN": {
+    "file": "NAN.json",
+    "count": 4
+  },
+  "NATRAJ": {
+    "file": "NATRAJ.json",
+    "count": 5
+  },
+  "NATURAL": {
+    "file": "NATURAL.json",
+    "count": 61
+  },
+  "NATURALS": {
+    "file": "NATURALS.json",
+    "count": 3
+  },
+  "NAVARATNA": {
+    "file": "NAVARATNA.json",
+    "count": 4
+  },
+  "NAVNEET": {
+    "file": "NAVNEET.json",
+    "count": 42
+  },
+  "NAVYA": {
+    "file": "NAVYA.json",
+    "count": 6
+  },
+  "NDR": {
+    "file": "NDR.json",
+    "count": 6
+  },
+  "NELCON": {
+    "file": "NELCON.json",
+    "count": 7
+  },
+  "NELLARI": {
+    "file": "NELLARI.json",
+    "count": 5
+  },
+  "NEO": {
+    "file": "NEO.json",
+    "count": 14
+  },
+  "NESCAFE": {
+    "file": "NESCAFE.json",
+    "count": 20
+  },
+  "NESTLE": {
+    "file": "NESTLE.json",
+    "count": 25
+  },
+  "NESTUM": {
+    "file": "NESTUM.json",
+    "count": 3
+  },
+  "NEW": {
+    "file": "NEW.json",
+    "count": 4
+  },
+  "NIKASU": {
+    "file": "NIKASU.json",
+    "count": 10
+  },
+  "NIMYLE": {
+    "file": "NIMYLE.json",
+    "count": 5
+  },
+  "NIPPO": {
+    "file": "NIPPO.json",
+    "count": 13
+  },
+  "NIRAPARA": {
+    "file": "NIRAPARA.json",
+    "count": 44
+  },
+  "NIRMAL": {
+    "file": "NIRMAL.json",
+    "count": 11
+  },
+  "NISSIN": {
+    "file": "NISSIN.json",
+    "count": 9
+  },
+  "NIVEA": {
+    "file": "NIVEA.json",
+    "count": 64
+  },
+  "NJUZE": {
+    "file": "NJUZE.json",
+    "count": 6
+  },
+  "NO": {
+    "file": "NO.json",
+    "count": 8
+  },
+  "NOLTA": {
+    "file": "NOLTA.json",
+    "count": 64
+  },
+  "NONU": {
+    "file": "NONU.json",
+    "count": 5
+  },
+  "NOURISH": {
+    "file": "NOURISH.json",
+    "count": 10
+  },
+  "NUPUR": {
+    "file": "NUPUR.json",
+    "count": 3
+  },
+  "NUTELLA": {
+    "file": "NUTELLA.json",
+    "count": 3
+  },
+  "NUTRIFUD": {
+    "file": "NUTRIFUD.json",
+    "count": 7
+  },
+  "NUTRO": {
+    "file": "NUTRO.json",
+    "count": 5
+  },
+  "ODDY": {
+    "file": "ODDY.json",
+    "count": 7
+  },
+  "ODOMOS": {
+    "file": "ODOMOS.json",
+    "count": 4
+  },
+  "ODONIL": {
+    "file": "ODONIL.json",
+    "count": 24
+  },
+  "OFFICEMATE": {
+    "file": "OFFICEMATE.json",
+    "count": 4
+  },
+  "OH": {
+    "file": "OH.json",
+    "count": 10
+  },
+  "OLAY": {
+    "file": "OLAY.json",
+    "count": 8
+  },
+  "OLD": {
+    "file": "OLD.json",
+    "count": 13
+  },
+  "OLEEV": {
+    "file": "OLEEV.json",
+    "count": 3
+  },
+  "OLIVIA": {
+    "file": "OLIVIA.json",
+    "count": 16
+  },
+  "OLVIA": {
+    "file": "OLVIA.json",
+    "count": 5
+  },
+  "OM": {
+    "file": "OM.json",
+    "count": 6
+  },
+  "ON1Y": {
+    "file": "ON1Y.json",
+    "count": 7
+  },
+  "ONION": {
+    "file": "ONION.json",
+    "count": 6
+  },
+  "ONIX": {
+    "file": "ONIX.json",
+    "count": 8
+  },
+  "ONLY": {
+    "file": "ONLY.json",
+    "count": 4
+  },
+  "ORALB": {
+    "file": "ORALB.json",
+    "count": 30
+  },
+  "ORANGE": {
+    "file": "ORANGE.json",
+    "count": 5
+  },
+  "ORBIT": {
+    "file": "ORBIT.json",
+    "count": 7
+  },
+  "OREO": {
+    "file": "OREO.json",
+    "count": 4
+  },
+  "ORGANIC": {
+    "file": "ORGANIC.json",
+    "count": 49
+  },
+  "ORGANO": {
+    "file": "ORGANO.json",
+    "count": 17
+  },
+  "ORGELLO": {
+    "file": "ORGELLO.json",
+    "count": 45
+  },
+  "ORIGAMI": {
+    "file": "ORIGAMI.json",
+    "count": 17
+  },
+  "ORION": {
+    "file": "ORION.json",
+    "count": 6
+  },
+  "OYA": {
+    "file": "OYA.json",
+    "count": 6
+  },
+  "PACHARI": {
+    "file": "PACHARI.json",
+    "count": 3
+  },
+  "PAF": {
+    "file": "PAF.json",
+    "count": 9
+  },
+  "PALAT": {
+    "file": "PALAT.json",
+    "count": 13
+  },
+  "PALMO": {
+    "file": "PALMO.json",
+    "count": 3
+  },
+  "PALMOLIVE": {
+    "file": "PALMOLIVE.json",
+    "count": 7
+  },
+  "PAMPERS": {
+    "file": "PAMPERS.json",
+    "count": 57
+  },
+  "PANASONIC": {
+    "file": "PANASONIC.json",
+    "count": 14
+  },
+  "PANTAI": {
+    "file": "PANTAI.json",
+    "count": 6
+  },
+  "PANTENE": {
+    "file": "PANTENE.json",
+    "count": 17
+  },
+  "PAPER": {
+    "file": "PAPER.json",
+    "count": 17
+  },
+  "PARACHUTE": {
+    "file": "PARACHUTE.json",
+    "count": 22
+  },
+  "PARK": {
+    "file": "PARK.json",
+    "count": 15
+  },
+  "PARKER": {
+    "file": "PARKER.json",
+    "count": 6
+  },
+  "PARLE": {
+    "file": "PARLE.json",
+    "count": 47
+  },
+  "PARLES": {
+    "file": "PARLES.json",
+    "count": 3
+  },
+  "PARRYS": {
+    "file": "PARRYS.json",
+    "count": 7
+  },
+  "PARTY": {
+    "file": "PARTY.json",
+    "count": 3
+  },
+  "PAVAN": {
+    "file": "PAVAN.json",
+    "count": 5
+  },
+  "PAVITHRAM": {
+    "file": "PAVITHRAM.json",
+    "count": 8
+  },
+  "PAVIZHAM": {
+    "file": "PAVIZHAM.json",
+    "count": 9
+  },
+  "PEACE": {
+    "file": "PEACE.json",
+    "count": 4
+  },
+  "PEAR": {
+    "file": "PEAR.json",
+    "count": 3
+  },
+  "PEARL": {
+    "file": "PEARL.json",
+    "count": 59
+  },
+  "PEARLPET": {
+    "file": "PEARLPET.json",
+    "count": 21
+  },
+  "PEARS": {
+    "file": "PEARS.json",
+    "count": 21
+  },
+  "PEDIASURE": {
+    "file": "PEDIASURE.json",
+    "count": 5
+  },
+  "PEDIGREE": {
+    "file": "PEDIGREE.json",
+    "count": 7
+  },
+  "PEEKAY": {
+    "file": "PEEKAY.json",
+    "count": 3
+  },
+  "PEPSI": {
+    "file": "PEPSI.json",
+    "count": 7
+  },
+  "PEPSODENT": {
+    "file": "PEPSODENT.json",
+    "count": 15
+  },
+  "PETALS": {
+    "file": "PETALS.json",
+    "count": 14
+  },
+  "PEXPO": {
+    "file": "PEXPO.json",
+    "count": 3
+  },
+  "PIDILITE": {
+    "file": "PIDILITE.json",
+    "count": 5
+  },
+  "PIPE": {
+    "file": "PIPE.json",
+    "count": 3
+  },
+  "PIPO": {
+    "file": "PIPO.json",
+    "count": 5
+  },
+  "PIPPING": {
+    "file": "PIPPING.json",
+    "count": 3
+  },
+  "PIPPYS": {
+    "file": "PIPPYS.json",
+    "count": 17
+  },
+  "PLAIN": {
+    "file": "PLAIN.json",
+    "count": 7
+  },
+  "PLUM": {
+    "file": "PLUM.json",
+    "count": 9
+  },
+  "PLUMS": {
+    "file": "PLUMS.json",
+    "count": 3
+  },
+  "PLUS": {
+    "file": "PLUS.json",
+    "count": 17
+  },
+  "POLYGUARDS": {
+    "file": "POLYGUARDS.json",
+    "count": 10
+  },
+  "POLYSET": {
+    "file": "POLYSET.json",
+    "count": 77
+  },
+  "PONDS": {
+    "file": "PONDS.json",
+    "count": 32
+  },
+  "PONKATHIR": {
+    "file": "PONKATHIR.json",
+    "count": 15
+  },
+  "PONNI": {
+    "file": "PONNI.json",
+    "count": 12
+  },
+  "PONPON": {
+    "file": "PONPON.json",
+    "count": 6
+  },
+  "POOMER": {
+    "file": "POOMER.json",
+    "count": 6
+  },
+  "POPULAR": {
+    "file": "POPULAR.json",
+    "count": 25
+  },
+  "PPS": {
+    "file": "PPS.json",
+    "count": 4
+  },
+  "PREMIER": {
+    "file": "PREMIER.json",
+    "count": 15
+  },
+  "PREMIUM": {
+    "file": "PREMIUM.json",
+    "count": 3
+  },
+  "PRESTIGE": {
+    "file": "PRESTIGE.json",
+    "count": 12
+  },
+  "PRIL": {
+    "file": "PRIL.json",
+    "count": 16
+  },
+  "PRINGLES": {
+    "file": "PRINGLES.json",
+    "count": 9
+  },
+  "PRINTED": {
+    "file": "PRINTED.json",
+    "count": 10
+  },
+  "PRIYOM": {
+    "file": "PRIYOM.json",
+    "count": 6
+  },
+  "PRO": {
+    "file": "PRO.json",
+    "count": 9
+  },
+  "PULIYELI": {
+    "file": "PULIYELI.json",
+    "count": 21
+  },
+  "PUNARJANI": {
+    "file": "PUNARJANI.json",
+    "count": 3
+  },
+  "PUREHEART": {
+    "file": "PUREHEART.json",
+    "count": 4
+  },
+  "QANN": {
+    "file": "QANN.json",
+    "count": 4
+  },
+  "QEAT": {
+    "file": "QEAT.json",
+    "count": 10
+  },
+  "QUAKER": {
+    "file": "QUAKER.json",
+    "count": 9
+  },
+  "QUALITY": {
+    "file": "QUALITY.json",
+    "count": 30
+  },
+  "RAKSHA": {
+    "file": "RAKSHA.json",
+    "count": 9
+  },
+  "RANGEELA": {
+    "file": "RANGEELA.json",
+    "count": 5
+  },
+  "RASHA": {
+    "file": "RASHA.json",
+    "count": 3
+  },
+  "RASNA": {
+    "file": "RASNA.json",
+    "count": 12
+  },
+  "RATAN": {
+    "file": "RATAN.json",
+    "count": 4
+  },
+  "RAVIS": {
+    "file": "RAVIS.json",
+    "count": 3
+  },
+  "RAW": {
+    "file": "RAW.json",
+    "count": 6
+  },
+  "REAL": {
+    "file": "REAL.json",
+    "count": 67
+  },
+  "REAL1": {
+    "file": "REAL1.json",
+    "count": 108
+  },
+  "REBOUND": {
+    "file": "REBOUND.json",
+    "count": 5
+  },
+  "RED": {
+    "file": "RED.json",
+    "count": 12
+  },
+  "REDBULL": {
+    "file": "REDBULL.json",
+    "count": 3
+  },
+  "REVIVE": {
+    "file": "REVIVE.json",
+    "count": 5
+  },
+  "REXONA": {
+    "file": "REXONA.json",
+    "count": 9
+  },
+  "RICE": {
+    "file": "RICE.json",
+    "count": 14
+  },
+  "RIN": {
+    "file": "RIN.json",
+    "count": 4
+  },
+  "RIPPLE": {
+    "file": "RIPPLE.json",
+    "count": 8
+  },
+  "RITEBITE": {
+    "file": "RITEBITE.json",
+    "count": 5
+  },
+  "RKG": {
+    "file": "RKG.json",
+    "count": 3
+  },
+  "ROBIN": {
+    "file": "ROBIN.json",
+    "count": 4
+  },
+  "ROYAL": {
+    "file": "ROYAL.json",
+    "count": 113
+  },
+  "RUBYS": {
+    "file": "RUBYS.json",
+    "count": 4
+  },
+  "RUMIS": {
+    "file": "RUMIS.json",
+    "count": 8
+  },
+  "RW": {
+    "file": "RW.json",
+    "count": 20
+  },
+  "S": {
+    "file": "S.json",
+    "count": 3
+  },
+  "SAFA": {
+    "file": "SAFA.json",
+    "count": 19
+  },
+  "SAFFOLA": {
+    "file": "SAFFOLA.json",
+    "count": 8
+  },
+  "SAMRUDHI": {
+    "file": "SAMRUDHI.json",
+    "count": 27
+  },
+  "SAMYANG": {
+    "file": "SAMYANG.json",
+    "count": 5
+  },
+  "SANIFRESH": {
+    "file": "SANIFRESH.json",
+    "count": 5
+  },
+  "SANTOOR": {
+    "file": "SANTOOR.json",
+    "count": 12
+  },
+  "SAPINS": {
+    "file": "SAPINS.json",
+    "count": 8
+  },
+  "SARVODAYA": {
+    "file": "SARVODAYA.json",
+    "count": 20
+  },
+  "SATKAR": {
+    "file": "SATKAR.json",
+    "count": 4
+  },
+  "SAVLON": {
+    "file": "SAVLON.json",
+    "count": 19
+  },
+  "SAYA": {
+    "file": "SAYA.json",
+    "count": 3
+  },
+  "SB": {
+    "file": "SB.json",
+    "count": 5
+  },
+  "SCHWEPPES": {
+    "file": "SCHWEPPES.json",
+    "count": 3
+  },
+  "SCOTCHBRITE": {
+    "file": "SCOTCHBRITE.json",
+    "count": 28
+  },
+  "SEAKING": {
+    "file": "SEAKING.json",
+    "count": 14
+  },
+  "SECRET": {
+    "file": "SECRET.json",
+    "count": 11
+  },
+  "SEEMA": {
+    "file": "SEEMA.json",
+    "count": 3
+  },
+  "SENSODENT": {
+    "file": "SENSODENT.json",
+    "count": 4
+  },
+  "SENSODYNE": {
+    "file": "SENSODYNE.json",
+    "count": 22
+  },
+  "SET": {
+    "file": "SET.json",
+    "count": 4
+  },
+  "SHANTIS": {
+    "file": "SHANTIS.json",
+    "count": 3
+  },
+  "SHUDHAKERA": {
+    "file": "SHUDHAKERA.json",
+    "count": 3
+  },
+  "SIT": {
+    "file": "SIT.json",
+    "count": 7
+  },
+  "SITHAS": {
+    "file": "SITHAS.json",
+    "count": 48
+  },
+  "SKEI": {
+    "file": "SKEI.json",
+    "count": 48
+  },
+  "SKITTLES": {
+    "file": "SKITTLES.json",
+    "count": 3
+  },
+  "SKORE": {
+    "file": "SKORE.json",
+    "count": 8
+  },
+  "SKY": {
+    "file": "SKY.json",
+    "count": 6
+  },
+  "SNICKERS": {
+    "file": "SNICKERS.json",
+    "count": 16
+  },
+  "SNJ": {
+    "file": "SNJ.json",
+    "count": 5
+  },
+  "SNUGGY": {
+    "file": "SNUGGY.json",
+    "count": 4
+  },
+  "SOFTOUCH": {
+    "file": "SOFTOUCH.json",
+    "count": 4
+  },
+  "SOFTSENS": {
+    "file": "SOFTSENS.json",
+    "count": 8
+  },
+  "SOFY": {
+    "file": "SOFY.json",
+    "count": 7
+  },
+  "SOMETHING": {
+    "file": "SOMETHING.json",
+    "count": 4
+  },
+  "SOUR": {
+    "file": "SOUR.json",
+    "count": 4
+  },
+  "SOYA": {
+    "file": "SOYA.json",
+    "count": 3
+  },
+  "SPEED": {
+    "file": "SPEED.json",
+    "count": 3
+  },
+  "SPRITE": {
+    "file": "SPRITE.json",
+    "count": 5
+  },
+  "SPROUTS": {
+    "file": "SPROUTS.json",
+    "count": 3
+  },
+  "SREERAM": {
+    "file": "SREERAM.json",
+    "count": 15
+  },
+  "SRI": {
+    "file": "SRI.json",
+    "count": 11
+  },
+  "SRIRAM": {
+    "file": "SRIRAM.json",
+    "count": 7
+  },
+  "SS": {
+    "file": "SS.json",
+    "count": 34
+  },
+  "STAR": {
+    "file": "STAR.json",
+    "count": 13
+  },
+  "STAYFREE": {
+    "file": "STAYFREE.json",
+    "count": 24
+  },
+  "STICKER": {
+    "file": "STICKER.json",
+    "count": 6
+  },
+  "STOFF": {
+    "file": "STOFF.json",
+    "count": 17
+  },
+  "STOP": {
+    "file": "STOP.json",
+    "count": 5
+  },
+  "STREAX": {
+    "file": "STREAX.json",
+    "count": 7
+  },
+  "SUGAR": {
+    "file": "SUGAR.json",
+    "count": 11
+  },
+  "SUMERU": {
+    "file": "SUMERU.json",
+    "count": 23
+  },
+  "SUNDROP": {
+    "file": "SUNDROP.json",
+    "count": 11
+  },
+  "SUNFEAST": {
+    "file": "SUNFEAST.json",
+    "count": 55
+  },
+  "SUNLIGHT": {
+    "file": "SUNLIGHT.json",
+    "count": 6
+  },
+  "SUNPLUS": {
+    "file": "SUNPLUS.json",
+    "count": 8
+  },
+  "SUNSILK": {
+    "file": "SUNSILK.json",
+    "count": 17
+  },
+  "SUNTIPS": {
+    "file": "SUNTIPS.json",
+    "count": 3
+  },
+  "SUPER": {
+    "file": "SUPER.json",
+    "count": 4
+  },
+  "SUPERWR": {
+    "file": "SUPERWR.json",
+    "count": 32
+  },
+  "SUPREME": {
+    "file": "SUPREME.json",
+    "count": 4
+  },
+  "SURAJ": {
+    "file": "SURAJ.json",
+    "count": 3
+  },
+  "SUREKHA": {
+    "file": "SUREKHA.json",
+    "count": 3
+  },
+  "SURF": {
+    "file": "SURF.json",
+    "count": 26
+  },
+  "SURIYAN": {
+    "file": "SURIYAN.json",
+    "count": 33
+  },
+  "SVOJAS": {
+    "file": "SVOJAS.json",
+    "count": 11
+  },
+  "SWAD": {
+    "file": "SWAD.json",
+    "count": 3
+  },
+  "SWEET": {
+    "file": "SWEET.json",
+    "count": 3
+  },
+  "SWEETO": {
+    "file": "SWEETO.json",
+    "count": 3
+  },
+  "SWITZ": {
+    "file": "SWITZ.json",
+    "count": 3
+  },
+  "TA": {
+    "file": "TA.json",
+    "count": 3
+  },
+  "TADAA": {
+    "file": "TADAA.json",
+    "count": 3
+  },
+  "TAFELI": {
+    "file": "TAFELI.json",
+    "count": 4
+  },
+  "TAJ": {
+    "file": "TAJ.json",
+    "count": 5
+  },
+  "TANG": {
+    "file": "TANG.json",
+    "count": 8
+  },
+  "TATA": {
+    "file": "TATA.json",
+    "count": 15
+  },
+  "TATAQ": {
+    "file": "TATAQ.json",
+    "count": 9
+  },
+  "TEA": {
+    "file": "TEA.json",
+    "count": 9
+  },
+  "TEDDYY": {
+    "file": "TEDDYY.json",
+    "count": 14
+  },
+  "TETLEY": {
+    "file": "TETLEY.json",
+    "count": 7
+  },
+  "TEXASS": {
+    "file": "TEXASS.json",
+    "count": 4
+  },
+  "TEXMA": {
+    "file": "TEXMA.json",
+    "count": 5
+  },
+  "THALOLAM": {
+    "file": "THALOLAM.json",
+    "count": 26
+  },
+  "THANIMA": {
+    "file": "THANIMA.json",
+    "count": 4
+  },
+  "THINGAL": {
+    "file": "THINGAL.json",
+    "count": 5
+  },
+  "THUMS": {
+    "file": "THUMS.json",
+    "count": 3
+  },
+  "TIC": {
+    "file": "TIC.json",
+    "count": 7
+  },
+  "TIDE": {
+    "file": "TIDE.json",
+    "count": 21
+  },
+  "TIGER": {
+    "file": "TIGER.json",
+    "count": 13
+  },
+  "TILDA": {
+    "file": "TILDA.json",
+    "count": 3
+  },
+  "TISH": {
+    "file": "TISH.json",
+    "count": 4
+  },
+  "TN": {
+    "file": "TN.json",
+    "count": 19
+  },
+  "TOMATO": {
+    "file": "TOMATO.json",
+    "count": 4
+  },
+  "TOOR": {
+    "file": "TOOR.json",
+    "count": 4
+  },
+  "TOP": {
+    "file": "TOP.json",
+    "count": 46
+  },
+  "TOPMIE": {
+    "file": "TOPMIE.json",
+    "count": 10
+  },
+  "TOY": {
+    "file": "TOY.json",
+    "count": 237
+  },
+  "TREO": {
+    "file": "TREO.json",
+    "count": 10
+  },
+  "TRESEMME": {
+    "file": "TRESEMME.json",
+    "count": 17
+  },
+  "TROPICANA": {
+    "file": "TROPICANA.json",
+    "count": 20
+  },
+  "UJALA": {
+    "file": "UJALA.json",
+    "count": 31
+  },
+  "ULTRALUX": {
+    "file": "ULTRALUX.json",
+    "count": 3
+  },
+  "UNIBIC": {
+    "file": "UNIBIC.json",
+    "count": 26
+  },
+  "UNICA": {
+    "file": "UNICA.json",
+    "count": 3
+  },
+  "UNION": {
+    "file": "UNION.json",
+    "count": 22
+  },
+  "UNITASTE": {
+    "file": "UNITASTE.json",
+    "count": 39
+  },
+  "URBANS": {
+    "file": "URBANS.json",
+    "count": 22
+  },
+  "USTRAA": {
+    "file": "USTRAA.json",
+    "count": 49
+  },
+  "UZHUNNU": {
+    "file": "UZHUNNU.json",
+    "count": 5
+  },
+  "VADUKAPULI": {
+    "file": "VADUKAPULI.json",
+    "count": 3
+  },
+  "VANBIODEGRADABLE": {
+    "file": "VANBIODEGRADABLE.json",
+    "count": 3
+  },
+  "VANISH": {
+    "file": "VANISH.json",
+    "count": 8
+  },
+  "VANPAYAR": {
+    "file": "VANPAYAR.json",
+    "count": 3
+  },
+  "VARIYERS": {
+    "file": "VARIYERS.json",
+    "count": 4
+  },
+  "VARMORA": {
+    "file": "VARMORA.json",
+    "count": 25
+  },
+  "VASELINE": {
+    "file": "VASELINE.json",
+    "count": 24
+  },
+  "VATIKA": {
+    "file": "VATIKA.json",
+    "count": 4
+  },
+  "VEDA": {
+    "file": "VEDA.json",
+    "count": 4
+  },
+  "VEER": {
+    "file": "VEER.json",
+    "count": 31
+  },
+  "VEET": {
+    "file": "VEET.json",
+    "count": 8
+  },
+  "VEGA": {
+    "file": "VEGA.json",
+    "count": 41
+  },
+  "VENKYS": {
+    "file": "VENKYS.json",
+    "count": 37
+  },
+  "VI": {
+    "file": "VI.json",
+    "count": 6
+  },
+  "VICKS": {
+    "file": "VICKS.json",
+    "count": 8
+  },
+  "VIJAYA": {
+    "file": "VIJAYA.json",
+    "count": 4
+  },
+  "VIM": {
+    "file": "VIM.json",
+    "count": 16
+  },
+  "VIP": {
+    "file": "VIP.json",
+    "count": 3
+  },
+  "VIVEL": {
+    "file": "VIVEL.json",
+    "count": 25
+  },
+  "VKC": {
+    "file": "VKC.json",
+    "count": 603
+  },
+  "VKUKWARE": {
+    "file": "VKUKWARE.json",
+    "count": 10
+  },
+  "VLCC": {
+    "file": "VLCC.json",
+    "count": 26
+  },
+  "WAFER": {
+    "file": "WAFER.json",
+    "count": 6
+  },
+  "WAI": {
+    "file": "WAI.json",
+    "count": 5
+  },
+  "WASHERZ": {
+    "file": "WASHERZ.json",
+    "count": 11
+  },
+  "WATER": {
+    "file": "WATER.json",
+    "count": 6
+  },
+  "WATTS": {
+    "file": "WATTS.json",
+    "count": 9
+  },
+  "WEIKFIELD": {
+    "file": "WEIKFIELD.json",
+    "count": 33
+  },
+  "WF": {
+    "file": "WF.json",
+    "count": 4
+  },
+  "WHEEL": {
+    "file": "WHEEL.json",
+    "count": 4
+  },
+  "WHISKAS": {
+    "file": "WHISKAS.json",
+    "count": 10
+  },
+  "WHISPER": {
+    "file": "WHISPER.json",
+    "count": 41
+  },
+  "WHITE": {
+    "file": "WHITE.json",
+    "count": 8
+  },
+  "WHYFRYY": {
+    "file": "WHYFRYY.json",
+    "count": 5
+  },
+  "WILD": {
+    "file": "WILD.json",
+    "count": 16
+  },
+  "WINSER": {
+    "file": "WINSER.json",
+    "count": 4
+  },
+  "WOMENS": {
+    "file": "WOMENS.json",
+    "count": 46
+  },
+  "XMAS": {
+    "file": "XMAS.json",
+    "count": 56
+  },
+  "YARDLEY": {
+    "file": "YARDLEY.json",
+    "count": 104
+  },
+  "YERA": {
+    "file": "YERA.json",
+    "count": 22
+  },
+  "YOGABAR": {
+    "file": "YOGABAR.json",
+    "count": 16
+  },
+  "YUMMIEZ": {
+    "file": "YUMMIEZ.json",
+    "count": 19
+  },
+  "YUMMY": {
+    "file": "YUMMY.json",
+    "count": 15
+  },
+  "ZUBI": {
+    "file": "ZUBI.json",
+    "count": 7
+  },
+  "_MISC_A": {
+    "file": "_MISC_A.json",
+    "count": 47
+  },
+  "_MISC_B": {
+    "file": "_MISC_B.json",
+    "count": 43
+  },
+  "_MISC_C": {
+    "file": "_MISC_C.json",
+    "count": 69
+  },
+  "_MISC_D": {
+    "file": "_MISC_D.json",
+    "count": 27
+  },
+  "_MISC_E": {
+    "file": "_MISC_E.json",
+    "count": 16
+  },
+  "_MISC_F": {
+    "file": "_MISC_F.json",
+    "count": 22
+  },
+  "_MISC_G": {
+    "file": "_MISC_G.json",
+    "count": 24
+  },
+  "_MISC_H": {
+    "file": "_MISC_H.json",
+    "count": 28
+  },
+  "_MISC_I": {
+    "file": "_MISC_I.json",
+    "count": 22
+  },
+  "_MISC_J": {
+    "file": "_MISC_J.json",
+    "count": 12
+  },
+  "_MISC_K": {
+    "file": "_MISC_K.json",
+    "count": 31
+  },
+  "_MISC_L": {
+    "file": "_MISC_L.json",
+    "count": 32
+  },
+  "_MISC_M": {
+    "file": "_MISC_M.json",
+    "count": 59
+  },
+  "_MISC_N": {
+    "file": "_MISC_N.json",
+    "count": 29
+  },
+  "_MISC_O": {
+    "file": "_MISC_O.json",
+    "count": 15
+  },
+  "_MISC_P": {
+    "file": "_MISC_P.json",
+    "count": 56
+  },
+  "_MISC_Q": {
+    "file": "_MISC_Q.json",
+    "count": 1
+  },
+  "_MISC_R": {
+    "file": "_MISC_R.json",
+    "count": 28
+  },
+  "_MISC_S": {
+    "file": "_MISC_S.json",
+    "count": 87
+  },
+  "_MISC_T": {
+    "file": "_MISC_T.json",
+    "count": 38
+  },
+  "_MISC_U": {
+    "file": "_MISC_U.json",
+    "count": 7
+  },
+  "_MISC_V": {
+    "file": "_MISC_V.json",
+    "count": 19
+  },
+  "_MISC_W": {
+    "file": "_MISC_W.json",
+    "count": 23
+  },
+  "_MISC_Y": {
+    "file": "_MISC_Y.json",
+    "count": 7
+  },
+  "_MISC_Z": {
+    "file": "_MISC_Z.json",
+    "count": 11
+  },
+  "_MISC__": {
+    "file": "_MISC__.json",
+    "count": 17
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DALDA SUNFLOWER OIL 1LTR",
+    "HSN_Ref": "15121910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DALDA VANASPATHI PCH 200ML",
+    "HSN_Ref": "15162091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DALDA VANASPATHI PCH 500ML",
+    "HSN_Ref": "15162091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DALDA VANASPATI PCH 100ML",
+    "HSN_Ref": "15162091",
+    "GST_Ref": "GST 5%"
+  }
+]

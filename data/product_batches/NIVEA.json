@@ -1,0 +1,386 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "NIVEA B.LTN SHEA SMTH MILK D.SKN 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "NIVEA BODY MILK NOURISHING LOTION 75ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "NIVEA BODY MILK NOURISHNG LOTION 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "NIVEA SHEA SMOOTH BODY MILK 75ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA FRANGIPANINOIL SHOWR GEL500ML",
+    "HSN_Ref": "34013019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA LEMON N OIL SHOWER GEL 500ML",
+    "HSN_Ref": "34013019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA MEN ADV.WHITNG OIL CNTRL F.W50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA MEN OIL CONTRL CHARCOAL F.W 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA SHOWER GEL FRANGIPANI N OIL 250ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA SHOWER GEL LEMON N OIL 125ML",
+    "HSN_Ref": "34013019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NIVEA SHOWER GEL LEMON N OIL 250ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA ACTIVE CLEAN SHOWER GEL 500ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA ALO.HY B.LTN NR.SKN120ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA ALOE HYDRTN B.LTN NRML SKIN 75ML",
+    "HSN_Ref": "33049120",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA ALOE PROTECTN B.LTN SPF15 200ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA ANTI PERSPT PRLNBEAUT ROLON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA B.LTN ALOE HYDRTN NRML SKN 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA CHERRY SHINE LIP BALM 4.8G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA COCOA NOURISH BODY LOTION 200ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA COCOA NOURISH BODY LOTION75ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA COOL KICK ROLL ON 25ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA COOL KICK ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA CREME CARE SHOWER GEL 250ML",
+    "HSN_Ref": "34013000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA CRM ALL SEASN MULT PRPS CRM100ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA CRM ALL SEASN MULTIPRPS CRM 60ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA CRM SOFT CARE SHWR GEL WMN 250ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA DEEP IMPACT MEN DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA DEEP IMPACT MEN ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA DEO ROLL ON PROTNCARE WOMEN 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA ESSENTIAL CARE LIP BALM 4.8G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA EVEN TNE WHITG UV PROT B.LTN75ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA EVEN TNE WHITG UV PRT B.LTN200ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA EXTRA WHITNING B.LTN SPF15 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA EXTRA WHITNING B.LTN SPF15 75ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH ACTIVE DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH ACTIVE ROLL ON 25ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH ACTIVE ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH COMFORT DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH NATRL DEODRNT ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH NATURAL DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA FRESH OCEAN DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA LIP CARE PEACH 4.8G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA MEN F.W ALL IN 1 10X VIT.C 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA MEN FACE WASH ALL IN 1 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA MEN PROTECTCARE SHVNG GEL 200ML",
+    "HSN_Ref": "34013012",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA MEN SENSTV AFTER SHAVE LTN 100ML",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA PEARL N BEAUTY DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA PROTECT N CARE FEMALE DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SHOWER GEL ACTIVE CLEAN 250ML",
+    "HSN_Ref": "34013000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SHOWER GEL COOL KICK MEN 250ML",
+    "HSN_Ref": "33073000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SHOWER GEL ENERGY MEN 250ML",
+    "HSN_Ref": "33073000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SHOWER GEL FRANGIPANI 125ML",
+    "HSN_Ref": "33073000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SHOWER GEL FRESH PURE 250ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SILVER PROTECT ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SOFT LIGHT MOISTURISER 25ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SOFT LIGHT MOISTURISNG CRM 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SOFT ROSE LIP CARE 4.8G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA SWEET STRWBERRY LIP BALM 4.8G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA TOTAL FACE CLN UP FACE WASH 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA WATERMELON FRUITY LIP BALM 4.8G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA WHITENING SENSITIV ROLLON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA WHITENING SENSTVE SKIN DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA WHITENING SMOOTH ROLLON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIVEA WHITENING SMOOTH SKIN DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  }
+]

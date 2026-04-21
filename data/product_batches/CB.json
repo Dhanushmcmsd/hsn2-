@@ -1,0 +1,890 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "CB CHOICE COFFEE PUDDING CAKE 225G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "CB DUST TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "CB SUGAR CANDY 100G",
+    "HSN_Ref": "17011200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB ALMOND 300G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB ALMOND 500G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB ATTA 1KG",
+    "HSN_Ref": "11010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB AVAL MATTA 500G",
+    "HSN_Ref": "19041020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB AVAL ROASTED 400G",
+    "HSN_Ref": "19041020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB AVAL WHITE 500G",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BADAM 100G",
+    "HSN_Ref": "08021200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BADAM 50G",
+    "HSN_Ref": "08021200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BARLEY 200G",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BASMATI ALIBABA 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BASMATI GOLDEN SELA 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BASMATI WHITE SELA RICE 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BESAN 500G",
+    "HSN_Ref": "11061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB BROKEN WHEAT 500G",
+    "HSN_Ref": "10062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CASHEW 100G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CASHEW 400G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CASHEW 50G",
+    "HSN_Ref": "08013210",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CASHEW SPLIT 100G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CASHEW SPLIT 50G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHAKKI ATTA 5KG",
+    "HSN_Ref": "11010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHERUMANI RICE PREMIUM 2KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHERUPAYAR PREMIUM 1KG",
+    "HSN_Ref": "7133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHERUPAYAR PREMIUM 500G",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHOICE APPLE VANILLA CAKE 325G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHOICE CARROT PUDDING CAKE 325G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHOICE DUTCH PUD.CAKE 325G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHOICE JAYA RICE 10KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHOICE MANGO PDG CAKE 225G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CHOICE MATTA VADI RICE 10KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CINNAMON/PATTA 25G",
+    "HSN_Ref": "09061110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CINNAMON/PATTA 50G",
+    "HSN_Ref": "09061990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CLOVE/GRAMPOO 25G",
+    "HSN_Ref": "09071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CLOVE/GRAMPOO 50G",
+    "HSN_Ref": "09071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CORIANDER/MALLI 250G",
+    "HSN_Ref": "09092190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CORIANDER/MALLI 500G",
+    "HSN_Ref": "09092200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CUMIN/JEERAKAM 100G",
+    "HSN_Ref": "09093200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB CUMIN/JEERAKAM 50G",
+    "HSN_Ref": "09093200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB DRY GINGER 50G",
+    "HSN_Ref": "09101120",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB ELAKKA 10G",
+    "HSN_Ref": "09081200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB ELAKKA 25G",
+    "HSN_Ref": "09081200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB GREEN PEAS PREMIUM 1KG",
+    "HSN_Ref": "07102100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB GREEN PEAS PREMIUM 500G",
+    "HSN_Ref": "07131000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB GROUND NUT 200G",
+    "HSN_Ref": "12023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB GROUND NUT 500G",
+    "HSN_Ref": "12023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB HORSE GRAM 1KG",
+    "HSN_Ref": "07135000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB HORSE GRAM 500G",
+    "HSN_Ref": "07135000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB IDLI RICE 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB INDIAN BASMATI RICE 1KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB JAGGERY CUBES 500G",
+    "HSN_Ref": "17011390",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB JAGGERY ROUND 1KG",
+    "HSN_Ref": "17011310",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB JAGGERY ROUND 500G",
+    "HSN_Ref": "17011300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB JAYA RICE PREMIUM 1KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB JAYA RICE PREMIUM 2KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA BROWN BOLD PRE 1KG",
+    "HSN_Ref": "07134000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA BROWN BOLD PRE 500G",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA BROWN SMALL 1KG",
+    "HSN_Ref": "07139090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA BROWN SMALL 500G",
+    "HSN_Ref": "7139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA PARIPPU 1 KG",
+    "HSN_Ref": "07132020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA PARIPPU 500G",
+    "HSN_Ref": "07132000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA WHITE ECONOMY 500G",
+    "HSN_Ref": "07139090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA WHITE PREMIUM 1KG",
+    "HSN_Ref": "07132000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KADALA WHITE PREMIUM 500G",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KAIMA RICE PREMIUM 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KAIMA RICE PREMIUM 2KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KHUS KHUS BLACK 100G",
+    "HSN_Ref": "12079100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KISMIS BLACK 100G",
+    "HSN_Ref": "08062010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KISMIS BLACK 50G",
+    "HSN_Ref": "08062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KISMIS BROWN 100G",
+    "HSN_Ref": "08062020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KISMIS BROWN 50G",
+    "HSN_Ref": "8062010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KISMIS YELLOW 100G",
+    "HSN_Ref": "08062010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KODAMPULI 100G",
+    "HSN_Ref": "08134090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB KODAMPULI 250G",
+    "HSN_Ref": "08029900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB LOBIA WHITE 200G",
+    "HSN_Ref": "7133300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB LOKWAN WHEAT 5KG",
+    "HSN_Ref": "10019910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MAIDA 500G",
+    "HSN_Ref": "11010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MAIDA1KG",
+    "HSN_Ref": "11010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MALAR 100G",
+    "HSN_Ref": "19041020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MARAYOOR SHARKARA UNDA 500G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MASOOR DAL 200G",
+    "HSN_Ref": "07134000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MASOOR DAL 500G",
+    "HSN_Ref": "07139090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA BROKEN RICE 500G",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA BROKEN RICE NICE 500G",
+    "HSN_Ref": "10064000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA RICE SINGLE 2KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA UNDA RICE PRE DB 1KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA UNDA RICE PRE DB 2KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA VADI RICE DB 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MATTA VADI RICE DB 2KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB METHI/ULUVA 100G",
+    "HSN_Ref": "09109924",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB METHI/ULUVA 200G",
+    "HSN_Ref": "09109924",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MOONG DAL 1KG",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MOONG DAL 500G",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB MUSTARD 100G",
+    "HSN_Ref": "12075090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PEAS DAL 1KG",
+    "HSN_Ref": "07131000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PEAS DAL 500G",
+    "HSN_Ref": "07131000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PEPPER BLACK 100G",
+    "HSN_Ref": "09041140",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PEPPER BLACK 50G",
+    "HSN_Ref": "09041140",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PERUMJEERAKAM 100G",
+    "HSN_Ref": "09096230",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PIRIYAN CHILLI 100G",
+    "HSN_Ref": "09109990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PIRIYAN CHILLI 200G",
+    "HSN_Ref": "09109990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PISTA 100G",
+    "HSN_Ref": "08013220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PONNI PREMIUM 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PONNI PREMIUM 2KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB PORI 100G",
+    "HSN_Ref": "19041020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB POTTUKADALA 200G",
+    "HSN_Ref": "11061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAGI 1KG",
+    "HSN_Ref": "10082130",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAGI 500G",
+    "HSN_Ref": "10082130",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAJMA RED 500G",
+    "HSN_Ref": "07133300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAJMA WHITE 500G",
+    "HSN_Ref": "07133300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAW RICE ECONOMY 1KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAW RICE IR8 PRM 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAW RICE IR8 PRM 2KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RAW RICE MEALS 2KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RED AVAL 400G",
+    "HSN_Ref": "19042000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RED/GUNTUR CHILLI 100G",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB RED/GUNTUR CHILLI 200G",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB ROASTED RAVA 500G",
+    "HSN_Ref": "11031100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SAGO/SAVALARY 100G",
+    "HSN_Ref": "19030000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SONAMASURI STEAM RICE 1KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SONAMASURI STEAM RICE 5KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SOOJI RAVA 500GM",
+    "HSN_Ref": "11031100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SOYA CHUNKS BIG 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SOYA CHUNKS SMALL 200G",
+    "HSN_Ref": "12081000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SOYABEAN 500G",
+    "HSN_Ref": "12021019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SUGAR PREMIUM 1KG",
+    "HSN_Ref": "17011490",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SUGAR PREMIUM 2KG",
+    "HSN_Ref": "17011490",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SUREKHA RICE 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB SUREKHA RICE 2KG",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB THAKKOLAM 25GM",
+    "HSN_Ref": "09096111",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB TILL/ELLU BLACK 100G",
+    "HSN_Ref": "12074090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB TILL/ELLU BLACK 50G",
+    "HSN_Ref": "12074090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB TOOR DAL ECONOMY 1KG",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB TOOR DAL PREMIUM 1KG",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB TOOR DAL PREMIUM 500G",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB TURMERIC 100G",
+    "HSN_Ref": "09103020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB UNAKKALARI 500G",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB UZHUN WH.UNDA PRE 500G",
+    "HSN_Ref": "7132000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB UZHUNNU WHITE SPLIT 1KG",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB UZHUNNU WHITE SPLIT 500G",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB UZHUNNU WHITE UNDA PRE 1KG",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB VADA PARIPPU 500G",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB VANPAYAR RED 1KG",
+    "HSN_Ref": "07133990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB VANPAYAR RED 500G",
+    "HSN_Ref": "07139090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB WHEAT 1KG",
+    "HSN_Ref": "10019910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB WHEAT SUJI 500G",
+    "HSN_Ref": "11031110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CB YELLOW PEAS 500G",
+    "HSN_Ref": "07131000",
+    "GST_Ref": "GST 5%"
+  }
+]

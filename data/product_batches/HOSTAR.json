@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "HOSTAR LIQUID DETERGENT 5KG",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HOSTAR CLNING KIT(FL+TL)500ML*2",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HOSTAR PHENYL BLUE 1L",
+    "HSN_Ref": "29071110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HOSTAR PHENYL GREEN 1 L",
+    "HSN_Ref": "29071110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HOSTAR PHENYL ROSE 1 L",
+    "HSN_Ref": "29071110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HOSTAR PHENYL WHITE 1L",
+    "HSN_Ref": "29071110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HOSTAR PHENYL YELLOW 1L",
+    "HSN_Ref": "29071110",
+    "GST_Ref": "GST 18%"
+  }
+]

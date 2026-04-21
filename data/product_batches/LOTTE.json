@@ -1,0 +1,104 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "LOTTE BADA ECLAIR MILK 600G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "LOTTE CARAMILK ECLAIRS(100+10) 396G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "LOTTE SEASONS GRTGS GIFT MILK 418G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE BADA ECLAIR CHOCO 600G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE BADA ECLAIR HONEY 600G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE BADA ECLAIR ORANGE 600G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE CHOCO PIE (2 PACK) 56G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE CHOCO PIE (4 PACK)112G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE CHOCO PIE (6 PACK) 168G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE CHOCOPIE (12PACK) 336G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE CHOCOPIE ORANGE 6PK 168G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE COFFIE BITE CLASSIC 190G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE COFFY BITE ECLAIRS 396G",
+    "HSN_Ref": "18069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE ECLAIRS CHOCO 100+10FREE 396G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE ECLAIRS CHOCO 260G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE LACTOKING (100+10FREE) 440G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTTE SEASONS GRTGS JEWE G.BOX 435G",
+    "HSN_Ref": "17049030",
+    "GST_Ref": "GST 5%"
+  }
+]

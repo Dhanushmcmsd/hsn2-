@@ -1,0 +1,56 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PRINGLES ORGINAL POTATAO CRISPS 107G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PRINGLES ORIGINAL 40G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PRINGLES POT.CRISP DESI MASAL TADK107G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PRINGLES SOUR CREAM N ONION 134G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PRINGLES SOUR CREAM N ONION 40G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PRINGLES TANGY TOMATO TWST102G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "PRINGLES PERI PERI FLAVOUR CHIPS 107G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "PRINGLES PIZZA CHIPS 107G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "PRINGLES SOUR CREAMNONION CHIPS 107G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  }
+]

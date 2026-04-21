@@ -1,0 +1,62 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "LA CRISPO COCONUT MILK MURUKKU 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO ACHAPPAM BIG 10PCS",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO ACHAPPAM SMALL 21PCS",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO MALABAR PAKKAVADA 140G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO PALAK MURUKKU 150G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO PEANUT ROAST 150G",
+    "HSN_Ref": "20081920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO RING MURUKKU 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LA CRISPO TAPIOCA STICK 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "LA CRISPO CORNFLAKES MIXTURE 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "LA CRISPO BANANA CHIPS 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  }
+]

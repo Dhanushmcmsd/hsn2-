@@ -1,0 +1,62 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ELOT BUTTER MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT BABY MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT CHEEDA 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT PAKKAVADA 125G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT PALAK MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT RICE MURUKKU 150G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT STRIP MURUKKU 125G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT THATTA 125G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELOT THATTA MASALA 125G",
+    "HSN_Ref": "9109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "ELOT KERALA MIXTURE 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

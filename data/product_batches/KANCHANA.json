@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "KANCHANA CURD CHILLY 100G",
+    "HSN_Ref": "21039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "KANCHANA POOJA OIL 500ML",
+    "HSN_Ref": "15180040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KANCHANA FRYUMS 100G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KANCHANA INSTANT IDIYAPPAM 200G",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KANCHANA PALM JAGGERRY 400G",
+    "HSN_Ref": "17022090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KANCHANA STEAM MADE PUTTU PODI 1KG",
+    "HSN_Ref": "11042900",
+    "GST_Ref": "GST 5%"
+  }
+]

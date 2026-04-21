@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC MINT 13G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC ORANGE 13G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC SAUNF FLAVOUR 9.7G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC SEEDS FENNEL 16G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC SEEDS JEERA B.SALT 16G",
+    "HSN_Ref": "09093129",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC SPEARMINT 13G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TIC TAC STRAWBERRY 13G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  }
+]

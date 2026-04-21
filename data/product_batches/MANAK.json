@@ -1,0 +1,902 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "MANAK COFFEE DABRA W.VATI SET",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "MANAK KOLGA COFFEE GLASS 1-22G",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "MANAK KOLGA COFFEE GLASS 2-22G",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "MANAK KOLGA COFFEE GLASS 3-22G",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "MANAK TEA STRAINER 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "MANAK TEA STRAINER 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "MANAK TEA STRAINER D2",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "MANAK TEA STRAINER D3",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MANAK MILK CAN 2",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MANAK MILK CAN 3.5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MANAK MILK CAN 4.5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MANAK PRESSING OIL CAN 2",
+    "HSN_Ref": "73102990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MANAK PRESSING OIL CAN 3",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MANAK PRESSING OIL CAN 4",
+    "HSN_Ref": "39235090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 20G CB VANA CHETTY 1",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 20G CB VANA CHETTY 2",
+    "HSN_Ref": "74181090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 20G CB VANA CHETTY 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 20G PLAIN TOPE 10",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 20G PLAIN TOPE 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 20G PLAIN TOPE 13",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLAIN KADAI 13",
+    "HSN_Ref": "76151021",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLAIN KADAI 15",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLAIN SAUCEPAN 10",
+    "HSN_Ref": "76151011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLAIN SAUCEPAN 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLAIN SAUCEPAN 12",
+    "HSN_Ref": "76151021",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLAIN SAUCEPAN 13",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLN LANGDI HANDI 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLN LANGDI HANDI 12",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLN LANGDI HANDI 13",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLN PRABHU CHETTY 10",
+    "HSN_Ref": "74181090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLN PRABHU CHETTY 11",
+    "HSN_Ref": "74181090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK 22G PLN PRABHU CHETTY 12",
+    "HSN_Ref": "74181090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK AGARABATI GOTI 3",
+    "HSN_Ref": "33074100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK AGARABATI GOTI 4",
+    "HSN_Ref": "33074100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEDDING KUMCHA 12",
+    "HSN_Ref": "63041900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEDDING KUMCHA 13",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEEDING PARAT 16",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEEDING PARAT 17",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEGI PLATE 10",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEGI PLATE 11",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BEGI PLATE 9",
+    "HSN_Ref": "48236900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BETHA DABBA 1",
+    "HSN_Ref": "42021290",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BETHA DABBA 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BOWL NO 9",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BRASS CHAKLI MAKER R8",
+    "HSN_Ref": "74181021",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK BULB WATER GLASS",
+    "HSN_Ref": "70133700",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK CHAINA JARA 16",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK CHAINA JARA 18",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP DABBA 14 24G",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP DABBA 16 24G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP DABBA 18 24G",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP DABBA 20 24G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP DABBA 22 24G",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP DABBA 24 24G",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP MIXING BOWL 10",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP MIXING BOWL 11",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP MIXING BOWL 12",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP MIXING BOWL 13",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK DEEP MIXING BOWL 9",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK FANCY PARAT NO 12",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK IDLY POT 12 +STEAMER-22G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK KERLA COCONUT GRATER 1",
+    "HSN_Ref": "82055100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK KK HANDI 1",
+    "HSN_Ref": "76151011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK KK HANDI 2",
+    "HSN_Ref": "73239310",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK KK HANDI 3",
+    "HSN_Ref": "76151011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK KK HANDI 4",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK KK HANDI 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK LASSI GLASS",
+    "HSN_Ref": "70133700",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK MIVERY WATER GLASS 3-22G",
+    "HSN_Ref": "70133700",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK MUKTA VATI 4-22G",
+    "HSN_Ref": "30049099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK MUKTA VATI 6-22G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK NILAM CHAPATI DABBA 10",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK NILAM CHAPATI DABBA 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK NILAM CHAPATI DABBA 12",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK OVAL SPOON 1",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK OVAL SPOON 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK OVAL SPOON 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK OVAL SPOON 4",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PAN SPOON 1",
+    "HSN_Ref": "39241000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PAN SPOON 2",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PAN SPOON 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PAN SPOON 4",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PLAIN CHIBA COVER 10",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PLAIN CHIBA COVER 11",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PLAIN CHIBA COVER 12",
+    "HSN_Ref": "39269099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PLATE STAND 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PLATE STAND 7",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PLATE STAND 9",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PRIYA POT 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PRIYA POT 3",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK PRIYA POT 4",
+    "HSN_Ref": "69120090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RECTANGLE DABBI 1",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RECTANGLE DABBI 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RICE PANJA 2",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RICE PANJA 3",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RICE SINDURI 2",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RICE SINDURI 3",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK ROUND B PATRA 13",
+    "HSN_Ref": "44199090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RUSSAIN DABBA 10",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RUSSAIN DABBA 11",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK RUSSAIN DABBA 12",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SAMBAR DABBI 3-24G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SAMBAR DABBI 5-24G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SOUTH INDIAN THALI 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE DABBI 1 L/B",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE DABBI 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE DABBI 3",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE LUNCH BOX 1",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE LUNCH BOX 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE LUNCH BOX 3",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE PALTA 5",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SQUARE PALTA 6",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS CHAKLI MAKER R8",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS CHAKLI MAKER R9",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS CHIRATTA PUTU (MS)",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS GUNDU 2 24G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS GUNDU 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS GUNDU 4",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS GUNDU 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS JARA 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS JARA 6",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS LADDLE 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS LADDLE 2",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS LADDLE 3",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS LADDLE 4",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS OVAL PALTA 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS OVAL PALTA 6",
+    "HSN_Ref": "16023900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS PEELAR",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS PUTU KUDAM (MS)",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS PUTU MAKER (MS)",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SS SPOON STAND 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK ST WATER GLASS-22G",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK STEEL PALTE SET PROMO",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK STEEL SAUCE PAN PROMO 11",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SUPREME DABBI 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SUPREME DABBI 2",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SUPREME DABBI 3",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SUPREME DABBI 4",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK SUPREME DABBI 5",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK TAPPER PURI DABBA 7-22G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK TAPPER PURI DABBA 8-22G",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK TVT DABBA 13",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK TVT DABBA 14",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK TVT DABBA 15",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK TVT DABBA 16",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK WAIR SPOON STAND 2",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK WAIR SPOON STAND 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK WATER MUG 300ML 24G",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK WATER MUG 700ML 24G",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANAK WATER MUG 900ML 24G",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  }
+]

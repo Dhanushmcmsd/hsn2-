@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GINGER",
+    "HSN_Ref": "07011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GINGER HYBRID",
+    "HSN_Ref": "07011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GINGER MANGO PICKLE LOOSE",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GINGER PICKLE LOOSE",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  }
+]

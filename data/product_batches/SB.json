@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SB BEEF PICKLE 150G",
+    "HSN_Ref": "16025000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SB CUT MANGO PICKLE 150G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SB KERA FISH PICKLE 150G",
+    "HSN_Ref": "16042000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SB PRAWN PICKLE 150G",
+    "HSN_Ref": "16052100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SB WHITE LEMON PICKLE 150G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  }
+]

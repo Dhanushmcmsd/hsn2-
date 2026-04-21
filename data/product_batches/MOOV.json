@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOOV PAIN RELIEF 10G",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOOV PAIN RELIEF CREAM 15G",
+    "HSN_Ref": "30045000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOOV PAIN RELIEF CREAM 25/30G",
+    "HSN_Ref": "30049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOOV PAIN RELIEF SPRAY 35G",
+    "HSN_Ref": "30045000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOOV PAIN RELIEF SPRAY 50/80G",
+    "HSN_Ref": "30049099",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,206 @@
+[
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "CRUNCHY SNACKS PEANUT CANDY 150G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "CRUNCHY GHEE ROASTED PEANUT 150G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CRUNCHY COCONUT MILK MURUKKU 120G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY GLASS JUG 1PCS",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY MASALA MURUKKU 140G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY PEPPER PAKKAVADA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY ROASTED GROUND NUT 160G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACK SESAME BALL 100G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS ACHAPPAM 10NOS",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS C LITTLE SNACKS 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS KUZHALAPPAM-MASALA",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS MADHURASEVA 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS MASALA PEANUT 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS MULLU MURUKKU 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS PAKKAVADA 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS PEANUT BALLS 150G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS RICE MURUKKU BIG",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS ROASTED PEANUT 150G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS SHARKARAVARATTY 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SNACKS TOMATO MURUKKU 125G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY SWEET BOONDI 125G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY TAPIOCA STICK CHILLY 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CRUNCHY WHITE MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "CRUNCHY SNACKS DAL MIXTURE 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "CRUNCHY SNACKS GARLIC MIXTURE 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "CRUNCHY SNACKS MIXTURE 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "CRUNCHY SNACKS MIXTURE 400G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "CRUNCHY SNACKS WHITE MIXTURE 175G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CRUNCHY BANANA SWEET CHIPS ( R)160G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CRUNCHY BANANA SWEET CHIPS (P)160G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CRUNCHY SNACKS BANANA CHIPS 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CRUNCHY SNACKS BANANA CHIPS 300G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CRUNCHY SNACKS POTATO CHIPS 90G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CRUNCHY TAPIOCA CHIPS PLAIN 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  }
+]

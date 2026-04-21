@@ -1,0 +1,56 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "CAVIN'S MILKSHAKE CHOCOLATE 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHAKE CHOC 1000ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHAKE KAJU BUTRSCTCH 180ML",
+    "HSN_Ref": "22029990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHAKE STRAWBERRY 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHAKE STRB 1000ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHAKE VANILLA 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHAKE VANLA 1000ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CAVIN'S MILKSHK BELGIAN CHOC 170ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CAVINS MAA MANGO TETRA 125ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  }
+]

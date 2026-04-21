@@ -1,0 +1,92 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "TATA COFFEE GOLD 50G JAR",
+    "HSN_Ref": "21011110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "TATA GRAND FILTER COFFEE 100G",
+    "HSN_Ref": "09012190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "TATA GRAND FILTER COFFEE 500G",
+    "HSN_Ref": "09012190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "TATA GRAND INST.COFFEE 50G PCH",
+    "HSN_Ref": "21011110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TATA TEA GOLD 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA COPR PLUS M.WATER PET 1L",
+    "HSN_Ref": "22011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA COPR PLUS M.WATER PET 2L",
+    "HSN_Ref": "22011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA COPR PLUS WATER PET 500ML",
+    "HSN_Ref": "22011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA GRAND INST.COFFE 100G JAR",
+    "HSN_Ref": "21011110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA GRAND INST.COFFE 100G PCH",
+    "HSN_Ref": "21011110",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA GRAND INSTANT JAR 50G",
+    "HSN_Ref": "21011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA MUG DESIGN 320ML",
+    "HSN_Ref": "69111011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA SALT CRYSTAL 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA SALT IODISED 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TATA SALT ROCK SALT 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  }
+]

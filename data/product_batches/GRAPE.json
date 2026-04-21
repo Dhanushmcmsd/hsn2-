@@ -1,0 +1,62 @@
+[
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "GRAPE JAM LOOSE",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE CRIMSON PACK",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE FRUIT IMPORTED",
+    "HSN_Ref": "8054000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE ROSE",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE ROSE PACK",
+    "HSN_Ref": "8061000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE SHARAD SEEDLESS",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE SHARAD SEEDLESS PACK",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE SONAKA SEEDLESS",
+    "HSN_Ref": "20089990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE SONAKA SEEDLESS PACK",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPE SONAKA SEEDLESS POUCH",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 0%"
+  }
+]

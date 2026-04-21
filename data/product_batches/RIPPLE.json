@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE CLASSIC GREEN TEA BAGS 50G",
+    "HSN_Ref": "09024040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE PREMIUM DUST TEA 250G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE PREMIUM DUST TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE PREMIUM GREEN TEA 125G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE PREMIUM GREEN TEA 250G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE PREMIUM LEAF TEA 250G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE PREMIUM LEAF TEA 500G",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "RIPPLE TEA HOTEL BLEND 1KG",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  }
+]

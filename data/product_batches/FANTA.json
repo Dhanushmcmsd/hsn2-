@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "FANTA 250ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "FANTA ORANGE CAN 300ML",
+    "HSN_Ref": "22021020",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "FANTA ORANGE PET 600ML",
+    "HSN_Ref": "22021010",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "FANTA ORANGE PET 750ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  }
+]

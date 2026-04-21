@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VI JOHN SHAVING CREAM CLASSIC 125G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VI JOHN SHAVING CREAM ICY MINT 125G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VI JOHN SHAVING CRM TROPICAL LIME 125G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VI JOHN SHAVING FOAM ALL SKIN TYPE400G",
+    "HSN_Ref": "33071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VI JOHN SHAVING FOAM SENSITV SKIN 400G",
+    "HSN_Ref": "33071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "VI WASH MATIC DETRGNT LQD 5LTR",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  }
+]

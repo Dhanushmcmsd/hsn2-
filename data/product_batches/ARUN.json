@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "ARUN CHOCOLATE CUP 85ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "ARUN CHOCOLATE ICONE 50ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ARUN CARIBBEAN ALMOND ICONE 50ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ARUN JOLLY TRAIN BAR CHOCB.SCTCH 55ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ARUN RED VELVET ICONE 100ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ARUN STRAWBERRY CUP 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ARUN VANILLA ICONE 50ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  }
+]

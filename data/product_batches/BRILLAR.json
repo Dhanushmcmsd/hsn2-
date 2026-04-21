@@ -1,0 +1,278 @@
+[
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "BRILLAR CHICKEN LOLLIPOP 450G",
+    "HSN_Ref": "02071400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BRILLAR RTF BUTTERFLY SHRIMP ASTD 200G",
+    "HSN_Ref": "16052100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR BUFFALO 1KG",
+    "HSN_Ref": "02023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR BUFFALO 450G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHEESY CHICKEN NUGGETS 200G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHEESY CHICKEN NUGGETS 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN B/L CUBES 450G",
+    "HSN_Ref": "02071400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN BREAKFAST SAUSAGE 500G",
+    "HSN_Ref": "16010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN BREAST 350G",
+    "HSN_Ref": "02071400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN BURGER PATTY 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN CURRY CUT 450G",
+    "HSN_Ref": "02071400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN CUTLETS 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN DRUMSTICKS 500G",
+    "HSN_Ref": "02071400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN NUGGETS 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN POPS 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN SAMOSA 200G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN SAMOSA 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR CHICKEN SPRING ROLL 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR COCKTAIL SAUSAGE 500G",
+    "HSN_Ref": "16010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR COIN PAROTA 360G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FISH CUTLETS 400G",
+    "HSN_Ref": "16041900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FISH FINGER 400G",
+    "HSN_Ref": "16041900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FISH SAMOSA 400G",
+    "HSN_Ref": "16041900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FRENCH FRIES 1KG",
+    "HSN_Ref": "20041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FRENCH FRIES 200G",
+    "HSN_Ref": "20041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FRENCH FRIES 500G",
+    "HSN_Ref": "20041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FROZEN GREEN PEAS 1KG",
+    "HSN_Ref": "07102100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FROZEN GREEN PEAS 200G",
+    "HSN_Ref": "07102100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR FROZEN GREEN PEAS 500G",
+    "HSN_Ref": "07102100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MALABAR PAROTA 360G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MALABAR WHEET POROTA 360G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MEAT CUTLETS 400G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MEAT SAMOSA 200G",
+    "HSN_Ref": "16025000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MEAT SAMOSAS 400G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MIXED VEGETABLES 200G",
+    "HSN_Ref": "07109000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MIXED VEGETABLES 500G",
+    "HSN_Ref": "07109000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR MUTTON CURRY CUT 450G",
+    "HSN_Ref": "02044200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR RTF CHICKEN CUTLET ASSRTD 200G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR RTF CHICKEN NUGGETS ASTD 200G",
+    "HSN_Ref": "16023200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR RTF MEAT CUTLET ASSRTD 200G",
+    "HSN_Ref": "16025000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR SWEET CORN 200G",
+    "HSN_Ref": "07104000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR SWEET CORN 500G",
+    "HSN_Ref": "07104000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR VEG NUGGTES 400G",
+    "HSN_Ref": "20049000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR VEG SAMOSA 400G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR VEG SPRING ROLL 400G",
+    "HSN_Ref": "20049000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRILLAR VEGETABLE SAMOSA 200G",
+    "HSN_Ref": "20049000",
+    "GST_Ref": "GST 5%"
+  }
+]

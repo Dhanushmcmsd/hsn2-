@@ -1,0 +1,56 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES BUTTER MURUKK 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES GARLIC MURUKKU 160GM",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES GINGER MURUKKU 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES MASALA MURUKK 150G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES ONION MURUKKU 200G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES PALAK MURUKK 150G",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES PALAK MURUKKU 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES RAGI MURUKKU 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "TEA BITES TOMATO MURUKKU 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "NJUZE GUAVA JUICE 350ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "NJUZE LITCHI JUICE 350ML",
+    "HSN_Ref": "20098910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "NJUZE MANGO JUICE 350ML",
+    "HSN_Ref": "20098910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "NJUZE MANGO JUICE 600ML",
+    "HSN_Ref": "20098910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "NJUZE PASSION FRUT JUICE 350ML",
+    "HSN_Ref": "20098910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NJUZE TEN.COCONUT WATER 200ML",
+    "HSN_Ref": "22029090",
+    "GST_Ref": "GST 0%"
+  }
+]

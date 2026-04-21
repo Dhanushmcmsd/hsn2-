@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "OYA COCONUT DATES CHOCOLATE 250G",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "OYA DATES DARK CHOCOLATE 250G",
+    "HSN_Ref": "18062020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "OYA DATES MILK CHOCOLATE 250G",
+    "HSN_Ref": "18062020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "OYA DATES WHITE CHOCOLATE 250G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "OYA PUDDING MANGO W.NATA DE COCO 80G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "OYA PUDDING STRAWBRY W.NATA D.COCO 80G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

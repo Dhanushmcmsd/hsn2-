@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "PALMOLIVE BLACK ORCHD N MILK H.W 250ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PALMOLIVE AROMA MORNING TONIC 250ML",
+    "HSN_Ref": "33073000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PALMOLIVE FOAMNG LIME N MINT H.W 500ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PALMOLIVE LIMENMINT FOAMING H.W 250ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PALMOLIVE LUMINOUS INVIGOR S.GEL 250ML",
+    "HSN_Ref": "34013000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PALMOLIVE LUMINOUS REJUVEN S.GEL 250ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PALMOLIVE RASPBERRY FOAMING H.W 250ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  }
+]

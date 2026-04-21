@@ -1,0 +1,74 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY DARK CHOCOLATE 56G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY FLUTES CHOCOLATE 11.25G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY FRUITNUT CHOCOLATE 100G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY FRUITNUT CHOCOLATE 20G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY FRUITNUT CHOCOLATE 52G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY SMOOTH MILK CHOCOLATE 19.1G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY SMOOTH MILK CHOCOLATE 30G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY SMOOTH MLK CHOCOLATE 90G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "GALAXY SMOOTH MLK CHOCOLATE HRC 56G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "GALAXY COOKIE CRUMBLE CHOCOLATE 20G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "GALAXY COOKIE CRUMBLE CHOCOLATE 96G",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "GALAXY SMOOTH MILK",
+    "HSN_Ref": "18063100",
+    "GST_Ref": "GST 5%"
+  }
+]

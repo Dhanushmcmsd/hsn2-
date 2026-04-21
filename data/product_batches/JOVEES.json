@@ -1,0 +1,260 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "JOVEES TEA TREE ANTI-ACNE F.PCK120G",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "JOVEES SHEA BUTTER MOISTURISER 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "JOVEES CITRUS CLEANSING MILK 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "JOVEES HAIR REPAIR SHAMPOO 250ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ADVANCED HAND CREAM 60G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ALOE VERA MOIST.LOTION 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES AMLANBEAL HAIR TONIC 200ML",
+    "HSN_Ref": "30049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ANTI ACNE CREAM 60G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ANTI PIGMENTATION CREAM 60G",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ANTI PIGMENTATION F.MASK120G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES APPLENGRAPE FRUIT PACK 120G",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES APRICOTNALMOND SCRUB 100G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES APRICOTNHNY PEELOFF MASK100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES AVOCADO REVITAL.NIGHT CRM50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES CHARCOAL FACE PACK 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES DE-TAN FACE PACK 100G",
+    "HSN_Ref": "33049190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES DE-TAN FACE SCRUB 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES DE-TAN FACE WASH 120ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES DETOX.CHARCOAL FACE WSH120ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES FOOT CREAMNSCRUB 2 IN 1 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES HAIR REPAIR CONDITIONER250ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES HAIR SPA MASQUE 200G",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES HENNANBRAHMI HRBL MEHNDI150G",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES HNYNAPPLE CONDITNG SHMP250ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES HNG ANTI HAIR LOSS SHMP250ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES INSTA FAIR GLOW PACK 120G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES KAJAL 3G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES MINI PEARL FACIAL KIT 65G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES NEEM FACE WASH 120ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES PEARL FACE CREAM 60G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES PEARL FACE PACK 60G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES PRE.ANTI AGEING SERUM 50ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES PRE.NAT.WHITENING SERUM 50ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES REGROWTHNREVIT.HAIR PCK 200G",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ROSE BODY WASH 300ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES ROSE SKIN TONER 200ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES SAFFRONNBB FAIRNESS CREAM60G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES SANDALWD DAY CRM SPF-16 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES SIGNATURE KAJAL 0.3G",
+    "HSN_Ref": "33042000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES SUN DEFENCE NEEM S.TONR100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES VEG OAT PEEL 100G",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES VERANAPPLE F.MASSAGE GEL100G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOVEES WATER LILY MOIST.LOTION100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  }
+]

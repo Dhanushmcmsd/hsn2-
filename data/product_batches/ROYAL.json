@@ -1,0 +1,680 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ROYAL TEA FORK",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL CEILING CLEANER BIG 1022",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL CEILING CLEANER TELE-1023",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL CEILING CLEANER TELE-AL-1025",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL CEILING CLEANER TELE-M-1024",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL FAN LEAF CLEANER 1029",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL FAN LEAF CLEANER KPW-2553",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "ROYAL FLOOR CLEANER WITH WN-04-2272",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL APRON CLOTH-1145",
+    "HSN_Ref": "62114300",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL APRON REXIN-1146",
+    "HSN_Ref": "63049239",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL APRON SPL-1147",
+    "HSN_Ref": "63049239",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BABY FORK",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BASIN BIG",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BASIN SMALL",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BATHRM CLEAN.BRUSH 1045",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BATHROOM BRUSH-ECO-1049",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BATHROOM BRUSH-SHORT-1046",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BOTTLE BRUSH 1171",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BOTTLE BRUSH 1172",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BROOM GRASS 5D SPL 6714",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BROOM GRASS DOUBLE 6711",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BROOM-1036",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BROOM-AL-1037",
+    "HSN_Ref": "96031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BROOM-SPL-1038",
+    "HSN_Ref": "96031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BRUSH CUM WIPER-1002",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL BUCKET 14 LTR BLK PRINT 8431",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL CEILING CLNR TELE-ALMINI-1026",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL CLIP MOP 6300W",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL CLIP MOP-CLASSIC-1105",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL CLIP N FIT MOP-03CLR-1193",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL CLIP N FIT MOP-M-02COLOR-1115",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL CLOTH HANGER SS",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL COCONUT SCRAPPER BIG",
+    "HSN_Ref": "82100000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL DESERT FORK",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL DESERT KNIFE",
+    "HSN_Ref": "48202000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL DUST PAN 01",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL DUSTFREE BROOM-2051",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL EASY CHOPPER",
+    "HSN_Ref": "82100000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL EGG TRAY",
+    "HSN_Ref": "39231090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL EUROMOP-NEW-1136",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL EUROMOP-PREMIUM-1140",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FISH CUTTER VR9380",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLAT METAL-BIG-1118",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLAT METAL-S-1117",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLAT MOP-BIG-1120",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLAT MOP-MED-1116",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLOOR BRUSH (10) PROMO",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLOOR BRUSH-01-2277",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLOOR BRUSH-02-2276",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLOOR BRUSH-03-2279",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FLR CLNR WITH METAL PIPE-2268",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL FOOD COVER SMALL 7022",
+    "HSN_Ref": "36241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL GOLD PAPER NAPKINS 1PLY80/100S",
+    "HSN_Ref": "48183000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL JAR PLANE 3,5,7.5LTR SET",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL JAR PLANE 3LTR",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL JAR PLANE 500ML 4PCS",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL JAR PRINT 500ML 4PCS",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL JUG NIAGARA CLR 1500ML",
+    "HSN_Ref": "70134900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL JUG NIAGARA TRANSPARENT 1500ML",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KIT.STAND SS FANCY 3003",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KITCHEN STAND 2001",
+    "HSN_Ref": "73239200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KLF",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KLR",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KMR",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KNC-2503",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KNP",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KNP-2501",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KNR",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE KNS-2502",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE RCV",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE RPW",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE RRV-2514",
+    "HSN_Ref": "82119200",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE RRW",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL KNIFE TOK",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL MASTER SPECIAL BROOM 2853",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL MP BOX 200ML TRANSPARENT 2PCS",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL MUG CLR 1000ML",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL MUG TRANSPERENT 1000ML",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL MUG TRANSPERENT 1500ML",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL MURAM SMALL",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL NAPKINS 100 PULLS 1 PLY PACK",
+    "HSN_Ref": "48183000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL OUTDR BROOM HERO SPL2291",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL PALM JAGGERY 400G",
+    "HSN_Ref": "17029010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL PATLA",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL PEARL E KITCHEN RACK",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL QUALITY E KITCHEN RACK",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL ROUND THREAD MOP-SYN-1101",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL SCRUBBER BRUSH HANDY-1085",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL SCRUBBER-SPECIAL-1084",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL SHORT KNIFE KRP",
+    "HSN_Ref": "82119100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL SQUEEZING MOP-1126",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL STICK BROOM-408",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET BRUSH DH-STEEL-2036",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET BRUSH HOCKEY-05-2036",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET BRUSH HOCKEY-DH-1090",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET BRUSH HOCKEY-DH04-2837",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET BRUSH RS09-2028",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET TISSUE 200 PULS 2PLY ROLL",
+    "HSN_Ref": "48181000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILET TISSUE 300 PULS 2PLY ROLL",
+    "HSN_Ref": "48181000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TOILETBRUSH HOCKEY-04SPL-2038",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TWISTING MOP-02-1134",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TWISTING MOP-COTTON-5015",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TWISTING MOP-COTTONSTEEL-5016",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL TWISTING MOP-PC-01-5013",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL VEGETABLE STAND 3STEP ROUND RACK",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WASHBASIN BRUSH FLAT-1055",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WASHBASIN BRUSH-S-1052",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WASTE TRAY",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WIPER C MED-1015",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WIPER C2+-1007",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WIPER SYN-1006",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WIPER SYN-LONG-1013",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ROYAL WIPER SYN-MED-1014",
+    "HSN_Ref": "96031000",
+    "GST_Ref": "GST 5%"
+  }
+]

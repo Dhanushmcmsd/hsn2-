@@ -1,0 +1,296 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "USTRAA BEARD GROWTH OIL 35ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "USTRAA BEARD GROWTH OIL ADVANCE 60ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "USTRAA FACE WASH OILY SKIN 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "USTRAA FACE WASH OILY SKIN 50G",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "USTRAA MOISTURSNG CREAM OILY SKIN 100G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "USTRAA MOOCH N BEARD OIL WOODY 35ML",
+    "HSN_Ref": "33073090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "USTRAA ANTI DANDRUF HAIR SHAMPOO 250ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "USTRAA ANTI HAIR FALL SHAMPOO 250ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "USTRAA AYURVEDIC HAIR OIL 100ML",
+    "HSN_Ref": "30049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "USTRAA HAIR OIL ANTI HAIR FALL 100ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "USTRAA HAIR VITALIZER SHAMPOO 250ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA ANTI ACNE SPOT GEL 15G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA AYURVEDIC F.W HALDI N NEEM 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA BDY WASH ACTIVTD CHARCOAL 200ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA BEARD SOFTENER 100G",
+    "HSN_Ref": "33059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA BEARD WASH WOODY 60ML",
+    "HSN_Ref": "33079090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA BODY LOTION GERM FREE 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA BODY WASH GREEN CLAY 200ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA BODY WASH TAURINE 200ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA COLOGNE AFTER DARK 100ML BTL",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA COLOGNE AMMUNITION 100ML BTL",
+    "HSN_Ref": "33030050",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA COLOGNE BASE CAMP 100ML BTL",
+    "HSN_Ref": "33030050",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA COLOGNE SCUBA 100ML BTL",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DAILY USE CONDITIONER 100G",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DAILY USE HAIR CREAM 100G",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DE TAN FACE CREAM 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DEODORANT AQUA 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DEODORANT BLACK 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DEODORANT BLUE 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DEODORANT KAKHI 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA DEODORANT O.G 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA EDP BAROOD 100ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA FACE SCRUB ANTI POLLUTANT 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA FACE WASH DRY SKIN 100G",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA FACE WASH NEEM N CHARCOAL 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA FACE WASH NEEM N CHARCOAL 50G",
+    "HSN_Ref": "34013019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA FACE N STUBBLE LOTION 60ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA HAIR GROWTH CREAM 50G",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA HAIR GRWTH VITALIZER NEW PK90ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA MOISTURISNG CREAM DRY SKIN 100G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA MOOCH N BEARD WAX STRG HOLD 50G",
+    "HSN_Ref": "33079090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA NIGHT CREAM 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA POWR F.W ENERGIZE N DE TAN 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA SHOWER GEL BASE CAMP 175ML",
+    "HSN_Ref": "33073010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA SOAP ACTIVATED CHARCOAL 100GX4",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA SOAP NEEM AND GREEN CLAY 100GX4",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA SOAP REBEL 125G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA SOAP SEA MINERALS 100GX4",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "USTRAA VITAMIN C FACE SERUM 20% 30ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 18%"
+  }
+]

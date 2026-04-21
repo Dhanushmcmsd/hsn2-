@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN BOOK COVER ROLL LONG",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN BOOK COVER ROLL SMALL",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN PAPER COVER LARGE",
+    "HSN_Ref": "48194000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN PAPER COVER MEDIUM",
+    "HSN_Ref": "48173000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN PAPER COVER SMALL",
+    "HSN_Ref": "48173000",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN POLSON CORN FLOUR CRT 100G",
+    "HSN_Ref": "11081200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN POLSON CORN FLOUR CRT 500G",
+    "HSN_Ref": "11081200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BROWN N POLSON CUSTARD PDR VANILA 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

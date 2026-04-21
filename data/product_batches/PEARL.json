@@ -1,0 +1,356 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "PEARL ALUMINM FOIL CVR 7X9 50S",
+    "HSN_Ref": "39201019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "PEARL TOUNG CLEANER 4P SET",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL BABY POWDER PUFF",
+    "HSN_Ref": "96161020",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL BATH SCRUBBER LOOFAH",
+    "HSN_Ref": "392410",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL BATH SCRUBBER PLASTIC",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL CLOTH CLIP BOSS",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL CLOTH CLIP CHAMPION",
+    "HSN_Ref": "392620",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL CLOTH CLIP PERFECT",
+    "HSN_Ref": "39269099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL CLOTH CLIP PERMENENT",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL COMB BARBAR BIG 2P SET",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL COMB BARBAR TYPE 2P SET",
+    "HSN_Ref": "96151900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL COMB CRYSTAL TYPE",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL COMB ROUND NORMAL",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL COTTON BUD RNDHEART SML",
+    "HSN_Ref": "56012110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL COTTON BUDS SQURE SMALL",
+    "HSN_Ref": "56012110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL DISPOSABLE FACE MASK 10S",
+    "HSN_Ref": "63079090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL EZEE TOOTH PICK",
+    "HSN_Ref": "44219990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL FINGER COMB 1P PKT",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR BAND SML ASTD 6P PK",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR BUSH AST NRM 4P SET",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR BUSH TYPE 4P PACK",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR CLIP ASRTD M.NO 256",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR CLIP ASRTD M.NO 286",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR DYE BRUSH",
+    "HSN_Ref": "96032900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR PIN ASRTD M.NO 352",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR SLIDE ASTD M.NO 755",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL HAIR SLIDE ASTD M.NO 795",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL LACE COMB 2P SET",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MANICURE SCISSOR SP 120",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MANICURE SCISSOR SP 130",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MAX DISH W.SCRUBR 3P SET",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MAX DISH WASH SPONGES",
+    "HSN_Ref": "392410",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MAX SHAVNG BODY RAZR WMN",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MAX SHAVNG RAZOR DSP.WMN",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL MAX SHAVNG RAZORS MANUAL",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL NAIL CUTTER BELL",
+    "HSN_Ref": "82141090",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL NAIL CUTTER KIDS",
+    "HSN_Ref": "82141090",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL NAIL CUTTER NORMAL 1ST",
+    "HSN_Ref": "82141090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL NAIL CUTTER PKT",
+    "HSN_Ref": "82141090",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL NAPTHALE BALL 50G",
+    "HSN_Ref": "29029010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL NATURAL 100% RAMACHAM",
+    "HSN_Ref": "12119029",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL OXO BIOD.GARBAGE BAG LRG",
+    "HSN_Ref": "39232100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL OXO BIOD.GARBAGE BAG MED",
+    "HSN_Ref": "39232100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL OXO BIOD.GARBAGE BAG SML",
+    "HSN_Ref": "39232100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL OXO BIOD.GARBG BAG E.LRG",
+    "HSN_Ref": "39232990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL OXO BIOD.GARBG BAG JUMBO",
+    "HSN_Ref": "39232100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL PET 1000 SQUARE JAR",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL PET SQUARE JAR 1KG 83MM",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL PET SQUARE JAR 400G 74MM",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL PET SQUARE JAR 800G 83MM",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL POCKET COMB 2P SET",
+    "HSN_Ref": "96151100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL RUBBER BAND 100G ASSORTD",
+    "HSN_Ref": "40169940",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL RUBBER BAND 50G ASSORTED",
+    "HSN_Ref": "40169940",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL SAFETY PIN 50P SET",
+    "HSN_Ref": "73194010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL SHAVING BRUSH",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL SHAVNG RAZOR DISPSBL MEN",
+    "HSN_Ref": "82121010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL SPONGE WIPES 3P SET",
+    "HSN_Ref": "392620",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL UMIKKARI BLACK POWDER 50G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEARL ZIP COVER 6X8 15S",
+    "HSN_Ref": "39232100",
+    "GST_Ref": "GST 18%"
+  }
+]

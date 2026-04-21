@@ -1,0 +1,74 @@
+[
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "JEEVA CURD 500ML",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "JEEVA MILK 500ML",
+    "HSN_Ref": "4011010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAGGERY CUBES LOOSE",
+    "HSN_Ref": "17011310",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAGGERY ROUND REGULAR 500G",
+    "HSN_Ref": "17011410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JASS CLASSIC PRFM SPRAY 60ML",
+    "HSN_Ref": "33030050",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYCO JOLLY (B) SIPPER BOTTLE",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JAYCO PLASTIC PLATINA 2000ML CASSEROLE",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JB PUTTU KUDAM W/O VISSEL 8004",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JB SS CASSEROLE CL.DIAMND 2.5L",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JC-SCREW DRIVER SET",
+    "HSN_Ref": "82054000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOTHIS APPAM BATTER 1KG",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JOTHIS DOSA/IDLY BATTER 1KG",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

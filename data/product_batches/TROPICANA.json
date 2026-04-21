@@ -1,0 +1,122 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "TROPICANA JUICE LYCHEE TETRA PK 200ML",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "TROPICANA JUICE ORANGE TETRA PK 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA APPLE DELIGHT TETRA PK 180ML",
+    "HSN_Ref": "20097900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA APPLE DLT 180/200ML PET",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA CRANBERRY DELIGHT TETRA 1LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA FRUIT DELIGHT TETRA PK 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA GUAVA DELIGHT 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA GUAVA DELIGHT TETRA PK 180ML",
+    "HSN_Ref": "20098990",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA J.APPLE DELIGHT TETRA PK 1L",
+    "HSN_Ref": "20097900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA J.GUAVA DELIGHT TETRA PK 1L",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA J.MANGO DELIGHT TETRA PK 1L",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA LITCHI DELIGHT 200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA LYCHEE DELIGHT TETRA PK 1LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA MIX FRUIT DELIGHT TETRA 1LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA MIX FRUIT PET 1LTR",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA MIXED FRUIT DELIGHT 200ML",
+    "HSN_Ref": "20094900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA ORANGE DELIGHT 1L",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA PINEAPLE DELIGHT TETRA 180ML",
+    "HSN_Ref": "20094900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA POMEGRNT DELIGHT TETRA 200ML",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "TROPICANA POMGRANT DELIGHT 180ML/200ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  }
+]

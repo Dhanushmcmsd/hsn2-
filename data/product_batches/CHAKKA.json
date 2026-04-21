@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "CHAKKA JACKFRUIT JAM 200G",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "CHAKKA PASSION FRUIT JAM 200G",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHAKKA GREEN JACKFRUIT POWDER 200G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHAKKA RIPE JACKFRUIT PALADA MIX 250G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CHAKKA VAC.FRD KABOOLI CHANA FLVD 150G",
+    "HSN_Ref": "20081920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "CHAKKA RIPE BANANA VAC.FRD CHIPS 90G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  }
+]

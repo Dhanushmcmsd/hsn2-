@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEDIASURE CHOCOLATE FLAVOUR 200G REFIL",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEDIASURE CHOCOLATE FLAVOUR 400G REFIL",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEDIASURE 7PLUS VANILLA 400G BOX",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEDIASURE VANILA DELIGHT FLAVR 200GRFL",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PEDIASURE VANILA DELIGHT FLAVR 400GRFL",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

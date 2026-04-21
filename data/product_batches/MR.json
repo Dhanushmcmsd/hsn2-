@@ -1,0 +1,86 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MR.GOLD MUSTARDOIL 1LTR PET BTL",
+    "HSN_Ref": "15149120",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MR.GOLD MUSTARDOIL 500ML PET BTL",
+    "HSN_Ref": "15149120",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MR.GOLD NKTRA POOJA OIL 1L PET",
+    "HSN_Ref": "15180040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MR.GOLD R.SUNFLOWER OIL 1L PCH",
+    "HSN_Ref": "15121910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "MR.GOLD RICE BRAN OIL 1 LTR",
+    "HSN_Ref": "15159040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MR. WHITE DETERGENT POWDER 1KG",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MR. WHITE DETERGENT POWDER 500G",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MR. WHITE DETERGENT POWDR 3KG+1KG FREE",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MR.GOLD NKTRAPOOJAOIL200ML PET",
+    "HSN_Ref": "15180040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MR.MUSCLE FLORAL PERFECTION 1 LTR",
+    "HSN_Ref": "34029099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MR.MUSCLE GLADE LAVENDER BTL 500ML",
+    "HSN_Ref": "38089400",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MR.MUSCLE VIS.PWR TOILET CLNR500ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MR.MUSCLE WITH GLADE CITRUS 1LTR",
+    "HSN_Ref": "34025090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MR.MUSCLE WITH GLADE LAVENDER 1LTR",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  }
+]

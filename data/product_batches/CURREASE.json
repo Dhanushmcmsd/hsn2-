@@ -1,0 +1,86 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "CURREASE BUTTER CHICKEN INST.MIX 300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "CURREASE CHKN GHEE ROAST INST.MIX 300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE BEEF CURRY INST.CURRY MIX300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE BEEF FRY INST.CURRY MIX 240G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE BEEF ROAST INST.CURRY MIX300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE BEEF VINDALU INST.MIX 300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE CHKN CURRY INST.CURRY MIX300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE CHKN ROAST INST.CURRY MIX300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE DUCK ROAST INST.CURRY MIX300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE MUTTON CURRY INST.MIX 300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE MUTTON ROAST INST.MIX 300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE PEPPR CHKN INST.CURRY MIX250G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE PORK DEEP FRY INST.MIX 250G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CURREASE PORK VINDALU INST.MIX 300G",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  }
+]

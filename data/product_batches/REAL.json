@@ -1,0 +1,404 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE APPLE 200ML",
+    "HSN_Ref": "20097100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE GUAVA 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE GUAVA 1LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE LITCHI 1LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE MANGO 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE MANGO 1LTR",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE MIXED FRUIT 180ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE MIXED FRUIT 1LTR",
+    "HSN_Ref": "20099090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL FRUIT JUICE ORANGE 1LTR",
+    "HSN_Ref": "20091900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "REAL MIXEDFRUIT JUICE VITAMIN BOOST 1L",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "REAL FRESH TEA PUDNG CAKE 225G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL AKKA MURUKK BIG PLN 180G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL AKKA MURUKK BOLD PLN 180G",
+    "HSN_Ref": "21069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL AKKA MURUKK SML PLN 180G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL AMMAMANAS DOSA BATTER 1KG",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL AMMAMANS PALAPAM BATR 1KG",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL AMMAMANS VELLAYPM BAT 1KG",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL BEEN BISCUT PINAPPLE 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL CHANDRAKALA PAKAVADA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH ABCD BISCUITS 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH ANIMAL BISCUTS 150G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH APPAM BATTER 1LTR",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH APPLE VAN.CAKE 325G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CARROT PD.CAKE 325G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CASHEW BISCUIT 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CHICKEN EGGS 12PCS",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CHICKEN EGGS 6PCS",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CHICKEN EGGS LOOSE",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CHILLY KADALA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH CORN MICTURE 150G",
+    "HSN_Ref": "19041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH COUNTRY EGGS 6PCS",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH COUNTRY EGGS LOOSE",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH DOSA IDLY BATTER 1L",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH G.APPLE PD.CAKE225G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH HEART BISCUTES 150G",
+    "HSN_Ref": "21069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH JACKFT PD.CAKE 225G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH KARA BOONDI 180G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH KARA SEVA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH KUR KURE 150G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH KUTTY PAPPADAM 75G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH MANGO PD.CAKE 225G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH MASALA KADALA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH OLA PAKKAVADA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH ONION PAKKODA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH P.APLE PD.CAKE 225G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH PAPPADAM 100G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH PAPPADAM 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH PLUM CAKE 250G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH PLUM CAKE 325G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH PLUM CAKE 650G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH QUAIL EGGS 12NOS",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH RICH PLUM 325G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH RICH PLUM 650G",
+    "HSN_Ref": "08109090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH ROSTED KADALA 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRESH THIRI MURUKKU 180G",
+    "HSN_Ref": "21069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRUIT PINK GUAVA 1 LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL FRUIT POWER PINEAPL 180ML",
+    "HSN_Ref": "20094900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL MATE SUPREME SANITRY PAD XXL 7PCS",
+    "HSN_Ref": "96190010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL MINI M.MURUKK GARLIC 180G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL MINI M.MURUKK PLAIN 180G",
+    "HSN_Ref": "21069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL MINI M.MURUKK SPICY 180G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL SUTTU MURUKKU PLAIN 180G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL SUTTU MURUKKU SPICY 180G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "REAL FRESH BOMBAY MIXTURE 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "REAL FRESH GARLIC MIXTURE 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "REAL FRESH IYYER MIXTURE 200G",
+    "HSN_Ref": "21069020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "REAL FRESH MULAKU MIXTURE 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  }
+]

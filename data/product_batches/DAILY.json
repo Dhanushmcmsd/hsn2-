@@ -1,0 +1,74 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "DAILY FRIES TEA CAKE 150G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "DAILY FRIES BUTTER MURUKK 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "DAILY FRIES GHEE ROASTED PEANUT 125G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRESH ELLU WHITE 50G",
+    "HSN_Ref": "12074090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRESH KASKAS WHITE 25G",
+    "HSN_Ref": "12079100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRESH KASKAS WHITE 50G",
+    "HSN_Ref": "12079100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRIES MADHURASEVA 175G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRIES PAKKAVADA 125G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRIES TAPIOCA STICK CHILLI 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DAILY FRIES THATTA 175G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "DAILY FRIES SWEET MIXTURE 150G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "DAILY FRIES TAPIOCA CHIPS CHILLI 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "JULIES GINGER LIME JUICE 300ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "JULIES GRAPE JUICE 300ML",
+    "HSN_Ref": "20096100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "JULIES PASSN FRUIT JUICE 300ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JULIES GINGER LIME SYRUP 500ML",
+    "HSN_Ref": "21069011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JULIES GRAPE SYRUP 500ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "JULIES PASSN FRUIT SYRUP 500ML",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

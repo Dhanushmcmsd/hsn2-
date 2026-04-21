@@ -1,0 +1,68 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SRI SRI OJASVITA CHOCOLATE BOX 200G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SRI SRI ANTI-DANDRUFF SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "SRI SRI SUDANTA TOOTH PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "SRI SRI SUDANTA TOOTH PASTE 200G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI ALMOND N HONEY SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI ANTI-ACNE FACE WASH 60ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI CUCUMBER LEMON FACE WASH 60ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI GLYCERINE SOAP 75G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI HONEY 250G",
+    "HSN_Ref": "04090000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI HONEY 500G",
+    "HSN_Ref": "04090000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SRI SRI SANDAL SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  }
+]

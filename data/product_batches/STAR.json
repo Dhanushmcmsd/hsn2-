@@ -1,0 +1,80 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "STAR POPCORN CHOCOLATE 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN CARAMEL 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN CASHEWNUT 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN CHEESE 30G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN CHEESE CARAMEL 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN CHILLY TOMATO 60G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN LEMON 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN MAGIC MASALA 30G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN ORANGE 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN PERI PERI CARAMEL 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN SESAME 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR POPCORN TANGY TOMATO 60G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAR THENILAVU 130G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  }
+]

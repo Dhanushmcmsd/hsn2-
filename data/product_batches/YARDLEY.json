@@ -1,0 +1,626 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AIR FR ATLNT.BRZ 210ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AIR FR K.LAVENDR 210ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AIR FR LONDN LOVE210ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AIR FR SCOT.MIST 210ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AIR FR SPRING MDW210ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ALPINE ROSENBC FRAG.MIST 140ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AUTUMN BLOOM COMPCT PRFM 18ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AUTUMN BLOOM DAILY PERFUM 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY AUTUMN BLOOM DAILY PRFM 100ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY BE A STAR PERFUME 30ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY BE ADIVA PERFUME 30ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY CARDNIA LILY 250ML",
+    "HSN_Ref": "33074100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY COUNTRY BREEZE COMP.PRFM 18ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY COUNTRY BREEZE DAILY PRFM 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY COUNTRY BREEZE DAILY PRFM100ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ELEGANCE DEO BODY SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ELEGANCE DEODORIZING TALC 250G",
+    "HSN_Ref": "11029022",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGL LAVENDER BODY SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGL LAVENDER LUXURY SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGL LAVENDER TALC 50G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGL ROSE REFRESHING DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH BLOSSOM ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVENDER TALC 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVENDER TALC 250G",
+    "HSN_Ref": "33049100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVENDER TALC 400G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVENDR BODY LTN 350ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVENDR COMP.PRFM 18ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVENDR HND WASH 200ML",
+    "HSN_Ref": "34013000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVNDR H.W 750MLX2 PCH",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVNDR H.W750ML +180ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH LAVNDR TRI PK SOAP300G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE BODY LOTION 350ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE DEO ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE LUXURY SOAP 100G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE PERFUMD TALC 100G",
+    "HSN_Ref": "33049100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE PERFUMD TALC 250G",
+    "HSN_Ref": "33049100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE PERFUMD TALC 400G",
+    "HSN_Ref": "33049120",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ENGLISH ROSE TRI PCK SOAP 300G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN C.MUSK PERFUME 120ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLASC COMP.PRFM 18ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLASIC DEO.TALC 400G",
+    "HSN_Ref": "33049120",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLASSIC D.PRFM 100ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLASSIC D.PRFM 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLASSIC DEO 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLASSIC SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN CLSC TALCUM PDR 250G",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN DUKE COMP.PRFM 18ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN ROYALE B.SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN ROYALE D.PRFM 100ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN ROYALE D.PRFM 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN STELLAR PERFUM 120ML",
+    "HSN_Ref": "33030050",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN URBANE B.SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMAN URBANE D.PRFM 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMN CL.DEODORZG TALC 100G",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMN CLSC CHAR.SOAP 100GX4",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMN ROYALE COMP.PRFM 18ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMN URBANE COMP.PRFM 18ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GENTLEMN URBANE D.PRFM 100ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GOLD AFTER SHAVE LOTION 50ML",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GOLD DEO BODY SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GOLD DEODORIZING TALC 250G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GOLD LATHER SHAVING CREAM 30G",
+    "HSN_Ref": "33071010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY GOLD LATHER SHAVING CREAM 70G",
+    "HSN_Ref": "33071090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IMP.JASMINE LUXURY SOAP 100G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IMP.SANDALWOOD LUXRY SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IMPERIAL JASMINE B.SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IMPERIAL JASMINE TALC 250G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IMPERIAL SANDAL WOOD TALC 250G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IMPERL SANDALWD B.SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IRIS N VIOLET 250ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IRISNVIOLET H.W 750ML+180MLPCH",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IRISNVIOLET H.WASH 200ML+180ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY IRISNVIOLET H.WASH 750MLX2 PCH",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY JASMINE LUXURY SOAP VP 100G X3",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY JASMINE PERFUMED TALC 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LACE PERFUMED TALC 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LACE PERFUMED TALC 250G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LACE PRFM DEODRNT B.SPRAY150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LACE SATIN DEODRT B.SPRAY150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LACE SATIN PERFUMED TALC 100GM",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LAVENDER ROLL ON 50ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LONDON MIST BODY SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LONDON MIST DAILY PERFUM 100ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LONDON MIST DAILY PERFUME 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY LONDON ROSE DEO.ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MAGNOLIANGRAPE FRAG.MIST 140ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW BODY SPRAY 150ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW COMPACT PRFM 18ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW DAILY PERFUM 100ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW DAILY PERFUME 50ML",
+    "HSN_Ref": "33030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW PERFUMED TALC 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW TALC 250G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY MORNING DEW TALC 50G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ORIGINAL DEODORNT ROLL ON 50ML",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY PENOY HW 750+750ML PCH",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY RED ROSE LUXURY SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ROYAL BOUQUET DEO.ROLL ON 50ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY ROYL RED ROSE LXRY SOAP 100GX3",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY SANDALWOOD LUXURY SOAP 100G X3",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY SANDALWOOD TALCUM POWDER 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY SCOTTISH MEADOWS B.SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY SPRING BLOSSOM B.SPRAY 150ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY STAR FLOWRZI PRFM 50ML",
+    "HSN_Ref": "33030010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "YARDLEY VIOLETNRASPBRY FRAG.MIST 140ML",
+    "HSN_Ref": "33072000",
+    "GST_Ref": "GST 5%"
+  }
+]

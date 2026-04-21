@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "NAVYA CANDY CANE",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAVYA 2 LAYER CAKE WOC 1 KG",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAVYA BLACK FOREST 1 KG",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAVYA CELEBRATION CAKE 800G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAVYA ENGLISH FRUIT CAKE 1KG",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAVYA XMAS ROYAL ICING CAKE 1 KG",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  }
+]

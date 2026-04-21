@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAN GROW 2-6 YEARS BIB 400G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAN PRO1 UPTO 6 MONTHS INFANT BIB 400G",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAN PRO2 AFTER 6 MONTHS FOLWUP BIB400G",
+    "HSN_Ref": "19011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NAN PRO3 FOLLOW UP FMLA OLD INFNT 400G",
+    "HSN_Ref": "19011090",
+    "GST_Ref": "GST 5%"
+  }
+]

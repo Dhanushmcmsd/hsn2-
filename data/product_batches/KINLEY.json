@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINLEY DRINKING WATER PET 1LTR",
+    "HSN_Ref": "22011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINLEY DRINKING WATER PET 2LTR",
+    "HSN_Ref": "22011010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINLEY DRINKING WATER PET 500ML",
+    "HSN_Ref": "22011010",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINLEY SODA 1.25LTR",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINLEY SODA PET 750ML",
+    "HSN_Ref": "22011020",
+    "GST_Ref": "GST 5%"
+  }
+]

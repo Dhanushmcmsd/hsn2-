@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "RUBY'S CLASSIC MILK BREAD 400G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "RUBY'S CLASSIC MILK BUN 4NOS",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RUBY'S FAMILY PACK BREAD 500G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RUBY'S REGULAR BREAD 400G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  }
+]

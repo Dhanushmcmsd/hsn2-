@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "KLF COCONAD COCONUT MILK POWDER 25G",
+    "HSN_Ref": "11063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "KLF COCONAD 100% PURE COCONT OIL1000ML",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "KLF NIRMAL VIRGIN COCONUT OIL 250ML",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "KLF NIRMAL VIRGIN COCONUT OIL 500ML",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "KLF NIRMAL VIRGN BABY COCONT OIL 100ML",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  }
+]

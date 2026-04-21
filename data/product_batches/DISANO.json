@@ -1,0 +1,74 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "DISANO PEANUT BUTTER CREAMY 350G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "DISANO PEANUT BUTTER CRUNCHY 350G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DISANO EXTRA LIGHT OLIVE OIL 1LTR",
+    "HSN_Ref": "15091000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DISANO EXTRA LIGHT OLIVE OIL 500ML",
+    "HSN_Ref": "15091000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DISANO OLIVE OIL 1LTR",
+    "HSN_Ref": "15099010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DISANO OLIVE OIL 250ML",
+    "HSN_Ref": "15099010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DISANO OLIVE OIL 500ML",
+    "HSN_Ref": "15099010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DISANO 100%WHOLE GRAIN OATS1KG-B1G1",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DISANO APPLE CIDER VINEGR FILTRD 500ML",
+    "HSN_Ref": "22090010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DISANO PASTALICIOUS ELBOWS 500GB1G1",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DISANO PASTALICIOUS FUSILLI500GB1G1",
+    "HSN_Ref": "19021990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DISANO PASTALICIOUS PENNE 500G B1G1",
+    "HSN_Ref": "19021100",
+    "GST_Ref": "GST 5%"
+  }
+]

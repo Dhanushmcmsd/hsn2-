@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "CETAPHIL BABY MASSAGE OIL 200ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "CETAPHIL BABY GENTLE SHAMPOO 230ML",
+    "HSN_Ref": "34013019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CETAPHIL MOISTURISING LOTION 250ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CETAPHIL SUN KID SPF30 GEL 100ML",
+    "HSN_Ref": "30049099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CETAPHIL SUN KID SPF50 GEL 150ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,842 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "HIMALAYA A.D TEA TR.SHMP200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "HIMALAYA A.DRF TEA TR.SHMP80ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "HIMALAYA REFRESHNG CLEANSNG MILK 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA BABY MASSAGE OIL 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA BABY MASSAGE OIL 200ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA D.REP A.OIL SHMP 180ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA FRESH OIL CLEAR FW LEMON 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA FRESH OIL CLR F.W LEMON 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA FRSH OIL CLR FW BLUEBRY 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA FRSH OIL CLR FW STRWBRY 100ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA INTNSE OIL CLR LEMN F.W 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA INTNSE OIL CLR LEMON F.W 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA OIL CLEAR LEMON FACE WSH 50ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA OIL CLEAR MUD FACE PACK 100G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA OIL CLR LEMON FACE WASH 100ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "HIMALAYA OIL CLR LMN F.W 150ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "HIMALAYA ANTI HAIR FALL HAIR OIL 100ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "HIMALAYA ANTI HAIR FALL HAIR OIL 200ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "HIMALAYA BABY HAIR OIL 100ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "HIMALAYA GENTLE BABY SHAMPOO 100ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "HIMALAYA GENTLE BABY SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "HIMALAYA ACTV FRESH GEL TOOTHPASTE 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "HIMALAYA COMPLETE CARE TOOTHPASTE 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "HIMALAYA SPARKLG WHITE TOOTHPASTE 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA A.HAIR F.BR.SHMP200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA A.HAIR FL BR.SHMP80ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ACTIVE SPORT FACE WASH 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ALMOND AND ROSE SOAP 125G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ALMOND N ROSE SOAP SOAP 75G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ALOECUCUMBR RFRSHG LTN 200ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ALOENCUCUMBR RFRSHG LTN 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ALOENCUCUMBR RFRSHG LTN 400ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ANTI DANDRUF HAIR CREAM 100ML",
+    "HSN_Ref": "33059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ANTI HAIR FALL CREAM 100ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA ANTI-HAIR FALL CONDITNR 80ML",
+    "HSN_Ref": "33059019",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA AYURVEDA CLEAR SKIN SOAP 125G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA AYURVEDA CLEAR SKIN SOAP 75G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY CARE GIFT JAR",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY CREAM 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY CREAM 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY CREAM 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY LOTION 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY LOTION 200ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY LOTION 400ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY POWDER 100G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY POWDER 200G",
+    "HSN_Ref": "33049190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY POWDER 400G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA BABY POWDER 50G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA CLEAR COMPLXN WHITNG F.W 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA CLEAR COMPLXN WHTNG F.W 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA CLR COMPLXN WHITNG F.SCRB 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA CLR COMPLXN WHTNG F.SCRB 100G",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA COCOA BUTR INTNSV B.LTN 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA COCOA BUTR INTNSV B.LTN 200ML",
+    "HSN_Ref": "33049900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA COCOA BUTR INTNSV B.LTN 400ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA CUCUMBER AND COCONUT SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA CUCUMBR AND COCONUT SOAP 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA DAMGE REPR PROTN CONDTR 200ML",
+    "HSN_Ref": "33059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA DEEP CLEANSG APRICOT F.W 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA DEEP CLNSNG APRICOT F.W 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA DIAPER RASH CREAM 20ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA DIAPER RASH CREAM 50ML",
+    "HSN_Ref": "30049099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA DRYNESS DEF.DETNGLNCOND 200ML",
+    "HSN_Ref": "33059011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA EXTRA MOISTRZG BABY SOAP 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA EXTRA MOISTURZG BABY SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA FAIRNESS KESAR FACE PACK 100G",
+    "HSN_Ref": "33049190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA FAIRNESS KESAR FACE PACK 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTL EXFOLT APRICOT SCRB 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTL EXFOLT WALNUT SCRB 100G",
+    "HSN_Ref": "33049900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE BABY SOAP 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE BABY SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE BABY WASH 100ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE BABY WIPES 12PCS",
+    "HSN_Ref": "33079090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE BABY WIPES 24PCS",
+    "HSN_Ref": "96190030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE DAILY PROTEN SHMP 80ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE DAILY PROTN COND 100ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE DAILY PROTN COND 200ML",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GENTLE DAILY PROTN SHMP 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GNT.EXFOLTG APRICOT SCRUB100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA GNTL EXFOLTG WALNUT SCRUB 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA HONEY AND CREAM SOAP 125G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA HONEY AND CREAM SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA HYDRATNG ALOE FW 50ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA KAJAL 1G",
+    "HSN_Ref": "33042000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA KAJAL 2.7G",
+    "HSN_Ref": "33042000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA LIP BALM 10G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA MEN FACE N BEARD WASH 40ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA MOIST.ALOVERA FACIAL WIPE 10P",
+    "HSN_Ref": "48182000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA MOIST.ALOVERA FACIAL WIPE 25P",
+    "HSN_Ref": "48182000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA MOISTURIZNG ALOEVERA F.W 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NATRL GLOW KESAR FACE CRM 25G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NATRL GLOW KESAR FACE CRM 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NATURAL GLOW KESAR F.W 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NATURAL GLOW KESAR F.WSH 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NATURAL SHINE HENNA 120G",
+    "HSN_Ref": "33059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NATURAL SHINE HENNA 50G",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NEEM AND TURMERIC SOAP 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NEEM AND TURMERIC SOAP 75G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NEEM F.W 200ML 1+1",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NEEM PURIFYG F.W 15ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NOURISHING BABY SOAP 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NOURISHING BABY SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NOURISHING BODY LOTION 400ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NOURISHING SKIN CREAM 100ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NOURISHING SKIN CREAM 200ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA NOURSHING SKIN CREAM 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PEACH SHINE LIP CARE 4.5G",
+    "HSN_Ref": "33041000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PIMPLE CLEAR NEEM F.WASH 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PIMPLE CLEAR NEEM F.WSH 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA POWER GLOW LICORICE F.W 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PRICKLY HEAT BABY POWDER 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PROTECTIVE SUNSCREEN LTN 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PROTEIN HAIR CREAM 100ML",
+    "HSN_Ref": "33059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURE EXPRESSION KAJAL 0.30G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURE HAND TULSINLMN H.W 250ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYG NEEM FACIAL WIPES 10P",
+    "HSN_Ref": "48182000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYG NEEM FACIAL WIPES 25P",
+    "HSN_Ref": "48182000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYG NEEM FOAMNG F.W 150ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYING NEEM FACE WASH 50ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYING NEEM PACK 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYING NEEM PACK 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYING NEEM SCRUB 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYING NEEM SCRUB 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA PURIFYNG NEEM FACE WASH 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA REFRESHING BABY SOAP 125G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA REFRESHING BABY SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA REFRESHING FRUIT PACK 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA REFRSHNGNCLARFYNG TONER 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA STRAWBERY SHINE LIP CARE 4.5G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA TAN R.ORANGE PEEL OF MASK100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA TAN REM.ORNGE PEEL OF MASK50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA TAN REMOVAL ORANGE F.W 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA TAN REMOVL ORANGE F.WASH 50ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA TAN RMVL ORANGE FACE SCRB100G",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA TAN RMVL ORANGE FACE SCRUB50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA UNDER EYE CREAM 15ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA VIT.C FW BLUBRY 100ML",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA VIT.C FW STRWBRY100ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA WINTER DEFENSE MOIST.CRM 50ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HIMALAYA WINTER DEFNSE MOIST CRM 100ML",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "HAEAL COCONUT MILK SOAP 100G",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "HAEAL COCONUT MILK SOAP BUNDLE 100GX4",
+    "HSN_Ref": "34011110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAEAL CHARCOAL SOAP 100G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAEAL LAVANDR H.W 250ML 1+1OFR",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAEAL NEEM H.W 250ML 1+1 OFFER",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAEAL PEACH H.W 250ML 1+1 OFFR",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  }
+]

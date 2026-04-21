@@ -1,0 +1,62 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "MF CHOCOLATE CRUNCHY PB 227GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "MF CHOCOLATE CRUNCHY PB 510GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "MF CHOCOLATE PROTEIN BAR 34GM",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "MF CHOCOLATE PROTEIN BAR 60GM",
+    "HSN_Ref": "18069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MF HIGHPROTEIN CRUNCHY PB510GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MF NATURAL CRUNCHY PB 510GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MF ORIGINAL SMOOTH PB 227GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MF ORIGINAL SMOOTH PB 510GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MF ROLLED OATS 900GM",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MF ZERO SUGAR PB 510GM",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  }
+]

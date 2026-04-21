@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "EL' NATURAL CARDAMOM TEA 100G",
+    "HSN_Ref": "09021010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EL' NATURAL CHICKEN PICKLE 150G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EL' NATURAL DRY PRAWNS CHILLY ROAST 50G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EL' NATURAL NELLIKA KANTARI CONCNT750ML",
+    "HSN_Ref": "20089919",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EL' NATURAL VALANPULI (TAMARIND) 200G",
+    "HSN_Ref": "08134000",
+    "GST_Ref": "GST 0%"
+  }
+]

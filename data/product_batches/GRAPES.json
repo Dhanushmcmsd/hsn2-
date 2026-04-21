@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "GRAPES IND BLACK JUICE",
+    "HSN_Ref": "20096100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "GRAPES IND BLACK JUICE PACK",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "GRAPES IND BLACK JUICE POUCH",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPES IMPORTED RED GLOBE PACK",
+    "HSN_Ref": "08081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPES IND GREEN DILKUSH PACK",
+    "HSN_Ref": "08061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRAPES INDIAN RED GLOBE PACK",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 0%"
+  }
+]

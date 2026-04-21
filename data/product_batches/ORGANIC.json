@@ -1,0 +1,296 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ORGANIC INDIA TULSI GR.TEA 100G TIN",
+    "HSN_Ref": "09021090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ORGANIC INDIA TULSI GR.TEA 100G ZIP",
+    "HSN_Ref": "09021090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ORGANIC INDIA TULSI GR.TEA CLAS 10S",
+    "HSN_Ref": "09021090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ORGANIC INDIA TULSI GR.TEA CLAS 25S",
+    "HSN_Ref": "09021090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ORGANIC INDIA TULSI GR.TEA LMNG 25",
+    "HSN_Ref": "09021090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ORGANIC INDIA GHEE 500ML",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA ASHWAGANDHA 60 CAP",
+    "HSN_Ref": "30049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA HONEY(WILDFOREST)250G",
+    "HSN_Ref": "04090000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA IMMUNITY 60 CAP",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA JAGGERY PDR 500G",
+    "HSN_Ref": "48030090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA MORINGA 60 CAP",
+    "HSN_Ref": "12119029",
+    "GST_Ref": NaN
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA MORINGA PDR 100G CAN",
+    "HSN_Ref": "12119099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA QUINOA 500G",
+    "HSN_Ref": "10085000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA STEVIA N.SWEETNER 25S",
+    "HSN_Ref": "21069091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA TULSI G.TURMERIC25 IB",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC INDIA TURMERIC FORMULA 60S",
+    "HSN_Ref": "30049011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC NAT HIMALYAN PINK SALT 500G",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC NAT HIMALYAN PINK SALT 750G",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC NAT HIMALYN PINK SALT GRN 500G",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC NAT HIMALYN PINK SALT GRN 750G",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.ARHR (TUR) DAL500G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.BESAN 500G",
+    "HSN_Ref": "11051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.BROWN SUGAR 500G",
+    "HSN_Ref": "17019990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.CHANA DAL 500G",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.CORIANDER PDR 100G",
+    "HSN_Ref": "09092200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.CORIANDER WHL 100G",
+    "HSN_Ref": "09092190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.CUMIN WHOLE 100G",
+    "HSN_Ref": "09093119",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.FENUGREEK 100G",
+    "HSN_Ref": "09109912",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.FLAX SEEDS 100G",
+    "HSN_Ref": "12040090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.GROUND NUT 500G",
+    "HSN_Ref": "12023010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.IDLI RICE 1KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.JAGGERY POWDR 500G",
+    "HSN_Ref": "17011310",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.KABULI CHANA 500G",
+    "HSN_Ref": "07132090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.MOONG DAL WHL 500G",
+    "HSN_Ref": "07133190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.MOONG DL YL.SP500G",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.POHA WHITE 500G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.R.WHEAT FLOUR 500G",
+    "HSN_Ref": "11010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.RAGI FLOUR 500G",
+    "HSN_Ref": "11063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.RAGI WHOLE 500G",
+    "HSN_Ref": "10082130",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.RED CHILY PDR 100G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.RED POHA 500G",
+    "HSN_Ref": "19041020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.SONAMASURI H.P 1KG",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.SUGAR 500G",
+    "HSN_Ref": "17019990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.SUJI 500G",
+    "HSN_Ref": "11031110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.TURMERIC PDR 100G",
+    "HSN_Ref": "09103030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.URAD DAL W.WHT500G",
+    "HSN_Ref": "07139010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.WH.WHEAT FLOUR 1KG",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.WH.WHEAT FLOUR 5KG",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ORGANIC TAT.WHITE BASMATI 1KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  }
+]

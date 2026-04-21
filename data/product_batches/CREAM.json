@@ -1,0 +1,20 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CREAM BELL CHOC.BELGN MILK SHAKE 200ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "CREAM BELL COFE LATE CLD MILK SHK200ML",
+    "HSN_Ref": "22029990",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "CREAM 21 MOISTURZG CREAM 100ML",
+    "HSN_Ref": "04029180",
+    "GST_Ref": "GST 5%"
+  }
+]

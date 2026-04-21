@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANNA BLACK DATES 750G ZIP PK",
+    "HSN_Ref": "08041020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANNA MULTIGRAIN OATS ATTA 1KG",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANNA OATS 1KG JAR",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANNA OATS 500G PCH",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "MANNA MLTGN WAFERS CHOCLTE 75G",
+    "HSN_Ref": "19053290",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "MANNA MLTGN WAFERS VANILLA 75G",
+    "HSN_Ref": "19053290",
+    "GST_Ref": "GST 5%"
+  }
+]

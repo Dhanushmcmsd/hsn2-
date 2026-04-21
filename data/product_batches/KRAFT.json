@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "KRAFT CHEESE SPREAD 230G 1X12",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 10X4.5 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 10X8 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 12X10 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": NaN
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 12X5 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 6X4 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 9X4 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KRAFT ENVELOPE 9X6 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  }
+]

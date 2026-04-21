@@ -1,0 +1,20 @@
+[
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "PARLE'S WAFERS CLASSIC SALTED 70G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "PARLE'S WAFERS CREAM ONION 70G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "PARLE'S WAFERS TANGY TAMATO 70G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  }
+]

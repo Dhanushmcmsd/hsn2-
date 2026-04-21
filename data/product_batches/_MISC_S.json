@@ -1,0 +1,524 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "SMILE CERAMIC COFFEE CUP 300ML",
+    "HSN_Ref": "69120090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "SLICE FRUIT BASE DRINK BTL 1.2LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "SLICE FRUIT BASE DRINK BTL 600ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "STORIA POMEGRANATE JUICE 750ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STORIA COCONUT WATER 750ML",
+    "HSN_Ref": "20098990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "SKANDA PRE.COW GHEE 200ML JAR",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "SKANDA PRE.COW GHEE 500ML JAR",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SMOODH CARAMEL FLV MILK 80ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SOMANY MILK MUG 1PCS",
+    "HSN_Ref": "69111011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SOYVITA SOYA MILK POWDER DIABETIC 200G",
+    "HSN_Ref": "21069091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SOYVITA SOYA MILK POWDR SWEETENED 200G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "SUBSIDY OIL 2LTR PACK (1+1)",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "SUNPURE R.SUNFLOWER OIL 1L PCH",
+    "HSN_Ref": "15121910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "SUNRICH SUNFLOWER OIL 450G PCH",
+    "HSN_Ref": "15121910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "SUNRICH SUNFLOWER OIL 850G PCH",
+    "HSN_Ref": "15121910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "SWARNAM GINGELLY OIL 200ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "SWARNAM GINGENLY OIL 100 ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SAFE WASH LIQUID DETERGENT 1KG+1KG",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAFE WASH LIQUID DETERGNT 500G+500G",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SQUAD LIQUID DETERGENT 5LTR",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "SUNVEEL DETERGENT LIQUID 5KG",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SABENA DISH WASH PWDR 450GM",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SADHYA PLKDN VADI MATTA 10KG",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAFETY PIN SET KC2060",
+    "HSN_Ref": "73194000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAGAR SMP 500GM POUCH",
+    "HSN_Ref": "04021010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAMBAR KIT 1NOS",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAMRUSHI FLAX SEED 100G",
+    "HSN_Ref": "12119099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SANMAN TONG SERVING SMALL",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SANSENG NAIL CUTTER",
+    "HSN_Ref": "82142010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAPOTA (CHIKKU)",
+    "HSN_Ref": "08101000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SARA JOY TWISTER MOP",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SASO WASHNG MACH.HYGINE DRUM CLNR 160G",
+    "HSN_Ref": "34029099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAUCE JAR KC2075",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAVAJ SEVANAZHY STEEL REG 8",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAVORIT LNG VERMICLI 325G/500G",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SAVORIT PASTA ELBOW 500GM",
+    "HSN_Ref": "19021900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SCALE STICKER PRINT 58MM*38MM",
+    "HSN_Ref": "48114100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SCALE STICKER ROLL 58MM*38MM",
+    "HSN_Ref": "48114100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SCILINTA MENSTRUAL CUP SMALL SIZE",
+    "HSN_Ref": "40149090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SCISSORS KC1845",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SCISSORS STEEL KC2147",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SCRAPER SET 3PCS",
+    "HSN_Ref": "38264019",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SEA SPARKLE JUMBO SHRIMPS PDTO 250G",
+    "HSN_Ref": "03061719",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SEED BALANCE MORGEN METE 300G",
+    "HSN_Ref": "19041030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SENIOR BOYS DOTKNIT TSHIRT",
+    "HSN_Ref": "61091000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SENSO LEMON SQUEEZER",
+    "HSN_Ref": "39241090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SHANTHARAM CORIANDER SEED 250G",
+    "HSN_Ref": "09092110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SHANTHARM BYADGI CHILL.STM250G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SHANTHARM GUNTUR CHILL.STM250G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SHIKAKAI SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SHIP SUPERIOR MATCH BOX 10D NOS",
+    "HSN_Ref": "36050010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SHOWER TO SHWR SPR COOL PDR150G+50G",
+    "HSN_Ref": "39249090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SILVER MAX BLADE",
+    "HSN_Ref": "82122090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SINGH MEHANDI CONE 1NO",
+    "HSN_Ref": "14049090",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SISO 7 MTS HAIR CLR NAT BLK 20GX10SCHT",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SISO HAIR COLR 1M BLK SHMP 20G",
+    "HSN_Ref": "33059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIZZY FABRIC SOFTNER 430ML",
+    "HSN_Ref": "38099100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SMART WASH DETERGNT POWDER 2KG",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SNAKE GOURD",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SO GOOD ALMOND FRESH NATURAL 1LTR",
+    "HSN_Ref": "22029990",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTENZ HAND WASH DOVE 250ML",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTENZ HAND WASH STORM 250ML",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SONAMASURI RICE ECONOMY LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SPARK MATE DUST FREE BROOM XL",
+    "HSN_Ref": "96039000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SPICE STORY SCHEWAN CHUTNEY 200G",
+    "HSN_Ref": "21039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SPRING ONION",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SPRINKLE CRYSTAL SAALT 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SPRINKLE SALT POWDER 1KG",
+    "HSN_Ref": "25010010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SPYZEE ROASTED COCONUT 100G",
+    "HSN_Ref": "08011990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAIN OFF FABRC STAIN RMVR N.BLCH 50ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STAINLESS STEEL SCRAPER",
+    "HSN_Ref": "82130000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STEEL FRY STRAINER KC2290/2490",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STEEL FRY STRAINER KC2291",
+    "HSN_Ref": "73239300",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STEELGRIP INSULATION TAPE",
+    "HSN_Ref": "85461000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STERIPULL 3 PLY FACE MASK 5NOS",
+    "HSN_Ref": "63079090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STIFFNERZ FABRIC STIFFNR 200ML",
+    "HSN_Ref": "38099100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STING ENERGY DRINK 250ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STRAWBERRY BOX 1NOS",
+    "HSN_Ref": "08091000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "STREPSILS ORANGE 28X8",
+    "HSN_Ref": "30049099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUBHIKSHM RICE ADA 200G",
+    "HSN_Ref": "11062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUJATHA GAS LIGHTER",
+    "HSN_Ref": "96131000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUN PLUS DETRGNT LQD 5L POUCH",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUPERCLEAN GRASS BROOM",
+    "HSN_Ref": "96031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUPERMAX SHAVING FOAM CLASSIC 400ML",
+    "HSN_Ref": "33071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SURYA GRAND AL.PR.COOKER 3LTR",
+    "HSN_Ref": "76151011",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SWATTER BAT KC1815",
+    "HSN_Ref": "85167990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SYMEGA PINEAPPLE ESSENCE 20ML",
+    "HSN_Ref": "33021010",
+    "GST_Ref": "GST 18%"
+  }
+]

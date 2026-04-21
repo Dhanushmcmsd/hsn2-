@@ -1,0 +1,56 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ME TEA TREE OIL CNTRL FW 50 ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME BEETROOT HYDRAFUL FW 50 ML",
+    "HSN_Ref": "34013090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME BTRT HYD LGT MOSTRZG CRM 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME COCOA RICH MOSTRZG CRM 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME RICE DEWY BRGT MOSTRZG CRM 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME RICE WTR HYDRNG BDY LTN 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME UBTAN MOSTRZG BDY LTN 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME VTMN C DAILY GLW BDY LTN 100ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ME VTMN C GLW MOSTRZNG CRM 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  }
+]

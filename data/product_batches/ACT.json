@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ACT II IPC MAGIC BUTTER 40G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ACT II IPC MOVIE THEATER BUTTER 70G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ACT II IPC XTREME BUTTER 70G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "ACT II MWPC BUTTER 33G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ACT II IPC CLASSIC SALTED 40G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ACT II IPC GOLDEN SIZZLE 40G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ACT II IPC SOUTHERN SPICE 70G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ACT II SWEET CORN CHAT MASALA 121.5G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  }
+]

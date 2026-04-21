@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "INST.BRU COFFEE 1.2G",
+    "HSN_Ref": "21011120",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "INST.MILKYMIST MILK CREAM PLAIN 200ML",
+    "HSN_Ref": "4015000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "INST.JAGGERY LOOSE",
+    "HSN_Ref": "17011410",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "INST.REXONA SOAP 75G",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  }
+]

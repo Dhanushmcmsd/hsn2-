@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SOUR PUNK COLA 40G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOUR PUNK APPLE 40G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOUR PUNK BLUEBERRY 40G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOUR PUNK STRAWBERRY 40G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  }
+]

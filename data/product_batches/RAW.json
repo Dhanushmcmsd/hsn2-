@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "RAW PRESSERY JUICE MANGO 1LTR",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "RAW PRESSERY JUICE SUGARCANE 1L",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RAW PRESSERY MIXED FRUIT(AMB)1LTR",
+    "HSN_Ref": "20099000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RAW RICE IR64 ECONOMY LOOSE",
+    "HSN_Ref": "10063090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RAW RICE IR8 PRM LOOSE",
+    "HSN_Ref": "10063020",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RAW RICE MEALS LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  }
+]

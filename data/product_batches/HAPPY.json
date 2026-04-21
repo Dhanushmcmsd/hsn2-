@@ -1,0 +1,212 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HAPPY PEANUT BUTTER CHOCOLATE 200G",
+    "HSN_Ref": "20071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "HAPPY PEANUT BUTTER CHOCOLATE 350G",
+    "HSN_Ref": "20071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "HAPPY PEANUT BUTTER CREAMY 350G",
+    "HSN_Ref": "20071000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "HAPPY PEANUT BUTTER CRUNCHY 350G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY MANGO JAM 100G",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY MIXED FRUIT JAM 200G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY MIXED FRUIT JAM 250G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY MIXED FRUIT JAM 350G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY MIXED FRUIT JAM 500G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY PINEAPPLE JAM 1KG",
+    "HSN_Ref": "20079930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY PINEAPPLE JAM 200G",
+    "HSN_Ref": "20079930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY PINEAPPLE JAM 350G",
+    "HSN_Ref": "20079930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY PINEAPPLE JAM 500G",
+    "HSN_Ref": "20079930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "HAPPY STRAWBERRY JAM 100G",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY BIRD CHICKEN EGG 6S",
+    "HSN_Ref": "04072100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY BIRD CHICKEN EGG FAMILY PACK 12S",
+    "HSN_Ref": "04072100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY BIRD COUNTRY CHICKEN EGGS 6S",
+    "HSN_Ref": "04072100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY BIRD DUCK EGG 6S",
+    "HSN_Ref": "04072100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY BIRD QUIAL EGG 12S",
+    "HSN_Ref": "04072100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY CATER MATE TOMATO SAUCE 1KG",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY FACE PINEAPPLE PANCAKE MIX 250G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY GREEN CHILLY SAUCE 200G",
+    "HSN_Ref": "21039020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY LIME PICKLE 200G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY MANGO PICKLE 200G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY MANGO PICKLE 400G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY RED CHILLY SAUCE 200G",
+    "HSN_Ref": "21039020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY SOYA SAUCE 200G",
+    "HSN_Ref": "21031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TO HANG TESR P.HANGER 6P",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TO HANG ZOOM P.HANGER 6P",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TO HNG CL.HANGER 6P",
+    "HSN_Ref": "39269069",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TO HNG CL.HANGER 6P B1G1",
+    "HSN_Ref": "39269069",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TOMATO KETCHUP 200G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TOMATO KETCHUP 500G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TOMATO SAUCE 200G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "HAPPY TOMATO SAUCE 500G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MULLA LIQUID DETERGENT 750ML",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MULLA COLOR DETRGNT BAR XL900G",
+    "HSN_Ref": "34011900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MULLA COLOUR XL HALF DETRGNT SOAP 400G",
+    "HSN_Ref": "34011941",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MULLA DISH WASH 500ML (BUY1GET1)",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MULLA GOLD DETRGNT BAR XL 900G",
+    "HSN_Ref": "34011941",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MULLA HAND WASH 300ML (BUY1GET1)",
+    "HSN_Ref": "34013011",
+    "GST_Ref": "GST 5%"
+  }
+]

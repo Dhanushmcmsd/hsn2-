@@ -1,0 +1,578 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "AMUL PROCESSED CHEESE SLICES 100G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "AMUL PROCESSED CHEESE SLICES 200G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL DARK CHOCOLATE 150G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL EX.CHOCOLATE BROWNIE 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL FROSTIK CHOCOLATE STICK 70ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL FRUIT N NUT FANTASY 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL FRUIT N NUT FANTASY125ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL ICE CREAM CHOCOLATE 2L PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL ICE CREAM CHOCOLATE 750ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL MILK CHOCOLATE 150G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL MYSTIC MOCHA CHOCOLATE 150G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL SUNDAE CHOCOLATE MAGIC 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL TRICONE BELGIAN CHOCOLATE 120ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "AMUL TRICONE CHOCOLATE 120ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "AMUL CARAMEL COOKIES GOLD 1 L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "AMUL NUTS RAISIN COOKIES 50G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTER 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTER 200G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTER 500G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTER SCHOOL PACK 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTER UNSALTED 100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTERSCOTCH GOLD 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTERSCOTCH ROYALE 2L PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL BUTTERSCOTCH YELLOW 750MLCOMBO",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL GARLICHERB BUTTERY SPREAD100G",
+    "HSN_Ref": "04051000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL GHEE 1LTR TP",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL ICE CREAM BUTTER SCOTCH 500ML TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL ICE CREAM BUTTERSCOTCH 1.25L",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL ICE CREAM BUTTERSCOTCH 1LTR TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "AMUL TRICONE BUTTER SCOTCH 120ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL BTRSCTCH MILKSHK 180ML TP",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL CHOCLT MILKSHAKE 180ML TP",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL KOOL BADAM MILKSHAKE 180ML BTL",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL KOOL ROSE MILK SHK 180ML BTL",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL MASTI SPICED BUTERMILK TP 1LTR",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL SLIM N TRIM SKMD UHT MILK 1LTR",
+    "HSN_Ref": "04011000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL TAAZA FRESH TONED MILK 1L TP",
+    "HSN_Ref": "04012000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL TAAZA FRESH TONED MILK 500ML",
+    "HSN_Ref": "4012000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "AMUL VANILLA MILKSHKE 180ML TP",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "AMUL CHEESE SPREAD CREAMI 200G",
+    "HSN_Ref": "4063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "AMUL CHEESE SPREAD PEPPER 200G",
+    "HSN_Ref": "04069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "AMUL CHEESE SPREAD YUMMY PLAIN 200G",
+    "HSN_Ref": "04069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL AFGHAN DRY FRUIT 750ML COMBO",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL BINGE ROAST ALMOND 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL CHEESE SPRED SPICY GARLIC 200G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL FRESH CREAM 1LTR",
+    "HSN_Ref": "04015000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL FRESH CREAM 250ML",
+    "HSN_Ref": "04015000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM 2IN1 VAN.STRBRY 2LTR PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM ALPHONSO 125ML JUMB CUP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM COMBO MANGO 1.5L",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM FRUIT N NUT 2LTR PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM FRUIT N NUT 500ML TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM GOLDEN PEARL 125ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM KING ALPHONSO 500ML TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM MANGO 2L PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM MOROCAN DRYFRUIT 1L",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM NOVLTIES CASSATTA 150ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM PRO CHOCOBAR 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM RAJBHOG 1.5L",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM RAJBHOG 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM SANDWICH 80ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM STICK MANGO DUETZ 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM STK MAWA MAL.KULFI 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM STK RAJASTHN KULFI 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM STK RASPBERY DUETZ 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM STRAWBERRY 500ML TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM STRAWBERRY 750ML COMBO",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM SWIRL MANGO 125ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM TRICONE VANILLA 120ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM VANILLA 1.25LTR PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM VANILLA 500ML TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM VANILLA 750ML 1+1 COMBO",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM VANILLA GOLD 1LTR TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM VANILLA MAGIC 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL ICE CREAM VANILLA ROYALE 2L PP",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL KING ALPHONSO GOLD 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL KOOL KESAR PET BOTTLE 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL KOOL LASSI TP 250ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL LACTOSE FREE ICECREAM 125ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MALAI PANEER DICE 200G",
+    "HSN_Ref": "4061000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MANGO LASSI TP 1LTR",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MANGO LASSI TP 200ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MASTI SPICED BUTERMLK TP 200ML",
+    "HSN_Ref": "04039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MITHAI MATE 200G",
+    "HSN_Ref": "04029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MITHAI MATE 400G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL MOZZARELLA PIZZA CHEESE 200G",
+    "HSN_Ref": "04062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL PROCESSED CHEESE BLOCK 200G",
+    "HSN_Ref": "04063000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL PUNJABI KULFI 20X60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL SHAHI PISTA KULFI 60ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL SUNDAE CHOCO CARAML GOLD1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL SUNDAE STRAWBERRY MAGIC 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL TRICONE BLACK CURRANT 120ML",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL WHIPPING CREAM 1LTR",
+    "HSN_Ref": "04015000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "AMUL WHIPPING CREAM 250ML",
+    "HSN_Ref": "04015000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "AMUL CHOCO BLISES CHOCOCHIPS 1L TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "AMUL ICE CREAM CHOCO CHIPS 500ML TUB",
+    "HSN_Ref": "21050000",
+    "GST_Ref": "GST 5%"
+  }
+]

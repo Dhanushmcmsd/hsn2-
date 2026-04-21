@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "PAVITHRAM SESAME OIL 1000ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "PAVITHRAM SESAME OIL 100ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "PAVITHRAM SESAME OIL 200ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "PAVITHRAM SESAME OIL 350ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "PAVITHRAM SESAME OIL 500ML",
+    "HSN_Ref": "15155091",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PAVITHRAM TAMARIND 100G",
+    "HSN_Ref": "08134010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PAVITHRAM TAMARIND 200G",
+    "HSN_Ref": "08134010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PAVITHRAM TAMARIND 500G",
+    "HSN_Ref": "08134010",
+    "GST_Ref": "GST 0%"
+  }
+]

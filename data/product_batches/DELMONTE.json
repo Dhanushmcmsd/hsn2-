@@ -1,0 +1,74 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "DELMONTE OLIVE BLACK SLICED 230G",
+    "HSN_Ref": "20057000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "DELMONTE OLIVE GREEN SLICED 235G",
+    "HSN_Ref": "20057000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "DELMONTE OLIVE GREEN SLICED 450G",
+    "HSN_Ref": "20057000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DELMONTE EV OLIVE OIL PET250ML",
+    "HSN_Ref": "15099010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "DELMONTE POMC.OLIVE OIL PET 1L",
+    "HSN_Ref": "15099010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE CREAM STYLE CORN 425G",
+    "HSN_Ref": "20058000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE EGGLESS MAYO SPOUT 900G",
+    "HSN_Ref": "21039030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE NONG TOMTO KETCHUP SPOUT 1KG",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE OLIVE BLACK PITTED 450G",
+    "HSN_Ref": "20057000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE RED CHIL.SAUC190/200G",
+    "HSN_Ref": "21039020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE SCHEZWAN SAUCE 190G",
+    "HSN_Ref": "21039020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DELMONTE TOMATO KETCHUP SQUEEZY 320G",
+    "HSN_Ref": "21032000",
+    "GST_Ref": "GST 5%"
+  }
+]

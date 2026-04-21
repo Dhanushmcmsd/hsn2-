@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI BLACK MAX ZERO CALORES CAN 250ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI SOFT DRINK 1LTR BTL",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI SOFT DRINK 750ML BTL",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI SOFT DRINK BTL 1.25LTR",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI SOFT DRINK BTL 2.25L",
+    "HSN_Ref": "22021000",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI SOFT DRINK BTL 250/400ML",
+    "HSN_Ref": "22021010",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "PEPSI SOFT DRINK CAN 250/330ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  }
+]

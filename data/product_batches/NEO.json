@@ -1,0 +1,86 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "NEO SLICED RED PAPRIKA 180G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "NEO CASTOR OIL 200ML",
+    "HSN_Ref": "15153000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO CRT CNT.1800 SONT JAR SNGL",
+    "HSN_Ref": "39241010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PITTED BLACK OLIVES 230ML",
+    "HSN_Ref": "20057000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST FLORA 1500 3PCS SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST FLORA JAR 500 3P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST HYCRS JAR 500 3P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST HYCRS JAR1000 2P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST HYCRS JAR1500 2P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST SONET JAT 500 3P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST SONT JAR 1800 2P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST SPAIN BTL 900 2P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO PLAST VEGAS BTL 900 2P SET",
+    "HSN_Ref": "39233090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NEO WHITE NATURAL VINEGAR 370ML",
+    "HSN_Ref": "22090010",
+    "GST_Ref": "GST 18%"
+  }
+]

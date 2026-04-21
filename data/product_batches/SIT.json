@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT NAT.CALIFORNIA ALMOND 200G",
+    "HSN_Ref": "08021200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT NAT.PRE.W.CASHEW NUTS 200G",
+    "HSN_Ref": "08013200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT PRE.INTL DRIED KIWI 200G",
+    "HSN_Ref": "20089999",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT PRE.SEEDLS GRN RAISIN 100G",
+    "HSN_Ref": "08062010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT PRE.SEEDLS GRN RAISIN 250G",
+    "HSN_Ref": "08062010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT RSTSALT CAL.PISTACHIO100G",
+    "HSN_Ref": "08025100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SIT RSTSALT CAL.PISTACHIO200G",
+    "HSN_Ref": "08025100",
+    "GST_Ref": "GST 5%"
+  }
+]

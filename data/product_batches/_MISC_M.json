@@ -1,0 +1,356 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "MULTICOLOUR CERAMIC COFFEE CUP190ML",
+    "HSN_Ref": "69120090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MAAZA FRUIT JUICE MANGO PET 600ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MAAZA TETRA PACK 135ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MARQUE ZAHREL GRAPE JUICE RED 750ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MARQUE ZAHREL GRAPE JUICE YELLOW 750ML",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "MARS CHOCOLATE 51G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MARS MINIATR CHOC 100G",
+    "HSN_Ref": "18069010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "MILKMAID DOY PACK 210G",
+    "HSN_Ref": "04029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "MATEX FABRIC CLEANER 1LTR",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MATEX DISH WASH LEMN 500ML 1+1",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "MIXED FRUIT JAM LOOSE",
+    "HSN_Ref": "20079990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "M-SEAL REGULAR EPOXY COMPOUND 40G",
+    "HSN_Ref": "32141000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MAGGIE CHICKEN CUBE 20G",
+    "HSN_Ref": "21041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MAGNUS 837 D CALCULATOR BLACK",
+    "HSN_Ref": "84701000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MAGNUS 837 D CALCULATOR COLOUR",
+    "HSN_Ref": "84701000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MAHARANI 55555 NICE GRASS BROOM",
+    "HSN_Ref": "96031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MAIDA LOOSE",
+    "HSN_Ref": "11010000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANDARIN ORANGE",
+    "HSN_Ref": "08052100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANDGALDEEP SCENT",
+    "HSN_Ref": "33074900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANDI RICE GOLD LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANDI RICE WHITE LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGOSTEEN",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANILA ENVELOPE 9X4 25S",
+    "HSN_Ref": "48171000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MARQUIS ITALIA BASIL 25G",
+    "HSN_Ref": "12119094",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MARQUIS ITALIA THYME 25G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MARRI GOLD TOOTH PICKS",
+    "HSN_Ref": "44219190",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MASKWELL 3D FACE MASK 10NOS",
+    "HSN_Ref": "63079090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MASOAK GARAM MASALA POWDR 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MASOOR DAL LOOSE",
+    "HSN_Ref": "07139090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MASTER NONSTICK TWIN PACK-FRYPAN+TAWA",
+    "HSN_Ref": "76151090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MASTERCHEFS SCRT SPICY CHKN MASALA100G",
+    "HSN_Ref": "21039010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MATTE N GLOSS CERAMIC CUP 190ML",
+    "HSN_Ref": "69120090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MEAT PICKLE LOOSE",
+    "HSN_Ref": "21039040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MEDILINE 3PLY SURGICAL MASK 50NOS",
+    "HSN_Ref": "62103010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MENMA RICE POWDER 1KG",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "METHI LEAF",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "METHI REGULAR 100G",
+    "HSN_Ref": "09109924",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MICRO GREENS 1PACKET",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MINT LEAF",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MIRROR DOUBLE SIDE KC428",
+    "HSN_Ref": "70091010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MIX YOUR OWN SALAD",
+    "HSN_Ref": "07092000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MONSTER ENERGY DRINK 350ML",
+    "HSN_Ref": "22029990",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOONG DAL LOOSE",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MOONG DAL REGULAR 500G",
+    "HSN_Ref": "07133100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MS NAMBOOTHIRIS IDLY BATTER 1LTR",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MULLATHA (SOURSOP)",
+    "HSN_Ref": "08101000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUNCH BROWNIE 40G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUNCH CEREAL CHOCO FILLS 30G",
+    "HSN_Ref": "19041090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUNEER KAIMA RICE LOOSE",
+    "HSN_Ref": "10063010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MURAM BIG",
+    "HSN_Ref": "46021990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUSAMBI",
+    "HSN_Ref": "08051000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUSHROOM BUTTON",
+    "HSN_Ref": "07095100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUSHROOM OYSTER 1PKT",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUSK MELON",
+    "HSN_Ref": "08071100",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUSTARD REGULAR 100G",
+    "HSN_Ref": "12075090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MUTTU PIN KC933A",
+    "HSN_Ref": "73194000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "MALABAR PAYYOLI MIXTURE 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "MALABAR PAYYOLI MIXTURE 400G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "MONETTA STRAWBERRY WAFER STICKS 300G",
+    "HSN_Ref": "19053290",
+    "GST_Ref": "GST 5%"
+  }
+]

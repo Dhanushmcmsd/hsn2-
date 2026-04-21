@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BUSH ICE CREAM POWDR BUTTERSCOTCH 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BUSH CITRIC ACID 50G",
+    "HSN_Ref": "29181400",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BUSH GELATIN POWDER 50G",
+    "HSN_Ref": "35030020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BUSH ICE CREAM POWDER VANILLA 100G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  }
+]

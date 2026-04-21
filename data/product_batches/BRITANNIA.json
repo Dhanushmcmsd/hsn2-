@@ -1,0 +1,680 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "BRITANNIA BISCAFE COFFEE CRK BISC 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "BRITANNIA TOASTEA PREM.BAKE RUSK 700G",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "BRITANNIA TOASTEA RUSK 250G",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA BOURBON BISCUIT 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA BOURBON BISCUIT 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA BOURBON BISCUIT 50G+10G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA BOURBON COMBO PACK 100G*5",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA G.D CASHEW COOKIES 565G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA G.D CASHEW COOKIES 905G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GD BUTTR COOKIE 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GD DAY CHOCOCHIP COOKIE 400G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GOOD DAY BUTTER BISCT 53G+7G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GOOD DAY CASHEW COOKIES 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GOOD DAY CASHW COOKIES60G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GOOD DAY CASHW COOKIS 100G+20G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GOOD DAY NUTS COOKIE 120G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA GOOD DAY PISTA CASH.COOK100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA NC DIGESTIVE BISCUIT 91.7G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA NC DIGESTIVE ZERO BISCT 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA NC RAGI COOKIES BISCUIT 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "BRITANNIA PISTA BADAM COOKIES 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Crackers",
+    "Description": "BRITANNIA NC CRACKER SF 295G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA MARIE GLD BISCT 1KG (5X200G)",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA MARIE GOLD BISCUIT (4+1)120G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA MARIE GOLD BISCUIT 117G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA MARIE GOLD BISCUIT 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA MARIE GOLD BISCUIT 250G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA MARIEGOLD BISC 64/89G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA TIGER GLUCOSE BISCUIT 213G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA TIGER GLUCOSE BISCUIT 85.3G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA VITA MARIE GLD 900G (150GX6)",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA VITA MARIEGOLD BISCUIT 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA VITA MARIEGOLD BISCUIT 248G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "BRITANNIA VITA MARIEGOLD BISCUIT 56.5G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BRITANNIA BUTTER BISCT 113G X5",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BRITANNIA GD BUTTER 120G+30G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BRITANNIA GD BUTTER JEERA 450G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "BRITANNIA GOBBLES CAKE BUTTER BLST 45G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA MILK BIKIS 300G+60G (360G)",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA MILK BIKIS BISCUIT 80G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA MILK BIKIS CREAM BISCUT 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA MILK BIKIS CREAM BISCUT 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA MILK BIKIS RFRSH150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA MILK RUSK 182G+71G = 253G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "BRITANNIA NC OATS ALMND MILK BISCT 75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "BRITANNIA TREAT JIM JAM 138/150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "BRITANNIA TREAT JIM JAM BISCUIT 92G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 BISCUIT 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 BISCUIT 69.2G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 BISCUITS 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 GOL MAAL 110G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 MASKA CHASKA 300G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 MASKA CHASKA 38G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 MSKA CHSKA105G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 POTAZOS MASTI MSL71.5G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 POTAZOS MINT MAGIC 29G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA 50-50 TIMEPASS SALTED 66G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA BARCAKE NUT RAISIN 140G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA BARCAKE NUT RAISIN 55G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA DAIRY WHITENER 1KG POUCH",
+    "HSN_Ref": "04021010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA DAIRY WHITENER 200G POUCH",
+    "HSN_Ref": "04021010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA DAIRY WHITENER 400G POUCH",
+    "HSN_Ref": "04021010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA DAIRY WHITENER 400G JAR",
+    "HSN_Ref": "04021010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA FESTIVE PLUM CAKE 300GM",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GD CHO.CHIP 100G+11G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GD CHOCO CHIP 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GD FRUIT N NUT 450G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GOBBLES CAKE CHOCO CHIL 110G",
+    "HSN_Ref": "19059030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GOBBLES CAKE CHOCO CHILL 50G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GOBBLES CAKE FRUITY FUN 100G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GOBBLES CAKE FRUITY FUN 50G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GOBBLES CAKE ORANGE BITE 45G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA GOBBLES CAKE PINEAPPLE 50G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA LITTLE HEARTS 32G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA LITTLE HEARTS PCH 70G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA M.CAKE CHOC.VAN 110G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA M.CAKE RED VLVT 110G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA N.C OATS ORANGE BISCUIT 75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NC DIGESTVE 192G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NC DIGESTVE BISC 960G(5X192G)",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NC OATMEAL COOKIS 0 SUGR150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NC SUPER SEEDS 75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NC THIN ARROWROOT 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NC THIN ARROWROOT 300G",
+    "HSN_Ref": "11081400",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NICE TIME 136.5G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NICE TIME BISCUIT 52.7G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA NUTRI CHOICE 5 GRAIN 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA PLUM DELIGHT CAKE 300GM",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA PM CHOCLUSH 69+11.5G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA PREMIUM BAKE RUSK 183G+17G",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA PREMIUM BAKE RUSK 50G+8G",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA PREMIUM BAKE RUSK1KG",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA PURE MAGIC CHOCOLUSH 253G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA SWISS ROLL CHOCO 24G",
+    "HSN_Ref": "19059010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TIME PASS CLASSIC SALTD 150G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TREAT CHOCO BISCUIT 43G+8G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TREAT CROISANT MXD FRUIT 47G",
+    "HSN_Ref": "19059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TREAT CROISANT VANILA CRM45G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TREAT CROISSANT COCOA CRM45G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TREAT ORANGE 64G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TREAT VAN.CREME 515G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA TRT CHOCO CREME 515G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA WINKN BADAM SHK180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA WINKN CHOCO SHK180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA WINKN CL.LASSI 180ML",
+    "HSN_Ref": "4039090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA WINKN STRW.SHK 180ML",
+    "HSN_Ref": "22029930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "BRITANNIA WINKN VAN.SHK 180ML",
+    "HSN_Ref": "22029990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "BRITANNIA TIGER KRNCH CHOCO CHIPS 400G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "BRITANNIA TREAT CREME WAFERS CHOCO 60G",
+    "HSN_Ref": "19053200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "BRITANNIA TREAT CRM WAFER STRAWBRY 60G",
+    "HSN_Ref": "19053200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "BRITANNIA TREAT CRM WAFERS COCONUT 60G",
+    "HSN_Ref": "19053219",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "BRITANNIA TREAT CRM WAFERS ORANGE 60G",
+    "HSN_Ref": "19053219",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Wafers",
+    "Description": "BRITANNIA TREAT CRM WAFERS VANILLA 60G",
+    "HSN_Ref": "19053200",
+    "GST_Ref": "GST 5%"
+  }
+]

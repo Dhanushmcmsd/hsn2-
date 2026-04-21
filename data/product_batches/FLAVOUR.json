@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "FLAVOUR FARMS ROASTED COCONUT OIL 1LTR",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "FLAVOUR FARMS TAPIOCA ROUND SALT 200G",
+    "HSN_Ref": "19030000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "FLAVOUR FARMS TAPIOCA ROUND SPICY 200G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "FLAVOUR FARMS BOMBAY MIXTURE 150G",
+    "HSN_Ref": "19059040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "FLAVOUR FARMS BANANA CHIPS 200G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "RIN DETERGENT BAR 110G",
+    "HSN_Ref": "34011930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "RIN DETERGENT BAR 250G",
+    "HSN_Ref": "34011930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RIN ALA LQD BLEACH FABRIC WHITNR 500ML",
+    "HSN_Ref": "34022020",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "RIN FABRIC WHITENER 200ML",
+    "HSN_Ref": "34022020",
+    "GST_Ref": "GST 18%"
+  }
+]

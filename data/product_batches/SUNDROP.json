@@ -1,0 +1,68 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "SUNDROP PEANUT BUTTER CREAMY 200G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "SUNDROP PEANUT BUTTER CRUNCHY 100G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "SUNDROP PEANUT BUTTER CRUNCHY 200G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP HEART PLAIN OATS 1KG",
+    "HSN_Ref": "11041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP HEART PLAIN OATS 500G",
+    "HSN_Ref": "11042200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP P.BTR NO SUGR CRM 924G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP P.BTR NO SUGR CRNH924G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP PEANT BTR REG.CRMY924G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP PEANT BTR REG.CRNH924G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP PEANT BUTR CREAMY 462G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SUNDROP PEANT BUTR CRUNCH 462G",
+    "HSN_Ref": "20081100",
+    "GST_Ref": "GST 5%"
+  }
+]

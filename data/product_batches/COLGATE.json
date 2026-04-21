@@ -1,0 +1,536 @@
+[
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE 360 FLOSSTIP T.B SINGLE MEDIUM",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE 360 FLOSSTIP T.BRUSH SOFT B2G1",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE 360 TOOTH BRUSH MEDIUM",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE 360 VISIBLE WHITE T.BRUSH B2G2",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE 360 WHOLE MTH CLN T.BRUSH B2G2",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE 5+ KIDS MINIONS T.BRUSH E.SOFT",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ACTIVE SALT NEEM T.PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ACTIVE SALT T.P 100+200+17 OFF",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ACTIVE SALT TOOTH PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ACTIVE SALT TOOTH PASTE 200G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE BRLNT STAR SOFT TB 1NO",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE CHARCOAL CLEAN T.P 120+120G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE CHARCOAL CLEAN TOOTH PASTE120G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE CIBACA 20G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE CIBACA SUPREME HARD T.B",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE CIBACA TOOTH PASTE 175G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE CIBACA TOOTH PASTE 65G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE DENTAL CREAM 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE DENTAL CREAM 36G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE DENTAL CREAM TOOTH PASTE 500G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE DENTAL WAXED DENTAL FLOSS 25ML",
+    "HSN_Ref": "33062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE EXTRA CLEAN TOOTH BRUSH MEDIUM",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE GENTLE CLN ULTRA SOFT BRUSH 1PC",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE GENTLE ENAMEL TB B2G2",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE HERBAL TOOTH PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE HERBL ANTI CAVITY T.PASTE 200G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 0-2 EXTRA SOFT T.B",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 2+ TOOTH BRUSH BUY2 GET1",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 2-5 T.P BUBBLE FRUIT 40G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 2-5 T.PASTE STRAWBERY 40G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 2-5 YRS T.P BUBBLE FRUIT",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 3-5 0% ART T.P STWBRY 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 5+ BARBIE TOOTH BRUSH",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS 6-9 0% ART T.P STWBRY 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS BARBIE TOOTH PASTE 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS BATMAN TOOTH BRUSH SOFT",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS EXTRA SFT TOOTH BRSH 1NOS",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE KIDS SPIDERMAN TOOTH PASTE 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAX FRESH BLUE 38G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAX FRESH RED GEL T.PASTE 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAX FRESH RED SAVER T.P 300G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAX FRESH RED T.P 18G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAX FRSH BLUE GEL T.PASTE 300G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAX FRSH COOL MINT T.PASTE 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAXFRESH 48G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAXFRESH BLUE TOOTH PASTE 150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAXFRESH TOOTH PASTE70G+11G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE MAXFRSH CHARCL T.P 65G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE NEO TOOTH BRUSH ULTRA SOFT",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX COMPLETE MOUTH WASH 250ML",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX FRSH MINT SPLASH M.W100ML",
+    "HSN_Ref": "33069090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX FRSH MINT SPLASH M.W250ML",
+    "HSN_Ref": "33069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX FRSH MINT SPLASH M.W500ML",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX GENT.CARE MOUTH WSH 250ML",
+    "HSN_Ref": "33069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX PEPR MINT FRESH M.W 250ML",
+    "HSN_Ref": "33069000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE PLAX PEPR MINT FRESH M.W 500ML",
+    "HSN_Ref": "33062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SENSITIVE CLOVE T.P B1G1 80G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SENSITIVE ORIGINAL T.PASTE 40G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SENSITIVE TOOTH BRUSH 4 PACK",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SENSITIVE TOOTH PASTE MEGA SVR",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SLIM CHARCOAL T.B HANGER 1NOS",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SLIM SOFT CHARCOAL T.BRSH B2G2",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE STRONG TEETH TOOTH PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER FLEXI CHARCOAL MEDM 1NOS",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER FLEXI CHARCOAL SOFT 1NOS",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER FLEXI T.BRSH MDM 6P B2G1",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER FLEXI TOOTH BRUSH",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER RAKSHAK TOOTH POWDR 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER RAKSHAK TOOTH POWDR 200G",
+    "HSN_Ref": "33061010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SUPER SHINE TOOTH BRUSH MEDIUM",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE SWARNA VEDSHAKTI T.PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOOTH BRUSH SENSITIVE 1NOS",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOOTH BRUSH SLIM SOFT ADVANCE",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOOTH PASTE 17G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOOTH PASTE 200G+100G+T.BRUSH",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOOTH PASTE STRONG TEETH 200G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOTAL ADVANCED HEALTH T.P 120/15",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE TOTAL CHARCOAL TP 120/150G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE V.WHT O2 P.MNT SPRK50G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE VISIBLE WHITE O2 TB 2P",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE VISIBLE WHITE TOOTH PASTE 100G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE VISIBLE WHITE TOOTH PASTE 200G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE VISIBLE WHITE TOOTH PASTE 50G",
+    "HSN_Ref": "33061020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ZIGZAG CHARCL MDM T.BRUSH 4PK",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ZIGZAG CHARCOAL T.BRUSH MDM 1P",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ZIGZAG MEDIUM TOOTH BRUSH 1NOS",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ZIGZAG T.BRUSH PACK OF 6 MDM",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ZIGZAG TOOTH BRUSH B2G1",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Oral_Care",
+    "Description": "COLGATE ZIGZAG TOOTH BRUSH PK OF 6 SFT",
+    "HSN_Ref": "96032100",
+    "GST_Ref": "GST 5%"
+  }
+]

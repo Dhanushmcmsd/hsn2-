@@ -1,0 +1,26 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "KINZA COLA 250ML",
+    "HSN_Ref": "22021010",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINZA CITRUS 250ML",
+    "HSN_Ref": "220210",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINZA LEMON 250ML",
+    "HSN_Ref": "220210",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "KINZA ORANGE 250ML",
+    "HSN_Ref": "220210",
+    "GST_Ref": "GST 40%"
+  }
+]

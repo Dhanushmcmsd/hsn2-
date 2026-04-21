@@ -1,0 +1,110 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "LOTUS TEATREE WASH OIL CTRL F.WASH 80G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "LOTUS W.GLOW YOGURT SKIN SCRUB100G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "LOTUS W.GLOW ACTV.SKIN OIL CTRL F.W50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS ALMOND DAILY NOURISH B.LTN 250ML",
+    "HSN_Ref": "33049930",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS APRISCRUB FRSH APRICOT SCRUB100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS NEEMWASH PURIFYING FACE WASH 80G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS SAFE SUN BLOCK CRM SPF-20 50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS SAFE SUN BLOCK CRM SPF-30 50G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS SAFE SUN MATTE LOOK CREAM50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS SAFESUN UV SCREEN MATTEGEL50G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS SF SUN SCN GEL SPF50 15G",
+    "HSN_Ref": "33049900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS SF SUN SCN GEL SPF50 30G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS WHITE GLOW VIT.C GEL 15G",
+    "HSN_Ref": "33049900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS WHITE GLW ACTVTD CHARCL F.W 100G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS WHITEGLOW 3 IN 1 FACIAL FOAM 50G",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS WHITEGLOW NIGHT SKIN CREME 20G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS WHITEGLOW SKIN BRIGHT GEL 20G",
+    "HSN_Ref": "33049990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "LOTUS WHITEGLOW SKIN BRIGHT GEL 40G",
+    "HSN_Ref": "33049910",
+    "GST_Ref": "GST 5%"
+  }
+]

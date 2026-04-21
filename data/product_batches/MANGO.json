@@ -1,0 +1,98 @@
+[
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "MANGO JAM LOOSE",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO ALPHONSO",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO BANGANAPALLI",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO CHANDRAKKARAN",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO GUDADATH",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO HIMAPASAND",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO KALAPADI",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO KOTTOOKONAM",
+    "HSN_Ref": "07081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO MOOVANDAN",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO NEELAM",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO PRIYOOR",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO RAW",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO RUMANI",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO SELAM",
+    "HSN_Ref": "08045020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO SENDHURA",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MANGO THOTHAPURI",
+    "HSN_Ref": "08041010",
+    "GST_Ref": "GST 5%"
+  }
+]

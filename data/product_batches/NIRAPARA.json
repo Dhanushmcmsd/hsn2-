@@ -1,0 +1,266 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA APPAM PODI 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA BIRYANI MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CHEMBA PUTTU 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CHEMBA PUTTU PODI 1KG",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CHICKEN MASALA POWDR 100G PCH",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CHILLI PDR PCH 100G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CHILLI PDR PCH 250G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CHILLI PDR PCH 500G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CORIANDR PDR PCH 500G",
+    "HSN_Ref": "09096230",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CORIANDR PDR PCH 100G",
+    "HSN_Ref": "09096230",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CORIANDR PDR PCH 250G",
+    "HSN_Ref": "09096230",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CORN PUTTU PODI 1KG",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA CORN PUTTU PODI 500G",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA DOSA PODI 1KG",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA DOSA PODI 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA DOUBLE RSTD RAVA 1KG",
+    "HSN_Ref": "11031110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA FISH MASALA PDR 100G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA GARAM MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA GARAM MASALA PCH 50G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA KASHMIRI CHILLI PDR 100G PCH",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA KASHMIRI CHILLI PDR 250G PCH",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA MEAT MASALA PDR 100G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA MEAT ULRTH MASLA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA MUTON MASALA PDR 100G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA OATS PUTTU PODI 500G",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PALADA KHEER MIX300GM",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PALAPPAM PODI 1KG",
+    "HSN_Ref": "11029022",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PALAPPAM PODI 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PATHIRI PODI 1KG",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PATHIRI PODI 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PEPR CHKN MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PUTTU PODI 1KG",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA PUTTU PODI 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA RASAM POWDER PCH 100G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA RAVA 1KG",
+    "HSN_Ref": "11031110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA RAVA 500G",
+    "HSN_Ref": "11031110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA RICE POWDER 1KG",
+    "HSN_Ref": "11062000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA RICE POWDER 500G",
+    "HSN_Ref": "11022000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA SAMBAR PDR PCH 100G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA SAMBAR PWD 10RS SACHT",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA THAL.BIRYNI MASLA100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA TURMERIC PDR PCH 100G",
+    "HSN_Ref": "09109929",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA TURMERIC POWDER 200G",
+    "HSN_Ref": "09103030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NIRAPARA WHEAT PUTTU PODI 1KG",
+    "HSN_Ref": "11042900",
+    "GST_Ref": "GST 5%"
+  }
+]

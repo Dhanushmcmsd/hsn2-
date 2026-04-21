@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "GRB GHEE 200ML JAR",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "GRB GHEE 500ML JAR",
+    "HSN_Ref": "04059020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "GRB CANNED JAMUN 300G",
+    "HSN_Ref": "20079910",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Jams_Spreads",
+    "Description": "GRB GULAB JAMUN MIX 160G",
+    "HSN_Ref": "19012000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "GRB PINEAPPLE SOAN PAPDI 200G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  }
+]

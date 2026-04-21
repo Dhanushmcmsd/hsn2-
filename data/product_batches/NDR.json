@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Dairy_Butter_Ghee",
+    "Description": "NDR BUTTER MURUKKU 150G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "NDR RICE MURUKKU 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "NDR BOMBAY MIXTURE 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "NDR KERALA MIXTURE 200G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Namkeen_Mixture",
+    "Description": "NDR SP MIXTURE 200G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "NDR BANANA CHIPS 175G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  }
+]

@@ -1,0 +1,104 @@
+[
+  {
+    "Category_L2": "Beverages_Coffee",
+    "Description": "ELEPHANT COFFEE STRAINR NO2 1P",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "ELEPHANT SOUP AND JUICE NO 4",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "ELEPHANT SOUP AND JUICE NO 5",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 12%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT INOX TEA NO 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT TEA STRAINER NO.1 1P",
+    "HSN_Ref": "73239310",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT TEA STRAINER NO.2 1P",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT TEA TIME STRAINER 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT WIRE HANDLE TEA NO 1",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT WIRE HANDLE TEA NO 2",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT WIRE HANDLE TEA NO 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "ELEPHANT WIRE HANDLE TEA NO 4",
+    "HSN_Ref": "73239990",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELEPHANT INTERCHANGEABLE SIEVS",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELEPHANT PIPE HANDLE 2 MESH NO 3",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELEPHANT WHISK NO.3 1PCS",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELEPHANT WISK NO 10",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELEPHANT WISK NO 6",
+    "HSN_Ref": "73239390",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ELEPHANT WISK NO 9",
+    "HSN_Ref": "82159900",
+    "GST_Ref": "GST 18%"
+  }
+]

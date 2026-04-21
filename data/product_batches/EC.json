@@ -1,0 +1,80 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "EC WASH BAR DETERGENT 160G",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "EC WASH DETERGENT BAR 200G",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "EC WASH DETERGENT BAR 250G",
+    "HSN_Ref": "34011900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "EC WASH DETERGENT LIQUID 2L",
+    "HSN_Ref": "34029092",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DET POWDER MATIC 1KG",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DET POWDER MATIC 500G",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DET.PDR ORANGE 4KG",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DET.PDR REGULAR 4KG",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DISH WASH ROUND 250G",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DISHWASH BAR 100G (3+2) SET",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH DISHWASH ROUND BAR 500G",
+    "HSN_Ref": "34029011",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH LVNDR DTRGNT LQD 5L",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "EC WASH MAX PWR DTRGNT LQD 5L",
+    "HSN_Ref": "34022010",
+    "GST_Ref": "GST 18%"
+  }
+]

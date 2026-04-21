@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Dairy_Curd_Yogurt",
+    "Description": "ID CURD 400G POUCH",
+    "HSN_Ref": "04031000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ID IDLY N DOSA BATTER 1 KG",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ID MALABAR PAROTA 5PCS",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ID NATURAL PANEER 200G",
+    "HSN_Ref": "04061000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "ID WHOLE WHEAT CHAPPATHY 10PCS",
+    "HSN_Ref": "19054000",
+    "GST_Ref": "GST 5%"
+  }
+]

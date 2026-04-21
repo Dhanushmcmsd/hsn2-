@@ -1,0 +1,20 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PLUMS IMPORTED",
+    "HSN_Ref": "08091000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PLUMS IMPORTED PACK",
+    "HSN_Ref": "08081000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "PLUMS IMPORTED PACK OF 3",
+    "HSN_Ref": "08081000",
+    "GST_Ref": "GST 0%"
+  }
+]

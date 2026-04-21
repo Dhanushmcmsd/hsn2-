@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Dairy_Milk",
+    "Description": "SOFTSENS BABY MILK BAR 100GX3",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SOFTSENS BABY SHAMPOO 200ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Hair_Care",
+    "Description": "SOFTSENS BABY SHAMPOO 500ML",
+    "HSN_Ref": "33051090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTSENS BABY NAT BAR 100GX3",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTSENS BABY NRSH BAR 100GX3",
+    "HSN_Ref": "34011190",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTSENS BABY POWDER 200G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTSENS BABY POWDER 400G",
+    "HSN_Ref": "33049110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "SOFTSENS BABY WIPES 72S POUCH",
+    "HSN_Ref": "96190010",
+    "GST_Ref": "GST 0%"
+  }
+]

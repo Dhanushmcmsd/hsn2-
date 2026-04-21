@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "EASTEA HARM.DUST TEA 100G PCH",
+    "HSN_Ref": "09024040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "EASTEA HARM.DUST TEA 1KG PCH",
+    "HSN_Ref": "09024040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "EASTEA HARM.DUST TEA 250G PCH",
+    "HSN_Ref": "09023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "EASTEA HARM.DUST TEA 500G PCH",
+    "HSN_Ref": "9023020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Beverages_Tea",
+    "Description": "EASTEA HARM.GINGER TEA BAG 25S",
+    "HSN_Ref": "09024040",
+    "GST_Ref": "GST 5%"
+  }
+]

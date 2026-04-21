@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SPRITE 250ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SPRITE CAN 300ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SPRITE PET 1.25LTR",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SPRITE PET 2.25LTR",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "SPRITE PET 750ML",
+    "HSN_Ref": "22021090",
+    "GST_Ref": "GST 40%"
+  }
+]

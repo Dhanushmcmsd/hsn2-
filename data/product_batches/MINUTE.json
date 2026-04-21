@@ -1,0 +1,38 @@
+[
+  {
+    "Category_L2": "Beverages_Juice",
+    "Description": "MINUTE MAID F.JUICE MXD 1L PET",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MINUTE MAID APPLE TETRA 150ML",
+    "HSN_Ref": "20094900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MINUTE MAID F.J PULPY ORANGE 400ML PET",
+    "HSN_Ref": "20091900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MINUTE MAID F.J PULPY ORANGE PET 1LTR",
+    "HSN_Ref": "22029020",
+    "GST_Ref": "GST 40%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MINUTE MAID GRITY GUAVA PET 1L",
+    "HSN_Ref": "22029920",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MINUTE MAID PULPY ORANGE 250ML",
+    "HSN_Ref": "22029020",
+    "GST_Ref": "GST 5%"
+  }
+]

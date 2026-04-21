@@ -1,0 +1,32 @@
+[
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "WHYFRYY POTATO CHIP HERBY SOUR CRM 35G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "WHYFRYY POTATO CHIPS MIRCHI MASALA 35G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "WHYFRYY POTATO CHIPS SIMPLY SALT 35G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "WHYFRYY POTATO CHIPS SPICY CHAAT 35G",
+    "HSN_Ref": "19059090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Snacks_Potato_Chips",
+    "Description": "WHYFRYY POTATO CHIPS ZESTY TOMATO 35G",
+    "HSN_Ref": "20052000",
+    "GST_Ref": "GST 5%"
+  }
+]

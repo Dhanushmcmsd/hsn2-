@@ -1,0 +1,44 @@
+[
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI CANDY GINGER 200G",
+    "HSN_Ref": "20081990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI CANDY JEERA 100G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI CANDY JEERA 200G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI CANDY PACKET 200G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI CANDY PACKET 25G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI IMLI CANDY PACKET 100G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "MILI IMLI CANDY PACKET 200G",
+    "HSN_Ref": "17049090",
+    "GST_Ref": "GST 5%"
+  }
+]

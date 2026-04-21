@@ -1,0 +1,50 @@
+[
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX DISINFECTANT FLOOR CLEANER 500ML",
+    "HSN_Ref": "38089400",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX DISINFECTANT TOILET CLEANER 1LTR",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX FLOOR CLEANER 1000ML",
+    "HSN_Ref": "34025000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX LIME FRESH TOILET CLEANER 475ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX LIME FRESH TOILET CLEANER 750ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX OCEAN FRESH TOILET CLEANER 500ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Home_Cleaning",
+    "Description": "DOMEX OCEAN FRESH TOILET CLEANER 750ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "DOMEX T.CLNR SPARK.FRESH 475ML",
+    "HSN_Ref": "34022090",
+    "GST_Ref": "GST 18%"
+  }
+]

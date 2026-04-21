@@ -1,0 +1,68 @@
+[
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES BOURBON BISCUIT 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES BUTTER COOKIES 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES DARK COOKIE CREAM VANILA 120G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES DIGESTIVE 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES DIGESTIVE 100G (4+1 FREE)",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES DIGESTIVE 250G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Cookies_Premium",
+    "Description": "MCVITIES DIGESTIVE 400G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "MCVITIES MARIE 90G",
+    "HSN_Ref": "19053110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "MCVITIES WHOLE WHEAT MARIE 100G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Biscuits_Glucose_Marie",
+    "Description": "MCVITIES WHOLE WHEAT MARIE 200G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "MCVITIES DIGESTVE ZERO ADDED SUGAR 75G",
+    "HSN_Ref": "19053100",
+    "GST_Ref": "GST 5%"
+  }
+]

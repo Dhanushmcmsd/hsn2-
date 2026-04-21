@@ -1,0 +1,650 @@
+[
+  {
+    "Category_L2": "Beverages_Soft_Drinks",
+    "Description": "REAL1 CHOCOLATE SPREAD 220G",
+    "HSN_Ref": "18069030",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Confectionery_Candy",
+    "Description": "REAL1 VERMICLI CANDY BAR 200G",
+    "HSN_Ref": "17025000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "REAL1 COCONUT OIL 1LTR PCH",
+    "HSN_Ref": "15131900",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "REAL1 LAMP OIL 1LTR",
+    "HSN_Ref": "15159040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Edible_Oils",
+    "Description": "REAL1 LAMP OIL 500ML",
+    "HSN_Ref": "15159040",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 3DWATER ABSORB FLOOR MAT",
+    "HSN_Ref": "57050049",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 ANTI SKID PT FLOOR MAT",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 APPAM/PATHIRI PWDR 1KG",
+    "HSN_Ref": "11023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 APPAM/PATHIRI PWDR 500G",
+    "HSN_Ref": "11023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 ASAFOETIDA POWDER 100G",
+    "HSN_Ref": "13019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 ASAFOETIDA POWDER 50G",
+    "HSN_Ref": "13019013",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 B.TOWEL COTN T.LN 70X150",
+    "HSN_Ref": "63029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 B.TOWL COTTON PRE 70X150",
+    "HSN_Ref": "63029300",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 BED SHEET DBL",
+    "HSN_Ref": "63041910",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 BED SHEET DBL PREMIUM",
+    "HSN_Ref": "63041910",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 BED SHEET SINGLE",
+    "HSN_Ref": "63041940",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 BED SHEET SINGLE ECON",
+    "HSN_Ref": "63041940",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 BIRIYANI MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 BOX CUSHION",
+    "HSN_Ref": "94049099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHAIR CUSHION",
+    "HSN_Ref": "94049099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHAIR PAD 18X18",
+    "HSN_Ref": "94049099",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHEMEEN ROAST 100G",
+    "HSN_Ref": "03083020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHICKEN EGGS 6NOS",
+    "HSN_Ref": "04071990",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHICKEN MASALA 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHILLY POWDER 100G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHILLY POWDER 250G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CHILLY POWDER 500G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CLEANING COMBO 3PCS PACK",
+    "HSN_Ref": "34029051",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 COIR MAT PREMIUM 16X24IN",
+    "HSN_Ref": "57022020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 COIR WELCOME MATS 12X18IN",
+    "HSN_Ref": "57022090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CORIANDER POWDER 100G",
+    "HSN_Ref": "09092200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CORIANDER POWDER 250G",
+    "HSN_Ref": "09092200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 COUNTRY CHICKN EGGS 6NOS",
+    "HSN_Ref": "04079000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 CUSHION COVER",
+    "HSN_Ref": "630260",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 D.BED SHEET POLY COTTON",
+    "HSN_Ref": "63041910",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 DISH CLOTH CHK.ECO 15X35",
+    "HSN_Ref": "63071010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 DISH CLOTH CHK.PRE 35X35",
+    "HSN_Ref": "63071010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 DISH CLTH TERY LINE35X50",
+    "HSN_Ref": "63071010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 DISH CLTH TERY STRP35X50",
+    "HSN_Ref": "63071010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 DOUBLE BED SHEET GC 120",
+    "HSN_Ref": "63041940",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 DOUBLE BED SHEET GC 140",
+    "HSN_Ref": "63041940",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 F.TOWEL TERRY LINE 35X35",
+    "HSN_Ref": "63071010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 FUR ANTI COLLFLOOR MAT",
+    "HSN_Ref": "57031090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 GARAM MASALA 50G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 GLASS CLTH ECO 40X40",
+    "HSN_Ref": "63029300",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 GLASS CLTH PREMIUM 40X40",
+    "HSN_Ref": "63029300",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 GRASS PREMIUM FLOOR MAT",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 H.TOWEL CTN CHK OVL60X40",
+    "HSN_Ref": "63026010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 H.TOWEL WAFFLE PRE 60X40",
+    "HSN_Ref": "63026090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 H.TOWEL WAFLE EMBR 60X40",
+    "HSN_Ref": "63026010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 H.TOWL CT.CHK T.LN 60X40",
+    "HSN_Ref": "63026090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 H.TOWL EXPRT SURPL 60X40",
+    "HSN_Ref": "63026010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME BABY BATH TOWL60X70",
+    "HSN_Ref": "63026000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME BATH RUG FLOOR MAT",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME BATH TOWEL 70X140",
+    "HSN_Ref": "63029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME CRESTA FLOOR MAT",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME FLENO BLANKET 60X90",
+    "HSN_Ref": "63013000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME JDI FLOORMAT",
+    "HSN_Ref": "57031090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME JILEB FLR MAT 16X24",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME KABALI FLOOR MAT",
+    "HSN_Ref": "57050024",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME MUTL1 FLR MAT 16X22",
+    "HSN_Ref": "57050024",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME NAPOLI FLOOR MAT",
+    "HSN_Ref": "57050024",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME NICE FLR MAT 16X24",
+    "HSN_Ref": "57032090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME POP CORN FLOOR MAT",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME POPCORN FLOOR MATS",
+    "HSN_Ref": "57050090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME ROUND FLR MAT 16X27",
+    "HSN_Ref": "57050024",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME SOFA TOWEL 78X185",
+    "HSN_Ref": "63026090",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME STRIPES FLOOR MAT",
+    "HSN_Ref": "40169100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME TURKEY 2 FLOOR MAT",
+    "HSN_Ref": "57050042",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 HOME TURKY FLR MAT 16X24",
+    "HSN_Ref": "57050024",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 INCHI CURRY 250G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 KASHMIRI CHILLY PDR 100G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 KASHMIRI CHILLY PDR 250G",
+    "HSN_Ref": "09042211",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 KOVAKKA ROAST 100G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 KOZHUVA ROAST 100G",
+    "HSN_Ref": "03083020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 MANGO PICKLE 250G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 MIAMI STRIP B.TWL 75X150",
+    "HSN_Ref": "63029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 P.PEANUT BALL 250G CONT",
+    "HSN_Ref": "17025000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PALADA PAYASAM MIX 250G",
+    "HSN_Ref": "21069099",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PAVAKKA ROAST 100G",
+    "HSN_Ref": "20081940",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PEPPER POWDER 50G",
+    "HSN_Ref": "09041200",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PILLOW COVER",
+    "HSN_Ref": "63023100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PIRIYAN CHILLI 250G",
+    "HSN_Ref": "09109990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PIRIYAN CHILLI 500G",
+    "HSN_Ref": "09109990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PRE.BOX TISSUE 100P B1G1",
+    "HSN_Ref": "48182000",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PREMIUM PEANUT BAR 200G",
+    "HSN_Ref": "17049020",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PREMIUM PEANUT BAR 90G",
+    "HSN_Ref": "17025000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PREMIUM RUNNER MAT 2X5FT",
+    "HSN_Ref": "57032990",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 PUTTU PODI 1KG",
+    "HSN_Ref": "11023000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 QUEST BATH TOWEL 75X150",
+    "HSN_Ref": "63029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 ROASTED RAVA 1KG",
+    "HSN_Ref": "11029090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 RUBBER MAT PRE 16X24IN",
+    "HSN_Ref": "40169100",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 SAMBAR POWDER 100G",
+    "HSN_Ref": "09109100",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 SCHOOL BAG KID LRG 22101",
+    "HSN_Ref": "42021290",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 SCHOOL BAG KID MED 22103",
+    "HSN_Ref": "42029290",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 SEMIYA PAYASAM MIX 250G",
+    "HSN_Ref": "19019090",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 SUNFLWR BATH TOWL 75X150",
+    "HSN_Ref": "63029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 TERRY BATH TOWEL 75X150",
+    "HSN_Ref": "63029900",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 TUR STITCH FLOOR MAT",
+    "HSN_Ref": "57023220",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VAALANPULI 100G",
+    "HSN_Ref": "08134010",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VAALANPULI 200G",
+    "HSN_Ref": "08134020",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VAALANPULI 500G",
+    "HSN_Ref": "08134000",
+    "GST_Ref": "GST 0%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VADUKAPULI PICKLE 250G",
+    "HSN_Ref": "20019000",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VATTAL MULAK 250G",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VATTAL MULAK 500G",
+    "HSN_Ref": "09042110",
+    "GST_Ref": "GST 5%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VINEGAR 1LTR",
+    "HSN_Ref": "22090010",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 VINEGAR 500ML",
+    "HSN_Ref": "22090020",
+    "GST_Ref": "GST 18%"
+  },
+  {
+    "Category_L2": "Other_Unclassified",
+    "Description": "REAL1 WASHING COMBO 4PCS PACK",
+    "HSN_Ref": "63071090",
+    "GST_Ref": "GST 18%"
+  }
+]
