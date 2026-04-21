@@ -570,8 +570,6 @@ export default function Dashboard() {
       </main>
     </div>
   );
-}
-
   // Auth
   const [user, setUser] = useState<UserOut | null>(null);
 
