@@ -895,135 +895,338 @@ async def _probe_vp_schema(db: AsyncSession) -> bool:
     return _VP_HAS_NO_SIZE_COL
 
 
-# ── Core matching logic ────────────────────────────────────────────────────────
+# ── Helper: majority-vote HSN from verified_products rows ─────────────────────
+def _majority_hsn(rows, min_freq: int = 1):
+    """
+    Picks the most frequent HSN code across a list of DB rows.
+    Ties broken by shortest description (most generic / direct match).
+    Returns (best_hsn, best_gst, best_desc, freq, alt_list).
+    """
+    if not rows:
+        return None, None, None, 0, []
+
+    import collections as _col
+    hsn_groups = _col.defaultdict(list)
+    for r in rows:
+        hsn_groups[r.hsn_code].append(r)
+
+    # Sort by (freq DESC, shortest description ASC)
+    ranked = sorted(
+        hsn_groups.items(),
+        key=lambda kv: (-len(kv[1]), min(len(x.description) for x in kv[1])),
+    )
+
+    best_hsn, best_rows = ranked[0]
+    best_row = min(best_rows, key=lambda r: len(r.description))
+    freq = len(best_rows)
+
+    alts = []
+    for alt_hsn, alt_rows in ranked[1:4]:
+        alt_row = min(alt_rows, key=lambda r: len(r.description))
+        alts.append({
+            "hsn_code": normalize_hsn(alt_hsn),
+            "description": alt_row.description,
+            "gst_rate": float(alt_row.gst_rate or 0),
+            "confidence": round(len(alt_rows) / max(freq, 1) * 0.7, 3),
+        })
+
+    return best_hsn, best_row.gst_rate, best_row.description, freq, alts
+
+
+# ── Core matching logic (v2) ──────────────────────────────────────────────────
 async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     """
-    Multi-pass HSN matching.
+    Multi-pass HSN matching (v2 — enhanced verified_products passes).
 
-    Pass 0A: verified_products exact uppercase match        → confidence 1.0
-    Pass 0B: verified_products size-stripped exact match    → confidence 0.95
-             (skipped if description_no_size column absent)
-    Pass 0C: verified_products pg_trgm similarity           → sim-based
-             (skipped if description_no_size column absent)
-    Pass 1:  Exact HSN code lookup (numeric input)
-    Pass 2:  Full-text search via hsn_search.search_vector
-    Pass 3:  Trigram similarity on hsn_search.normalized_description
-    Pass 4:  ILIKE keyword fallback
+    Pass 0A : verified_products exact uppercase match        → conf 1.00
+    Pass 0B : verified_products size-stripped exact          → conf 0.95
+    Pass 0C : verified_products pg_trgm on no_size (≥0.60)  → conf sim-based
+    ── NEW ──────────────────────────────────────────────────────────────────
+    Pass 0D : verified_products LIKE 'QUERY%' prefix         → conf 0.60–0.88
+                "HARPIC" → "HARPIC DISINFT BATHRM CLNR LEMON 200ML"
+    Pass 0E : verified_products ALL words in no_size         → conf 0.50–0.85
+                "TURMERIC POWDER" → all TURMERIC+POWDER entries → vote
+    Pass 0E2: relax to top-60% words (noisy / abbreviated)  → conf 0.42–0.75
+                "CASHW COOKI" → top 2 words present in batch entries
+    Pass 0F : verified_products ANY keyword in no_size       → conf 0.28–0.70
+                "SESAME" → all sesame-* entries → vote by HSN frequency
+    ─────────────────────────────────────────────────────────────────────────
+    Pass 1  : exact numeric HSN code lookup
+    Pass 2  : full-text search via hsn_search.search_vector
+    Pass 3  : trigram on hsn_search.normalized_description
+    Pass 4  : ILIKE keyword fallback on hsn_codes
     """
+    import re as _re
+
     q_stripped = query.strip()
+    q_upper    = q_stripped.upper()
+    q_ns       = _strip_sizes(q_stripped)           # size-stripped UPPERCASE
 
-    # ── Pass 0: Verified products lookup ──────────────────────────────────────
+    # Extract meaningful words (≥3 chars) from size-stripped form
+    q_words = [w for w in _re.findall(r'[A-Z]{2,}', q_ns) if len(w) >= 3]
+
+    vp_has_col = await _probe_vp_schema(db)
+
+    # ── Shared builder: majority-vote → HSNBatchResult ────────────────────────
+    def _build_vp_result(method: str, rows, base_conf: float, max_conf: float):
+        best_hsn, best_gst, best_desc, freq, alts = _majority_hsn(rows)
+        if not best_hsn:
+            return None
+        # More votes → higher confidence (capped at max_conf)
+        conf = round(min(max_conf, base_conf + freq * 0.04), 3)
+        gst_float = float(_re.sub(r'[^0-9.]', '', str(best_gst or 0)) or 0)
+        label = "high" if conf >= 0.80 else ("medium" if conf >= 0.55 else "low")
+        return HSNBatchResult(
+            query=query,
+            hsn_code=normalize_hsn(best_hsn),
+            description=best_desc,
+            gst_rate=gst_float,
+            confidence=conf,
+            confidence_label=label,
+            match_method=method,
+            alternatives=alts,
+        )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0A — Exact normalized match
+    # ══════════════════════════════════════════════════════════════════════════
     try:
-        q_exact   = q_stripped.upper().strip()
-        q_no_size = _strip_sizes(q_stripped)  # now defined above — no NameError
-
-        # ── 0A: Exact normalised match ────────────────────────────────────────
-        vp_res = await db.execute(
+        res = await db.execute(
             text("""
-                SELECT
-                    vp.hsn_code,
-                    vp.gst_rate,
-                    vp.description AS matched_description,
-                    1.0::float     AS sim
+                SELECT vp.hsn_code, vp.gst_rate, vp.description, 1.0::float AS sim
                 FROM verified_products vp
                 WHERE vp.description_normalized = :q
                 LIMIT 1
             """),
-            {"q": q_exact},
+            {"q": q_upper},
         )
-        vp_row = vp_res.fetchone()
+        row = res.fetchone()
+        if row:
+            gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
+            return HSNBatchResult(
+                query=query,
+                hsn_code=normalize_hsn(row.hsn_code),
+                description=row.description,
+                gst_rate=gst_float,
+                confidence=1.0,
+                confidence_label="high",
+                match_method="verified_exact",
+            )
+    except Exception as e:
+        log.warning("pass0A.error query=%s error=%s", q_stripped[:50], str(e))
 
-        # ── 0B & 0C: Size-stripped passes (only if column exists) ─────────────
-        vp_has_col = await _probe_vp_schema(db)
-
-        if not vp_row and q_no_size and vp_has_col:
-            # 0B: exact on no-size form
-            vp_res = await db.execute(
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0B — Size-stripped exact match
+    # ══════════════════════════════════════════════════════════════════════════
+    if q_ns and vp_has_col:
+        try:
+            res = await db.execute(
                 text("""
-                    SELECT
-                        vp.hsn_code,
-                        vp.gst_rate,
-                        vp.description AS matched_description,
-                        0.95::float    AS sim
+                    SELECT vp.hsn_code, vp.gst_rate, vp.description
                     FROM verified_products vp
                     WHERE vp.description_no_size = :q
                     ORDER BY vp.id
                     LIMIT 1
                 """),
-                {"q": q_no_size},
+                {"q": q_ns},
             )
-            vp_row = vp_res.fetchone()
+            row = res.fetchone()
+            if row:
+                gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
+                return HSNBatchResult(
+                    query=query,
+                    hsn_code=normalize_hsn(row.hsn_code),
+                    description=row.description,
+                    gst_rate=gst_float,
+                    confidence=0.95,
+                    confidence_label="high",
+                    match_method="verified_no_size",
+                )
+        except Exception as e:
+            log.warning("pass0B.error query=%s error=%s", q_stripped[:50], str(e))
 
-        if not vp_row and q_no_size and vp_has_col:
-            # 0C: trigram on no-size form
-            vp_res = await db.execute(
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0C — Trigram on no_size (threshold ≥ 0.60)
+    # ══════════════════════════════════════════════════════════════════════════
+    if q_ns and vp_has_col:
+        try:
+            res = await db.execute(
                 text("""
-                    SELECT
-                        vp.hsn_code,
-                        vp.gst_rate,
-                        vp.description AS matched_description,
-                        similarity(vp.description_no_size, :q) AS sim
+                    SELECT vp.hsn_code, vp.gst_rate, vp.description,
+                           similarity(vp.description_no_size, :q) AS sim
                     FROM verified_products vp
                     WHERE vp.description_no_size % :q
                     ORDER BY sim DESC
                     LIMIT 1
                 """),
-                {"q": q_no_size},
+                {"q": q_ns},
             )
-            vp_row = vp_res.fetchone()
-
-        if vp_row:
-            sim = float(vp_row.sim)
-            if sim >= 0.50:
-                gst_raw = vp_row.gst_rate or "0"
-                gst_float = float(re.sub(r'[^0-9.]', '', str(gst_raw)) or 0)
+            row = res.fetchone()
+            if row and float(row.sim) >= 0.60:
+                sim = float(row.sim)
+                gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
                 return HSNBatchResult(
                     query=query,
-                    hsn_code=normalize_hsn(vp_row.hsn_code),
-                    description=vp_row.matched_description,
+                    hsn_code=normalize_hsn(row.hsn_code),
+                    description=row.description,
                     gst_rate=gst_float,
                     confidence=round(sim, 3),
-                    confidence_label=(
-                        "high"   if sim >= 0.90 else
-                        "medium" if sim >= 0.70 else
-                        "low"
-                    ),
-                    match_method=(
-                        "verified_exact"    if sim >= 0.99 else
-                        "verified_no_size"  if sim >= 0.94 else
-                        "verified_trigram"
-                    ),
+                    confidence_label="high" if sim >= 0.80 else "medium",
+                    match_method="verified_trigram",
                 )
+        except Exception as e:
+            log.warning("pass0C.error query=%s error=%s", q_stripped[:50], str(e))
 
-    except Exception as _vp_err:
-        # FIX: was crashing here because log was undefined — now safe
-        log.warning("pass0.verified_products_error query=%s error=%s",
-                    q_stripped[:60], str(_vp_err))
-
-    # ── Pass 1: exact HSN code lookup ─────────────────────────────────────────
-    if re.match(r'^\d{4,8}$', q_stripped):
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0D — PREFIX search on description_normalized  ← NEW
+    # "HARPIC"            → "HARPIC DISINFT BATHRM CLNR LEMON 200ML"
+    # "ARIEL PERFECT WASH"→ "ARIEL PERFECT WASH 1KG"
+    # "UNIBIC WAFERS"     → "UNIBIC WAFERS CHEESE 75G"
+    # ══════════════════════════════════════════════════════════════════════════
+    try:
         res = await db.execute(
             text("""
-                SELECT h.hsn_code, h.description, h.gst_rate, h.category
-                FROM hsn_codes h
-                WHERE h.hsn_code = :code AND h.is_active = TRUE
-                LIMIT 1
+                SELECT vp.hsn_code, vp.gst_rate, vp.description
+                FROM verified_products vp
+                WHERE vp.description_normalized LIKE :prefix
+                ORDER BY LENGTH(vp.description_normalized) ASC
+                LIMIT 20
             """),
-            {"code": q_stripped}
+            {"prefix": q_upper + "%"},
         )
-        row = res.fetchone()
-        if row:
-            return HSNBatchResult(
-                query=query,
-                hsn_code=normalize_hsn(row.hsn_code),
-                description=row.description,
-                gst_rate=float(row.gst_rate or 0),
-                confidence=1.0,
-                confidence_label="high",
-                match_method="exact_code",
+        rows = res.fetchall()
+        if rows:
+            result = _build_vp_result(
+                "verified_prefix", rows, base_conf=0.60, max_conf=0.88
             )
+            if result and result.confidence >= 0.50:
+                return result
+    except Exception as e:
+        log.warning("pass0D.error query=%s error=%s", q_stripped[:50], str(e))
 
-    # Expand abbreviations then tokenize
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0E — ALL query words contained in description_no_size  ← NEW
+    # "TURMERIC POWDER"   → all products with TURMERIC+POWDER → vote
+    # "SUNFLOWER OIL"     → all products with SUNFLOWER+OIL → vote
+    # "SALT IODISED"      → all products with SALT+IODISED → vote
+    # "PURE PUJA OIL"     → all products with PURE+PUJA+OIL → vote
+    # ══════════════════════════════════════════════════════════════════════════
+    if q_words and vp_has_col and len(q_words) >= 2:
+        try:
+            where_parts = " AND ".join(
+                f"vp.description_no_size LIKE :w{i}" for i in range(len(q_words))
+            )
+            params = {f"w{i}": f"%{w}%" for i, w in enumerate(q_words)}
+            res = await db.execute(
+                text(f"""
+                    SELECT vp.hsn_code, vp.gst_rate, vp.description
+                    FROM verified_products vp
+                    WHERE {where_parts}
+                    LIMIT 30
+                """),
+                params,
+            )
+            rows = res.fetchall()
+            if rows:
+                result = _build_vp_result(
+                    "verified_allwords", rows, base_conf=0.50, max_conf=0.85
+                )
+                if result and result.confidence >= 0.45:
+                    return result
+        except Exception as e:
+            log.warning("pass0E.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0E-2 — Relax to top-60% of words  ← NEW
+    # "CASHW COOKI" → longest words "CASHW"+"COOKI" both hit batch entries
+    # "NAGPUR SOAN PAPDI" → 2 of 3 words: "NAGPUR"+"PAPDI" → hits haldirams
+    # ══════════════════════════════════════════════════════════════════════════
+    if q_words and vp_has_col and len(q_words) >= 2:
+        try:
+            needed    = max(1, round(len(q_words) * 0.60))
+            top_words = sorted(q_words, key=len, reverse=True)[:needed]
+            where_parts = " AND ".join(
+                f"vp.description_no_size LIKE :rw{i}" for i in range(len(top_words))
+            )
+            params = {f"rw{i}": f"%{w}%" for i, w in enumerate(top_words)}
+            res = await db.execute(
+                text(f"""
+                    SELECT vp.hsn_code, vp.gst_rate, vp.description
+                    FROM verified_products vp
+                    WHERE {where_parts}
+                    LIMIT 30
+                """),
+                params,
+            )
+            rows = res.fetchall()
+            if rows:
+                result = _build_vp_result(
+                    "verified_partial", rows, base_conf=0.42, max_conf=0.75
+                )
+                if result and result.confidence >= 0.40:
+                    return result
+        except Exception as e:
+            log.warning("pass0E2.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0F — Single-keyword fallback in description_no_size  ← NEW
+    # "SESAME"  → all sesame-* entries → vote (sesame candy wins by count,
+    #             sesame oil is #2 alternative — user sees both)
+    # "JAGGERY 1 KG" → JAGGERY keyword → all jaggery entries → vote
+    # ══════════════════════════════════════════════════════════════════════════
+    if q_words and vp_has_col:
+        try:
+            best_word = max(q_words, key=len)   # most discriminative word
+            res = await db.execute(
+                text("""
+                    SELECT vp.hsn_code, vp.gst_rate, vp.description
+                    FROM verified_products vp
+                    WHERE vp.description_no_size LIKE :kw
+                    LIMIT 50
+                """),
+                {"kw": f"%{best_word}%"},
+            )
+            rows = res.fetchall()
+            if rows:
+                result = _build_vp_result(
+                    "verified_keyword", rows, base_conf=0.28, max_conf=0.70
+                )
+                if result and result.confidence >= 0.25:
+                    return result
+        except Exception as e:
+            log.warning("pass0F.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 1 — Exact HSN code (numeric input)
+    # ══════════════════════════════════════════════════════════════════════════
+    if _re.match(r'^\d{4,8}$', q_stripped):
+        try:
+            res = await db.execute(
+                text("""
+                    SELECT h.hsn_code, h.description, h.gst_rate, h.category
+                    FROM hsn_codes h
+                    WHERE h.hsn_code = :code AND h.is_active = TRUE
+                    LIMIT 1
+                """),
+                {"code": q_stripped},
+            )
+            row = res.fetchone()
+            if row:
+                return HSNBatchResult(
+                    query=query,
+                    hsn_code=normalize_hsn(row.hsn_code),
+                    description=row.description,
+                    gst_rate=float(row.gst_rate or 0),
+                    confidence=1.0,
+                    confidence_label="high",
+                    match_method="exact_code",
+                )
+        except Exception as e:
+            log.warning("pass1.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASSES 2–4 — FTS / trigram / ILIKE on hsn_codes table
+    # ══════════════════════════════════════════════════════════════════════════
     q_expanded = expand_fmcg_abbreviations(q_stripped)
     tokens = tokenize(q_expanded)
     if not tokens:
@@ -1031,20 +1234,15 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
 
     domain_clause, domain_params = build_hsn_prefix_clause(tokens)
 
-    # ── Pass 2: Full-text search via hsn_search.search_vector ────────────────
+    # Pass 2: full-text search (AND then OR fallback)
     rows_fts = []
     try:
         ts_query_terms = build_tsquery_terms(tokens)
         ts_and = " & ".join(ts_query_terms[:8])
-        query_params = {"q": ts_and, **domain_params}
         res = await db.execute(
             text("""
-                SELECT
-                    h.hsn_code,
-                    h.description,
-                    h.gst_rate,
-                    h.category,
-                    ts_rank(s.search_vector, query) AS rank
+                SELECT h.hsn_code, h.description, h.gst_rate, h.category,
+                       ts_rank(s.search_vector, query) AS rank
                 FROM hsn_search s
                 JOIN hsn_codes h ON h.hsn_code = s.hsn_code
                 CROSS JOIN to_tsquery('english', :q) query
@@ -1053,25 +1251,19 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 ORDER BY rank DESC
                 LIMIT 15
             """),
-            query_params
+            {"q": ts_and, **domain_params},
         )
         rows_fts = res.fetchall()
     except Exception:
         rows_fts = []
 
-    # Fallback: OR query if AND returned nothing
     if not rows_fts and len(tokens) > 1:
         try:
             ts_or = " | ".join(ts_query_terms[:8])
-            query_params = {"q": ts_or, **domain_params}
             res = await db.execute(
                 text("""
-                    SELECT
-                        h.hsn_code,
-                        h.description,
-                        h.gst_rate,
-                        h.category,
-                        ts_rank(s.search_vector, query) AS rank
+                    SELECT h.hsn_code, h.description, h.gst_rate, h.category,
+                       ts_rank(s.search_vector, query) AS rank
                     FROM hsn_search s
                     JOIN hsn_codes h ON h.hsn_code = s.hsn_code
                     CROSS JOIN to_tsquery('english', :q) query
@@ -1080,36 +1272,33 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     ORDER BY rank DESC
                     LIMIT 15
                 """),
-                query_params
+                {"q": ts_or, **domain_params},
             )
             rows_fts = res.fetchall()
         except Exception:
             rows_fts = []
 
     if rows_fts:
-        best = None
+        best      = None
         best_score = 0.0
-        alts = []
-
+        alts      = []
         for r in rows_fts:
             desc_tokens = set(tokenize(r.description))
             if not desc_tokens:
                 continue
-            jaccard = compute_weighted_jaccard(tokens, desc_tokens)
-            fts_score = min(float(r.rank) * 2.5, 0.4)
-            jaccard_weighted = jaccard * 0.6
-            final_score = min(jaccard_weighted + fts_score, 1.0)
-
+            jaccard    = compute_weighted_jaccard(tokens, desc_tokens)
+            fts_score  = min(float(r.rank) * 2.5, 0.4)
+            final_score = min(jaccard * 0.6 + fts_score, 1.0)
             entry = {
-                "hsn_code": normalize_hsn(r.hsn_code),
+                "hsn_code":   normalize_hsn(r.hsn_code),
                 "description": r.description,
-                "gst_rate": float(r.gst_rate or 0),
+                "gst_rate":   float(r.gst_rate or 0),
                 "confidence": round(final_score, 3),
             }
             if final_score > best_score:
                 if best:
                     alts.append(best)
-                best = entry
+                best       = entry
                 best_score = final_score
             else:
                 alts.append(entry)
@@ -1127,17 +1316,13 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 alternatives=alts[:4],
             )
 
-    # ── Pass 3: Trigram similarity on hsn_search.normalized_description ───────
+    # Pass 3: trigram on hsn_search
     try:
         trgm_query = " ".join(tokens[:6])
         res = await db.execute(
             text("""
-                SELECT
-                    h.hsn_code,
-                    h.description,
-                    h.gst_rate,
-                    h.category,
-                    similarity(s.normalized_description, :q) AS sim
+                SELECT h.hsn_code, h.description, h.gst_rate, h.category,
+                       similarity(s.normalized_description, :q) AS sim
                 FROM hsn_search s
                 JOIN hsn_codes h ON h.hsn_code = s.hsn_code
                 WHERE s.normalized_description % :q
@@ -1145,20 +1330,20 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 ORDER BY sim DESC
                 LIMIT 10
             """),
-            {"q": trgm_query, **domain_params}
+            {"q": trgm_query, **domain_params},
         )
         rows_trgm = res.fetchall()
     except Exception:
         rows_trgm = []
 
     if rows_trgm:
-        best = rows_trgm[0]
+        best      = rows_trgm[0]
         sim_score = float(best.sim)
         alts = [
             {
-                "hsn_code": normalize_hsn(r.hsn_code),
+                "hsn_code":   normalize_hsn(r.hsn_code),
                 "description": r.description,
-                "gst_rate": float(r.gst_rate or 0),
+                "gst_rate":   float(r.gst_rate or 0),
                 "confidence": round(float(r.sim), 3),
             }
             for r in rows_trgm[1:4]
@@ -1176,31 +1361,34 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 alternatives=alts,
             )
 
-    # ── Pass 4: ILIKE keyword fallback ────────────────────────────────────────
-    candidates: dict[str, dict] = {}
+    # Pass 4: ILIKE keyword fallback on hsn_codes
+    candidates: dict = {}
     for token in tokens[:4]:
         if len(token) < 3:
             continue
-        res = await db.execute(
-            text("""
-                SELECT h.hsn_code, h.description, h.gst_rate, h.category
-                FROM hsn_codes h
-                WHERE h.description ILIKE :pat AND h.is_active = TRUE"""
-                + domain_clause + """
-                LIMIT 20
-            """),
-            {"pat": f"%{token}%", **domain_params}
-        )
-        for r in res.fetchall():
-            key = normalize_hsn(r.hsn_code)
-            if key not in candidates:
-                candidates[key] = {
-                    "hsn_code": key,
-                    "description": r.description,
-                    "gst_rate": float(r.gst_rate or 0),
-                    "hits": 0,
-                }
-            candidates[key]["hits"] += 1
+        try:
+            res = await db.execute(
+                text("""
+                    SELECT h.hsn_code, h.description, h.gst_rate, h.category
+                    FROM hsn_codes h
+                    WHERE h.description ILIKE :pat AND h.is_active = TRUE
+                    """ + domain_clause + """
+                    LIMIT 20
+                """),
+                {"pat": f"%{token}%", **domain_params},
+            )
+            for r in res.fetchall():
+                key = normalize_hsn(r.hsn_code)
+                if key not in candidates:
+                    candidates[key] = {
+                        "hsn_code":   key,
+                        "description": r.description,
+                        "gst_rate":   float(r.gst_rate or 0),
+                        "hits":       0,
+                    }
+                candidates[key]["hits"] += 1
+        except Exception:
+            pass
 
     if candidates:
         total_tokens = max(len(tokens), 1)
@@ -1213,8 +1401,12 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         if top_score > 0.1:
             label = "high" if top_score >= 0.65 else ("medium" if top_score >= 0.35 else "low")
             alts = [
-                {"hsn_code": c["hsn_code"], "description": c["description"],
-                 "gst_rate": c["gst_rate"], "confidence": round(s, 3)}
+                {
+                    "hsn_code":   c["hsn_code"],
+                    "description": c["description"],
+                    "gst_rate":   c["gst_rate"],
+                    "confidence": round(s, 3),
+                }
                 for s, c in scored[1:4] if s > 0
             ]
             return HSNBatchResult(
