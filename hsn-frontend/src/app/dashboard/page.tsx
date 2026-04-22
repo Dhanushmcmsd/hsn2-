@@ -1,443 +1,877 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { hsnApi, authApi, type PredictResponse, type UserOut } from "@/lib/api";
-import * as XLSX from "xlsx";
-import {
-  BarChart3, Search, Upload, Download, LogOut, FileSpreadsheet,
-  ChevronRight, ChevronLeft, AlertCircle, CheckCircle2, Clock, X, Loader2
-} from "lucide-react";
 
-interface HSNBatchResult {
-  query: string;
-  hsn_code?: string;
-  description?: string;
-  gst_rate?: number;
-  confidence: number;
-  confidence_label: "high" | "medium" | "low";
-  match_method: string;
-  alternatives: { hsn_code: string; description: string; gst_rate: number; confidence: number }[];
-  error?: string;
-}
-interface BatchResponse {
-  results: HSNBatchResult[];
-  total: number;
-  matched: number;
-  unmatched: number;
-}
+// ─── Standalone demo component (no Next.js router deps) ───────────────────
+// Replace router.push / router.replace with window.location for real use
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const BASE_URL = "http://localhost:8000";
 const PAGE_SIZE = 20;
 
-function padHsn(code: string | undefined): string {
+function padHsn(code) {
   if (!code) return "";
   const t = code.trim();
   return /^\d+$/.test(t) ? t.padStart(8, "0") : t;
 }
 
-function ConfidencePill({ label, value }: { label: string; value: number }) {
-  const styles: Record<string, { bg: string; border: string; color: string; dot: string }> = {
-    high:   { bg: "rgba(1,128,235,0.12)",   border: "rgba(1,128,235,0.35)",  color: "#0180EB", dot: "#0180EB" },
-    medium: { bg: "rgba(206,221,250,0.18)",  border: "rgba(206,221,250,0.5)", color: "#4a7fc1", dot: "#4a7fc1" },
-    low:    { bg: "rgba(0,31,84,0.15)",       border: "rgba(0,31,84,0.3)",    color: "#6a8aad", dot: "#6a8aad" },
+// ── Floating ambient icons (Indian GST context) ──────────────────────────────
+const FLOAT_ICONS = [
+  { shape: "invoice", x: 8, y: 15, size: 38, delay: 0, dur: 22 },
+  { shape: "rupee",   x: 88, y: 8,  size: 28, delay: 3, dur: 18 },
+  { shape: "barcode", x: 5,  y: 72, size: 44, delay: 6, dur: 25 },
+  { shape: "gst",     x: 82, y: 65, size: 34, delay: 1, dur: 20 },
+  { shape: "sheet",   x: 50, y: 5,  size: 30, delay: 8, dur: 28 },
+  { shape: "rupee",   x: 18, y: 88, size: 22, delay: 4, dur: 16 },
+  { shape: "invoice", x: 72, y: 85, size: 36, delay: 9, dur: 24 },
+  { shape: "barcode", x: 92, y: 40, size: 26, delay: 2, dur: 19 },
+];
+
+function FloatingIcon({ shape, x, y, size, delay, dur }) {
+  const paths = {
+    invoice: (
+      <g>
+        <rect x="2" y="1" width="20" height="26" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+        <line x1="6" y1="8" x2="18" y2="8" stroke="currentColor" strokeWidth="1.2"/>
+        <line x1="6" y1="12" x2="18" y2="12" stroke="currentColor" strokeWidth="1.2"/>
+        <line x1="6" y1="16" x2="13" y2="16" stroke="currentColor" strokeWidth="1.2"/>
+        <line x1="6" y1="20" x2="16" y2="20" stroke="currentColor" strokeWidth="1.2"/>
+      </g>
+    ),
+    rupee: (
+      <g>
+        <text x="4" y="22" fontSize="22" fill="currentColor" fontFamily="serif" fontWeight="bold">₹</text>
+      </g>
+    ),
+    barcode: (
+      <g>
+        {[0,3,5,8,10,13,16,19,21].map((bx,i) => (
+          <rect key={i} x={bx} y="4" width={i%3===0?2:1.5} height="16" fill="currentColor"/>
+        ))}
+        <text x="2" y="26" fontSize="6" fill="currentColor" fontFamily="monospace">084930271</text>
+      </g>
+    ),
+    gst: (
+      <g>
+        <text x="1" y="17" fontSize="13" fill="currentColor" fontFamily="sans-serif" fontWeight="700" letterSpacing="1">GST</text>
+        <line x1="0" y1="20" x2="26" y2="20" stroke="currentColor" strokeWidth="1"/>
+        <text x="2" y="28" fontSize="7" fill="currentColor" fontFamily="monospace">HSN</text>
+      </g>
+    ),
+    sheet: (
+      <g>
+        <rect x="1" y="1" width="22" height="22" rx="1" fill="none" stroke="currentColor" strokeWidth="1.2"/>
+        {[5,9,13,17].map((ry,i) => (
+          <line key={i} x1="1" y1={ry} x2="23" y2={ry} stroke="currentColor" strokeWidth="0.8"/>
+        ))}
+        {[7,13,19].map((rx,i) => (
+          <line key={i} x1={rx} y1="1" x2={rx} y2="23" stroke="currentColor" strokeWidth="0.8"/>
+        ))}
+      </g>
+    ),
   };
-  const s = styles[label] ?? styles.low;
+
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: s.bg, border: `1px solid ${s.border}`, color: s.color, padding: "0.2rem 0.55rem", borderRadius: 100, fontSize: "0.72rem", fontWeight: 600, fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap", boxShadow: `0 0 8px ${s.bg}` }}>
-      <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.dot, flexShrink: 0, boxShadow: `0 0 4px ${s.dot}` }} />
+    <div style={{
+      position: "absolute",
+      left: `${x}%`,
+      top: `${y}%`,
+      width: size,
+      height: size,
+      color: "rgba(96,165,250,0.08)",
+      animation: `floatDrift${delay%4} ${dur}s ease-in-out infinite`,
+      animationDelay: `${delay}s`,
+      pointerEvents: "none",
+      filter: "blur(0.5px)",
+    }}>
+      <svg viewBox="0 0 28 28" width={size} height={size} style={{display:"block"}}>
+        {paths[shape]}
+      </svg>
+    </div>
+  );
+}
+
+// ── Confidence pill ──────────────────────────────────────────────────────────
+function ConfPill({ label, value }) {
+  const map = {
+    high:   { color: "#60a5fa", bg: "rgba(96,165,250,0.12)", border: "rgba(96,165,250,0.3)" },
+    medium: { color: "#a78bfa", bg: "rgba(167,139,250,0.12)", border: "rgba(167,139,250,0.3)" },
+    low:    { color: "#94a3b8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.2)" },
+  };
+  const s = map[label] || map.low;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: s.bg, border: `1px solid ${s.border}`,
+      color: s.color, padding: "3px 10px", borderRadius: 100,
+      fontSize: "0.7rem", fontWeight: 600, fontFamily: "'DM Mono', monospace",
+      whiteSpace: "nowrap",
+    }}>
+      <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
       {label} · {Math.round(value * 100)}%
     </span>
   );
 }
 
-export default function Dashboard() {
-  const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+// ── Step indicator ───────────────────────────────────────────────────────────
+function ProcessStep({ label, done, active }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.78rem",
+      color: done ? "#60a5fa" : active ? "#e2e8f0" : "#475569",
+      transition: "color 0.4s" }}>
+      <div style={{
+        width: 16, height: 16, borderRadius: "50%", flexShrink: 0,
+        background: done ? "#60a5fa" : active ? "rgba(96,165,250,0.3)" : "rgba(148,163,184,0.15)",
+        border: `1px solid ${done ? "#60a5fa" : active ? "rgba(96,165,250,0.6)" : "rgba(148,163,184,0.2)"}`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        transition: "all 0.4s",
+      }}>
+        {done && (
+          <svg width="8" height="8" viewBox="0 0 8 8">
+            <polyline points="1.5,4 3,5.5 6.5,2.5" stroke="white" strokeWidth="1.5" fill="none"/>
+          </svg>
+        )}
+        {active && !done && <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#60a5fa", animation: "pulse 1s ease-in-out infinite" }} />}
+      </div>
+      {label}
+    </div>
+  );
+}
 
-  const [user, setUser] = useState<UserOut | null>(null);
-  const [mode, setMode] = useState<"single" | "bulk">("single");
+// ── Main component ───────────────────────────────────────────────────────────
+export default function PremiumDashboard() {
+  const fileInputRef = useRef(null);
+  const [mode, setMode] = useState("single");
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<PredictResponse | null>(null);
+  const [result, setResult] = useState(null);
   const [singleLoading, setSingleLoading] = useState(false);
   const [singleError, setSingleError] = useState("");
   const [fileName, setFileName] = useState("");
-  const [columns, setColumns] = useState<string[]>([]);
+  const [fileSize, setFileSize] = useState("");
+  const [columns, setColumns] = useState([]);
   const [selectedCol, setSelectedCol] = useState("");
-  const [rawRows, setRawRows] = useState<Record<string, unknown>[]>([]);
-  const [bulkResults, setBulkResults] = useState<HSNBatchResult[]>([]);
+  const [rawRows, setRawRows] = useState([]);
+  const [bulkResults, setBulkResults] = useState([]);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkError, setBulkError] = useState("");
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [page, setPage] = useState(0);
-  const [bulkStats, setBulkStats] = useState<{ matched: number; unmatched: number; total: number } | null>(null);
+  const [bulkStats, setBulkStats] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [processSteps, setProcessSteps] = useState([false, false, false]);
+  const [showFileSuccess, setShowFileSuccess] = useState(false);
+  const [userInitial] = useState("D");
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
-  useEffect(() => {
-    if (!localStorage.getItem("access_token")) { router.replace("/login"); return; }
-    authApi.me().then(setUser).catch(() => router.replace("/login"));
-  }, []);
+  const CSS = `
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap');
 
-  async function handlePredict(e: React.FormEvent) {
-    e.preventDefault();
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #020617; }
+
+    @keyframes floatDrift0 {
+      0%,100%{transform:translate(0,0) rotate(-2deg)}
+      33%{transform:translate(8px,-12px) rotate(2deg)}
+      66%{transform:translate(-6px,8px) rotate(-1deg)}
+    }
+    @keyframes floatDrift1 {
+      0%,100%{transform:translate(0,0) rotate(1deg)}
+      50%{transform:translate(-10px,-8px) rotate(-3deg)}
+    }
+    @keyframes floatDrift2 {
+      0%,100%{transform:translate(0,0)}
+      25%{transform:translate(6px,10px) rotate(2deg)}
+      75%{transform:translate(-8px,-6px) rotate(-2deg)}
+    }
+    @keyframes floatDrift3 {
+      0%,100%{transform:translate(0,0) rotate(-1deg)}
+      40%{transform:translate(10px,-14px) rotate(3deg)}
+      80%{transform:translate(-4px,6px) rotate(0deg)}
+    }
+    @keyframes blobDrift {
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(40px,30px) scale(1.08)}
+    }
+    @keyframes pulse {
+      0%,100%{opacity:0.5;transform:scale(0.8)}
+      50%{opacity:1;transform:scale(1)}
+    }
+    @keyframes shimmer {
+      0%{transform:translateX(-100%)}
+      100%{transform:translateX(100%)}
+    }
+    @keyframes fadeUp {
+      from{opacity:0;transform:translateY(12px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    @keyframes glow {
+      0%,100%{box-shadow:0 0 20px rgba(96,165,250,0.2)}
+      50%{box-shadow:0 0 40px rgba(96,165,250,0.4)}
+    }
+    @keyframes borderGlow {
+      0%,100%{border-color:rgba(96,165,250,0.3)}
+      50%{border-color:rgba(96,165,250,0.8)}
+    }
+    @keyframes dashAnimate {
+      to{stroke-dashoffset:-20}
+    }
+    @keyframes checkPop {
+      0%{transform:scale(0)}
+      70%{transform:scale(1.2)}
+      100%{transform:scale(1)}
+    }
+    @keyframes progressFill {
+      from{width:0}
+    }
+    @keyframes typing {
+      from{width:0}to{width:100%}
+    }
+    @keyframes blink {
+      50%{border-color:transparent}
+    }
+    @keyframes wave {
+      0%,100%{transform:scaleY(1) rotate(0.3deg)}
+      50%{transform:scaleY(1.02) rotate(-0.3deg)}
+    }
+    @keyframes spin {
+      to{transform:rotate(360deg)}
+    }
+    @keyframes dotBounce {
+      0%,80%,100%{transform:scale(0)}
+      40%{transform:scale(1)}
+    }
+
+    .glass-card {
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+    }
+    .glass-card-bright {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+    }
+    .input-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #e2e8f0;
+      padding: 0.75rem 1.1rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-family: 'Instrument Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      width: 100%;
+    }
+    .input-field::placeholder{color:#475569}
+    .input-field:focus{
+      border-color: rgba(96,165,250,0.6);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 3px rgba(96,165,250,0.12), 0 0 20px rgba(96,165,250,0.1);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: #fff;
+      border: none;
+      padding: 0.72rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: 'Instrument Sans', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: 0.02em;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(37,99,235,0.4), 0 0 0 1px rgba(59,130,246,0.3) inset;
+      white-space: nowrap;
+    }
+    .btn-primary:hover:not(:disabled){
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(37,99,235,0.55), 0 0 0 1px rgba(59,130,246,0.3) inset;
+    }
+    .btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+    .btn-ghost {
+      background: rgba(255,255,255,0.04);
+      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-family: 'Instrument Sans', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover{background:rgba(255,255,255,0.08);color:#e2e8f0;border-color:rgba(96,165,250,0.4)}
+    .tab-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 0.82rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .tab-active {
+      background: rgba(37,99,235,0.25);
+      color: #93c5fd;
+      border: 1px solid rgba(59,130,246,0.4);
+      box-shadow: 0 0 16px rgba(37,99,235,0.2);
+    }
+    .tab-inactive{color:#475569;border:1px solid transparent}
+    .tab-inactive:hover{color:#94a3b8;background:rgba(255,255,255,0.04)}
+    .select-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #e2e8f0;
+      padding: 0.65rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-family: 'Instrument Sans', sans-serif;
+      outline: none;
+      cursor: pointer;
+    }
+    .select-field:focus{border-color:rgba(96,165,250,0.5)}
+    .data-table{width:100%;border-collapse:collapse}
+    .data-table th{
+      text-align:left;
+      font-size:0.66rem;
+      font-weight:600;
+      color:#475569;
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      padding:0.65rem 1rem;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+      background:rgba(0,0,0,0.2);
+    }
+    .data-table td{
+      padding:0.6rem 1rem;
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      font-size:0.79rem;
+      color:#64748b;
+      vertical-align:middle;
+    }
+    .data-table tr:last-child td{border-bottom:none}
+    .data-table tr:hover td{background:rgba(37,99,235,0.06)}
+    .hsn-big{
+      font-family:'DM Mono',monospace;
+      color:#60a5fa;
+      font-size:clamp(2.5rem,7vw,5rem);
+      font-weight:400;
+      letter-spacing:0.1em;
+      line-height:1;
+      text-shadow:0 0 40px rgba(96,165,250,0.5);
+    }
+    .hsn-sm{
+      font-family:'DM Mono',monospace;
+      color:#60a5fa;
+      font-size:0.82rem;
+      font-weight:500;
+      letter-spacing:0.04em;
+    }
+    .lbl{
+      font-size:0.68rem;
+      font-weight:600;
+      color:#334155;
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      margin-bottom:0.6rem;
+    }
+    .upload-zone {
+      border: 1.5px dashed rgba(96,165,250,0.25);
+      border-radius: 16px;
+      padding: 3.5rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s ease;
+      background: rgba(37,99,235,0.02);
+    }
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: rgba(96,165,250,0.7);
+      background: rgba(37,99,235,0.06);
+      box-shadow: 0 0 40px rgba(37,99,235,0.12), inset 0 0 30px rgba(37,99,235,0.06);
+      animation: borderGlow 2s ease-in-out infinite;
+    }
+    .upload-zone .corner{
+      position:absolute;
+      width:12px;height:12px;
+      border-color:rgba(96,165,250,0.4);
+      border-style:solid;
+    }
+    .upload-zone .c-tl{top:8px;left:8px;border-width:1.5px 0 0 1.5px;border-radius:4px 0 0 0}
+    .upload-zone .c-tr{top:8px;right:8px;border-width:1.5px 1.5px 0 0;border-radius:0 4px 0 0}
+    .upload-zone .c-bl{bottom:8px;left:8px;border-width:0 0 1.5px 1.5px;border-radius:0 0 0 4px}
+    .upload-zone .c-br{bottom:8px;right:8px;border-width:0 1.5px 1.5px 0;border-radius:0 0 4px 0}
+    .upload-icon-ring {
+      width:60px;height:60px;
+      margin:0 auto 1.5rem;
+      border-radius:50%;
+      background:rgba(37,99,235,0.1);
+      border:1.5px solid rgba(96,165,250,0.3);
+      display:flex;align-items:center;justify-content:center;
+      animation:glow 3s ease-in-out infinite;
+      box-shadow:0 0 24px rgba(37,99,235,0.2);
+    }
+    .stat-card{
+      background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:14px;
+      padding:1.25rem;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .stat-card::before{
+      content:'';
+      position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,rgba(96,165,250,0.4),transparent);
+    }
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(96,165,250,0.2);border-radius:4px}
+    .usage-bar{
+      height:3px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;
+    }
+    .usage-fill{
+      height:100%;
+      background:linear-gradient(90deg,#2563eb,#3b82f6);
+      border-radius:4px;
+      width:24%;
+      transition:width 0.5s ease;
+    }
+    .typing-demo {
+      font-family:'DM Mono',monospace;
+      font-size:0.78rem;
+      color:#60a5fa;
+      overflow:hidden;
+      white-space:nowrap;
+      border-right:2px solid #60a5fa;
+      animation:typing 1.5s steps(22,end), blink 0.8s step-end infinite;
+    }
+    .floating-chip {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:100px;
+      padding:4px 12px;
+      font-size:0.72rem;
+      font-family:'DM Mono',monospace;
+      color:#94a3b8;
+      animation:floatDrift1 4s ease-in-out infinite;
+    }
+    .loading-dots span {
+      display:inline-block;
+      width:6px;height:6px;
+      border-radius:50%;
+      background:#60a5fa;
+      margin:0 2px;
+    }
+    .loading-dots span:nth-child(1){animation:dotBounce 1.4s ease-in-out 0s infinite}
+    .loading-dots span:nth-child(2){animation:dotBounce 1.4s ease-in-out 0.2s infinite}
+    .loading-dots span:nth-child(3){animation:dotBounce 1.4s ease-in-out 0.4s infinite}
+  `;
+
+  // ── Simulate predict ──────────────────────────────────────────────────────
+  async function handlePredict(e) {
+    e?.preventDefault();
     if (!query.trim()) return;
     setSingleError(""); setSingleLoading(true); setResult(null);
-    try { setResult(await hsnApi.predict(query)); }
-    catch (err: unknown) { setSingleError(err instanceof Error ? err.message : "Prediction failed"); }
-    finally { setSingleLoading(false); }
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 1200));
+    setSingleLoading(false);
+    setResult({
+      top_match: {
+        hsn_code: "33061010",
+        description: "Toothpaste and other oral hygiene preparations",
+        score: 0.94,
+        method: "verified_exact",
+      },
+      alternatives: [
+        { hsn_code: "33069090", description: "Other oral hygiene preparations", score: 0.73, method: "fts" },
+        { hsn_code: "33049900", description: "Dental cosmetic preparations", score: 0.61, method: "semantic" },
+      ],
+      confidence: 0.94,
+      confidence_label: "high",
+      needs_review: false,
+    });
   }
 
-  function processFile(file: File) {
-    setFileName(file.name); setBulkResults([]); setBulkError(""); setBulkStats(null); setPage(0);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        const data = ev.target?.result;
-        const wb = XLSX.read(data, { type: "binary" });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" });
-        if (rows.length === 0) { setBulkError("File is empty or unreadable."); return; }
-        const cols = Object.keys(rows[0]);
-        setColumns(cols); setSelectedCol(cols[0]); setRawRows(rows);
-      } catch { setBulkError("Could not parse file. Upload a valid .xlsx or .csv."); }
-    };
-    reader.readAsBinaryString(file);
+  // ── File processing ───────────────────────────────────────────────────────
+  function processFile(file) {
+    setFileName(file.name);
+    setFileSize((file.size / 1024).toFixed(1) + " KB");
+    setBulkResults([]); setBulkError(""); setBulkStats(null); setPage(0);
+    setShowFileSuccess(false);
+    setTimeout(() => setShowFileSuccess(true), 300);
+    // Demo columns
+    setColumns(["Product Description", "Item Code", "Category"]);
+    setSelectedCol("Product Description");
+    setRawRows(Array.from({ length: 24 }, (_, i) => ({ "Product Description": `Product ${i+1}` })));
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (file) processFile(file);
   }
 
-  function handleDrop(e: React.DragEvent) {
+  function handleDrop(e) {
     e.preventDefault(); setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
     if (file) processFile(file);
   }
 
+  // ── Bulk process ──────────────────────────────────────────────────────────
   const handleBulkProcess = useCallback(async () => {
-    if (!selectedCol || rawRows.length === 0) return;
-    setBulkLoading(true); setBulkError(""); setBulkResults([]); setBulkStats(null); setPage(0);
-    const descriptions = rawRows.map((r) => String(r[selectedCol] ?? "").trim()).filter(Boolean);
-    const CHUNK = 50;
-    const allResults: HSNBatchResult[] = [];
-    setProgress({ done: 0, total: descriptions.length });
-    const token = localStorage.getItem("access_token") ?? "";
-    try {
-      for (let i = 0; i < descriptions.length; i += CHUNK) {
-        const chunk = descriptions.slice(i, i + CHUNK);
-        const res = await fetch(`${BASE_URL}/hsn/batch`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ queries: chunk }),
-        });
-        if (!res.ok) { const err = await res.json().catch(() => ({ detail: "Unknown" })); throw new Error(err.detail ?? `HTTP ${res.status}`); }
-        const data: BatchResponse = await res.json();
-        allResults.push(...data.results);
-        setProgress({ done: Math.min(i + CHUNK, descriptions.length), total: descriptions.length });
-        setBulkResults([...allResults]);
-      }
-      const matched = allResults.filter((r) => r.hsn_code && !r.error).length;
-      setBulkStats({ matched, unmatched: allResults.length - matched, total: allResults.length });
-    } catch (err: unknown) {
-      setBulkError(err instanceof Error ? err.message : "Batch processing failed");
-    } finally { setBulkLoading(false); }
-  }, [selectedCol, rawRows]);
+    if (rawRows.length === 0) return;
+    setBulkLoading(true); setBulkError("");
+    setBulkResults([]); setBulkStats(null); setPage(0);
+
+    const steps = [false, false, false];
+    setProcessSteps([...steps]);
+
+    await new Promise(r => setTimeout(r, 600));
+    steps[0] = true; setProcessSteps([...steps]);
+    await new Promise(r => setTimeout(r, 800));
+    steps[1] = true; setProcessSteps([...steps]);
+
+    const total = rawRows.length;
+    setProgress({ done: 0, total });
+
+    const hsnSamples = ["33061010","19053100","21069099","09041100","04061000","15131900","22011010","73239300"];
+    const descs = ["Oral hygiene prep","Sweet biscuits","Food supplement","Black pepper","Processed cheese","Coconut oil","Mineral water","SS household articles"];
+    const labels = ["high","high","medium","high","high","medium","high","medium"];
+
+    for (let i = 0; i < total; i++) {
+      await new Promise(r => setTimeout(r, 30));
+      setProgress({ done: i+1, total });
+      setBulkResults(prev => [...prev, {
+        query: rawRows[i][selectedCol] || `Row ${i+1}`,
+        hsn_code: hsnSamples[i % hsnSamples.length],
+        description: descs[i % descs.length],
+        gst_rate: [5,12,18,28][i%4],
+        confidence: 0.72 + Math.random() * 0.26,
+        confidence_label: labels[i % labels.length],
+        match_method: "verified_exact",
+        alternatives: [],
+      }]);
+    }
+
+    steps[2] = true; setProcessSteps([...steps]);
+    const matched = total;
+    setBulkStats({ matched, unmatched: 0, total });
+    setBulkLoading(false);
+  }, [rawRows, selectedCol]);
 
   function handleDownload() {
-    if (bulkResults.length === 0) return;
-    const rows = bulkResults.map((r) => ({
+    const rows = bulkResults.map(r => ({
       "Product Description": r.query,
       "HSN Code": padHsn(r.hsn_code),
-      "Matched Description": r.description ?? "",
-      "GST Rate (%)": r.gst_rate ?? "",
+      "Description": r.description,
+      "GST Rate (%)": r.gst_rate,
       "Confidence": `${Math.round(r.confidence * 100)}%`,
       "Confidence Label": r.confidence_label,
-      "Match Method": r.match_method,
-      "Error": r.error ?? "",
     }));
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "HSN Results");
-    XLSX.writeFile(wb, `hsn_results_${Date.now()}.xlsx`);
+    const csv = [Object.keys(rows[0]).join(","), ...rows.map(r => Object.values(r).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url;
+    a.download = `hsn_results_${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
   }
-
-  function signOut() { localStorage.clear(); router.push("/login"); }
 
   const pageSlice = bulkResults.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(bulkResults.length / PAGE_SIZE);
 
-  const sharedStyles = `
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap');
-    * { box-sizing: border-box; }
-    body { margin: 0; background: #001F54; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #001030; }
-    ::-webkit-scrollbar-thumb { background: #0180EB44; border-radius: 3px; }
-
-    .search-input {
-      flex: 1; background: rgba(0,31,84,0.6); border: 1px solid #CEDDFA44;
-      color: #F5F8F3; padding: 0.7rem 1rem; border-radius: 7px;
-      font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s; min-width: 0;
-    }
-    .search-input::placeholder { color: #CEDDFA55; }
-    .search-input:focus {
-      border-color: #0180EB;
-      box-shadow: 0 0 0 3px rgba(1,128,235,0.2), 0 0 12px rgba(1,128,235,0.15);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #0180EB 0%, #0a60c0 100%);
-      color: #F5F8F3; border: 1px solid #0180EB;
-      padding: 0.7rem 1.25rem; border-radius: 7px; font-size: 0.8rem;
-      font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif;
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      transition: all 0.2s; letter-spacing: 0.02em; white-space: nowrap;
-      box-shadow: 0 0 14px rgba(1,128,235,0.35), inset 0 1px 0 rgba(245,248,243,0.15);
-    }
-    .btn-primary:hover:not(:disabled) {
-      box-shadow: 0 0 22px rgba(1,128,235,0.55), inset 0 1px 0 rgba(245,248,243,0.2);
-      transform: translateY(-1px);
-    }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
-
-    .btn-ghost {
-      background: rgba(206,221,250,0.06); color: #CEDDFA99; border: 1px solid #CEDDFA33;
-      padding: 0.7rem 1rem; border-radius: 7px; font-size: 0.8rem;
-      font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
-      display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s;
-    }
-    .btn-ghost:hover { border-color: #0180EB88; color: #F5F8F3; background: rgba(1,128,235,0.1); }
-
-    .btn-success {
-      background: linear-gradient(135deg, #003d7a, #0180EB);
-      color: #F5F8F3; border: 1px solid rgba(1,128,235,0.5);
-      padding: 0.6rem 1rem; border-radius: 7px; font-size: 0.78rem;
-      font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif;
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      transition: all 0.2s; letter-spacing: 0.02em;
-      box-shadow: 0 0 12px rgba(1,128,235,0.3), inset 0 1px 0 rgba(245,248,243,0.1);
-    }
-    .btn-success:hover:not(:disabled) { box-shadow: 0 0 20px rgba(1,128,235,0.5); }
-    .btn-success:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
-
-    .card {
-      background: rgba(0,31,84,0.85);
-      border: 1px solid #CEDDFA22;
-      border-radius: 10px; position: relative; overflow: hidden;
-      backdrop-filter: blur(8px);
-    }
-    .card-top-line {
-      position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(1,128,235,0.5), transparent);
-    }
-
-    .tab { background: transparent; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; padding: 0.5rem 1rem; border-radius: 5px; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.2s; }
-    .tab.active { background: rgba(1,128,235,0.2); color: #F5F8F3; border: 1px solid rgba(1,128,235,0.5); box-shadow: 0 0 10px rgba(1,128,235,0.2); }
-    .tab.inactive { color: #CEDDFA66; }
-    .tab.inactive:hover { color: #CEDDFA; background: rgba(206,221,250,0.06); }
-
-    .select-input {
-      background: rgba(0,31,84,0.7); border: 1px solid #CEDDFA33; color: #F5F8F3;
-      padding: 0.6rem 0.875rem; border-radius: 6px; font-size: 0.82rem;
-      font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer; transition: border-color 0.2s;
-    }
-    .select-input:focus { border-color: #0180EB; box-shadow: 0 0 8px rgba(1,128,235,0.25); }
-
-    /* ── Neon upload zone ── */
-    .upload-zone {
-      border: 1.5px dashed rgba(1,128,235,0.35);
-      border-radius: 10px;
-      padding: 3rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
-      background: rgba(1,128,235,0.02);
-      box-shadow:
-        inset 0 0 30px rgba(1,128,235,0.04),
-        0 0 0 0 rgba(1,128,235,0);
-    }
-    .upload-zone::before {
-      content: '';
-      position: absolute; inset: 0;
-      border-radius: 10px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(1,128,235,0.07) 0%, transparent 65%);
-      pointer-events: none;
-      animation: neonBreath 3s ease-in-out infinite;
-    }
-    @keyframes neonBreath {
-      0%, 100% { opacity: 0.6; }
-      50%       { opacity: 1; }
-    }
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: rgba(1,128,235,0.8);
-      background: rgba(1,128,235,0.05);
-      box-shadow:
-        inset 0 0 40px rgba(1,128,235,0.08),
-        0 0 20px rgba(1,128,235,0.2),
-        0 0 40px rgba(1,128,235,0.08);
-    }
-    .upload-zone .corner {
-      position: absolute;
-      width: 10px; height: 10px;
-      border-color: rgba(1,128,235,0.6);
-      border-style: solid;
-    }
-    .upload-zone .corner-tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
-    .upload-zone .corner-tr { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
-    .upload-zone .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
-    .upload-zone .corner-br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
-
-    .upload-icon-wrap {
-      width: 52px; height: 52px;
-      margin: 0 auto 1.25rem;
-      border-radius: 50%;
-      background: rgba(1,128,235,0.1);
-      border: 1px solid rgba(1,128,235,0.3);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 20px rgba(1,128,235,0.25), inset 0 0 12px rgba(1,128,235,0.08);
-      animation: iconPulse 3s ease-in-out infinite;
-    }
-    @keyframes iconPulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(1,128,235,0.25), inset 0 0 12px rgba(1,128,235,0.08); }
-      50%       { box-shadow: 0 0 30px rgba(1,128,235,0.45), inset 0 0 16px rgba(1,128,235,0.15); }
-    }
-
-    /* Dashed border animation */
-    @keyframes dashMove {
-      from { stroke-dashoffset: 0; }
-      to   { stroke-dashoffset: -40; }
-    }
-
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; font-size: 0.68rem; font-weight: 600; color: #CEDDFA55; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.625rem 0.875rem; border-bottom: 1px solid #CEDDFA15; background: rgba(0,20,50,0.5); }
-    td { padding: 0.6rem 0.875rem; border-bottom: 1px solid #CEDDFA10; font-size: 0.8rem; color: #CEDDFA99; vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(1,128,235,0.06); }
-
-    .hsn-code-hero {
-      font-family: 'DM Mono', monospace;
-      color: #0180EB;
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      line-height: 1;
-      text-shadow: 0 0 30px rgba(1,128,235,0.5), 0 0 60px rgba(1,128,235,0.2);
-    }
-    .hsn-code-sm { font-family: 'DM Mono', monospace; color: #0180EB; font-size: 0.85rem; font-weight: 500; text-shadow: 0 0 8px rgba(1,128,235,0.3); }
-    .section-label { font-size: 0.7rem; font-weight: 600; color: #CEDDFA55; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
-    .mono { font-family: 'DM Mono', monospace; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.4s ease both; }
-  `;
-
   return (
-    <div style={{ minHeight: "100vh", background: "#001F54", color: "#F5F8F3", fontFamily: "'DM Sans', sans-serif" }}>
-      <style>{sharedStyles}</style>
+    <div style={{ minHeight: "100vh", background: "#020617", color: "#e2e8f0", fontFamily: "'Instrument Sans', sans-serif", position: "relative", overflow: "hidden" }}>
+      <style>{CSS}</style>
 
-      {/* Nav */}
-      <nav style={{ borderBottom: "1px solid #CEDDFA18", background: "rgba(0,20,50,0.97)", backdropFilter: "blur(16px)", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 1px 20px rgba(1,128,235,0.1)" }}>
-        <div style={{ maxWidth: 1140, margin: "0 auto", padding: "0 1.5rem", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <div style={{ width: 26, height: 26, background: "linear-gradient(135deg, #0180EB, #0a60c0)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 10px rgba(1,128,235,0.5)" }}>
-              <BarChart3 size={13} color="#F5F8F3" />
-            </div>
-            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#F5F8F3" }}>HSN Classifier</span>
+      {/* ── Deep layered background ─────────────────────────────────────── */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+        {/* Gradient mesh */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: `
+            radial-gradient(ellipse at 20% 30%, rgba(30,58,138,0.4) 0%, transparent 55%),
+            radial-gradient(ellipse at 80% 70%, rgba(37,99,235,0.2) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 100%, rgba(15,23,42,0.8) 0%, transparent 70%),
+            #020617`,
+        }} />
+        {/* Noise grain */}
+        <div style={{
+          position: "absolute", inset: 0, opacity: 0.035,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        }} />
+        {/* Blobs */}
+        <div style={{
+          position: "absolute", width: 600, height: 600,
+          top: -200, left: -200, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)",
+          animation: "blobDrift 20s ease-in-out infinite",
+        }} />
+        <div style={{
+          position: "absolute", width: 400, height: 400,
+          bottom: -100, right: -100, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%)",
+          animation: "blobDrift 26s ease-in-out infinite reverse",
+        }} />
+        {/* Floating icons */}
+        {FLOAT_ICONS.map((ic, i) => <FloatingIcon key={i} {...ic} />)}
+
+        {/* Subtle Indian flag behind hero */}
+        <div style={{
+          position: "absolute", right: "5%", top: "8%",
+          width: 120, height: 72,
+          opacity: 0.06,
+          borderRadius: 4,
+          overflow: "hidden",
+          animation: "wave 6s ease-in-out infinite",
+          filter: "blur(1px)",
+        }}>
+          <div style={{ height: "33.33%", background: "#FF9933" }} />
+          <div style={{ height: "33.33%", background: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 12, height: 12, borderRadius: "50%", border: "1.5px solid #000080" }} />
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-            <span style={{ fontSize: "0.75rem", color: "#CEDDFA55", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</span>
-            <button onClick={signOut} className="btn-ghost" style={{ padding: "0.4rem 0.75rem", fontSize: "0.75rem" }}>
-              <LogOut size={13} /> Sign out
-            </button>
+          <div style={{ height: "33.33%", background: "#138808" }} />
+        </div>
+      </div>
+
+      {/* ── Navbar ─────────────────────────────────────────────────────── */}
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 100,
+        height: 62,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 2rem",
+        background: "rgba(2,6,23,0.85)",
+        backdropFilter: "blur(24px)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 1px 30px rgba(0,0,0,0.4)",
+      }}>
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <div style={{
+            width: 30, height: 30,
+            background: "linear-gradient(135deg, #2563eb, #3b82f6)",
+            borderRadius: 8,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 0 16px rgba(37,99,235,0.5)",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="8" width="3" height="7" fill="white" rx="1"/>
+              <rect x="6" y="5" width="3" height="10" fill="white" rx="1"/>
+              <rect x="11" y="2" width="3" height="13" fill="white" rx="1"/>
+            </svg>
+          </div>
+          <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: "1rem", color: "#f8fafc", letterSpacing: "-0.01em" }}>
+            HSN<span style={{ color: "#3b82f6" }}>iq</span>
+          </span>
+        </div>
+
+        {/* Center nav */}
+        <div style={{ display: "flex", gap: "0.25rem", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "0.25rem" }}>
+          <button onClick={() => setMode("single")} className={`tab-btn ${mode === "single" ? "tab-active" : "tab-inactive"}`}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="4" stroke="currentColor" strokeWidth="1.5"/><path d="M2 13c0-2.2 2.7-4 6-4s6 1.8 6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            Single
+          </button>
+          <button onClick={() => setMode("bulk")} className={`tab-btn ${mode === "bulk" ? "tab-active" : "tab-inactive"}`}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            Bulk Excel
+          </button>
+        </div>
+
+        {/* Right — usage + user */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: "0.65rem", color: "#475569", marginBottom: 3, fontFamily: "'DM Mono', monospace" }}>120 / 500 rows used</div>
+            <div className="usage-bar" style={{ width: 80 }}><div className="usage-fill" /></div>
+          </div>
+          <div style={{ position: "relative" }}>
+            <div
+              onClick={() => setShowUserMenu(p => !p)}
+              style={{
+                width: 34, height: 34, borderRadius: "50%",
+                background: "linear-gradient(135deg, #2563eb, #60a5fa)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer",
+                fontSize: "0.78rem", fontWeight: 700, color: "#fff",
+                boxShadow: "0 0 12px rgba(37,99,235,0.4)",
+                border: "1.5px solid rgba(96,165,250,0.4)",
+              }}
+            >{userInitial}</div>
+            {showUserMenu && (
+              <div style={{
+                position: "absolute", top: 44, right: 0, width: 180,
+                background: "rgba(10,18,40,0.97)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 14, padding: "0.5rem", zIndex: 200,
+                backdropFilter: "blur(20px)",
+                boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
+                animation: "fadeUp 0.2s ease",
+              }}>
+                {["Profile", "API Keys", "Settings", "Sign out"].map(item => (
+                  <div key={item} onClick={() => setShowUserMenu(false)} style={{
+                    padding: "0.55rem 0.8rem", borderRadius: 8,
+                    fontSize: "0.8rem", color: "#94a3b8", cursor: "pointer",
+                    transition: "all 0.15s",
+                    color: item === "Sign out" ? "#f87171" : "#94a3b8",
+                  }}
+                  onMouseEnter={e => e.target.style.background = "rgba(255,255,255,0.06)"}
+                  onMouseLeave={e => e.target.style.background = "transparent"}>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </nav>
 
-      {/* Main */}
-      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "2rem 1.5rem" }}>
+      {/* ── Main ────────────────────────────────────────────────────────── */}
+      <div style={{ maxWidth: 1080, margin: "0 auto", padding: "2.5rem 1.5rem", position: "relative", zIndex: 1 }}>
 
-        {/* Page header + mode tabs */}
-        <div style={{ marginBottom: "1.75rem", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
-          <div>
-            <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#F5F8F3", marginBottom: "0.25rem", letterSpacing: "-0.01em" }}>
-              HSN Code Lookup
-            </h1>
-            <p style={{ fontSize: "0.78rem", color: "#CEDDFA66" }}>Classify products to their GST HSN codes instantly</p>
+        {/* Page header */}
+        <div style={{ marginBottom: "2rem", animation: "fadeUp 0.6s ease both" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", boxShadow: "0 0 8px rgba(59,130,246,0.8)" }} />
+            <span style={{ fontSize: "0.68rem", color: "#3b82f6", fontFamily: "'DM Mono', monospace", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+              India · GST Classification
+            </span>
           </div>
-          <div style={{ display: "flex", gap: "0.375rem", background: "rgba(0,20,50,0.8)", border: "1px solid #CEDDFA22", borderRadius: 8, padding: "0.25rem" }}>
-            <button onClick={() => setMode("single")} className={`tab ${mode === "single" ? "active" : "inactive"}`}>
-              <Search size={13} /> Single
-            </button>
-            <button onClick={() => setMode("bulk")} className={`tab ${mode === "bulk" ? "active" : "inactive"}`}>
-              <FileSpreadsheet size={13} /> Bulk / Excel
-            </button>
-          </div>
+          <h1 style={{
+            fontFamily: "'Cabinet Grotesk', sans-serif",
+            fontSize: "1.85rem", fontWeight: 800,
+            color: "#f8fafc", margin: 0,
+            letterSpacing: "-0.025em",
+          }}>
+            HSN Code Lookup
+          </h1>
+          <p style={{ fontSize: "0.82rem", color: "#475569", marginTop: 6 }}>
+            AI-powered classification for Indian GST compliance
+          </p>
         </div>
 
-        {/* ── SINGLE MODE ── */}
+        {/* ════════════════════ SINGLE MODE ════════════════════ */}
         {mode === "single" && (
-          <div>
+          <div style={{ animation: "fadeUp 0.5s ease both" }}>
+            {/* Search bar */}
             <form onSubmit={handlePredict} style={{ display: "flex", gap: "0.625rem", marginBottom: "1.5rem" }}>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Enter product description…"
-                className="search-input"
-              />
+              <div style={{ flex: 1, position: "relative" }}>
+                <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", opacity: 0.35 }}
+                  width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <circle cx="6.5" cy="6.5" r="4.5" stroke="#94a3b8" strokeWidth="1.5"/>
+                  <path d="M10 10l4 4" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <input
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  placeholder="Type a product description e.g. Colgate Toothpaste 200g..."
+                  className="input-field"
+                  style={{ paddingLeft: "2.5rem" }}
+                />
+              </div>
               <button type="submit" disabled={singleLoading || !query.trim()} className="btn-primary">
-                {singleLoading
-                  ? <><Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Classifying</>
-                  : <><Search size={14} /> Classify</>}
+                {singleLoading ? (
+                  <div className="loading-dots"><span/><span/><span/></div>
+                ) : (
+                  <>
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                      <path d="M7 2l7 6-7 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Classify
+                  </>
+                )}
               </button>
             </form>
 
+            {/* Example chips */}
+            {!result && !singleLoading && (
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "2rem" }}>
+                {["Colgate Toothpaste 200g", "Horlicks Womens 400g", "VKC Chappal 7", "Basmati Rice 5kg"].map(ex => (
+                  <button key={ex} onClick={() => { setQuery(ex); }} style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#64748b",
+                    padding: "0.35rem 0.9rem",
+                    borderRadius: 100,
+                    fontSize: "0.73rem",
+                    fontFamily: "'DM Mono', monospace",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={e => { e.target.style.color = "#93c5fd"; e.target.style.borderColor = "rgba(96,165,250,0.3)"; }}
+                  onMouseLeave={e => { e.target.style.color = "#64748b"; e.target.style.borderColor = "rgba(255,255,255,0.08)"; }}>
+                    {ex}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {singleError && (
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,31,84,0.8)", border: "1px solid rgba(1,128,235,0.3)", color: "#CEDDFA", fontSize: "0.8rem", padding: "0.625rem 0.875rem", borderRadius: 7, marginBottom: "1rem" }}>
-                <AlertCircle size={14} color="#0180EB" /> {singleError}
+              <div style={{
+                display: "flex", alignItems: "center", gap: "0.5rem",
+                background: "rgba(248,113,113,0.08)",
+                border: "1px solid rgba(248,113,113,0.2)",
+                color: "#fca5a5", fontSize: "0.8rem",
+                padding: "0.75rem 1rem", borderRadius: 12, marginBottom: "1rem",
+              }}>
+                ⚠ {singleError}
               </div>
             )}
 
             {result && (
-              <div className="fade-in">
-                {/* Big HSN code display */}
-                <div className="card" style={{ padding: "3rem 2rem", textAlign: "center", marginBottom: "0.875rem" }}>
-                  <div className="card-top-line" />
-                  <div className="section-label" style={{ marginBottom: "1.5rem" }}>HSN Code</div>
-                  <div className="hsn-code-hero">{padHsn(result.top_match.hsn_code)}</div>
-                  <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "center", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
-                    <ConfidencePill label={result.confidence_label} value={result.confidence} />
-                    {result.needs_review && (
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.7rem", color: "#CEDDFA", background: "rgba(206,221,250,0.1)", border: "1px solid rgba(206,221,250,0.25)", padding: "0.2rem 0.55rem", borderRadius: 100 }}>
-                        <Clock size={10} /> Review recommended
-                      </span>
-                    )}
+              <div style={{ animation: "fadeUp 0.4s ease both" }}>
+                {/* Big HSN result */}
+                <div className="glass-card-bright" style={{ padding: "3rem 2rem", textAlign: "center", marginBottom: "0.875rem", position: "relative", overflow: "hidden" }}>
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "radial-gradient(ellipse at center, rgba(37,99,235,0.06) 0%, transparent 70%)",
+                    pointerEvents: "none",
+                  }} />
+                  <div className="lbl">Classified HSN Code</div>
+                  <div className="hsn-big">{padHsn(result.top_match.hsn_code)}</div>
+                  <div style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "0.75rem", maxWidth: 400, margin: "0.75rem auto 0" }}>
+                    {result.top_match.description}
+                  </div>
+                  <div style={{ marginTop: "1.25rem", display: "flex", justifyContent: "center", gap: "0.6rem", flexWrap: "wrap", alignItems: "center" }}>
+                    <ConfPill label={result.confidence_label} value={result.confidence} />
+                    <span style={{ fontSize: "0.7rem", color: "#334155", fontFamily: "'DM Mono', monospace" }}>
+                      via {result.top_match.method}
+                    </span>
                   </div>
                 </div>
 
                 {/* Alternatives */}
                 {result.alternatives.length > 0 && (
-                  <div className="card" style={{ overflow: "hidden" }}>
-                    <div className="card-top-line" />
-                    <div style={{ padding: "1rem 1.25rem 0.75rem" }}>
-                      <div className="section-label">Alternatives</div>
+                  <div className="glass-card" style={{ overflow: "hidden" }}>
+                    <div style={{ padding: "1rem 1.25rem 0.5rem" }}>
+                      <div className="lbl">Alternative Matches</div>
                     </div>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>HSN Code</th>
-                          <th>Description</th>
-                          <th>Confidence</th>
-                        </tr>
-                      </thead>
+                    <table className="data-table">
+                      <thead><tr>
+                        <th>HSN Code</th><th>Description</th><th>Confidence</th>
+                      </tr></thead>
                       <tbody>
-                        {result.alternatives.map((a) => (
+                        {result.alternatives.map(a => (
                           <tr key={a.hsn_code}>
-                            <td><span className="hsn-code-sm">{padHsn(a.hsn_code)}</span></td>
-                            <td style={{ color: "#CEDDFA77", maxWidth: 380 }}><span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>{a.description}</span></td>
-                            <td><ConfidencePill label={a.score >= 0.8 ? "high" : a.score >= 0.55 ? "medium" : "low"} value={a.score} /></td>
+                            <td><span className="hsn-sm">{padHsn(a.hsn_code)}</span></td>
+                            <td style={{ maxWidth: 340 }}>
+                              <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#475569" }}>{a.description}</span>
+                            </td>
+                            <td><ConfPill label={a.score >= 0.8 ? "high" : a.score >= 0.55 ? "medium" : "low"} value={a.score} /></td>
                           </tr>
                         ))}
                       </tbody>
@@ -448,92 +882,174 @@ export default function Dashboard() {
             )}
 
             {!result && !singleLoading && (
-              <div style={{ textAlign: "center", padding: "6rem 2rem", color: "#CEDDFA33" }}>
-                <Search size={32} style={{ marginBottom: "1rem", opacity: 0.35 }} />
-                <p style={{ fontSize: "0.85rem" }}>Enter a product description above</p>
+              <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
+                {/* Animated demo */}
+                <div style={{ display: "inline-flex", flexDirection: "column", gap: "0.75rem", marginBottom: "2rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>Horlicks Womens 400g</span>
+                    <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>21069099</span>
+                    <ConfPill label="high" value={0.91} />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>VKC Chappal Size 7</span>
+                    <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>64021000</span>
+                    <ConfPill label="high" value={0.97} />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>Aashirvaad Atta 5kg</span>
+                    <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>11010000</span>
+                    <ConfPill label="high" value={0.95} />
+                  </div>
+                </div>
+                <p style={{ fontSize: "0.8rem", color: "#334155" }}>Type any product description above</p>
               </div>
             )}
           </div>
         )}
 
-        {/* ── BULK MODE ── */}
+        {/* ════════════════════ BULK MODE ════════════════════ */}
         {mode === "bulk" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", animation: "fadeUp 0.5s ease both" }}>
 
-            {/* Upload zone — neon glow */}
-            <div className="card" style={{ padding: "1.5rem" }}>
-              <div className="card-top-line" />
-              <div className="section-label">Step 1 — Upload file</div>
+            {/* Two-column layout: upload + process panel */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
 
-              <div
-                className={`upload-zone${isDragOver ? " drag-over" : ""}`}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-                onDragLeave={() => setIsDragOver(false)}
-                onDrop={handleDrop}
-              >
-                {/* Corner accents */}
-                <div className="corner corner-tl" />
-                <div className="corner corner-tr" />
-                <div className="corner corner-bl" />
-                <div className="corner corner-br" />
+              {/* Upload zone */}
+              <div className="glass-card" style={{ padding: "1.5rem" }}>
+                <div className="lbl">Step 1 — Upload Excel / CSV</div>
+                <div
+                  className={`upload-zone${isDragOver ? " drag" : ""}`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
+                  onDragLeave={() => setIsDragOver(false)}
+                  onDrop={handleDrop}
+                >
+                  <div className="corner c-tl" /><div className="corner c-tr" />
+                  <div className="corner c-bl" /><div className="corner c-br" />
 
-                <div className="upload-icon-wrap">
-                  <Upload size={20} color="#0180EB" style={{ filter: "drop-shadow(0 0 6px rgba(1,128,235,0.8))" }} />
+                  {showFileSuccess ? (
+                    <div style={{ animation: "fadeUp 0.4s ease" }}>
+                      <div style={{
+                        width: 52, height: 52, borderRadius: "50%",
+                        background: "rgba(34,197,94,0.15)",
+                        border: "1.5px solid rgba(34,197,94,0.4)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        margin: "0 auto 1rem",
+                        animation: "checkPop 0.4s ease",
+                      }}>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <polyline points="4,10 8,14 16,6" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <p style={{ fontSize: "0.85rem", color: "#f8fafc", margin: "0 0 4px", fontWeight: 600 }}>{fileName}</p>
+                      <p style={{ fontSize: "0.72rem", color: "#64748b", margin: 0, fontFamily: "'DM Mono', monospace" }}>
+                        {fileSize} · {rawRows.length} rows detected
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="upload-icon-ring">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 3v12M8 7l4-4 4 4" stroke="#60a5fa" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2" stroke="#60a5fa" strokeWidth="1.8" strokeLinecap="round"/>
+                        </svg>
+                      </div>
+                      <p style={{ fontSize: "0.88rem", color: "#94a3b8", margin: "0 0 0.4rem", fontWeight: 500 }}>
+                        Drop your Excel here or <span style={{ color: "#60a5fa" }}>browse files</span>
+                      </p>
+                      <p style={{ fontSize: "0.7rem", color: "#334155", margin: 0, fontFamily: "'DM Mono', monospace" }}>
+                        XLSX · CSV · up to 500 rows
+                      </p>
+                    </>
+                  )}
+                  <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: "none" }} onChange={handleFileChange} />
+                </div>
+              </div>
+
+              {/* Config + process panel */}
+              <div className="glass-card" style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div>
+                  <div className="lbl">Step 2 — Select column</div>
+                  <select value={selectedCol} onChange={e => setSelectedCol(e.target.value)} className="select-field" style={{ width: "100%" }}>
+                    {columns.length === 0 && <option value="">Upload a file first</option>}
+                    {columns.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  {selectedCol && rawRows.slice(0,2).map((r,i) => (
+                    <div key={i} style={{
+                      fontSize: "0.7rem", color: "#475569",
+                      background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.04)",
+                      borderRadius: 6, padding: "4px 8px", marginTop: 4,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      fontFamily: "'DM Mono', monospace",
+                    }}>
+                      {String(r[selectedCol] || "").slice(0,60) || "—"}
+                    </div>
+                  ))}
                 </div>
 
-                <p style={{ fontSize: "0.9rem", color: fileName ? "#F5F8F3" : "#CEDDFA88", margin: "0 0 0.35rem", fontWeight: 500, letterSpacing: "0.01em" }}>
-                  {fileName || "Click to upload or drag & drop"}
-                </p>
-                <p style={{ fontSize: "0.72rem", color: "#CEDDFA33", margin: 0, fontFamily: "'DM Mono', monospace" }}>
-                  .xlsx · .xls · .csv — max 500 rows
-                </p>
+                {/* Processing steps */}
+                {bulkLoading || processSteps.some(Boolean) ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "1rem", background: "rgba(0,0,0,0.2)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <ProcessStep label="Analyzing products..." done={processSteps[0]} active={bulkLoading && !processSteps[0]} />
+                    <ProcessStep label="Cleaning & normalizing data" done={processSteps[1]} active={bulkLoading && processSteps[0] && !processSteps[1]} />
+                    <ProcessStep label="Mapping HSN codes" done={processSteps[2]} active={bulkLoading && processSteps[1] && !processSteps[2]} />
+                  </div>
+                ) : null}
 
-                <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: "none" }} onChange={handleFileChange} />
+                {/* Progress bar */}
+                {bulkLoading && progress.total > 0 && (
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: "0.7rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>
+                        Processing...
+                      </span>
+                      <span style={{ fontSize: "0.7rem", color: "#60a5fa", fontFamily: "'DM Mono', monospace" }}>
+                        {progress.done}/{progress.total}
+                      </span>
+                    </div>
+                    <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{
+                        height: "100%",
+                        background: "linear-gradient(90deg, #2563eb, #60a5fa)",
+                        borderRadius: 4,
+                        width: `${(progress.done/progress.total)*100}%`,
+                        transition: "width 0.15s linear",
+                        boxShadow: "0 0 10px rgba(96,165,250,0.5)",
+                      }} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Action button */}
+                <div style={{ marginTop: "auto" }}>
+                  <button
+                    onClick={handleBulkProcess}
+                    disabled={bulkLoading || columns.length === 0}
+                    className="btn-primary"
+                    style={{ width: "100%", justifyContent: "center", padding: "0.8rem" }}
+                  >
+                    {bulkLoading ? (
+                      <div className="loading-dots"><span/><span/><span/></div>
+                    ) : (
+                      <>
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                          <path d="M8 2L14 8L8 14" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                          <path d="M2 8h12" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        Process {rawRows.length > 0 ? rawRows.length.toLocaleString() : ""} rows
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Column selector */}
-            {columns.length > 0 && (
-              <div className="card" style={{ padding: "1.5rem" }}>
-                <div className="card-top-line" />
-                <div className="section-label">Step 2 — Select description column</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "0.875rem" }}>
-                  <select value={selectedCol} onChange={(e) => setSelectedCol(e.target.value)} className="select-input">
-                    {columns.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  <span style={{ fontSize: "0.75rem", color: "#CEDDFA55" }}>{rawRows.length.toLocaleString()} rows detected</span>
-                </div>
-                {selectedCol && rawRows.slice(0, 2).map((r, i) => (
-                  <div key={i} className="mono" style={{ fontSize: "0.72rem", color: "#CEDDFA44", background: "rgba(0,15,40,0.6)", border: "1px solid #CEDDFA15", borderRadius: 5, padding: "0.4rem 0.75rem", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {String(r[selectedCol] ?? "").slice(0, 90) || "—"}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Process button */}
-            {columns.length > 0 && (
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-                <button onClick={handleBulkProcess} disabled={bulkLoading || !selectedCol} className="btn-primary" style={{ padding: "0.75rem 1.5rem" }}>
-                  {bulkLoading
-                    ? <><Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Processing…</>
-                    : <><FileSpreadsheet size={14} /> Process {rawRows.length.toLocaleString()} rows</>}
-                </button>
-                {bulkLoading && progress.total > 0 && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <div style={{ width: 140, height: 4, background: "#CEDDFA15", borderRadius: 2, overflow: "hidden" }}>
-                      <div style={{ height: "100%", background: "linear-gradient(90deg, #0180EB, #60b4ff)", borderRadius: 2, width: `${(progress.done / progress.total) * 100}%`, transition: "width 0.3s", boxShadow: "0 0 8px rgba(1,128,235,0.6)" }} />
-                    </div>
-                    <span className="mono" style={{ fontSize: "0.75rem", color: "#CEDDFA55" }}>{progress.done}/{progress.total}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
             {bulkError && (
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,31,84,0.8)", border: "1px solid rgba(1,128,235,0.3)", color: "#CEDDFA", fontSize: "0.8rem", padding: "0.75rem 1rem", borderRadius: 7 }}>
-                <AlertCircle size={14} color="#0180EB" /> {bulkError}
+              <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)", color: "#fca5a5", fontSize: "0.8rem", padding: "0.75rem 1rem", borderRadius: 12 }}>
+                ⚠ {bulkError}
               </div>
             )}
 
@@ -541,15 +1057,18 @@ export default function Dashboard() {
             {bulkStats && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.875rem" }}>
                 {[
-                  { label: "Total", val: bulkStats.total, color: "#F5F8F3", icon: <FileSpreadsheet size={14} /> },
-                  { label: "Matched", val: bulkStats.matched, color: "#0180EB", icon: <CheckCircle2 size={14} /> },
-                  { label: "Unmatched", val: bulkStats.unmatched, color: "#CEDDFA", icon: <X size={14} /> },
-                ].map((s) => (
-                  <div key={s.label} className="card" style={{ padding: "1.25rem", textAlign: "center" }}>
-                    <div className="card-top-line" />
-                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.5rem", color: s.color, opacity: 0.7 }}>{s.icon}</div>
-                    <div className="mono" style={{ fontSize: "2rem", fontWeight: 500, color: s.color, lineHeight: 1 }}>{s.val.toLocaleString()}</div>
-                    <div style={{ fontSize: "0.7rem", color: "#CEDDFA44", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 }}>{s.label}</div>
+                  { label: "Total Rows", val: bulkStats.total, color: "#e2e8f0", icon: "📋" },
+                  { label: "Matched", val: bulkStats.matched, color: "#4ade80", icon: "✓" },
+                  { label: "Needs Review", val: bulkStats.unmatched, color: "#fb923c", icon: "⚠" },
+                ].map(s => (
+                  <div key={s.label} className="stat-card">
+                    <div style={{ fontSize: "1.2rem", marginBottom: "0.4rem", opacity: 0.7 }}>{s.icon}</div>
+                    <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontSize: "2rem", fontWeight: 800, color: s.color, lineHeight: 1 }}>
+                      {s.val.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: "0.68rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 }}>
+                      {s.label}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -557,46 +1076,54 @@ export default function Dashboard() {
 
             {/* Results table */}
             {bulkResults.length > 0 && (
-              <div className="card" style={{ overflow: "hidden" }}>
-                <div className="card-top-line" />
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: "1px solid #CEDDFA15" }}>
-                  <div>
-                    <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "0.85rem", color: "#F5F8F3" }}>Results</span>
-                    {bulkLoading && <span style={{ marginLeft: "0.625rem", fontSize: "0.72rem", color: "#0180EB88" }}>— updating…</span>}
+              <div className="glass-card" style={{ overflow: "hidden" }}>
+                <div style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "1rem 1.25rem",
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#f8fafc" }}>
+                      Results
+                    </span>
+                    {bulkLoading && (
+                      <div className="loading-dots" style={{ display: "inline-flex" }}>
+                        <span/><span/><span/>
+                      </div>
+                    )}
                   </div>
-                  <button onClick={handleDownload} disabled={bulkLoading} className="btn-success">
-                    <Download size={13} /> Download .xlsx
+                  <button onClick={handleDownload} disabled={bulkLoading} className="btn-ghost" style={{ fontSize: "0.75rem" }}>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 2v9M4 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M2 14h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    Download CSV
                   </button>
                 </div>
 
                 <div style={{ overflowX: "auto" }}>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th style={{ width: 42 }}>#</th>
-                        <th>Description</th>
-                        <th>HSN Code</th>
-                        <th>GST%</th>
-                        <th>Confidence</th>
-                      </tr>
-                    </thead>
+                  <table className="data-table">
+                    <thead><tr>
+                      <th style={{ width: 40 }}>#</th>
+                      <th>Description</th>
+                      <th>HSN Code</th>
+                      <th>GST%</th>
+                      <th>Confidence</th>
+                    </tr></thead>
                     <tbody>
                       {pageSlice.map((r, i) => {
                         const rowNum = page * PAGE_SIZE + i + 1;
                         return (
                           <tr key={rowNum}>
-                            <td style={{ color: "#CEDDFA33", fontFamily: "'DM Mono', monospace", fontSize: "0.72rem" }}>{rowNum}</td>
-                            <td style={{ maxWidth: 300 }}>
-                              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", color: "#CEDDFA77", fontSize: "0.78rem" }}>{r.query}</span>
+                            <td style={{ color: "#1e293b", fontFamily: "'DM Mono', monospace", fontSize: "0.7rem" }}>{rowNum}</td>
+                            <td style={{ maxWidth: 280 }}>
+                              <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#64748b" }}>{r.query}</span>
                             </td>
-                            <td>
-                              {r.hsn_code
-                                ? <span className="hsn-code-sm">{padHsn(r.hsn_code)}</span>
-                                : <span style={{ color: "#CEDDFA33", fontSize: "0.72rem", fontStyle: "italic" }}>{r.error ? "error" : "—"}</span>
-                              }
+                            <td><span className="hsn-sm">{padHsn(r.hsn_code)}</span></td>
+                            <td style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#64748b" }}>
+                              {r.gst_rate != null ? `${r.gst_rate}%` : "—"}
                             </td>
-                            <td className="mono" style={{ fontSize: "0.75rem" }}>{r.gst_rate != null ? `${r.gst_rate}%` : "—"}</td>
-                            <td>{r.hsn_code && !r.error ? <ConfidencePill label={r.confidence_label} value={r.confidence} /> : <span style={{ color: "#CEDDFA22" }}>—</span>}</td>
+                            <td><ConfPill label={r.confidence_label} value={r.confidence} /></td>
                           </tr>
                         );
                       })}
@@ -605,17 +1132,23 @@ export default function Dashboard() {
                 </div>
 
                 {totalPages > 1 && (
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.875rem 1.25rem", borderTop: "1px solid #CEDDFA15" }}>
-                    <span className="mono" style={{ fontSize: "0.72rem", color: "#CEDDFA33" }}>
-                      {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    padding: "0.875rem 1.25rem",
+                    borderTop: "1px solid rgba(255,255,255,0.05)",
+                  }}>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#334155" }}>
+                      {page * PAGE_SIZE + 1}–{Math.min((page+1)*PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
                     </span>
-                    <div style={{ display: "flex", gap: "0.375rem", alignItems: "center" }}>
-                      <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="btn-ghost" style={{ padding: "0.375rem 0.625rem" }}>
-                        <ChevronLeft size={14} />
+                    <div style={{ display: "flex", gap: "0.35rem" }}>
+                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>
+                        ←
                       </button>
-                      <span className="mono" style={{ fontSize: "0.72rem", color: "#CEDDFA55", padding: "0 0.375rem" }}>{page + 1}/{totalPages}</span>
-                      <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="btn-ghost" style={{ padding: "0.375rem 0.625rem" }}>
-                        <ChevronRight size={14} />
+                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#475569", padding: "0 0.35rem", display: "flex", alignItems: "center" }}>
+                        {page+1}/{totalPages}
+                      </span>
+                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>
+                        →
                       </button>
                     </div>
                   </div>
@@ -623,23 +1156,40 @@ export default function Dashboard() {
               </div>
             )}
 
-            {bulkResults.length === 0 && !bulkLoading && !bulkError && columns.length === 0 && (
-              <div style={{ textAlign: "center", padding: "4rem 2rem", color: "#CEDDFA33" }}>
-                <FileSpreadsheet size={36} style={{ marginBottom: "1rem", opacity: 0.35 }} />
-                <p style={{ fontSize: "0.85rem", marginBottom: "0.375rem" }}>Upload a file to get started</p>
-                <p style={{ fontSize: "0.75rem", color: "#CEDDFA22" }}>Supports .xlsx, .xls, and .csv formats</p>
+            {bulkResults.length === 0 && !bulkLoading && columns.length === 0 && (
+              <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1.5rem", opacity: 0.4 }}>
+                  {["Excel → ", "AI Processing → ", "HSN Codes"].map((label, i) => (
+                    <div key={i} style={{
+                      display: "flex", alignItems: "center", gap: "0.5rem",
+                      fontSize: "0.75rem", color: "#475569",
+                      fontFamily: "'DM Mono', monospace",
+                    }}>
+                      {label}
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: "0.8rem", color: "#334155", marginBottom: 4 }}>Upload a spreadsheet to begin</p>
+                <p style={{ fontSize: "0.72rem", color: "#1e293b" }}>Supports .xlsx, .xls, and .csv</p>
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Footer */}
-      <footer style={{ borderTop: "1px solid #CEDDFA15", padding: "1rem 1.5rem", marginTop: "2rem" }}>
-        <div style={{ maxWidth: 1140, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: "0.7rem", color: "#CEDDFA33" }}>HSN Classifier — AI-powered GST compliance</span>
-          <span style={{ fontSize: "0.7rem", color: "#CEDDFA44" }}>
-            Developer: <span style={{ color: "#0180EB", textShadow: "0 0 8px rgba(1,128,235,0.4)" }}>DhanushRaghav</span>
+      {/* ── Footer ──────────────────────────────────────────────────────── */}
+      <footer style={{
+        borderTop: "1px solid rgba(255,255,255,0.04)",
+        padding: "1rem 1.5rem",
+        marginTop: "2rem",
+        position: "relative", zIndex: 1,
+      }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: "0.68rem", color: "#1e293b", fontFamily: "'DM Mono', monospace" }}>
+            HSNiq · AI-powered GST classification for India
+          </span>
+          <span style={{ fontSize: "0.68rem", color: "#334155" }}>
+            Built by <span style={{ color: "#3b82f6" }}>DhanushRaghav</span>
           </span>
         </div>
       </footer>
