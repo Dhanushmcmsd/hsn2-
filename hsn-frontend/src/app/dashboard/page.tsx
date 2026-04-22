@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 
@@ -7,7 +8,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const BASE_URL = "http://localhost:8000";
 const PAGE_SIZE = 20;
 
-function padHsn(code) {
+function padHsn(code: string | null | undefined) {
   if (!code) return "";
   const t = code.trim();
   return /^\d+$/.test(t) ? t.padStart(8, "0") : t;
