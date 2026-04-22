@@ -3,6 +3,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { hsnApi, authApi, type PredictResponse, type UserOut } from "@/lib/api";
 import * as XLSX from "xlsx";
+import {
+  BarChart3, Search, Upload, Download, LogOut, FileSpreadsheet,
+  ChevronRight, ChevronLeft, AlertCircle, CheckCircle2, Clock, X, Loader2
+} from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface HSNBatchResult {
@@ -25,49 +29,40 @@ interface BatchResponse {
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-const CONFIDENCE_COLOR: Record<string, string> = {
-  high:   "bg-emerald-50 text-emerald-700 border-emerald-200",
-  medium: "bg-amber-50 text-amber-700 border-amber-200",
-  low:    "bg-red-50 text-red-600 border-red-200",
-};
-
-const CONFIDENCE_DOT: Record<string, string> = {
-  high:   "bg-emerald-500",
-  medium: "bg-amber-400",
-  low:    "bg-red-400",
-};
-
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const PAGE_SIZE = 20;
 
-// ── HSN zero-padding helper ───────────────────────────────────────────────────
 function padHsn(code: string | undefined): string {
   if (!code) return "";
-  const trimmed = code.trim();
-  if (/^\d+$/.test(trimmed)) {
-    return trimmed.padStart(8, "0");
-  }
-  return trimmed;
+  const t = code.trim();
+  return /^\d+$/.test(t) ? t.padStart(8, "0") : t;
 }
 
-// ── Main component ─────────────────────────────────────────────────────────────
+function ConfidencePill({ label, value }: { label: string; value: number }) {
+  const styles: Record<string, { bg: string; border: string; color: string; dot: string }> = {
+    high:   { bg: "rgba(29,90,60,0.2)",  border: "rgba(45,120,80,0.4)",  color: "#4db87a", dot: "#2d9060" },
+    medium: { bg: "rgba(120,90,20,0.2)", border: "rgba(160,120,30,0.4)", color: "#c8a060", dot: "#a07830" },
+    low:    { bg: "rgba(120,30,30,0.2)", border: "rgba(160,50,50,0.4)",  color: "#c07070", dot: "#903030" },
+  };
+  const s = styles[label] ?? styles.low;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: s.bg, border: `1px solid ${s.border}`, color: s.color, padding: "0.2rem 0.55rem", borderRadius: 100, fontSize: "0.72rem", fontWeight: 600, fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap" }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
+      {label} · {Math.round(value * 100)}%
+    </span>
+  );
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auth
   const [user, setUser] = useState<UserOut | null>(null);
-
-  // Mode: "single" | "bulk"
   const [mode, setMode] = useState<"single" | "bulk">("single");
-
-  // Single mode
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<PredictResponse | null>(null);
   const [singleLoading, setSingleLoading] = useState(false);
   const [singleError, setSingleError] = useState("");
-
-  // Bulk mode
   const [fileName, setFileName] = useState("");
   const [columns, setColumns] = useState<string[]>([]);
   const [selectedCol, setSelectedCol] = useState("");
@@ -84,28 +79,19 @@ export default function Dashboard() {
     authApi.me().then(setUser).catch(() => router.replace("/login"));
   }, []);
 
-  // ── Single predict ──────────────────────────────────────────────────────────
   async function handlePredict(e: React.FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
     setSingleError(""); setSingleLoading(true); setResult(null);
-    try {
-      setResult(await hsnApi.predict(query));
-    } catch (err: unknown) {
-      setSingleError(err instanceof Error ? err.message : "Prediction failed");
-    } finally { setSingleLoading(false); }
+    try { setResult(await hsnApi.predict(query)); }
+    catch (err: unknown) { setSingleError(err instanceof Error ? err.message : "Prediction failed"); }
+    finally { setSingleLoading(false); }
   }
 
-  // ── File upload ─────────────────────────────────────────────────────────────
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setFileName(file.name);
-    setBulkResults([]);
-    setBulkError("");
-    setBulkStats(null);
-    setPage(0);
-
+    setFileName(file.name); setBulkResults([]); setBulkError(""); setBulkStats(null); setPage(0);
     const reader = new FileReader();
     reader.onload = (ev) => {
       try {
@@ -115,47 +101,29 @@ export default function Dashboard() {
         const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" });
         if (rows.length === 0) { setBulkError("File is empty or unreadable."); return; }
         const cols = Object.keys(rows[0]);
-        setColumns(cols);
-        setSelectedCol(cols[0]);
-        setRawRows(rows);
-      } catch {
-        setBulkError("Could not parse file. Please upload a valid .xlsx or .csv.");
-      }
+        setColumns(cols); setSelectedCol(cols[0]); setRawRows(rows);
+      } catch { setBulkError("Could not parse file. Upload a valid .xlsx or .csv."); }
     };
     reader.readAsBinaryString(file);
   }
 
-  // ── Batch process ───────────────────────────────────────────────────────────
   const handleBulkProcess = useCallback(async () => {
     if (!selectedCol || rawRows.length === 0) return;
-    setBulkLoading(true);
-    setBulkError("");
-    setBulkResults([]);
-    setBulkStats(null);
-    setPage(0);
-
+    setBulkLoading(true); setBulkError(""); setBulkResults([]); setBulkStats(null); setPage(0);
     const descriptions = rawRows.map((r) => String(r[selectedCol] ?? "").trim()).filter(Boolean);
     const CHUNK = 50;
     const allResults: HSNBatchResult[] = [];
     setProgress({ done: 0, total: descriptions.length });
-
     const token = localStorage.getItem("access_token") ?? "";
-
     try {
       for (let i = 0; i < descriptions.length; i += CHUNK) {
         const chunk = descriptions.slice(i, i + CHUNK);
         const res = await fetch(`${BASE_URL}/hsn/batch`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           body: JSON.stringify({ queries: chunk }),
         });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({ detail: "Unknown error" }));
-          throw new Error(err.detail ?? `HTTP ${res.status}`);
-        }
+        if (!res.ok) { const err = await res.json().catch(() => ({ detail: "Unknown" })); throw new Error(err.detail ?? `HTTP ${res.status}`); }
         const data: BatchResponse = await res.json();
         allResults.push(...data.results);
         setProgress({ done: Math.min(i + CHUNK, descriptions.length), total: descriptions.length });
@@ -165,12 +133,9 @@ export default function Dashboard() {
       setBulkStats({ matched, unmatched: allResults.length - matched, total: allResults.length });
     } catch (err: unknown) {
       setBulkError(err instanceof Error ? err.message : "Batch processing failed");
-    } finally {
-      setBulkLoading(false);
-    }
+    } finally { setBulkLoading(false); }
   }, [selectedCol, rawRows]);
 
-  // ── Download results ────────────────────────────────────────────────────────
   function handleDownload() {
     if (bulkResults.length === 0) return;
     const rows = bulkResults.map((r) => ({
@@ -183,247 +148,303 @@ export default function Dashboard() {
       "Match Method": r.match_method,
       "Alt 1 HSN": padHsn(r.alternatives[0]?.hsn_code),
       "Alt 1 Desc": r.alternatives[0]?.description ?? "",
-      "Alt 2 HSN": padHsn(r.alternatives[1]?.hsn_code),
-      "Alt 2 Desc": r.alternatives[1]?.description ?? "",
       "Error": r.error ?? "",
     }));
-
     const ws = XLSX.utils.json_to_sheet(rows);
-
-    const hsnColIndices = [1, 7, 9];
-    const totalRows = rows.length + 1;
-    hsnColIndices.forEach((colIdx) => {
-      const colLetter = XLSX.utils.encode_col(colIdx);
-      for (let rowIdx = 1; rowIdx < totalRows; rowIdx++) {
-        const cellRef = `${colLetter}${rowIdx + 1}`;
-        if (ws[cellRef]) {
-          ws[cellRef].t = "s";
-        }
-      }
-    });
-
+    ws["!cols"] = [{ wch: 40 }, { wch: 12 }, { wch: 40 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 14 }, { wch: 12 }, { wch: 30 }, { wch: 20 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "HSN Results");
-
-    ws["!cols"] = [
-      { wch: 40 }, { wch: 12 }, { wch: 40 }, { wch: 14 },
-      { wch: 12 }, { wch: 16 }, { wch: 14 },
-      { wch: 12 }, { wch: 30 }, { wch: 12 }, { wch: 30 }, { wch: 20 },
-    ];
     XLSX.writeFile(wb, `hsn_results_${Date.now()}.xlsx`);
   }
 
   function signOut() { localStorage.clear(); router.push("/login"); }
 
-  // ── Paginated slice ─────────────────────────────────────────────────────────
   const pageSlice = bulkResults.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(bulkResults.length / PAGE_SIZE);
 
-  // ──────────────────────────────────────────────────────────────────────────
+  const sharedStyles = `
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap');
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #060b18; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #0a1020; }
+    ::-webkit-scrollbar-thumb { background: #1a2840; border-radius: 3px; }
+    .search-input {
+      flex: 1; background: rgba(6,11,24,0.8); border: 1px solid #1a2840;
+      color: #c8d4e8; padding: 0.7rem 1rem; border-radius: 7px;
+      font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s; min-width: 0;
+    }
+    .search-input::placeholder { color: #2e4060; }
+    .search-input:focus { border-color: #2d4a7a; box-shadow: 0 0 0 3px rgba(45,74,122,0.15); }
+    .btn-primary {
+      background: linear-gradient(135deg, #1e3a6e 0%, #2d5aa0 100%);
+      color: #a8c4f0; border: 1px solid #2d4a7a;
+      padding: 0.7rem 1.25rem; border-radius: 7px; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      transition: all 0.2s; letter-spacing: 0.02em; white-space: nowrap;
+    }
+    .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #243f77 0%, #3463ae 100%); color: #c8d8f8; box-shadow: 0 0 16px rgba(45,90,160,0.25); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent; color: #4e6480; border: 1px solid #1a2840;
+      padding: 0.7rem 1rem; border-radius: 7px; font-size: 0.8rem;
+      font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: #2d4a7a; color: #8aaccc; }
+    .btn-success {
+      background: linear-gradient(135deg, #163d2a, #1e5e3a);
+      color: #4db87a; border: 1px solid rgba(45,120,80,0.4);
+      padding: 0.6rem 1rem; border-radius: 7px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      transition: all 0.2s; letter-spacing: 0.02em;
+    }
+    .btn-success:hover:not(:disabled) { background: linear-gradient(135deg, #1a4a32, #246e44); }
+    .btn-success:disabled { opacity: 0.4; cursor: not-allowed; }
+    .card { background: rgba(10,16,30,0.95); border: 1px solid #1a2840; border-radius: 10px; position: relative; overflow: hidden; }
+    .card-top-line { position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(90,140,230,0.25), transparent); }
+    .tab { background: transparent; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; padding: 0.5rem 1rem; border-radius: 5px; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.2s; }
+    .tab.active { background: rgba(30,58,110,0.5); color: #8ab8e8; border: 1px solid rgba(45,74,122,0.5); }
+    .tab.inactive { color: #4e6480; }
+    .tab.inactive:hover { color: #7a9ab8; }
+    .select-input {
+      background: rgba(6,11,24,0.8); border: 1px solid #1a2840; color: #c8d4e8;
+      padding: 0.6rem 0.875rem; border-radius: 6px; font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer;
+    }
+    .select-input:focus { border-color: #2d4a7a; }
+    .upload-zone {
+      border: 2px dashed #1a2840; border-radius: 8px; padding: 2.5rem 1.5rem;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .upload-zone:hover { border-color: #2d4a7a; background: rgba(30,58,110,0.05); }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 0.68rem; font-weight: 600; color: #3a5070; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.625rem 0.875rem; border-bottom: 1px solid #0e1828; background: rgba(6,11,24,0.5); }
+    td { padding: 0.6rem 0.875rem; border-bottom: 1px solid #0e1828; font-size: 0.8rem; color: #7a90b0; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(30,58,110,0.06); }
+    .hsn-code-big { font-family: 'DM Mono', monospace; color: #5b8fe8; }
+    .hsn-code-sm { font-family: 'DM Mono', monospace; color: #5b8fe8; font-size: 0.85rem; font-weight: 500; }
+    .section-label { font-size: 0.7rem; font-weight: 600; color: #3a5070; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+    .mono { font-family: 'DM Mono', monospace; }
+  `;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ minHeight: "100vh", background: "#060b18", color: "#c8d4e8", fontFamily: "'DM Sans', sans-serif" }}>
+      <style>{sharedStyles}</style>
+
       {/* Nav */}
-      <nav className="bg-white border-b border-gray-100 px-8 py-4">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <span className="font-semibold text-gray-900">HSN Classifier</span>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">{user?.email}</span>
-            <button onClick={signOut}
-              className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-              Sign out
+      <nav style={{ borderBottom: "1px solid #0e1828", background: "rgba(6,11,24,0.98)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 50 }}>
+        <div style={{ maxWidth: 1140, margin: "0 auto", padding: "0 1.5rem", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ width: 26, height: 26, background: "linear-gradient(135deg, #1e3a6e, #3d6db5)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <BarChart3 size={13} color="#8ab4e8" />
+            </div>
+            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#b8cce0" }}>HSN Classifier</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+            <span style={{ fontSize: "0.75rem", color: "#3a5070", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</span>
+            <button onClick={signOut} className="btn-ghost" style={{ padding: "0.4rem 0.75rem", fontSize: "0.75rem" }}>
+              <LogOut size={13} /> Sign out
             </button>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto px-8 py-10">
-        {/* Header + mode toggle */}
-        <div className="flex items-center justify-between mb-8">
+      {/* Main */}
+      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "2rem 1.5rem" }}>
+
+        {/* Page header */}
+        <div style={{ marginBottom: "1.75rem", display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">HSN Code Lookup</h1>
-            <p className="text-gray-500 text-sm">Classify products to their GST HSN codes instantly</p>
+            <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#c8d4e8", marginBottom: "0.25rem", letterSpacing: "-0.01em" }}>
+              HSN Code Lookup
+            </h1>
+            <p style={{ fontSize: "0.78rem", color: "#3a5070" }}>Classify products to their GST HSN codes instantly</p>
           </div>
-          <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-1">
-            {(["single", "bulk"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                className={`px-5 py-2 rounded-lg text-sm font-medium transition ${
-                  mode === m
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                {m === "single" ? "Single" : "Bulk / Excel"}
-              </button>
-            ))}
+          {/* Mode tabs */}
+          <div style={{ display: "flex", gap: "0.375rem", background: "rgba(6,11,24,0.8)", border: "1px solid #1a2840", borderRadius: 8, padding: "0.25rem" }}>
+            <button onClick={() => setMode("single")} className={`tab ${mode === "single" ? "active" : "inactive"}`}>
+              <Search size={13} /> Single
+            </button>
+            <button onClick={() => setMode("bulk")} className={`tab ${mode === "bulk" ? "active" : "inactive"}`}>
+              <FileSpreadsheet size={13} /> Bulk / Excel
+            </button>
           </div>
         </div>
 
-        {/* ── Single mode ── */}
+        {/* ── SINGLE MODE ── */}
         {mode === "single" && (
           <div>
-            <form onSubmit={handlePredict} className="flex gap-3 mb-8">
+            <form onSubmit={handlePredict} style={{ display: "flex", gap: "0.625rem", marginBottom: "1.5rem" }}>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="e.g. VKC DL3323 BLUE LADIES 06, HARPIC DISINFTNT BTRM CLNR 500ML..."
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                placeholder="Enter product description — e.g. VKC DL3323 BLUE LADIES 06"
+                className="search-input"
               />
-              <button
-                type="submit"
-                disabled={singleLoading || !query.trim()}
-                className="px-6 py-3 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-700 disabled:opacity-40 transition whitespace-nowrap"
-              >
-                {singleLoading ? "Classifying…" : "Classify →"}
+              <button type="submit" disabled={singleLoading || !query.trim()} className="btn-primary">
+                {singleLoading ? <><Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Classifying</> : <><Search size={14} /> Classify</>}
               </button>
             </form>
 
             {singleError && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl">{singleError}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(120,30,30,0.15)", border: "1px solid rgba(160,50,50,0.3)", color: "#c07070", fontSize: "0.8rem", padding: "0.625rem 0.875rem", borderRadius: 7, marginBottom: "1rem" }}>
+                <AlertCircle size={14} /> {singleError}
+              </div>
             )}
 
             {result && (
-              <div className="space-y-4">
-                <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-                  <div className="flex justify-between items-start mb-3">
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
+                {/* Top match card */}
+                <div className="card" style={{ padding: "1.75rem" }}>
+                  <div className="card-top-line" />
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
                     <div>
-                      <div className="text-4xl font-bold text-blue-600 font-mono">
-                        {padHsn(result.top_match.hsn_code)}
-                      </div>
-                      <div className="text-gray-600 mt-1">{result.top_match.description}</div>
+                      <div className="section-label">Top match</div>
+                      <div className="hsn-code-big" style={{ fontSize: "2.5rem", fontWeight: 500, letterSpacing: "0.04em", lineHeight: 1 }}>{padHsn(result.top_match.hsn_code)}</div>
+                      <div style={{ color: "#6b84a6", fontSize: "0.875rem", marginTop: "0.5rem", maxWidth: 480 }}>{result.top_match.description}</div>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${CONFIDENCE_COLOR[result.confidence_label]}`}>
-                      {result.confidence_label} · {Math.round(result.confidence * 100)}%
-                    </span>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem" }}>
+                      <ConfidencePill label={result.confidence_label} value={result.confidence} />
+                      {result.needs_review && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.7rem", color: "#c8a060", background: "rgba(120,90,20,0.15)", border: "1px solid rgba(160,120,30,0.3)", padding: "0.2rem 0.55rem", borderRadius: 100 }}>
+                          <Clock size={10} /> Review recommended
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex gap-4 text-xs text-gray-400 mt-4 pt-4 border-t border-gray-50">
-                    <span>Score: {result.top_match.score.toFixed(3)}</span>
-                    <span>{result.processing_time_ms.toFixed(0)}ms</span>
-                    <span>Method: {result.top_match.method}</span>
-                    {result.needs_review && <span className="text-orange-500">⚠ Flagged for review</span>}
+                  <div style={{ borderTop: "1px solid #0e1828", paddingTop: "0.875rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+                    {[
+                      { label: "Score", val: result.top_match.score.toFixed(3) },
+                      { label: "Method", val: result.top_match.method },
+                      { label: "Latency", val: `${result.processing_time_ms.toFixed(0)}ms` },
+                    ].map((m) => (
+                      <div key={m.label}>
+                        <div style={{ fontSize: "0.65rem", color: "#3a5070", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>{m.label}</div>
+                        <div className="mono" style={{ fontSize: "0.78rem", color: "#7a90b0" }}>{m.val}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
+
+                {/* Alternatives */}
                 {result.alternatives.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2 px-1">Other possible matches</p>
-                    <div className="space-y-2">
-                      {result.alternatives.map((alt) => (
-                        <div key={alt.hsn_code} className="flex items-center justify-between bg-white rounded-xl border border-gray-100 px-4 py-3 text-sm">
-                          <span className="font-mono font-semibold text-gray-700 w-20">{padHsn(alt.hsn_code)}</span>
-                          <span className="text-gray-500 flex-1 mx-4 truncate">{alt.description}</span>
-                          <span className="text-gray-400 text-xs">{(alt.score * 100).toFixed(0)}%</span>
-                        </div>
-                      ))}
+                  <div className="card" style={{ overflow: "hidden" }}>
+                    <div className="card-top-line" />
+                    <div style={{ padding: "1rem 1.25rem 0.75rem" }}>
+                      <div className="section-label">Alternative matches</div>
                     </div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>HSN Code</th>
+                          <th>Description</th>
+                          <th>Score</th>
+                          <th>Method</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {result.alternatives.map((a) => (
+                          <tr key={a.hsn_code}>
+                            <td><span className="hsn-code-sm">{padHsn(a.hsn_code)}</span></td>
+                            <td style={{ color: "#5a7a9a", maxWidth: 320 }}><span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>{a.description}</span></td>
+                            <td><span className="mono" style={{ fontSize: "0.75rem" }}>{(a.score * 100).toFixed(0)}%</span></td>
+                            <td><span style={{ fontSize: "0.7rem", color: "#3a5070", fontFamily: "'DM Mono', monospace" }}>{a.method}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>
             )}
 
             {!result && !singleLoading && (
-              <div className="text-center py-16 text-gray-400">
-                <div className="text-5xl mb-4">🔍</div>
-                <p className="text-sm">Enter a product description above to get started</p>
+              <div style={{ textAlign: "center", padding: "5rem 2rem", color: "#2e4060" }}>
+                <Search size={32} style={{ marginBottom: "1rem", opacity: 0.4 }} />
+                <p style={{ fontSize: "0.85rem" }}>Enter a product description to classify it</p>
               </div>
             )}
           </div>
         )}
 
-        {/* ── Bulk mode ── */}
+        {/* ── BULK MODE ── */}
         {mode === "bulk" && (
-          <div className="space-y-6">
-            {/* Upload card */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-              <h2 className="font-semibold text-gray-800 mb-4 text-sm uppercase tracking-wide">Step 1 — Upload file</h2>
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition group"
-              >
-                <div className="text-3xl mb-3">📁</div>
-                <p className="text-sm font-medium text-gray-700 group-hover:text-blue-700 transition">
-                  {fileName ? fileName : "Click to upload .xlsx or .csv"}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {/* Upload */}
+            <div className="card" style={{ padding: "1.5rem" }}>
+              <div className="card-top-line" />
+              <div className="section-label">Step 1 — Upload file</div>
+              <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
+                <Upload size={22} style={{ color: "#2d4a7a", marginBottom: "0.75rem" }} />
+                <p style={{ fontSize: "0.85rem", color: "#4e6480", margin: "0 0 0.25rem", fontWeight: 500 }}>
+                  {fileName || "Click to upload .xlsx or .csv"}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">Max 500 rows per batch</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".xlsx,.xls,.csv"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
+                <p style={{ fontSize: "0.72rem", color: "#2e4060", margin: 0 }}>Max 500 rows per batch</p>
+                <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: "none" }} onChange={handleFileChange} />
               </div>
             </div>
 
             {/* Column selector */}
             {columns.length > 0 && (
-              <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-                <h2 className="font-semibold text-gray-800 mb-4 text-sm uppercase tracking-wide">Step 2 — Select description column</h2>
-                <div className="flex items-center gap-4 flex-wrap">
-                  <div className="flex-1 min-w-48">
-                    <label className="block text-xs font-medium text-gray-500 mb-1.5">Column with product descriptions</label>
-                    <select
-                      value={selectedCol}
-                      onChange={(e) => setSelectedCol(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                    >
-                      {columns.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="text-xs text-gray-400 pt-5">
-                    {rawRows.length.toLocaleString()} rows detected
-                  </div>
+              <div className="card" style={{ padding: "1.5rem" }}>
+                <div className="card-top-line" />
+                <div className="section-label">Step 2 — Select description column</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "0.875rem" }}>
+                  <select value={selectedCol} onChange={(e) => setSelectedCol(e.target.value)} className="select-input">
+                    {columns.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <span style={{ fontSize: "0.75rem", color: "#3a5070" }}>{rawRows.length.toLocaleString()} rows detected</span>
                 </div>
-
-                {selectedCol && rawRows.slice(0, 3).map((r, i) => (
-                  <div key={i} className="mt-2 text-xs text-gray-500 font-mono bg-gray-50 rounded px-3 py-1.5">
-                    {String(r[selectedCol] ?? "").slice(0, 80) || <em className="text-gray-300">empty</em>}
+                {selectedCol && rawRows.slice(0, 2).map((r, i) => (
+                  <div key={i} className="mono" style={{ fontSize: "0.72rem", color: "#3a5070", background: "rgba(6,11,24,0.6)", border: "1px solid #0e1828", borderRadius: 5, padding: "0.4rem 0.75rem", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {String(r[selectedCol] ?? "").slice(0, 90) || "—"}
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Process button */}
+            {/* Process */}
             {columns.length > 0 && (
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleBulkProcess}
-                  disabled={bulkLoading || !selectedCol}
-                  className="px-8 py-3 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-700 disabled:opacity-40 transition"
-                >
-                  {bulkLoading ? "Processing…" : `Process ${rawRows.length.toLocaleString()} rows →`}
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+                <button onClick={handleBulkProcess} disabled={bulkLoading || !selectedCol} className="btn-primary" style={{ padding: "0.75rem 1.5rem" }}>
+                  {bulkLoading ? <><Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Processing…</> : <><FileSpreadsheet size={14} /> Process {rawRows.length.toLocaleString()} rows</>}
                 </button>
-                {bulkLoading && (
-                  <div className="flex items-center gap-3 text-sm text-gray-500">
-                    <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                        style={{ width: progress.total ? `${(progress.done / progress.total) * 100}%` : "0%" }}
-                      />
+                {bulkLoading && progress.total > 0 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <div style={{ width: 140, height: 4, background: "#0e1828", borderRadius: 2, overflow: "hidden" }}>
+                      <div style={{ height: "100%", background: "linear-gradient(90deg, #2d5aa0, #5b8fe8)", borderRadius: 2, width: `${(progress.done / progress.total) * 100}%`, transition: "width 0.3s" }} />
                     </div>
-                    <span>{progress.done.toLocaleString()} / {progress.total.toLocaleString()} processed</span>
+                    <span style={{ fontSize: "0.75rem", color: "#3a5070", fontFamily: "'DM Mono', monospace" }}>{progress.done}/{progress.total}</span>
                   </div>
                 )}
               </div>
             )}
 
             {bulkError && (
-              <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl">{bulkError}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(120,30,30,0.15)", border: "1px solid rgba(160,50,50,0.3)", color: "#c07070", fontSize: "0.8rem", padding: "0.75rem 1rem", borderRadius: 7 }}>
+                <AlertCircle size={14} /> {bulkError}
+              </div>
             )}
 
-            {/* Stats bar */}
+            {/* Stats */}
             {bulkStats && (
-              <div className="grid grid-cols-3 gap-4">
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.875rem" }}>
                 {[
-                  { label: "Total", value: bulkStats.total, color: "text-gray-700" },
-                  { label: "Matched", value: bulkStats.matched, color: "text-emerald-600" },
-                  { label: "Unmatched", value: bulkStats.unmatched, color: "text-red-500" },
+                  { label: "Total", val: bulkStats.total, color: "#c8d4e8", icon: <FileSpreadsheet size={14} /> },
+                  { label: "Matched", val: bulkStats.matched, color: "#4db87a", icon: <CheckCircle2 size={14} /> },
+                  { label: "Unmatched", val: bulkStats.unmatched, color: "#c07070", icon: <X size={14} /> },
                 ].map((s) => (
-                  <div key={s.label} className="bg-white border border-gray-100 rounded-2xl p-5 text-center shadow-sm">
-                    <div className={`text-3xl font-bold ${s.color}`}>{s.value.toLocaleString()}</div>
-                    <div className="text-xs text-gray-400 mt-1 font-medium">{s.label}</div>
+                  <div key={s.label} className="card" style={{ padding: "1.25rem", textAlign: "center" }}>
+                    <div className="card-top-line" />
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.5rem", color: s.color, opacity: 0.6 }}>{s.icon}</div>
+                    <div className="mono" style={{ fontSize: "2rem", fontWeight: 500, color: s.color, lineHeight: 1 }}>{s.val.toLocaleString()}</div>
+                    <div style={{ fontSize: "0.7rem", color: "#3a5070", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 }}>{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -431,84 +452,54 @@ export default function Dashboard() {
 
             {/* Results table */}
             {bulkResults.length > 0 && (
-              <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
-                  <h2 className="font-semibold text-gray-800 text-sm">
-                    Results
-                    {bulkLoading && (
-                      <span className="ml-2 text-xs text-blue-500 font-normal">— live updating…</span>
-                    )}
-                  </h2>
-                  <button
-                    onClick={handleDownload}
-                    disabled={bulkLoading}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700 disabled:opacity-40 transition"
-                  >
-                    <span>⬇</span> Download .xlsx
+              <div className="card" style={{ overflow: "hidden" }}>
+                <div className="card-top-line" />
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", borderBottom: "1px solid #0e1828" }}>
+                  <div>
+                    <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "0.85rem", color: "#b8cce0" }}>Results</span>
+                    {bulkLoading && <span style={{ marginLeft: "0.625rem", fontSize: "0.72rem", color: "#3a6090" }}>— updating…</span>}
+                  </div>
+                  <button onClick={handleDownload} disabled={bulkLoading} className="btn-success">
+                    <Download size={13} /> Download .xlsx
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div style={{ overflowX: "auto" }}>
+                  <table>
                     <thead>
-                      <tr className="bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                        <th className="px-4 py-3 text-left">#</th>
-                        <th className="px-4 py-3 text-left">Description</th>
-                        <th className="px-4 py-3 text-left">HSN Code</th>
-                        <th className="px-4 py-3 text-left">Matched Description</th>
-                        <th className="px-4 py-3 text-left">GST%</th>
-                        <th className="px-4 py-3 text-left">Confidence</th>
-                        <th className="px-4 py-3 text-left">Method</th>
+                      <tr>
+                        <th style={{ width: 42 }}>#</th>
+                        <th>Description</th>
+                        <th>HSN Code</th>
+                        <th>Matched As</th>
+                        <th>GST%</th>
+                        <th>Confidence</th>
+                        <th>Method</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody>
                       {pageSlice.map((r, i) => {
                         const rowNum = page * PAGE_SIZE + i + 1;
-                        const isError = !!r.error;
-                        const isUnmatched = !r.hsn_code && !isError;
                         return (
-                          <tr
-                            key={rowNum}
-                            className={`transition hover:bg-gray-50/60 ${
-                              isError ? "bg-red-50/40" : isUnmatched ? "bg-amber-50/30" : ""
-                            }`}
-                          >
-                            <td className="px-4 py-3 text-gray-400 text-xs">{rowNum}</td>
-                            <td className="px-4 py-3 max-w-xs">
-                              <span className="text-gray-700 text-xs line-clamp-2">{r.query}</span>
+                          <tr key={rowNum}>
+                            <td style={{ color: "#2e4060", fontFamily: "'DM Mono', monospace", fontSize: "0.72rem" }}>{rowNum}</td>
+                            <td style={{ maxWidth: 240 }}>
+                              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", color: "#5a7a9a", fontSize: "0.78rem" }}>{r.query}</span>
                             </td>
-                            <td className="px-4 py-3">
-                              {r.hsn_code ? (
-                                <span className="font-mono font-semibold text-blue-600 text-sm">{padHsn(r.hsn_code)}</span>
-                              ) : (
-                                <span className="text-gray-300 text-xs italic">{isError ? "error" : "—"}</span>
-                              )}
+                            <td>
+                              {r.hsn_code
+                                ? <span className="hsn-code-sm">{padHsn(r.hsn_code)}</span>
+                                : <span style={{ color: "#2e4060", fontSize: "0.72rem", fontStyle: "italic" }}>{r.error ? "error" : "—"}</span>
+                              }
                             </td>
-                            <td className="px-4 py-3 max-w-xs">
-                              <span className="text-gray-500 text-xs line-clamp-2">
-                                {isError ? (
-                                  <span className="text-red-500">{r.error}</span>
-                                ) : (
-                                  r.description ?? "—"
-                                )}
+                            <td style={{ maxWidth: 220 }}>
+                              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: "0.75rem" }}>
+                                {r.error ? <span style={{ color: "#c07070" }}>{r.error}</span> : (r.description ?? "—")}
                               </span>
                             </td>
-                            <td className="px-4 py-3 text-gray-600 text-xs font-medium">
-                              {r.gst_rate != null ? `${r.gst_rate}%` : "—"}
-                            </td>
-                            <td className="px-4 py-3">
-                              {r.hsn_code && !isError ? (
-                                <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full border ${CONFIDENCE_COLOR[r.confidence_label]}`}>
-                                  <span className={`w-1.5 h-1.5 rounded-full ${CONFIDENCE_DOT[r.confidence_label]}`} />
-                                  {r.confidence_label} · {Math.round(r.confidence * 100)}%
-                                </span>
-                              ) : (
-                                <span className="text-gray-300 text-xs">—</span>
-                              )}
-                            </td>
-                            <td className="px-4 py-3">
-                              <span className="text-xs text-gray-400 font-mono">{r.match_method}</span>
-                            </td>
+                            <td className="mono" style={{ fontSize: "0.75rem" }}>{r.gst_rate != null ? `${r.gst_rate}%` : "—"}</td>
+                            <td>{r.hsn_code && !r.error ? <ConfidencePill label={r.confidence_label} value={r.confidence} /> : <span style={{ color: "#2e4060" }}>—</span>}</td>
+                            <td><span className="mono" style={{ fontSize: "0.68rem", color: "#2e4060" }}>{r.match_method}</span></td>
                           </tr>
                         );
                       })}
@@ -516,29 +507,18 @@ export default function Dashboard() {
                   </table>
                 </div>
 
-                {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between px-6 py-4 border-t border-gray-50">
-                    <span className="text-xs text-gray-400">
-                      Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.875rem 1.25rem", borderTop: "1px solid #0e1828" }}>
+                    <span style={{ fontSize: "0.72rem", color: "#2e4060", fontFamily: "'DM Mono', monospace" }}>
+                      {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
                     </span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setPage(Math.max(0, page - 1))}
-                        disabled={page === 0}
-                        className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-30 transition"
-                      >
-                        ← Prev
+                    <div style={{ display: "flex", gap: "0.375rem", alignItems: "center" }}>
+                      <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="btn-ghost" style={{ padding: "0.375rem 0.625rem" }}>
+                        <ChevronLeft size={14} />
                       </button>
-                      <span className="px-3 py-1.5 text-xs text-gray-500">
-                        {page + 1} / {totalPages}
-                      </span>
-                      <button
-                        onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                        disabled={page >= totalPages - 1}
-                        className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-30 transition"
-                      >
-                        Next →
+                      <span style={{ fontSize: "0.72rem", color: "#3a5070", fontFamily: "'DM Mono', monospace", padding: "0 0.375rem" }}>{page + 1}/{totalPages}</span>
+                      <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="btn-ghost" style={{ padding: "0.375rem 0.625rem" }}>
+                        <ChevronRight size={14} />
                       </button>
                     </div>
                   </div>
@@ -547,15 +527,25 @@ export default function Dashboard() {
             )}
 
             {bulkResults.length === 0 && !bulkLoading && !bulkError && columns.length === 0 && (
-              <div className="text-center py-16 text-gray-400">
-                <div className="text-5xl mb-4">📊</div>
-                <p className="text-sm">Upload an Excel or CSV file to get started</p>
-                <p className="text-xs mt-2 text-gray-300">Supports .xlsx, .xls, and .csv formats</p>
+              <div style={{ textAlign: "center", padding: "4rem 2rem", color: "#2e4060" }}>
+                <FileSpreadsheet size={36} style={{ marginBottom: "1rem", opacity: 0.35 }} />
+                <p style={{ fontSize: "0.85rem", marginBottom: "0.375rem" }}>Upload an Excel or CSV file to get started</p>
+                <p style={{ fontSize: "0.75rem", color: "#243040" }}>Supports .xlsx, .xls, and .csv formats</p>
               </div>
             )}
           </div>
         )}
-      </main>
+      </div>
+
+      {/* Footer */}
+      <footer style={{ borderTop: "1px solid #0e1828", padding: "1rem 1.5rem", marginTop: "2rem" }}>
+        <div style={{ maxWidth: 1140, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: "0.7rem", color: "#243040" }}>HSN Classifier — AI-powered GST compliance</span>
+          <span style={{ fontSize: "0.7rem", color: "#2e3d52" }}>
+            Developer: <span style={{ color: "#7a8060" }}>DhanushRaghav</span>
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }
