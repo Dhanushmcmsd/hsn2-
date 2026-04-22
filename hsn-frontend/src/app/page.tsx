@@ -73,8 +73,11 @@ export default function Home() {
           0%,100%{transform:translateY(0) rotate(1deg)}
           50%{transform:translateY(-6px) rotate(-1deg)}
         }
-        @keyframes spin {
-          to{transform:rotate(360deg)}
+        @keyframes flagFlow {
+          0%,100%{transform:perspective(400px) rotateY(0deg) scaleX(1) skewY(0deg)}
+          20%{transform:perspective(400px) rotateY(2.5deg) scaleX(0.97) skewY(0.3deg)}
+          50%{transform:perspective(400px) rotateY(0.5deg) scaleX(1.01) skewY(-0.2deg)}
+          75%{transform:perspective(400px) rotateY(-2deg) scaleX(0.98) skewY(0.2deg)}
         }
 
         .nav {
@@ -152,6 +155,7 @@ export default function Home() {
           margin-bottom: 1.5rem;
           display: flex; align-items: center; gap: 8px;
           animation: fadeUp 0.8s 0.2s ease both;
+          position: relative;
         }
         .headline {
           font-family: 'Cabinet Grotesk', sans-serif;
@@ -257,7 +261,6 @@ export default function Home() {
           color: #94a3b8;
           white-space: nowrap;
         }
-        .chip-arrow { color: #3b82f6; font-size: 0.8rem; margin: 0 2px; }
         .feature-grid {
           display: grid; grid-template-columns: repeat(3, 1fr);
           gap: 1rem;
@@ -300,7 +303,7 @@ export default function Home() {
           text-align: center; margin-bottom: 0.75rem;
         }
         .section-sub {
-          font-size: 0.82rem; color: "#64748b";
+          font-size: 0.82rem;
           text-align: center; margin-bottom: 3rem;
           color: #475569;
         }
@@ -309,6 +312,30 @@ export default function Home() {
           padding: 0 2rem 2rem;
           text-align: center;
           position: relative; z-index: 1;
+        }
+
+        /* India flag watermark — smooth flowing water-like animation */
+        .india-flag-watermark {
+          position: absolute;
+          border-radius: 4px;
+          overflow: hidden;
+          pointer-events: none;
+          animation: flagFlow 9s ease-in-out infinite;
+        }
+        .flag-stripe-saffron { background: #FF9933; }
+        .flag-stripe-white   { background: #FFFFFF; position: relative; display: flex; align-items: center; justify-content: center; }
+        .flag-stripe-green   { background: #138808; }
+        /* Ashoka wheel dot */
+        .flag-wheel-dot {
+          width: 12px; height: 12px;
+          border-radius: 50%;
+          border: 1.5px solid rgba(0,0,128,0.5);
+          flex-shrink: 0;
+        }
+        /* Fade edges to blend seamlessly */
+        .flag-edge-mask {
+          position: absolute;
+          inset: 0;
         }
       `}</style>
 
@@ -322,16 +349,14 @@ export default function Home() {
             radial-gradient(ellipse at 50% 110%, rgba(15,23,42,0.9) 0%, transparent 60%),
             #020617`,
         }} />
-        {/* Noise */}
         <div style={{
           position: "absolute", inset: 0, opacity: 0.03,
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         }} />
-        {/* Blobs */}
         <div style={{ position:"absolute",width:700,height:700,top:-200,left:-200,borderRadius:"50%",background:"radial-gradient(circle,rgba(37,99,235,0.1) 0%,transparent 70%)",animation:"blobDrift 22s ease-in-out infinite" }} />
         <div style={{ position:"absolute",width:500,height:500,bottom:-120,right:-120,borderRadius:"50%",background:"radial-gradient(circle,rgba(96,165,250,0.07) 0%,transparent 70%)",animation:"blobDrift2 28s ease-in-out infinite" }} />
 
-        {/* Floating icons */}
+        {/* Floating icons — no flag here anymore */}
         {[
           { left:"6%",  top:"18%", size:36, anim:"floatA 22s ease-in-out infinite", delay:"0s" },
           { left:"90%", top:"12%", size:26, anim:"floatB 18s ease-in-out infinite", delay:"3s" },
@@ -369,24 +394,9 @@ export default function Home() {
             </svg>
           </div>
         ))}
-
-        {/* Indian flag (subtle) */}
-        <div style={{
-          position:"absolute",right:"7%",top:"10%",
-          width:110,height:66,opacity:0.055,
-          borderRadius:3,overflow:"hidden",
-          animation:"wave 7s ease-in-out infinite",
-          filter:"blur(1.5px)",
-        }}>
-          <div style={{height:"33.33%",background:"#FF9933"}}/>
-          <div style={{height:"33.33%",background:"#FFFFFF",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <div style={{width:10,height:10,borderRadius:"50%",border:"1.5px solid #000080"}}/>
-          </div>
-          <div style={{height:"33.33%",background:"#138808"}}/>
-        </div>
       </div>
 
-      {/* ── Nav ────────────────────────────────────────────────────────── */}
+      {/* ── Nav ── (no flag in nav) ─────────────────────────────────────── */}
       <nav className="nav">
         <a href="/" className="nav-logo">
           <div className="nav-logo-icon">
@@ -400,9 +410,7 @@ export default function Home() {
         </a>
         <div style={{display:"flex",alignItems:"center",gap:"1.5rem"}}>
           <a href="/login" className="btn-nav-ghost">Sign in</a>
-          <a href="/signup" className="btn-nav">
-            Get started →
-          </a>
+          <a href="/signup" className="btn-nav">Get started →</a>
         </div>
       </nav>
 
@@ -410,10 +418,32 @@ export default function Home() {
       <section className="hero">
         {/* Left */}
         <div>
+          {/* Eyebrow with subtle India flag watermark behind it */}
           <div className="eyebrow">
-            <div style={{width:6,height:6,borderRadius:"50%",background:"#3b82f6",boxShadow:"0 0 8px rgba(59,130,246,0.8)"}}/>
-            India · GST · HSN Classification
+            {/* Flowing flag behind the eyebrow text */}
+            <div style={{ position: "absolute", left: -16, top: -22, zIndex: 0, pointerEvents: "none" }}>
+              <div
+                className="india-flag-watermark"
+                style={{ width: 200, height: 120, opacity: 0.06, filter: "blur(1.5px) saturate(0.5)" }}
+              >
+                <div className="flag-stripe-saffron" style={{ height: "33.33%" }} />
+                <div className="flag-stripe-white" style={{ height: "33.33%" }}>
+                  <div className="flag-wheel-dot" />
+                </div>
+                <div className="flag-stripe-green" style={{ height: "33.33%" }} />
+                {/* Fade from both sides + top + bottom */}
+                <div className="flag-edge-mask" style={{
+                  background: "linear-gradient(90deg, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.2) 18%, rgba(2,6,23,0) 35%, rgba(2,6,23,0) 65%, rgba(2,6,23,0.2) 82%, rgba(2,6,23,0.95) 100%)"
+                }} />
+                <div className="flag-edge-mask" style={{
+                  background: "linear-gradient(180deg, rgba(2,6,23,0.85) 0%, rgba(2,6,23,0) 25%, rgba(2,6,23,0) 75%, rgba(2,6,23,0.85) 100%)"
+                }} />
+              </div>
+            </div>
+            <div style={{width:6,height:6,borderRadius:"50%",background:"#3b82f6",boxShadow:"0 0 8px rgba(59,130,246,0.8)", position: "relative", zIndex: 1}}/>
+            <span style={{ position: "relative", zIndex: 1 }}>India · GST · HSN Classification</span>
           </div>
+
           <h1 className="headline">
             Classify thousands<br/>
             of products into<br/>
@@ -452,7 +482,6 @@ export default function Home() {
         {/* Right — animated demo */}
         <div className="hero-right">
           <div className="glass-demo">
-            {/* Window chrome */}
             <div className="demo-header">
               <div className="dot" style={{background:"#ef4444"}}/>
               <div className="dot" style={{background:"#f59e0b"}}/>
@@ -462,7 +491,6 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Scanning animation */}
             <div style={{position:"relative",overflow:"hidden"}}>
               <div style={{
                 position:"absolute",left:0,right:0,height:"1px",
@@ -471,7 +499,6 @@ export default function Home() {
                 zIndex:2,
               }}/>
 
-              {/* Rows */}
               <div style={{padding:"1rem"}}>
                 {[
                   { prod:"Horlicks Womens 400g", hsn:"21069099", gst:"18%", delay:"0s" },
@@ -509,7 +536,6 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Bottom progress */}
               <div style={{padding:"0.75rem 1rem",borderTop:"1px solid rgba(255,255,255,0.04)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <span style={{fontSize:"0.65rem",color:"#334155",fontFamily:"'DM Mono',monospace"}}>
                   Processed 1,247 / 1,500
@@ -521,7 +547,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Floating accuracy chips */}
           <div style={{display:"flex",gap:"0.5rem",justifyContent:"center",flexWrap:"wrap",marginTop:"1rem"}}>
             {[
               { label:"Toothpaste → 33061010", delay:"chipFloat1 3.5s ease-in-out infinite" },
@@ -537,7 +562,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Features ───────────────────────────────────────────────────── */}
+      {/* ── Features ── (flag behind "India-First Design" card) ──────── */}
       <section style={{position:"relative",zIndex:1,paddingBottom:"6rem"}}>
         <div className="section-header">
           <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(37,99,235,0.1)",border:"1px solid rgba(59,130,246,0.25)",borderRadius:100,padding:"4px 14px",marginBottom:"1.25rem"}}>
@@ -551,21 +576,51 @@ export default function Home() {
         </div>
         <div className="feature-grid">
           {[
-            { icon:"📊", title:"Bulk Excel Upload", body:"Upload your entire product catalog as .xlsx or .csv. Process thousands of items in one go, with HSN codes and GST rates for every row.", delay:"0.1s" },
-            { icon:"🧠", title:"AI-Powered Matching", body:"Multi-layer semantic engine understands product names, abbreviations, and local trade terms. Trained on Indian FMCG, retail, and trade invoices.", delay:"0.2s" },
-            { icon:"⚡", title:"Instant Classification", body:"Single product lookups return results in milliseconds. Bulk batches of 500+ rows complete in under 30 seconds with live progress feedback.", delay:"0.3s" },
-            { icon:"🔍", title:"8-Digit Precision", body:"Returns full 8-digit HSN codes with exact GST rates (5%, 12%, 18%, 28%). No ambiguity, no guesswork — ready for GSTR filing.", delay:"0.4s" },
-            { icon:"🇮🇳", title:"India-First Design", body:"Built around Indian trade vocabulary — understands VKC, TR masalas, Pavithram oil, Kerala groceries, FMCG abbreviations, and more.", delay:"0.5s" },
-            { icon:"💾", title:"Export Ready", body:"Download classified results as Excel or CSV instantly. Includes HSN code, matched description, GST rate, and confidence score per row.", delay:"0.6s" },
+            { icon:"📊", title:"Bulk Excel Upload", body:"Upload your entire product catalog as .xlsx or .csv. Process thousands of items in one go, with HSN codes and GST rates for every row.", delay:"0.1s", india: false },
+            { icon:"🧠", title:"AI-Powered Matching", body:"Multi-layer semantic engine understands product names, abbreviations, and local trade terms. Trained on Indian FMCG, retail, and trade invoices.", delay:"0.2s", india: false },
+            { icon:"⚡", title:"Instant Classification", body:"Single product lookups return results in milliseconds. Bulk batches of 500+ rows complete in under 30 seconds with live progress feedback.", delay:"0.3s", india: false },
+            { icon:"🔍", title:"8-Digit Precision", body:"Returns full 8-digit HSN codes with exact GST rates (5%, 12%, 18%, 28%). No ambiguity, no guesswork — ready for GSTR filing.", delay:"0.4s", india: false },
+            { icon:"🇮🇳", title:"India-First Design", body:"Built around Indian trade vocabulary — understands VKC, TR masalas, Pavithram oil, Kerala groceries, FMCG abbreviations, and more.", delay:"0.5s", india: true },
+            { icon:"💾", title:"Export Ready", body:"Download classified results as Excel or CSV instantly. Includes HSN code, matched description, GST rate, and confidence score per row.", delay:"0.6s", india: false },
           ].map((f, i) => (
             <div key={i} className="feature-card" style={{animationDelay:f.delay}}>
-              <div className="feature-icon">{f.icon}</div>
-              <h3 style={{fontFamily:"'Cabinet Grotesk',sans-serif",fontWeight:700,fontSize:"1rem",color:"#f8fafc",marginBottom:"0.6rem",letterSpacing:"-0.01em"}}>
-                {f.title}
-              </h3>
-              <p style={{fontSize:"0.8rem",color:"#475569",lineHeight:1.7,margin:0}}>
-                {f.body}
-              </p>
+              {/* Subtle India flag watermark inside the India-First card only */}
+              {f.india && (
+                <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", borderRadius: 18, pointerEvents: "none" }}>
+                  <div
+                    className="india-flag-watermark"
+                    style={{
+                      width: "110%", height: "110%",
+                      top: "-5%", left: "-5%",
+                      opacity: 0.045,
+                      filter: "blur(2px) saturate(0.4)",
+                      animationDuration: "11s",
+                    }}
+                  >
+                    <div className="flag-stripe-saffron" style={{ height: "33.33%" }} />
+                    <div className="flag-stripe-white" style={{ height: "33.33%" }}>
+                      <div className="flag-wheel-dot" />
+                    </div>
+                    <div className="flag-stripe-green" style={{ height: "33.33%" }} />
+                    {/* Heavy edge fading so only the middle softly glows */}
+                    <div className="flag-edge-mask" style={{
+                      background: "linear-gradient(90deg, rgba(2,6,23,0.92) 0%, rgba(2,6,23,0.1) 25%, rgba(2,6,23,0) 50%, rgba(2,6,23,0.1) 75%, rgba(2,6,23,0.92) 100%)"
+                    }} />
+                    <div className="flag-edge-mask" style={{
+                      background: "linear-gradient(180deg, rgba(2,6,23,0.8) 0%, rgba(2,6,23,0) 30%, rgba(2,6,23,0) 70%, rgba(2,6,23,0.8) 100%)"
+                    }} />
+                  </div>
+                </div>
+              )}
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <div className="feature-icon">{f.icon}</div>
+                <h3 style={{fontFamily:"'Cabinet Grotesk',sans-serif",fontWeight:700,fontSize:"1rem",color:"#f8fafc",marginBottom:"0.6rem",letterSpacing:"-0.01em"}}>
+                  {f.title}
+                </h3>
+                <p style={{fontSize:"0.8rem",color:"#475569",lineHeight:1.7,margin:0}}>
+                  {f.body}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -612,7 +667,6 @@ export default function Home() {
         padding:"1.25rem 2.5rem",
         position:"relative",zIndex:1,
         display:"flex",justifyContent:"space-between",alignItems:"center",
-        maxWidth:"100%",
       }}>
         <span style={{fontSize:"0.7rem",color:"#1e293b",fontFamily:"'DM Mono',monospace"}}>
           HSNiq · AI-powered GST classification for India
