@@ -2,9 +2,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// ─── Standalone demo component (no Next.js router deps) ───────────────────
-// Replace router.push / router.replace with window.location for real use
-
 const BASE_URL = "http://localhost:8000";
 const PAGE_SIZE = 20;
 
@@ -12,6 +9,12 @@ function padHsn(code: string | null | undefined) {
   if (!code) return "";
   const t = code.trim();
   return /^\d+$/.test(t) ? t.padStart(8, "0") : t;
+}
+
+// GST rate to percentage label helper
+function gstLabel(rate: number | null | undefined): string {
+  if (rate == null) return "—";
+  return `${rate}%`;
 }
 
 // ── Floating ambient icons (Indian GST context) ──────────────────────────────
@@ -112,6 +115,31 @@ function ConfPill({ label, value }) {
   );
 }
 
+// ── GST rate pill ────────────────────────────────────────────────────────────
+function GstPill({ rate }) {
+  if (rate == null) return null;
+  const colors = {
+    0:  { color: "#94a3b8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.25)" },
+    5:  { color: "#4ade80", bg: "rgba(74,222,128,0.1)", border: "rgba(74,222,128,0.3)" },
+    12: { color: "#fb923c", bg: "rgba(251,146,60,0.1)", border: "rgba(251,146,60,0.3)" },
+    18: { color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.3)" },
+    28: { color: "#f87171", bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.3)" },
+  };
+  const s = colors[rate] || { color: "#a78bfa", bg: "rgba(167,139,250,0.1)", border: "rgba(167,139,250,0.3)" };
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: s.bg, border: `1px solid ${s.border}`,
+      color: s.color, padding: "3px 10px", borderRadius: 100,
+      fontSize: "0.7rem", fontWeight: 600, fontFamily: "'DM Mono', monospace",
+      whiteSpace: "nowrap",
+    }}>
+      <span style={{ fontSize: "0.65rem", opacity: 0.7 }}>₹</span>
+      GST {rate}%
+    </span>
+  );
+}
+
 // ── Step indicator ───────────────────────────────────────────────────────────
 function ProcessStep({ label, done, active }) {
   return (
@@ -160,7 +188,6 @@ export default function PremiumDashboard() {
   const [processSteps, setProcessSteps] = useState([false, false, false]);
   const [showFileSuccess, setShowFileSuccess] = useState(false);
   const [userInitial] = useState("D");
-  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap');
@@ -211,26 +238,14 @@ export default function PremiumDashboard() {
       0%,100%{border-color:rgba(96,165,250,0.3)}
       50%{border-color:rgba(96,165,250,0.8)}
     }
-    @keyframes dashAnimate {
-      to{stroke-dashoffset:-20}
-    }
     @keyframes checkPop {
       0%{transform:scale(0)}
       70%{transform:scale(1.2)}
       100%{transform:scale(1)}
     }
-    @keyframes progressFill {
-      from{width:0}
-    }
-    @keyframes typing {
-      from{width:0}to{width:100%}
-    }
-    @keyframes blink {
-      50%{border-color:transparent}
-    }
     @keyframes wave {
-      0%,100%{transform:scaleY(1) rotate(0.3deg)}
-      50%{transform:scaleY(1.02) rotate(-0.3deg)}
+      0%,100%{transform:scaleY(1) skewX(-0.3deg)}
+      50%{transform:scaleY(1.03) skewX(0.3deg)}
     }
     @keyframes spin {
       to{transform:rotate(360deg)}
@@ -238,6 +253,12 @@ export default function PremiumDashboard() {
     @keyframes dotBounce {
       0%,80%,100%{transform:scale(0)}
       40%{transform:scale(1)}
+    }
+    @keyframes flagWave {
+      0%,100%{transform:perspective(300px) rotateY(0deg) scaleX(1)}
+      25%{transform:perspective(300px) rotateY(2deg) scaleX(0.98)}
+      50%{transform:perspective(300px) rotateY(0deg) scaleX(1.01)}
+      75%{transform:perspective(300px) rotateY(-2deg) scaleX(0.99)}
     }
 
     .glass-card {
@@ -452,28 +473,6 @@ export default function PremiumDashboard() {
       width:24%;
       transition:width 0.5s ease;
     }
-    .typing-demo {
-      font-family:'DM Mono',monospace;
-      font-size:0.78rem;
-      color:#60a5fa;
-      overflow:hidden;
-      white-space:nowrap;
-      border-right:2px solid #60a5fa;
-      animation:typing 1.5s steps(22,end), blink 0.8s step-end infinite;
-    }
-    .floating-chip {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.1);
-      border-radius:100px;
-      padding:4px 12px;
-      font-size:0.72rem;
-      font-family:'DM Mono',monospace;
-      color:#94a3b8;
-      animation:floatDrift1 4s ease-in-out infinite;
-    }
     .loading-dots span {
       display:inline-block;
       width:6px;height:6px;
@@ -484,6 +483,46 @@ export default function PremiumDashboard() {
     .loading-dots span:nth-child(1){animation:dotBounce 1.4s ease-in-out 0s infinite}
     .loading-dots span:nth-child(2){animation:dotBounce 1.4s ease-in-out 0.2s infinite}
     .loading-dots span:nth-child(3){animation:dotBounce 1.4s ease-in-out 0.4s infinite}
+
+    /* Indian flag watermark */
+    .india-flag-watermark {
+      position:absolute;
+      width:160px;
+      height:96px;
+      border-radius:4px;
+      overflow:hidden;
+      opacity:0.055;
+      filter:blur(1px) saturate(0.6);
+      animation:flagWave 8s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .india-flag-watermark::before,
+    .india-flag-watermark::after {
+      content:'';
+      position:absolute;
+      left:0;right:0;
+      height:33.33%;
+    }
+    .flag-stripe-saffron { background:#FF9933; height:33.33%; }
+    .flag-stripe-white   { background:#FFFFFF; height:33.33%; display:flex; align-items:center; justify-content:center; }
+    .flag-stripe-green   { background:#138808; height:33.33%; }
+    .flag-fade-mask {
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, rgba(2,6,23,0.9) 0%, rgba(2,6,23,0) 20%, rgba(2,6,23,0) 80%, rgba(2,6,23,0.9) 100%),
+                linear-gradient(180deg, rgba(2,6,23,0.7) 0%, rgba(2,6,23,0) 15%, rgba(2,6,23,0) 85%, rgba(2,6,23,0.7) 100%);
+    }
+
+    /* GST badge in single result */
+    .gst-rate-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:10px;
+      padding:0.6rem 1rem;
+    }
   `;
 
   // ── Simulate predict ──────────────────────────────────────────────────────
@@ -491,7 +530,6 @@ export default function PremiumDashboard() {
     e?.preventDefault();
     if (!query.trim()) return;
     setSingleError(""); setSingleLoading(true); setResult(null);
-    // Simulate API call
     await new Promise(r => setTimeout(r, 1200));
     setSingleLoading(false);
     setResult({
@@ -500,14 +538,16 @@ export default function PremiumDashboard() {
         description: "Toothpaste and other oral hygiene preparations",
         score: 0.94,
         method: "verified_exact",
+        gst_rate: 12,
       },
       alternatives: [
-        { hsn_code: "33069090", description: "Other oral hygiene preparations", score: 0.73, method: "fts" },
-        { hsn_code: "33049900", description: "Dental cosmetic preparations", score: 0.61, method: "semantic" },
+        { hsn_code: "33069090", description: "Other oral hygiene preparations", score: 0.73, method: "fts", gst_rate: 12 },
+        { hsn_code: "33049900", description: "Dental cosmetic preparations", score: 0.61, method: "semantic", gst_rate: 18 },
       ],
       confidence: 0.94,
       confidence_label: "high",
       needs_review: false,
+      gst_rate: 12,
     });
   }
 
@@ -518,7 +558,6 @@ export default function PremiumDashboard() {
     setBulkResults([]); setBulkError(""); setBulkStats(null); setPage(0);
     setShowFileSuccess(false);
     setTimeout(() => setShowFileSuccess(true), 300);
-    // Demo columns
     setColumns(["Product Description", "Item Code", "Category"]);
     setSelectedCol("Product Description");
     setRawRows(Array.from({ length: 24 }, (_, i) => ({ "Product Description": `Product ${i+1}` })));
@@ -555,6 +594,7 @@ export default function PremiumDashboard() {
     const hsnSamples = ["33061010","19053100","21069099","09041100","04061000","15131900","22011010","73239300"];
     const descs = ["Oral hygiene prep","Sweet biscuits","Food supplement","Black pepper","Processed cheese","Coconut oil","Mineral water","SS household articles"];
     const labels = ["high","high","medium","high","high","medium","high","medium"];
+    const gstRates = [12, 5, 18, 5, 12, 5, 5, 18];
 
     for (let i = 0; i < total; i++) {
       await new Promise(r => setTimeout(r, 30));
@@ -563,7 +603,7 @@ export default function PremiumDashboard() {
         query: rawRows[i][selectedCol] || `Row ${i+1}`,
         hsn_code: hsnSamples[i % hsnSamples.length],
         description: descs[i % descs.length],
-        gst_rate: [5,12,18,28][i%4],
+        gst_rate: gstRates[i % gstRates.length],
         confidence: 0.72 + Math.random() * 0.26,
         confidence_label: labels[i % labels.length],
         match_method: "verified_exact",
@@ -572,8 +612,7 @@ export default function PremiumDashboard() {
     }
 
     steps[2] = true; setProcessSteps([...steps]);
-    const matched = total;
-    setBulkStats({ matched, unmatched: 0, total });
+    setBulkStats({ matched: total, unmatched: 0, total });
     setBulkLoading(false);
   }, [rawRows, selectedCol]);
 
@@ -603,7 +642,6 @@ export default function PremiumDashboard() {
 
       {/* ── Deep layered background ─────────────────────────────────────── */}
       <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
-        {/* Gradient mesh */}
         <div style={{
           position: "absolute", inset: 0,
           background: `
@@ -612,12 +650,10 @@ export default function PremiumDashboard() {
             radial-gradient(ellipse at 50% 100%, rgba(15,23,42,0.8) 0%, transparent 70%),
             #020617`,
         }} />
-        {/* Noise grain */}
         <div style={{
           position: "absolute", inset: 0, opacity: 0.035,
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         }} />
-        {/* Blobs */}
         <div style={{
           position: "absolute", width: 600, height: 600,
           top: -200, left: -200, borderRadius: "50%",
@@ -630,25 +666,7 @@ export default function PremiumDashboard() {
           background: "radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%)",
           animation: "blobDrift 26s ease-in-out infinite reverse",
         }} />
-        {/* Floating icons */}
         {FLOAT_ICONS.map((ic, i) => <FloatingIcon key={i} {...ic} />)}
-
-        {/* Subtle Indian flag behind hero */}
-        <div style={{
-          position: "absolute", right: "5%", top: "8%",
-          width: 120, height: 72,
-          opacity: 0.06,
-          borderRadius: 4,
-          overflow: "hidden",
-          animation: "wave 6s ease-in-out infinite",
-          filter: "blur(1px)",
-        }}>
-          <div style={{ height: "33.33%", background: "#FF9933" }} />
-          <div style={{ height: "33.33%", background: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: 12, height: 12, borderRadius: "50%", border: "1.5px solid #000080" }} />
-          </div>
-          <div style={{ height: "33.33%", background: "#138808" }} />
-        </div>
       </div>
 
       {/* ── Navbar ─────────────────────────────────────────────────────── */}
@@ -682,7 +700,7 @@ export default function PremiumDashboard() {
           </span>
         </div>
 
-        {/* Center nav */}
+        {/* Center nav tabs */}
         <div style={{ display: "flex", gap: "0.25rem", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "0.25rem" }}>
           <button onClick={() => setMode("single")} className={`tab-btn ${mode === "single" ? "tab-active" : "tab-inactive"}`}>
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="4" stroke="currentColor" strokeWidth="1.5"/><path d="M2 13c0-2.2 2.7-4 6-4s6 1.8 6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -694,50 +712,21 @@ export default function PremiumDashboard() {
           </button>
         </div>
 
-        {/* Right — usage + user */}
+        {/* Right — usage bar only (user menu removed) */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.65rem", color: "#475569", marginBottom: 3, fontFamily: "'DM Mono', monospace" }}>120 / 500 rows used</div>
             <div className="usage-bar" style={{ width: 80 }}><div className="usage-fill" /></div>
           </div>
-          <div style={{ position: "relative" }}>
-            <div
-              onClick={() => setShowUserMenu(p => !p)}
-              style={{
-                width: 34, height: 34, borderRadius: "50%",
-                background: "linear-gradient(135deg, #2563eb, #60a5fa)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer",
-                fontSize: "0.78rem", fontWeight: 700, color: "#fff",
-                boxShadow: "0 0 12px rgba(37,99,235,0.4)",
-                border: "1.5px solid rgba(96,165,250,0.4)",
-              }}
-            >{userInitial}</div>
-            {showUserMenu && (
-              <div style={{
-                position: "absolute", top: 44, right: 0, width: 180,
-                background: "rgba(10,18,40,0.97)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 14, padding: "0.5rem", zIndex: 200,
-                backdropFilter: "blur(20px)",
-                boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
-                animation: "fadeUp 0.2s ease",
-              }}>
-                {["Profile", "API Keys", "Settings", "Sign out"].map(item => (
-                  <div key={item} onClick={() => setShowUserMenu(false)} style={{
-                    padding: "0.55rem 0.8rem", borderRadius: 8,
-                    fontSize: "0.8rem", color: "#94a3b8", cursor: "pointer",
-                    transition: "all 0.15s",
-                    color: item === "Sign out" ? "#f87171" : "#94a3b8",
-                  }}
-                  onMouseEnter={e => e.target.style.background = "rgba(255,255,255,0.06)"}
-                  onMouseLeave={e => e.target.style.background = "transparent"}>
-                    {item}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Avatar — display only, no menu */}
+          <div style={{
+            width: 34, height: 34, borderRadius: "50%",
+            background: "linear-gradient(135deg, #2563eb, #60a5fa)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "0.78rem", fontWeight: 700, color: "#fff",
+            boxShadow: "0 0 12px rgba(37,99,235,0.4)",
+            border: "1.5px solid rgba(96,165,250,0.4)",
+          }}>{userInitial}</div>
         </div>
       </nav>
 
@@ -746,9 +735,20 @@ export default function PremiumDashboard() {
 
         {/* Page header */}
         <div style={{ marginBottom: "2rem", animation: "fadeUp 0.6s ease both" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", boxShadow: "0 0 8px rgba(59,130,246,0.8)" }} />
-            <span style={{ fontSize: "0.68rem", color: "#3b82f6", fontFamily: "'DM Mono', monospace", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem", position: "relative" }}>
+            {/* Subtle flowing flag behind the "India · GST Classification" eyebrow */}
+            <div style={{ position: "absolute", left: -20, top: -28, zIndex: 0, pointerEvents: "none" }}>
+              <div className="india-flag-watermark" style={{ width: 180, height: 108 }}>
+                <div className="flag-stripe-saffron" />
+                <div className="flag-stripe-white">
+                  <div style={{ width: 14, height: 14, borderRadius: "50%", border: "1.5px solid rgba(0,0,128,0.5)" }} />
+                </div>
+                <div className="flag-stripe-green" />
+                <div className="flag-fade-mask" />
+              </div>
+            </div>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", boxShadow: "0 0 8px rgba(59,130,246,0.8)", position: "relative", zIndex: 1 }} />
+            <span style={{ fontSize: "0.68rem", color: "#3b82f6", fontFamily: "'DM Mono', monospace", letterSpacing: "0.12em", textTransform: "uppercase", position: "relative", zIndex: 1 }}>
               India · GST Classification
             </span>
           </div>
@@ -835,7 +835,7 @@ export default function PremiumDashboard() {
 
             {result && (
               <div style={{ animation: "fadeUp 0.4s ease both" }}>
-                {/* Big HSN result */}
+                {/* Big HSN result card */}
                 <div className="glass-card-bright" style={{ padding: "3rem 2rem", textAlign: "center", marginBottom: "0.875rem", position: "relative", overflow: "hidden" }}>
                   <div style={{
                     position: "absolute", inset: 0,
@@ -847,12 +847,49 @@ export default function PremiumDashboard() {
                   <div style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "0.75rem", maxWidth: 400, margin: "0.75rem auto 0" }}>
                     {result.top_match.description}
                   </div>
+
+                  {/* Pills row: confidence + GST rate */}
                   <div style={{ marginTop: "1.25rem", display: "flex", justifyContent: "center", gap: "0.6rem", flexWrap: "wrap", alignItems: "center" }}>
                     <ConfPill label={result.confidence_label} value={result.confidence} />
+                    <GstPill rate={result.gst_rate ?? result.top_match.gst_rate} />
                     <span style={{ fontSize: "0.7rem", color: "#334155", fontFamily: "'DM Mono', monospace" }}>
                       via {result.top_match.method}
                     </span>
                   </div>
+
+                  {/* GST detail bar */}
+                  {(result.gst_rate != null || result.top_match.gst_rate != null) && (
+                    <div style={{
+                      marginTop: "1.5rem",
+                      display: "inline-flex",
+                      gap: "1.5rem",
+                      background: "rgba(0,0,0,0.2)",
+                      border: "1px solid rgba(255,255,255,0.06)",
+                      borderRadius: 12,
+                      padding: "0.75rem 1.5rem",
+                    }}>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: "0.6rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>GST Rate</div>
+                        <div style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: "1.4rem", color: "#4ade80", lineHeight: 1 }}>
+                          {result.gst_rate ?? result.top_match.gst_rate}%
+                        </div>
+                      </div>
+                      <div style={{ width: 1, background: "rgba(255,255,255,0.06)", alignSelf: "stretch" }} />
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: "0.6rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>HSN Chapter</div>
+                        <div style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: "1.2rem", color: "#60a5fa", lineHeight: 1 }}>
+                          {padHsn(result.top_match.hsn_code).slice(0, 2)}
+                        </div>
+                      </div>
+                      <div style={{ width: 1, background: "rgba(255,255,255,0.06)", alignSelf: "stretch" }} />
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: "0.6rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>Review</div>
+                        <div style={{ fontSize: "0.8rem", color: result.needs_review ? "#f87171" : "#4ade80", fontWeight: 600 }}>
+                          {result.needs_review ? "Needed" : "Clear"}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Alternatives */}
@@ -863,14 +900,19 @@ export default function PremiumDashboard() {
                     </div>
                     <table className="data-table">
                       <thead><tr>
-                        <th>HSN Code</th><th>Description</th><th>Confidence</th>
+                        <th>HSN Code</th><th>Description</th><th>GST%</th><th>Confidence</th>
                       </tr></thead>
                       <tbody>
                         {result.alternatives.map(a => (
                           <tr key={a.hsn_code}>
                             <td><span className="hsn-sm">{padHsn(a.hsn_code)}</span></td>
-                            <td style={{ maxWidth: 340 }}>
+                            <td style={{ maxWidth: 280 }}>
                               <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#475569" }}>{a.description}</span>
+                            </td>
+                            <td>
+                              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#4ade80", fontWeight: 600 }}>
+                                {a.gst_rate != null ? `${a.gst_rate}%` : "—"}
+                              </span>
                             </td>
                             <td><ConfPill label={a.score >= 0.8 ? "high" : a.score >= 0.55 ? "medium" : "low"} value={a.score} /></td>
                           </tr>
@@ -884,26 +926,20 @@ export default function PremiumDashboard() {
 
             {!result && !singleLoading && (
               <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-                {/* Animated demo */}
                 <div style={{ display: "inline-flex", flexDirection: "column", gap: "0.75rem", marginBottom: "2rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>Horlicks Womens 400g</span>
-                    <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
-                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>21069099</span>
-                    <ConfPill label="high" value={0.91} />
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>VKC Chappal Size 7</span>
-                    <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
-                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>64021000</span>
-                    <ConfPill label="high" value={0.97} />
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>Aashirvaad Atta 5kg</span>
-                    <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
-                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>11010000</span>
-                    <ConfPill label="high" value={0.95} />
-                  </div>
+                  {[
+                    { prod: "Horlicks Womens 400g", hsn: "21069099", conf: 0.91, gst: 18 },
+                    { prod: "VKC Chappal Size 7",   hsn: "64021000", conf: 0.97, gst: 5  },
+                    { prod: "Aashirvaad Atta 5kg",  hsn: "11010000", conf: 0.95, gst: 5  },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>{item.prod}</span>
+                      <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
+                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>{item.hsn}</span>
+                      <ConfPill label="high" value={item.conf} />
+                      <GstPill rate={item.gst} />
+                    </div>
+                  ))}
                 </div>
                 <p style={{ fontSize: "0.8rem", color: "#334155" }}>Type any product description above</p>
               </div>
@@ -914,10 +950,7 @@ export default function PremiumDashboard() {
         {/* ════════════════════ BULK MODE ════════════════════ */}
         {mode === "bulk" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", animation: "fadeUp 0.5s ease both" }}>
-
-            {/* Two-column layout: upload + process panel */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-
               {/* Upload zone */}
               <div className="glass-card" style={{ padding: "1.5rem" }}>
                 <div className="lbl">Step 1 — Upload Excel / CSV</div>
@@ -991,8 +1024,7 @@ export default function PremiumDashboard() {
                   ))}
                 </div>
 
-                {/* Processing steps */}
-                {bulkLoading || processSteps.some(Boolean) ? (
+                {(bulkLoading || processSteps.some(Boolean)) ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "1rem", background: "rgba(0,0,0,0.2)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.05)" }}>
                     <ProcessStep label="Analyzing products..." done={processSteps[0]} active={bulkLoading && !processSteps[0]} />
                     <ProcessStep label="Cleaning & normalizing data" done={processSteps[1]} active={bulkLoading && processSteps[0] && !processSteps[1]} />
@@ -1000,16 +1032,11 @@ export default function PremiumDashboard() {
                   </div>
                 ) : null}
 
-                {/* Progress bar */}
                 {bulkLoading && progress.total > 0 && (
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ fontSize: "0.7rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>
-                        Processing...
-                      </span>
-                      <span style={{ fontSize: "0.7rem", color: "#60a5fa", fontFamily: "'DM Mono', monospace" }}>
-                        {progress.done}/{progress.total}
-                      </span>
+                      <span style={{ fontSize: "0.7rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>Processing...</span>
+                      <span style={{ fontSize: "0.7rem", color: "#60a5fa", fontFamily: "'DM Mono', monospace" }}>{progress.done}/{progress.total}</span>
                     </div>
                     <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
                       <div style={{
@@ -1024,7 +1051,6 @@ export default function PremiumDashboard() {
                   </div>
                 )}
 
-                {/* Action button */}
                 <div style={{ marginTop: "auto" }}>
                   <button
                     onClick={handleBulkProcess}
@@ -1084,14 +1110,8 @@ export default function PremiumDashboard() {
                   borderBottom: "1px solid rgba(255,255,255,0.05)",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#f8fafc" }}>
-                      Results
-                    </span>
-                    {bulkLoading && (
-                      <div className="loading-dots" style={{ display: "inline-flex" }}>
-                        <span/><span/><span/>
-                      </div>
-                    )}
+                    <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#f8fafc" }}>Results</span>
+                    {bulkLoading && <div className="loading-dots" style={{ display: "inline-flex" }}><span/><span/><span/></div>}
                   </div>
                   <button onClick={handleDownload} disabled={bulkLoading} className="btn-ghost" style={{ fontSize: "0.75rem" }}>
                     <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -1121,7 +1141,7 @@ export default function PremiumDashboard() {
                               <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#64748b" }}>{r.query}</span>
                             </td>
                             <td><span className="hsn-sm">{padHsn(r.hsn_code)}</span></td>
-                            <td style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#64748b" }}>
+                            <td style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#4ade80", fontWeight: 600 }}>
                               {r.gst_rate != null ? `${r.gst_rate}%` : "—"}
                             </td>
                             <td><ConfPill label={r.confidence_label} value={r.confidence} /></td>
@@ -1142,15 +1162,9 @@ export default function PremiumDashboard() {
                       {page * PAGE_SIZE + 1}–{Math.min((page+1)*PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
                     </span>
                     <div style={{ display: "flex", gap: "0.35rem" }}>
-                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>
-                        ←
-                      </button>
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#475569", padding: "0 0.35rem", display: "flex", alignItems: "center" }}>
-                        {page+1}/{totalPages}
-                      </span>
-                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>
-                        →
-                      </button>
+                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>←</button>
+                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#475569", padding: "0 0.35rem", display: "flex", alignItems: "center" }}>{page+1}/{totalPages}</span>
+                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>→</button>
                     </div>
                   </div>
                 )}
@@ -1159,17 +1173,6 @@ export default function PremiumDashboard() {
 
             {bulkResults.length === 0 && !bulkLoading && columns.length === 0 && (
               <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
-                <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1.5rem", opacity: 0.4 }}>
-                  {["Excel → ", "AI Processing → ", "HSN Codes"].map((label, i) => (
-                    <div key={i} style={{
-                      display: "flex", alignItems: "center", gap: "0.5rem",
-                      fontSize: "0.75rem", color: "#475569",
-                      fontFamily: "'DM Mono', monospace",
-                    }}>
-                      {label}
-                    </div>
-                  ))}
-                </div>
                 <p style={{ fontSize: "0.8rem", color: "#334155", marginBottom: 4 }}>Upload a spreadsheet to begin</p>
                 <p style={{ fontSize: "0.72rem", color: "#1e293b" }}>Supports .xlsx, .xls, and .csv</p>
               </div>
