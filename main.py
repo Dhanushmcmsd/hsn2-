@@ -11,9 +11,6 @@ from datetime import datetime, timedelta
 from typing import Optional
 import os, json, re, uuid, math
 
-# ── Logging ───────────────────────────────────────────────────────────────────
-# FIX #1: main.py is standalone — structlog lives in app/ only.
-# Define a standard-library logger so log.warning() calls never crash.
 import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
 log = logging.getLogger("hsn_main")
@@ -48,9 +45,7 @@ class Base(DeclarativeBase):
     pass
 
 class HSNCode(Base):
-    """Maps to hsn_codes table in Neon PostgreSQL."""
     __tablename__ = "hsn_codes"
-
     id:                  Mapped[str]           = mapped_column(String(36), primary_key=True)
     hsn_code:            Mapped[str]           = mapped_column(String(8), index=True)
     hsn_chapter:         Mapped[Optional[str]] = mapped_column(String(2))
@@ -134,8 +129,6 @@ def decode_token(token: str) -> str:
 
 # ── HSN code normalizer ───────────────────────────────────────────────────────
 def normalize_hsn(code: str) -> str:
-    """Zero-pad HSN codes to 8 digits. e.g. '8471' → '08471000' is wrong;
-    '8013220' → '08013220' is right (preserve all digits, just left-pad)."""
     if not code or not str(code).strip():
         return code
     stripped = str(code).strip()
@@ -143,8 +136,7 @@ def normalize_hsn(code: str) -> str:
         return stripped.zfill(8)
     return stripped
 
-# ── FIX #2: _strip_sizes was called in _match_one Pass 0 but never defined ────
-# Copied verbatim from app/models/database.py so main.py is fully self-contained.
+# ── Size-stripping ────────────────────────────────────────────────────────────
 _SIZE_PAT = re.compile(
     r'\b\d+(?:\.\d+)?\s*(?:G|GM|GMS|KG|KGS|ML|L|LTR|LITRE|LITER|'
     r'PC|PCS|NOS|NO|N|P|IN|MG|OZ|LB)\b'
@@ -156,7 +148,6 @@ _SIZE_PAT = re.compile(
 )
 
 def _strip_sizes(text: str) -> str:
-    """Remove weight/volume/count tokens; collapse whitespace; return UPPERCASE."""
     t = _SIZE_PAT.sub(' ', text.upper())
     t = re.sub(r'[^A-Z\s]', ' ', t)
     return re.sub(r'\s+', ' ', t).strip()
@@ -216,7 +207,7 @@ class BatchResponse(BaseModel):
     unmatched: int
 
 # ── App ───────────────────────────────────────────────────────────────────────
-app = FastAPI(title="HSN Classifier API", version="2.2.1")
+app = FastAPI(title="HSN Classifier API", version="2.3.0")
 
 ALLOWED_ORIGINS = [
     "https://hsn2.vercel.app",
@@ -241,32 +232,27 @@ app.add_middleware(
 @app.get("/health")
 async def health(db: AsyncSession = Depends(get_db)):
     try:
-        result = await db.execute(
-            text("SELECT COUNT(*) FROM hsn_codes WHERE is_active = TRUE")
-        )
+        result = await db.execute(text("SELECT COUNT(*) FROM hsn_codes WHERE is_active = TRUE"))
         hsn_count = result.scalar()
     except Exception:
         hsn_count = 0
-
     try:
         search_result = await db.execute(text("SELECT COUNT(*) FROM hsn_search"))
         search_count = search_result.scalar()
     except Exception:
         search_count = 0
-
     try:
         vp_result = await db.execute(text("SELECT COUNT(*) FROM verified_products"))
         vp_count = vp_result.scalar()
     except Exception:
         vp_count = 0
-
     return {
         "status": "ok",
         "redis": "connected" if redis_client else "disabled",
         "hsn_records": hsn_count,
         "hsn_search_records": search_count,
         "verified_products": vp_count,
-        "version": "2.2.1",
+        "version": "2.3.0",
     }
 
 # ── Auth routes ───────────────────────────────────────────────────────────────
@@ -373,7 +359,6 @@ async def search_hsn(
         for r in result.fetchall()
     ]
 
-# ── FMCG Abbreviation Expansion ───────────────────────────────────────────────
 @app.post("/expand-abbreviations")
 async def expand_abbreviations_endpoint(body: SingleQuery):
     expanded = expand_fmcg_abbreviations(body.text)
@@ -466,7 +451,7 @@ async def batch_predict(
                     alt["hsn_code"] = normalize_hsn(alt["hsn_code"])
             results.append(row)
         except Exception as e:
-            log.error("batch.match_failed", query=query[:60], error=str(e))
+            log.error("batch.match_failed query=%s error=%s", query[:60], str(e))
             results.append(HSNBatchResult(query=query, error=str(e)))
 
     matched = sum(1 for r in results if r.hsn_code)
@@ -477,7 +462,7 @@ async def batch_predict(
         unmatched=len(results) - matched,
     )
 
-# ── Core matching dictionaries ────────────────────────────────────────────────
+# ── Matching dictionaries ─────────────────────────────────────────────────────
 
 STOPWORDS = {
     'the','a','an','and','or','of','in','is','for','to','with','on','at',
@@ -493,67 +478,55 @@ STOPWORDS = {
     'whole','part','piece','slice','chunk','bit','portion','section','segment',
     'various','different','multiple','several','many','few','single','double','triple',
     'regular','extra','special','standard','basic','advanced','simple','complex',
-    'normal','abnormal','usual','unusual','common','rare','unique','ordinary',
-    'general','specific','particular','certain','various','diverse','wide','narrow',
+    'normal','usual','common','rare','unique','ordinary','general','specific',
+    'no1','no2','grade','quality','type','variety','model','make',
+    'cover','wrapper','wt','weight','net','gross',
 }
 
 BRANDS = {
-    'vkc', 'cello', 'manak', 'lemam', 'apaar', 'gebi', 'nolta',
-    'bees', 'polyset', 'nakoda', 'esquire', 'real1', 'brillar',
-    'orgello', 'lazza', 'jaipet', 'sithas', 'skei', 'ustraa',
-    'mercely', 'mercelyn', 'homwow', 'impex', 'firmer',
-    'topclean', 'ksk', 'kvg', 'kshethra',
-    'keli', 'muram', 'liya', 'heyday', 'cupid', 'alfa',
-    'colombo', 'flair', 'camlin', 'classmate', 'navneet',
-    'kangaro', 'bakers', 'chozen', 'grandmas',
-    'diva', 'brahmins', 'eastern',
-    'patanjali', 'nestle', 'amul', 'tata', 'godrej', 'dettol',
-    'lifebuoy', 'colgate', 'pepsodent', 'nivea', 'garnier', 'loreal',
-    'sony', 'samsung', 'apple', 'lg', 'whirlpool', 'philips',
-    'nike', 'adidas', 'puma', 'reebok', 'bajaj', 'marico',
-    'unilever', 'parle', 'britannia', 'honda', 'suzuki',
-    'himalaya', 'dove', 'yardley', 'gillette', 'pampers',
-    'huggies', 'johnson', 'dabur', 'emami', 'meril',
-    'harpic', 'lizol', 'ariel', 'surf', 'rin', 'vim',
-    'haldirams', 'bikano', 'bikaji', 'balaji', 'prataap',
-    'maggi', 'knorr', 'kissan', 'sunfeast', 'horlicks',
-    'bournvita', 'complan', 'pediasure', 'boost',
-    'cadbury', 'milkybar', 'kitkat',
-    'lays', 'kurkure', 'pringles',
-    'pepsi', 'sprite', 'fanta', 'maaza',
-    'tropicana', 'paperboat',
-    'milkymist', 'heritage',
-    'moov', 'volini', 'iodex', 'burnol',
-    'fogg', 'axe', 'engage',
-    'maybelline', 'lakme', 'revlon',
-    'cinthol', 'liril', 'lux', 'pears',
-    'head', 'pantene', 'sunsilk', 'tresemme',
-    'odonil', 'odomos', 'mortein', 'baygon', 'hit',
-    'fevicol', 'fevistick', 'fevikwik', 'pidilite',
-    'nataraj', 'apsara', 'faber', 'staedtler',
-    'orbit', 'mentos', 'alpenliebe',
-    'indiagate', 'daawat', 'kohinoor',
-    'aashirvaad', 'saffola', 'fortune',
-    'sundrop', 'dhara', 'goldwinner',
-    'everest', 'mdh', 'catch', 'badshah',
-    'mcvities', 'oreo',
-    'prestige', 'hawkins', 'pigeon', 'butterfly',
+    'vkc','cello','manak','lemam','apaar','gebi','nolta','bees','polyset',
+    'nakoda','esquire','real1','brillar','orgello','lazza','jaipet','sithas',
+    'skei','ustraa','mercely','mercelyn','homwow','impex','firmer',
+    'topclean','ksk','kvg','kshethra','keli','muram','liya','heyday','cupid',
+    'alfa','colombo','flair','camlin','classmate','navneet','kangaro','bakers',
+    'chozen','grandmas','diva','brahmins','eastern',
+    'patanjali','nestle','amul','tata','godrej','dettol','lifebuoy','colgate',
+    'pepsodent','nivea','garnier','loreal','sony','samsung','apple','lg',
+    'whirlpool','philips','nike','adidas','puma','reebok','bajaj','marico',
+    'unilever','parle','britannia','honda','suzuki','himalaya','dove','yardley',
+    'gillette','pampers','huggies','johnson','dabur','emami','meril',
+    'harpic','lizol','ariel','surf','rin','vim','haldirams','bikano','bikaji',
+    'balaji','prataap','maggi','knorr','kissan','sunfeast','horlicks',
+    'bournvita','complan','pediasure','boost','cadbury','milkybar','kitkat',
+    'lays','kurkure','pringles','pepsi','sprite','fanta','maaza',
+    'tropicana','paperboat','milkymist','heritage','moov','volini','iodex','burnol',
+    'fogg','axe','engage','maybelline','lakme','revlon','cinthol','liril','lux',
+    'pears','head','pantene','sunsilk','tresemme','odonil','odomos','mortein',
+    'baygon','hit','fevicol','fevistick','fevikwik','pidilite','nataraj','apsara',
+    'faber','staedtler','orbit','mentos','alpenliebe','indiagate','daawat',
+    'kohinoor','aashirvaad','saffola','fortune','sundrop','dhara','goldwinner',
+    'everest','mdh','catch','badshah','mcvities','oreo','prestige','hawkins',
+    'pigeon','butterfly','pavithram','idhayam','suriyan','forma','dev','sithas',
+    'thalolam','paf','lion','aachi','kissan','happy','priyom','fruitomans',
+    'craze','unibic','bauli','elko','pearl','indigate','noltai','suryan',
+    'crazee','urbans','daileco','om','shanthi','natural','spices',
 }
 
 FMCG_ABBREVIATIONS = {
-    'btrm': 'bathroom', 'clnr': 'cleaner', 'clng': 'cleaning',
-    'cnctrtd': 'concentrated', 'disinftnt': 'disinfectant',
-    'disnftnt': 'disinfectant', 'lqd': 'liquid', 'lm': 'lime',
-    'grs': 'grease', 'blk': 'black', 'thndr': 'thunder',
-    'florl': 'floral', 'antibctrl': 'antibacterial', 'xtra': 'extra',
-    'tugh': 'tough', 'det': 'detergent', 'fab': 'fabric',
+    'btrm': 'bathroom', 'bthrm': 'bathroom', 'clnr': 'cleaner',
+    'clng': 'cleaning', 'cnctrtd': 'concentrated', 'disinftnt': 'disinfectant',
+    'disnftnt': 'disinfectant', 'disinft': 'disinfectant', 'disnft': 'disinfectant',
+    'lqd': 'liquid', 'lm': 'lime', 'grs': 'grease', 'blk': 'black',
+    'thndr': 'thunder', 'florl': 'floral', 'antibctrl': 'antibacterial',
+    'xtra': 'extra', 'tugh': 'tough', 'det': 'detergent', 'fab': 'fabric',
     'phnyl': 'phenyl', 'dsinfct': 'disinfectant', 'airfsh': 'air freshener',
-    'cookis': 'cookie', 'cashw': 'cashew', 'digestve': 'digestive',
-    'choc': 'chocolate',
-    'choco': 'chocolate', 'van': 'vanilla', 'vnlla': 'vanilla',
-    'strbry': 'strawberry', 'rasbry': 'raspberry', 'bluebry': 'blueberry',
-    'blkbry': 'blackberry', 'butrscotch': 'butterscotch', 'jasmne': 'jasmine',
-    'ketch': 'ketchup', 'rsln': 'rasalnu', 'rsnlmn': 'rasalnu lemon',
+    'toilt': 'toilet', 'tolt': 'toilet', 'tlot': 'toilet', 'tlt': 'toilet',
+    'clnr': 'cleaner', 'clnsng': 'cleansing',
+    'cookis': 'cookies', 'cooki': 'cookie', 'cashw': 'cashew',
+    'digestve': 'digestive', 'choc': 'chocolate', 'choco': 'chocolate',
+    'van': 'vanilla', 'vnlla': 'vanilla', 'strbry': 'strawberry',
+    'rasbry': 'raspberry', 'bluebry': 'blueberry', 'blkbry': 'blackberry',
+    'butrscotch': 'butterscotch', 'jasmne': 'jasmine', 'ketch': 'ketchup',
     'ftgr': 'fenugreek', 'podi': 'powder', 'puttu': 'puttu flour',
     'matta': 'matta rice', 'shmp': 'shampoo', 'shavng': 'shaving',
     'razr': 'razor', 'wmn': 'women', 'cndtnr': 'conditioner',
@@ -573,6 +546,17 @@ FMCG_ABBREVIATIONS = {
     'agrbtti': 'agarbatti', 'agrbati': 'agarbatti', 'chand': 'chandan',
     'chndn': 'chandan sandalwood', 'lnch': 'lunch', 'kdu': 'kadukkai',
     'pck': 'pack', 'sprng': 'spring', 'nuggt': 'nugget',
+    'pwr': 'power', 'plus': 'plus', 'orig': 'original', 'orgnl': 'original',
+    'orgnc': 'organic', 'act': 'active', 'actv': 'active',
+    'hygnc': 'hygienic', 'hygienc': 'hygienic', 'rim': 'rim',
+    'flushmtic': 'flushmatic', 'cistrn': 'cistern',
+    'marin': 'marine', 'jasmn': 'jasmine', 'lemn': 'lemon',
+    'parijta': 'parijata', 'parijt': 'parijata',
+    'wht': 'white', 'whn': 'when', 'whi': 'whitening',
+    'whitenshн': 'whitening', 'whiten': 'whitening',
+    'germnstain': 'germ stain', 'blaster': 'blaster',
+    'iodised': 'iodized', 'brandedjaggry': 'jaggery',
+    'nc': 'nice', 'noltai': 'nolta',
 }
 
 SYNONYMS = {
@@ -599,8 +583,7 @@ SYNONYMS = {
     'spatula': ['ladle', 'spoon', 'utensil'],
     'strainer': ['sieve', 'filter', 'jali', 'colander'],
     'glassware': ['dinner set', 'bowl', 'plate', 'mug', 'glass'],
-    'cello': ['glassware', 'dinner set', 'bowl', 'container'],
-    'aluminium': ['aluminum', 'alu', 'fry pan', 'mould', 'cookware'],
+    'cosmetic': ['makeup', 'beauty', 'skincare'],
     'lipstick': ['lip color', 'lip balm', 'lip gloss'],
     'fairness': ['face cream', 'skin whitening', 'face wash'],
     'cream': ['lotion', 'moisturizer', 'fairness', 'face'],
@@ -626,7 +609,7 @@ SYNONYMS = {
     'cardamom': ['elaichi', 'elakkai'],
     'cinnamon': ['dalchini', 'pattai'],
     'fenugreek': ['methi', 'vendayam', 'ftgr'],
-    'sesame': ['gingelly', 'til oil', 'ellu', 'nallennai'],
+    'sesame': ['gingelly', 'til oil', 'ellu', 'nallennai', 'sesame oil', 'sesame candy'],
     'gingelly': ['sesame', 'til', 'ellu'],
     'coconut': ['copra', 'narikela', 'thengai'],
     'sunflower': ['saffola', 'sunflower oil'],
@@ -641,7 +624,10 @@ SYNONYMS = {
     'paneer': ['cheese', 'cottage cheese', 'dairy'],
     'yogurt': ['curd', 'dahi', 'set curd'],
     'curd': ['yogurt', 'dahi', 'set curd'],
-    'cookie': ['biscuit', 'wafer', 'cracker', 'digestive'],
+    'cookie': ['biscuit', 'wafer', 'cracker', 'digestive', 'cookies', 'cooki'],
+    'cooki': ['cookie', 'biscuit', 'wafer', 'cracker', 'cookies'],
+    'cashew': ['cashw', 'kaju'],
+    'cashw': ['cashew', 'kaju'],
     'wafer': ['biscuit', 'cookie', 'chocolate wafer'],
     'chips': ['snack', 'crisps', 'puff', 'extruded snack'],
     'puff': ['chips', 'snack', 'corn puff', 'extruded'],
@@ -656,14 +642,11 @@ SYNONYMS = {
     'chicken': ['poultry', 'meat', 'chkn', 'broiler'],
     'toy': ['plaything', 'game', 'play set', 'doll', 'vehicle'],
     'doll': ['toy', 'figurine', 'play'],
-    'xmas': ['christmas', 'x-mas', 'decoration', 'festive'],
     'notebook': ['note book', 'exercise book', 'writing book', 'nb'],
     'pen': ['ball pen', 'writing pen', 'gel pen', 'ink pen'],
     'pencil': ['drawing pencil', 'hb pencil', 'graphite'],
     'eraser': ['rubber eraser', 'correction'],
     'umbrella': ['rain umbrella', 'telescopic umbrella', 'umbrla'],
-    'ice cream': ['kulfi', 'ice lolly', 'frozen dessert', 'fundae'],
-    'lazza': ['ice cream', 'frozen dessert', 'kulfi'],
     'pickle': ['achar', 'pickled', 'brined', 'mango pickle'],
     'jam': ['jelly', 'marmalade', 'fruit spread'],
     'ketchup': ['sauce', 'tomato sauce', 'chilli sauce'],
@@ -724,6 +707,7 @@ DOMAIN_PREFIXES = {
     'chips': ['19'], 'puff': ['19'], 'snack': ['19'],
     'cereal': ['19'], 'popcorn': ['19'], 'noodle': ['19'],
     'pasta': ['19'], 'bread': ['19'],
+    'cashew': ['08', '20'], 'cashw': ['08', '20'],
     'chocolate': ['18'], 'cocoa': ['18'],
     'sugar': ['17'], 'jaggery': ['17'], 'candy': ['17'], 'toffee': ['17'],
     'pickle': ['20'], 'jam': ['20'], 'jelly': ['20'], 'preserve': ['20'],
@@ -778,7 +762,7 @@ CATEGORY_RULES = [
     {'keywords': ['atta', 'flour', 'maida', 'suji', 'rava', 'puttupodi', 'aval', 'poha'], 'chapters': ['11']},
     {'keywords': ['spice', 'masala', 'turmeric', 'chilli', 'pepper', 'cardamom'], 'chapters': ['09']},
     {'keywords': ['chocolate', 'cocoa', 'choco'],                   'chapters': ['18']},
-    {'keywords': ['biscuit', 'cookie', 'wafer', 'chips', 'puff', 'snack', 'cereal', 'popcorn'], 'chapters': ['19']},
+    {'keywords': ['biscuit', 'cookie', 'wafer', 'chips', 'puff', 'snack', 'cereal', 'popcorn', 'cooki', 'cookis'], 'chapters': ['19']},
     {'keywords': ['sugar', 'jaggery', 'candy', 'toffee'],           'chapters': ['17']},
     {'keywords': ['dairy', 'milk', 'ghee', 'butter', 'cheese', 'paneer', 'curd', 'yogurt'], 'chapters': ['04']},
     {'keywords': ['fish', 'prawn', 'seafood', 'shrimp'],            'chapters': ['03']},
@@ -789,6 +773,7 @@ CATEGORY_RULES = [
     {'keywords': ['jam', 'jelly', 'marmalade'],                     'chapters': ['20']},
     {'keywords': ['ketchup', 'sauce', 'ice cream', 'supplement'],   'chapters': ['21']},
     {'keywords': ['juice', 'aerated', 'soft drink', 'water', 'soda'], 'chapters': ['22']},
+    {'keywords': ['cashew', 'cashw', 'kaju'],                       'chapters': ['08', '20']},
 ]
 
 # ── Helper functions ───────────────────────────────────────────────────────────
@@ -845,7 +830,6 @@ def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
     expanded_tokens = set(tokens)
     for token in tokens:
         expanded_tokens.update(SYNONYMS.get(token, []))
-
     category_chapters = detect_category_restrictions(list(expanded_tokens))
     if category_chapters:
         prefixes = category_chapters
@@ -853,11 +837,9 @@ def build_hsn_prefix_clause(tokens: list[str]) -> tuple[str, dict]:
         prefixes = []
         for token in expanded_tokens:
             prefixes.extend(DOMAIN_PREFIXES.get(token, []))
-
     prefixes = sorted(set(prefixes))
     if not prefixes:
         return "", {}
-
     clause_parts = []
     params: dict[str, str] = {}
     for idx, prefix in enumerate(prefixes):
@@ -885,7 +867,6 @@ def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
         query_weights[token] = max(query_weights.get(token, 0), 2)
         for synonym in SYNONYMS.get(token, []):
             query_weights[synonym] = max(query_weights.get(synonym, 0), 1)
-
     intersection_weight = sum(
         weight for term, weight in query_weights.items() if term in desc_tokens
     )
@@ -903,7 +884,6 @@ def _build_candidate_lexical_index(
     query_fields = split_query_fields(query)
     documents = []
     token_docs: dict[str, set[int]] = {}
-
     for idx, row in enumerate(rows):
         description = str(getattr(row, description_attr, "") or "")
         category = str(getattr(row, category_attr, "") or "")
@@ -913,7 +893,6 @@ def _build_candidate_lexical_index(
         desc_tokens = set(tokenize(desc_expanded))
         category_tokens = set(tokenize(category))
         doc_tokens = desc_tokens | category_tokens | brand_tokens
-
         documents.append({
             "brand_tokens": brand_tokens,
             "desc_tokens": desc_tokens,
@@ -921,10 +900,8 @@ def _build_candidate_lexical_index(
             "doc_tokens": doc_tokens,
             "text_lower": description.lower(),
         })
-
         for token in doc_tokens:
             token_docs.setdefault(token, set()).add(idx)
-
     return {
         "query_fields": query_fields,
         "documents": documents,
@@ -1011,55 +988,40 @@ def compute_inverted_index_score(
     return max(0.0, min(final_score, 1.0))
 
 
-# ── FIX #3: Probe once at startup whether description_no_size column exists ───
-# If the column was never added via ALTER TABLE, Pass 0B/0C queries crash.
-# This flag lets us skip those sub-passes gracefully without touching every query.
-_VP_HAS_NO_SIZE_COL: Optional[bool] = None  # None = not yet probed
+# ── Schema probe (cached) ──────────────────────────────────────────────────────
+_VP_HAS_NO_SIZE_COL: Optional[bool] = None
 
 async def _probe_vp_schema(db: AsyncSession) -> bool:
-    """Return True if verified_products.description_no_size column exists."""
     global _VP_HAS_NO_SIZE_COL
     if _VP_HAS_NO_SIZE_COL is not None:
         return _VP_HAS_NO_SIZE_COL
     try:
-        await db.execute(text(
-            "SELECT description_no_size FROM verified_products LIMIT 0"
-        ))
+        await db.execute(text("SELECT description_no_size FROM verified_products LIMIT 0"))
         _VP_HAS_NO_SIZE_COL = True
     except Exception:
         _VP_HAS_NO_SIZE_COL = False
         log.warning(
             "verified_products.description_no_size column missing — "
-            "run the Neon ALTER TABLE migration. Pass 0B/0C disabled until then."
+            "Pass 0B/0C disabled. Run: ALTER TABLE verified_products "
+            "ADD COLUMN description_no_size VARCHAR(500); to enable."
         )
     return _VP_HAS_NO_SIZE_COL
 
 
-# ── Helper: majority-vote HSN from verified_products rows ─────────────────────
 def _majority_hsn(rows, min_freq: int = 1):
-    """
-    Picks the most frequent HSN code across a list of DB rows.
-    Ties broken by shortest description (most generic / direct match).
-    Returns (best_hsn, best_gst, best_desc, freq, alt_list).
-    """
     if not rows:
         return None, None, None, 0, []
-
     import collections as _col
     hsn_groups = _col.defaultdict(list)
     for r in rows:
         hsn_groups[r.hsn_code].append(r)
-
-    # Sort by (freq DESC, shortest description ASC)
     ranked = sorted(
         hsn_groups.items(),
         key=lambda kv: (-len(kv[1]), min(len(x.description) for x in kv[1])),
     )
-
     best_hsn, best_rows = ranked[0]
     best_row = min(best_rows, key=lambda r: len(r.description))
     freq = len(best_rows)
-
     alts = []
     for alt_hsn, alt_rows in ranked[1:4]:
         alt_row = min(alt_rows, key=lambda r: len(r.description))
@@ -1069,41 +1031,132 @@ def _majority_hsn(rows, min_freq: int = 1):
             "gst_rate": float(alt_row.gst_rate or 0),
             "confidence": round(len(alt_rows) / max(freq, 1) * 0.7, 3),
         })
-
     return best_hsn, best_row.gst_rate, best_row.description, freq, alts
 
 
-# ── Core matching logic (v2) ──────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# LAYER 3 & 4 HELPERS — Intent scoring + confidence calibration
+# ══════════════════════════════════════════════════════════════════════════════
+
+INTENT_BOOSTS = {
+    # (query_keyword, match_keyword_in_description): delta
+    ("jam", "jam"):             +0.18,
+    ("jam", "jelly"):           +0.08,
+    ("jam", "marmalade"):       +0.06,
+    ("jam", "cocktail"):        -0.22,
+    ("jam", "nectar"):          -0.15,
+    ("jam", "preserve"):        +0.04,
+    ("oil", "oil"):             +0.10,
+    ("puja", "puja"):           +0.22,
+    ("puja", "agarbatti"):      -0.12,
+    ("puja", "oil"):            +0.12,
+    ("harpic", "toilet"):       +0.15,
+    ("harpic", "cleaner"):      +0.12,
+    ("harpic", "disinfect"):    +0.10,
+    ("sesame", "sesame"):       +0.10,
+    ("cashew", "cashew"):       +0.15,
+    ("cashew", "cashw"):        +0.15,
+    ("cooki", "cooki"):         +0.12,
+    ("cooki", "cookie"):        +0.12,
+    ("cookie", "cooki"):        +0.12,
+    ("cookie", "cookie"):       +0.12,
+    ("cookie", "biscuit"):      +0.06,
+    ("biscuit", "biscuit"):     +0.12,
+    ("horlicks", "horlicks"):   +0.22,
+    ("womens", "womens"):       +0.18,
+    ("toothpaste", "tooth"):    +0.15,
+    ("shampoo", "shampoo"):     +0.15,
+    ("detergent", "detergent"): +0.12,
+    ("rice", "rice"):           +0.12,
+    ("flour", "flour"):         +0.12,
+    ("atta", "atta"):           +0.15,
+    ("turmeric", "turmeric"):   +0.15,
+    ("salt", "salt"):           +0.15,
+    ("ghee", "ghee"):           +0.15,
+    ("fruit", "fruit"):         +0.08,
+    ("fruit", "cocktail"):      -0.18,
+}
+
+
+def _compute_intent_bonus(query_tokens: list[str], description: str) -> float:
+    """Layer 3: Boost/penalize based on keyword intent vs matched description."""
+    desc_lower = description.lower()
+    bonus = 0.0
+    for qt in query_tokens:
+        qt_lower = qt.lower()
+        for (qk, mk), delta in INTENT_BOOSTS.items():
+            if qt_lower == qk and mk in desc_lower:
+                bonus += delta
+    return max(-0.35, min(0.35, bonus))
+
+
+def _calibrate_confidence(
+    conf: float,
+    query_words: list[str],
+    description: str,
+    *,
+    max_conf: float = 1.0,
+) -> float:
+    """
+    Layer 4: Boost confidence when query words are a subset of matched description.
+    'HORLICKS WOMENS' found in 'HORLICKS WOMENS CHOCO PET 400G' → +0.12
+    """
+    if not query_words:
+        return conf
+    desc_upper = description.upper()
+    sig_words = [w for w in query_words if len(w) >= 3]
+    if not sig_words:
+        return conf
+    matched = sum(1 for w in sig_words if w in desc_upper)
+    ratio = matched / len(sig_words)
+    if ratio >= 1.0:
+        conf = min(max_conf, conf + 0.12)
+    elif ratio >= 0.7:
+        conf = min(max_conf, conf + 0.06)
+    return round(conf, 3)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CORE MATCHING ENGINE v3 — 4-layer fix applied
+# ══════════════════════════════════════════════════════════════════════════════
 async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     """
-    Multi-pass HSN matching (v2 — enhanced verified_products passes).
+    Multi-pass HSN matching (v3 — 4-layer fix).
 
-    Pass 0A : verified_products exact uppercase match        → conf 1.00
-    Pass 0B : verified_products size-stripped exact          → conf 0.95
-    Pass 0C : verified_products pg_trgm on no_size (≥0.60)  → conf sim-based
-    ── NEW ──────────────────────────────────────────────────────────────────
-    Pass 0D : verified_products LIKE 'QUERY%' prefix         → conf 0.60–0.88
-                "HARPIC" → "HARPIC DISINFT BATHRM CLNR LEMON 200ML"
-    Pass 0E : verified_products ALL words in no_size         → conf 0.50–0.85
-                "TURMERIC POWDER" → all TURMERIC+POWDER entries → vote
-    Pass 0E2: relax to top-60% words (noisy / abbreviated)  → conf 0.42–0.75
-                "CASHW COOKI" → top 2 words present in batch entries
-    Pass 0F : verified_products ANY keyword in no_size       → conf 0.28–0.70
-                "SESAME" → all sesame-* entries → vote by HSN frequency
-    ─────────────────────────────────────────────────────────────────────────
-    Pass 1  : exact numeric HSN code lookup
-    Pass 2  : full-text search via hsn_search.search_vector
+    Layer 1: Early abbreviation expansion before ALL passes.
+    Layer 2: Passes 0D-0F use description_normalized (always populated) as primary.
+    Layer 3: Intent-based scoring in FTS and verified-product passes.
+    Layer 4: Confidence calibration boost when query words ⊆ match description.
+
+    Pass 0A : verified_products exact uppercase                     → conf 1.00
+    Pass 0B : verified_products size-stripped exact                 → conf 0.95
+    Pass 0C : verified_products pg_trgm on no_size (≥0.60)         → conf sim-based
+    Pass 0D : verified_products prefix on description_normalized    → conf 0.62-0.90
+    Pass 0E : verified_products ALL words in description_normalized → conf 0.55-0.88
+    Pass 0E2: top-60% words in description_normalized               → conf 0.44-0.78
+    Pass 0F : ANY keyword (+ synonyms) in description_normalized    → conf 0.30-0.72
+    Pass 1  : exact numeric HSN code
+    Pass 2  : full-text search (FTS) via hsn_search
     Pass 3  : trigram on hsn_search.normalized_description
     Pass 4  : ILIKE keyword fallback on hsn_codes
     """
     import re as _re
 
     q_stripped = query.strip()
-    q_upper    = q_stripped.upper()
-    q_ns       = _strip_sizes(q_stripped)           # size-stripped UPPERCASE
+    q_upper = q_stripped.upper()
 
-    # Extract meaningful words (≥3 chars) from size-stripped form
-    q_words = [w for w in _re.findall(r'[A-Z]{2,}', q_ns) if len(w) >= 3]
+    # ── Layer 1: Expand abbreviations early (used in ALL passes) ──────────────
+    q_expanded = expand_fmcg_abbreviations(q_stripped)
+    q_expanded_upper = q_expanded.upper()
+
+    q_ns          = _strip_sizes(q_stripped)   # size-stripped UPPERCASE (original)
+    q_ns_expanded = _strip_sizes(q_expanded)   # size-stripped UPPERCASE (expanded)
+
+    # Extract meaningful words (≥3 chars) from both forms
+    q_words     = [w for w in _re.findall(r'[A-Z]{2,}', q_ns) if len(w) >= 3]
+    q_words_exp = [w for w in _re.findall(r'[A-Z]{2,}', q_ns_expanded.upper()) if len(w) >= 3]
+    # Combined deduped word list for searching
+    q_all_words = list(dict.fromkeys(q_words + q_words_exp))
 
     vp_has_col = await _probe_vp_schema(db)
 
@@ -1112,8 +1165,9 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         best_hsn, best_gst, best_desc, freq, alts = _majority_hsn(rows)
         if not best_hsn:
             return None
-        # More votes → higher confidence (capped at max_conf)
         conf = round(min(max_conf, base_conf + freq * 0.04), 3)
+        # Layer 4: boost when query words subset of matched description
+        conf = _calibrate_confidence(conf, q_all_words, best_desc, max_conf=max_conf)
         gst_float = float(_re.sub(r'[^0-9.]', '', str(best_gst or 0)) or 0)
         label = "high" if conf >= 0.80 else ("medium" if conf >= 0.55 else "low")
         return HSNBatchResult(
@@ -1128,165 +1182,230 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         )
 
     # ══════════════════════════════════════════════════════════════════════════
-    # PASS 0A — Exact normalized match
+    # PASS 0A — Exact normalized match (try original + expanded form)
     # ══════════════════════════════════════════════════════════════════════════
-    try:
-        res = await db.execute(
-            text("""
-                SELECT vp.hsn_code, vp.gst_rate, vp.description, 1.0::float AS sim
-                FROM verified_products vp
-                WHERE vp.description_normalized = :q
-                LIMIT 1
-            """),
-            {"q": q_upper},
-        )
-        row = res.fetchone()
-        if row:
-            gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
-            return HSNBatchResult(
-                query=query,
-                hsn_code=normalize_hsn(row.hsn_code),
-                description=row.description,
-                gst_rate=gst_float,
-                confidence=1.0,
-                confidence_label="high",
-                match_method="verified_exact",
+    for exact_q in list(dict.fromkeys([q_upper, q_expanded_upper])):
+        try:
+            res = await db.execute(
+                text("""
+                    SELECT vp.hsn_code, vp.gst_rate, vp.description
+                    FROM verified_products vp
+                    WHERE vp.description_normalized = :q
+                    LIMIT 1
+                """),
+                {"q": exact_q},
             )
-    except Exception as e:
-        log.warning("pass0A.error query=%s error=%s", q_stripped[:50], str(e))
+            row = res.fetchone()
+            if row:
+                conf = _calibrate_confidence(1.0, q_all_words, row.description, max_conf=1.0)
+                gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
+                return HSNBatchResult(
+                    query=query,
+                    hsn_code=normalize_hsn(row.hsn_code),
+                    description=row.description,
+                    gst_rate=gst_float,
+                    confidence=conf,
+                    confidence_label="high",
+                    match_method="verified_exact",
+                )
+        except Exception as e:
+            log.warning("pass0A.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
     # PASS 0B — Size-stripped exact match
     # ══════════════════════════════════════════════════════════════════════════
-    if q_ns and vp_has_col:
+    if vp_has_col:
+        for ns_q in list(dict.fromkeys([q_ns, q_ns_expanded])):
+            if not ns_q:
+                continue
+            try:
+                res = await db.execute(
+                    text("""
+                        SELECT vp.hsn_code, vp.gst_rate, vp.description
+                        FROM verified_products vp
+                        WHERE vp.description_no_size = :q
+                        ORDER BY vp.id
+                        LIMIT 1
+                    """),
+                    {"q": ns_q},
+                )
+                row = res.fetchone()
+                if row:
+                    conf = _calibrate_confidence(0.95, q_all_words, row.description, max_conf=1.0)
+                    gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
+                    return HSNBatchResult(
+                        query=query,
+                        hsn_code=normalize_hsn(row.hsn_code),
+                        description=row.description,
+                        gst_rate=gst_float,
+                        confidence=conf,
+                        confidence_label="high",
+                        match_method="verified_no_size",
+                    )
+            except Exception as e:
+                log.warning("pass0B.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0C — Trigram on description_no_size (≥0.60)
+    # ══════════════════════════════════════════════════════════════════════════
+    if vp_has_col:
+        for ns_q in list(dict.fromkeys([q_ns, q_ns_expanded])):
+            if not ns_q:
+                continue
+            try:
+                res = await db.execute(
+                    text("""
+                        SELECT vp.hsn_code, vp.gst_rate, vp.description,
+                               similarity(vp.description_no_size, :q) AS sim
+                        FROM verified_products vp
+                        WHERE vp.description_no_size % :q
+                        ORDER BY sim DESC
+                        LIMIT 1
+                    """),
+                    {"q": ns_q},
+                )
+                row = res.fetchone()
+                if row and float(row.sim) >= 0.60:
+                    sim = float(row.sim)
+                    conf = _calibrate_confidence(round(sim, 3), q_all_words, row.description, max_conf=1.0)
+                    gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
+                    return HSNBatchResult(
+                        query=query,
+                        hsn_code=normalize_hsn(row.hsn_code),
+                        description=row.description,
+                        gst_rate=gst_float,
+                        confidence=conf,
+                        confidence_label="high" if conf >= 0.80 else "medium",
+                        match_method="verified_trigram",
+                    )
+            except Exception as e:
+                log.warning("pass0C.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # LAYER 2 FIX: Passes 0D–0F now search description_normalized (PRIMARY)
+    # This fixes SESAME/HARPIC/PUJA OIL/FRUIT JAM returning "none" because
+    # they previously only searched description_no_size which may be NULL.
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0D — PREFIX search on description_normalized
+    # "HARPIC"  → "HARPIC DISINFTNT BTRM CLNR FLORL 500ML"
+    # "HORLICK" → "HORLICKS WOMENS CHOCO PET 400G"
+    # Tries: original prefix, expanded prefix
+    # ══════════════════════════════════════════════════════════════════════════
+    for prefix_q in list(dict.fromkeys([q_upper, q_expanded_upper])):
+        if not prefix_q or len(prefix_q) < 3:
+            continue
         try:
             res = await db.execute(
                 text("""
                     SELECT vp.hsn_code, vp.gst_rate, vp.description
                     FROM verified_products vp
-                    WHERE vp.description_no_size = :q
-                    ORDER BY vp.id
-                    LIMIT 1
+                    WHERE vp.description_normalized LIKE :prefix
+                    ORDER BY LENGTH(vp.description_normalized) ASC
+                    LIMIT 20
                 """),
-                {"q": q_ns},
-            )
-            row = res.fetchone()
-            if row:
-                gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
-                return HSNBatchResult(
-                    query=query,
-                    hsn_code=normalize_hsn(row.hsn_code),
-                    description=row.description,
-                    gst_rate=gst_float,
-                    confidence=0.95,
-                    confidence_label="high",
-                    match_method="verified_no_size",
-                )
-        except Exception as e:
-            log.warning("pass0B.error query=%s error=%s", q_stripped[:50], str(e))
-
-    # ══════════════════════════════════════════════════════════════════════════
-    # PASS 0C — Trigram on no_size (threshold ≥ 0.60)
-    # ══════════════════════════════════════════════════════════════════════════
-    if q_ns and vp_has_col:
-        try:
-            res = await db.execute(
-                text("""
-                    SELECT vp.hsn_code, vp.gst_rate, vp.description,
-                           similarity(vp.description_no_size, :q) AS sim
-                    FROM verified_products vp
-                    WHERE vp.description_no_size % :q
-                    ORDER BY sim DESC
-                    LIMIT 1
-                """),
-                {"q": q_ns},
-            )
-            row = res.fetchone()
-            if row and float(row.sim) >= 0.60:
-                sim = float(row.sim)
-                gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
-                return HSNBatchResult(
-                    query=query,
-                    hsn_code=normalize_hsn(row.hsn_code),
-                    description=row.description,
-                    gst_rate=gst_float,
-                    confidence=round(sim, 3),
-                    confidence_label="high" if sim >= 0.80 else "medium",
-                    match_method="verified_trigram",
-                )
-        except Exception as e:
-            log.warning("pass0C.error query=%s error=%s", q_stripped[:50], str(e))
-
-    # ══════════════════════════════════════════════════════════════════════════
-    # PASS 0D — PREFIX search on description_normalized  ← NEW
-    # "HARPIC"            → "HARPIC DISINFT BATHRM CLNR LEMON 200ML"
-    # "ARIEL PERFECT WASH"→ "ARIEL PERFECT WASH 1KG"
-    # "UNIBIC WAFERS"     → "UNIBIC WAFERS CHEESE 75G"
-    # ══════════════════════════════════════════════════════════════════════════
-    try:
-        res = await db.execute(
-            text("""
-                SELECT vp.hsn_code, vp.gst_rate, vp.description
-                FROM verified_products vp
-                WHERE vp.description_normalized LIKE :prefix
-                ORDER BY LENGTH(vp.description_normalized) ASC
-                LIMIT 20
-            """),
-            {"prefix": q_upper + "%"},
-        )
-        rows = res.fetchall()
-        if rows:
-            result = _build_vp_result(
-                "verified_prefix", rows, base_conf=0.60, max_conf=0.88
-            )
-            if result and result.confidence >= 0.50:
-                return result
-    except Exception as e:
-        log.warning("pass0D.error query=%s error=%s", q_stripped[:50], str(e))
-
-    # ══════════════════════════════════════════════════════════════════════════
-    # PASS 0E — ALL query words contained in description_no_size  ← NEW
-    # "TURMERIC POWDER"   → all products with TURMERIC+POWDER → vote
-    # "SUNFLOWER OIL"     → all products with SUNFLOWER+OIL → vote
-    # "SALT IODISED"      → all products with SALT+IODISED → vote
-    # "PURE PUJA OIL"     → all products with PURE+PUJA+OIL → vote
-    # ══════════════════════════════════════════════════════════════════════════
-    if q_words and vp_has_col and len(q_words) >= 2:
-        try:
-            where_parts = " AND ".join(
-                f"vp.description_no_size LIKE :w{i}" for i in range(len(q_words))
-            )
-            params = {f"w{i}": f"%{w}%" for i, w in enumerate(q_words)}
-            res = await db.execute(
-                text(f"""
-                    SELECT vp.hsn_code, vp.gst_rate, vp.description
-                    FROM verified_products vp
-                    WHERE {where_parts}
-                    LIMIT 30
-                """),
-                params,
+                {"prefix": prefix_q + "%"},
             )
             rows = res.fetchall()
             if rows:
-                result = _build_vp_result(
-                    "verified_allwords", rows, base_conf=0.50, max_conf=0.85
-                )
-                if result and result.confidence >= 0.45:
+                result = _build_vp_result("verified_prefix", rows, base_conf=0.62, max_conf=0.90)
+                if result and result.confidence >= 0.52:
                     return result
         except Exception as e:
-            log.warning("pass0E.error query=%s error=%s", q_stripped[:50], str(e))
+            log.warning("pass0D.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
-    # PASS 0E-2 — Relax to top-60% of words  ← NEW
-    # "CASHW COOKI" → longest words "CASHW"+"COOKI" both hit batch entries
-    # "NAGPUR SOAN PAPDI" → 2 of 3 words: "NAGPUR"+"PAPDI" → hits haldirams
+    # PASS 0E — ALL query words in description_normalized
+    # Uses q_all_words (original + Layer 1 expanded) for better matching.
+    # "FRUIT JAM 350g" → words [FRUIT,JAM] → many jam entries → 20079990
+    # "HORLICKS WOMENS" → [HORLICKS,WOMENS] → 19019090
+    # "PURE PUJA OIL"  → [PURE,PUJA,OIL] → 15180040
+    # "CASHW COOKI"    → [CASHW,COOKI,CASHEW,COOKIE] → 19053100
     # ══════════════════════════════════════════════════════════════════════════
-    if q_words and vp_has_col and len(q_words) >= 2:
+    if len(q_all_words) >= 2:
+        # Try different word sets: original, expanded, combined
+        word_sets_to_try = []
+        seen_keys: set = set()
+        for ws in [q_words, q_words_exp, q_all_words]:
+            if len(ws) >= 2:
+                key = tuple(sorted(ws))
+                if key not in seen_keys:
+                    seen_keys.add(key)
+                    word_sets_to_try.append(ws)
+
+        for words_to_use in word_sets_to_try:
+            try:
+                where_parts = " AND ".join(
+                    f"vp.description_normalized LIKE :w{i}" for i in range(len(words_to_use))
+                )
+                params = {f"w{i}": f"%{w}%" for i, w in enumerate(words_to_use)}
+                res = await db.execute(
+                    text(f"""
+                        SELECT vp.hsn_code, vp.gst_rate, vp.description
+                        FROM verified_products vp
+                        WHERE {where_parts}
+                        LIMIT 30
+                    """),
+                    params,
+                )
+                rows = res.fetchall()
+                if rows:
+                    result = _build_vp_result(
+                        "verified_allwords", rows, base_conf=0.55, max_conf=0.88
+                    )
+                    if result and result.confidence >= 0.48:
+                        # Layer 3: apply intent bonus
+                        tokens_for_intent = tokenize(q_expanded)
+                        intent = _compute_intent_bonus(tokens_for_intent, result.description)
+                        if intent < -0.12:
+                            continue  # wrong category match, try next word set
+                        result.confidence = round(
+                            min(0.88, result.confidence + max(0.0, intent)), 3
+                        )
+                        result.confidence_label = (
+                            "high" if result.confidence >= 0.80 else
+                            "medium" if result.confidence >= 0.55 else "low"
+                        )
+                        return result
+            except Exception as e:
+                log.warning("pass0E.error query=%s error=%s", q_stripped[:50], str(e))
+
+        # Also try description_no_size when available (secondary)
+        if vp_has_col and len(q_words) >= 2:
+            try:
+                where_parts = " AND ".join(
+                    f"vp.description_no_size LIKE :ws{i}" for i in range(len(q_words))
+                )
+                params = {f"ws{i}": f"%{w}%" for i, w in enumerate(q_words)}
+                res = await db.execute(
+                    text(f"""
+                        SELECT vp.hsn_code, vp.gst_rate, vp.description
+                        FROM verified_products vp
+                        WHERE {where_parts}
+                        LIMIT 30
+                    """),
+                    params,
+                )
+                rows = res.fetchall()
+                if rows:
+                    result = _build_vp_result(
+                        "verified_allwords_ns", rows, base_conf=0.55, max_conf=0.88
+                    )
+                    if result and result.confidence >= 0.48:
+                        return result
+            except Exception as e:
+                log.warning("pass0E_ns.error query=%s error=%s", q_stripped[:50], str(e))
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # PASS 0E2 — Top-60% of words on description_normalized
+    # ══════════════════════════════════════════════════════════════════════════
+    if len(q_all_words) >= 2:
         try:
-            needed    = max(1, round(len(q_words) * 0.60))
-            top_words = sorted(q_words, key=len, reverse=True)[:needed]
+            needed = max(1, round(len(q_all_words) * 0.60))
+            top_words = sorted(q_all_words, key=len, reverse=True)[:needed]
             where_parts = " AND ".join(
-                f"vp.description_no_size LIKE :rw{i}" for i in range(len(top_words))
+                f"vp.description_normalized LIKE :rw{i}" for i in range(len(top_words))
             )
             params = {f"rw{i}": f"%{w}%" for i, w in enumerate(top_words)}
             res = await db.execute(
@@ -1301,45 +1420,78 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             rows = res.fetchall()
             if rows:
                 result = _build_vp_result(
-                    "verified_partial", rows, base_conf=0.42, max_conf=0.75
+                    "verified_partial", rows, base_conf=0.44, max_conf=0.78
                 )
-                if result and result.confidence >= 0.40:
-                    return result
+                if result and result.confidence >= 0.42:
+                    tokens_for_intent = tokenize(q_expanded)
+                    intent = _compute_intent_bonus(tokens_for_intent, result.description)
+                    if intent >= -0.08:
+                        result.confidence = round(
+                            min(0.78, result.confidence + max(0.0, intent)), 3
+                        )
+                        result.confidence_label = (
+                            "high" if result.confidence >= 0.80 else
+                            "medium" if result.confidence >= 0.55 else "low"
+                        )
+                        return result
         except Exception as e:
             log.warning("pass0E2.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
-    # PASS 0F — Single-keyword fallback in description_no_size  ← NEW
-    # "SESAME"  → all sesame-* entries → vote (sesame candy wins by count,
-    #             sesame oil is #2 alternative — user sees both)
-    # "JAGGERY 1 KG" → JAGGERY keyword → all jaggery entries → vote
+    # PASS 0F — Single keyword (+ synonyms) on description_normalized
+    # Layer 2 FIX: Uses description_normalized (always exists), not just no_size.
+    # "SESAME"  → all sesame entries → majority HSN
+    # "HARPIC"  → all harpic entries → majority HSN
+    # Also expands: "CASHW" tries "CASHEW" via synonyms too
     # ══════════════════════════════════════════════════════════════════════════
-    if q_words and vp_has_col:
-        try:
-            best_word = max(q_words, key=len)   # most discriminative word
-            res = await db.execute(
-                text("""
-                    SELECT vp.hsn_code, vp.gst_rate, vp.description
-                    FROM verified_products vp
-                    WHERE vp.description_no_size LIKE :kw
-                    LIMIT 50
-                """),
-                {"kw": f"%{best_word}%"},
-            )
-            rows = res.fetchall()
-            if rows:
-                result = _build_vp_result(
-                    "verified_keyword", rows, base_conf=0.28, max_conf=0.70
+    if q_all_words:
+        best_word_orig = max(q_words, key=len) if q_words else ""
+        best_word_exp  = max(q_words_exp, key=len) if q_words_exp else ""
+        # Include synonyms of the best keyword for broader matching
+        synonym_kws = [
+            syn.upper() for syn in SYNONYMS.get(best_word_orig.lower(), [])
+            if len(syn) >= 3 and ' ' not in syn
+        ][:3]
+        candidate_keywords = list(dict.fromkeys(
+            [w for w in [best_word_orig, best_word_exp] if w] + synonym_kws
+        ))
+
+        for kw in candidate_keywords:
+            if not kw or len(kw) < 3:
+                continue
+            try:
+                res = await db.execute(
+                    text("""
+                        SELECT vp.hsn_code, vp.gst_rate, vp.description
+                        FROM verified_products vp
+                        WHERE vp.description_normalized LIKE :kw
+                        LIMIT 50
+                    """),
+                    {"kw": f"%{kw}%"},
                 )
-                if result and result.confidence >= 0.25:
-                    return result
-        except Exception as e:
-            log.warning("pass0F.error query=%s error=%s", q_stripped[:50], str(e))
+                rows = res.fetchall()
+                if rows:
+                    result = _build_vp_result(
+                        "verified_keyword", rows, base_conf=0.30, max_conf=0.72
+                    )
+                    if result and result.confidence >= 0.27:
+                        tokens_for_intent = tokenize(q_expanded)
+                        intent = _compute_intent_bonus(tokens_for_intent, result.description)
+                        result.confidence = round(
+                            min(0.72, result.confidence + max(0.0, intent)), 3
+                        )
+                        result.confidence_label = (
+                            "high" if result.confidence >= 0.80 else
+                            "medium" if result.confidence >= 0.55 else "low"
+                        )
+                        return result
+            except Exception as e:
+                log.warning("pass0F.error kw=%s error=%s", kw, str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
     # PASS 1 — Exact HSN code (numeric input)
     # ══════════════════════════════════════════════════════════════════════════
-    if _re.match(r'^\d{4,8}$', q_stripped):
+    if re.match(r'^\d{4,8}$', q_stripped):
         try:
             res = await db.execute(
                 text("""
@@ -1366,9 +1518,10 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
 
     # ══════════════════════════════════════════════════════════════════════════
     # PASSES 2–4 — FTS / trigram / ILIKE on hsn_codes table
+    # Layer 1: tokenize q_expanded (not q_stripped) for better FTS
+    # Layer 3: intent bonus applied to each FTS result
     # ══════════════════════════════════════════════════════════════════════════
-    q_expanded = expand_fmcg_abbreviations(q_stripped)
-    tokens = tokenize(q_expanded)
+    tokens = tokenize(q_expanded)   # Layer 1: use expanded form
     if not tokens:
         return HSNBatchResult(query=query, match_method="none")
 
@@ -1431,12 +1584,12 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             fts_score = min(float(r.rank) * 2.5, 0.4)
             db_score = min(jaccard * 0.45 + fts_score, 1.0)
             final_score = compute_inverted_index_score(
-                q_expanded,
-                r,
-                lexical_index,
-                doc_idx=idx,
-                base_db_score=db_score,
+                q_expanded, r, lexical_index, doc_idx=idx, base_db_score=db_score,
             )
+            # Layer 3: apply intent bonus
+            intent = _compute_intent_bonus(tokens, r.description)
+            final_score = max(0.0, min(1.0, final_score + intent))
+
             entry = {
                 "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
@@ -1490,12 +1643,11 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         for idx, r in enumerate(rows_trgm):
             sim_score = min(float(r.sim), 1.0)
             final_score = compute_inverted_index_score(
-                q_expanded,
-                r,
-                lexical_index,
-                doc_idx=idx,
-                base_db_score=sim_score,
+                q_expanded, r, lexical_index, doc_idx=idx, base_db_score=sim_score,
             )
+            # Layer 3: intent bonus
+            intent = _compute_intent_bonus(tokens, r.description)
+            final_score = max(0.0, min(1.0, final_score + intent))
             ranked_trgm.append((final_score, r))
         ranked_trgm.sort(key=lambda item: item[0], reverse=True)
         best_score, best = ranked_trgm[0]
@@ -1542,11 +1694,11 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 key = normalize_hsn(r.hsn_code)
                 if key not in candidates:
                     candidates[key] = {
-                        "hsn_code":   key,
+                        "hsn_code":    key,
                         "description": r.description,
-                        "gst_rate":   float(r.gst_rate or 0),
-                        "category":   r.category,
-                        "hits":       0,
+                        "gst_rate":    float(r.gst_rate or 0),
+                        "category":    r.category,
+                        "hits":        0,
                     }
                 candidates[key]["hits"] += 1
         except Exception:
@@ -1556,28 +1708,20 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         candidate_rows = []
         for candidate in candidates.values():
             candidate_rows.append(
-                type(
-                    "CandidateRow",
-                    (),
-                    {
-                        "hsn_code": candidate["hsn_code"],
-                        "description": candidate["description"],
-                        "gst_rate": candidate["gst_rate"],
-                        "category": candidate.get("category", ""),
-                    },
-                )()
+                type("CandidateRow", (), {
+                    "hsn_code":    candidate["hsn_code"],
+                    "description": candidate["description"],
+                    "gst_rate":    candidate["gst_rate"],
+                    "category":    candidate.get("category", ""),
+                })()
             )
-
         lexical_index = _build_candidate_lexical_index(q_expanded, candidate_rows)
         total_tokens = max(len(tokens), 1)
         scored = sorted(
             [
                 (
                     compute_inverted_index_score(
-                        q_expanded,
-                        row,
-                        lexical_index,
-                        doc_idx=idx,
+                        q_expanded, row, lexical_index, doc_idx=idx,
                         base_db_score=candidates[row.hsn_code]["hits"] / total_tokens,
                     ),
                     candidates[row.hsn_code],
@@ -1592,10 +1736,10 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             label = "high" if top_score >= 0.65 else ("medium" if top_score >= 0.35 else "low")
             alts = [
                 {
-                    "hsn_code":   c["hsn_code"],
+                    "hsn_code":    c["hsn_code"],
                     "description": c["description"],
-                    "gst_rate":   c["gst_rate"],
-                    "confidence": round(s, 3),
+                    "gst_rate":    c["gst_rate"],
+                    "confidence":  round(s, 3),
                 }
                 for s, c in scored[1:4] if s > 0
             ]
@@ -1616,12 +1760,6 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
 # ── Startup ────────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
-    """
-    Create only the users table if missing.
-    DO NOT touch hsn_codes / hsn_search — they already exist in Neon
-    with the correct schema, indexes, and ~10,957 records.
-    verified_products is seeded separately via data/seed_verified.py.
-    """
     async with engine.begin() as conn:
         await conn.execute(text("""
             CREATE TABLE IF NOT EXISTS users (
@@ -1635,3 +1773,15 @@ async def startup():
         await conn.execute(text("""
             CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)
         """))
+        # Ensure description_no_size column exists in verified_products
+        try:
+            await conn.execute(text("""
+                ALTER TABLE verified_products
+                ADD COLUMN IF NOT EXISTS description_no_size VARCHAR(500)
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_verified_no_size
+                ON verified_products (description_no_size)
+            """))
+        except Exception:
+            pass  # Column already exists or table doesn't exist yet

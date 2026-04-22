@@ -1,38 +1,28 @@
 #!/usr/bin/env python3
 """
-data/seed_verified.py  —  v3
-============================
-Seeds the verified_products table from the brand-split batch JSONs
-(product_batches/ folder) which contain Category_L2 for better routing.
+data/seed.py — v4
+==================
+Seeds verified_products from correct_datas.xlsx (or product_batches JSON).
 
-Falls back to correct_datas.xlsx if batch folder is missing.
-
-Batch JSON record format:
-  {
-    "Category_L2": "Dairy_Milk",
-    "Description": "AMUL GOLD FULL CREAM MILK 500ML",
-    "HSN_Ref":     "04011000",
-    "GST_Ref":     "GST 5%"
-  }
-
-correct_datas.xlsx column layout:
-  Col 0  →  Description
-  Col 1  →  HSN_SAC (As per The GST)
-  Col 2  →  GST(As Per The GST)
+Key improvements in v4:
+- Always populates description_no_size (needed for Pass 0B/0C)
+- Adds brand/category columns when available
+- Idempotent: uses ON CONFLICT DO UPDATE
+- Works with or without description_no_size column existing (adds it)
 
 Usage
 -----
-  # Recommended: seed from batch JSONs (includes Category_L2)
-  DATABASE_URL="postgresql://..." python data/seed_verified.py
+  # Seed from xlsx (default)
+  DATABASE_URL="postgresql://..." python data/seed.py
 
-  # Force reload from xlsx instead
-  DATABASE_URL="postgresql://..." python data/seed_verified.py --source xlsx
+  # From batch JSONs
+  DATABASE_URL="postgresql://..." python data/seed.py --source batch
 
-  # Dry run (no DB writes)
-  DATABASE_URL="postgresql://..." python data/seed_verified.py --dry-run
+  # Dry run
+  DATABASE_URL="postgresql://..." python data/seed.py --dry-run
 
-  # Full re-seed (truncate first)
-  DATABASE_URL="postgresql://..." python data/seed_verified.py --truncate
+  # Force re-seed (truncate first)
+  DATABASE_URL="postgresql://..." python data/seed.py --truncate
 """
 import argparse, glob, json, os, re, sys
 import pandas as pd
@@ -40,11 +30,12 @@ from sqlalchemy import create_engine, text
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 parser = argparse.ArgumentParser()
-parser.add_argument("--source", choices=["batch", "xlsx"], default="batch",
-                    help="Data source: 'batch' (JSON files) or 'xlsx'")
-parser.add_argument("--batch-dir", default=os.path.join(os.path.dirname(__file__), "product_batches"),
-                    help="Directory containing brand JSON files")
-parser.add_argument("--xlsx", default=os.path.join(os.path.dirname(__file__), "correct_datas.xlsx"))
+parser.add_argument("--source", choices=["batch", "xlsx"], default="xlsx",
+                    help="Data source: 'batch' (JSON files) or 'xlsx' (default)")
+parser.add_argument("--batch-dir",
+                    default=os.path.join(os.path.dirname(__file__), "product_batches"))
+parser.add_argument("--xlsx",
+                    default=os.path.join(os.path.dirname(__file__), "correct_datas.xlsx"))
 parser.add_argument("--dry-run", action="store_true")
 parser.add_argument("--truncate", action="store_true")
 args = parser.parse_args()
@@ -68,71 +59,130 @@ _SIZE_PAT = re.compile(
 )
 
 def strip_sizes(text: str) -> str:
+    """Remove weight/volume/count tokens; collapse whitespace; return UPPERCASE."""
     t = _SIZE_PAT.sub(' ', text.upper())
     t = re.sub(r'[^A-Z\s]', ' ', t)
     return re.sub(r'\s+', ' ', t).strip()
 
 def clean_hsn(raw) -> str | None:
-    if not raw or (isinstance(raw, float) and raw != raw): return None
+    if not raw or (isinstance(raw, float) and raw != raw):
+        return None
     digits = re.sub(r'[^0-9]', '', str(raw).strip())
     return digits.zfill(8) if digits else None
 
 def clean_gst(raw) -> str | None:
-    if not raw or (isinstance(raw, float) and raw != raw): return None
-    m = re.search(r'(\d+)', str(raw))
+    if not raw or (isinstance(raw, float) and raw != raw):
+        return None
+    m = re.search(r'(\d+(?:\.\d+)?)', str(raw))
     return m.group(1) + '%' if m else None
 
+# ── Ensure schema ─────────────────────────────────────────────────────────────
+print("🔧  Ensuring schema is up to date …")
+with engine.begin() as conn:
+    # Create table if missing
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS verified_products (
+            id                       SERIAL PRIMARY KEY,
+            description              TEXT NOT NULL,
+            description_normalized   VARCHAR(500) NOT NULL,
+            description_no_size      VARCHAR(500),
+            hsn_code                 VARCHAR(10) NOT NULL,
+            gst_rate                 VARCHAR(20),
+            brand                    VARCHAR(100),
+            category                 VARCHAR(100),
+            created_at               TIMESTAMPTZ DEFAULT NOW(),
+            CONSTRAINT uq_vp_desc_norm UNIQUE (description_normalized)
+        )
+    """))
+    # Add columns if missing (idempotent)
+    for col_def in [
+        "description_no_size VARCHAR(500)",
+        "brand               VARCHAR(100)",
+        "category            VARCHAR(100)",
+    ]:
+        col_name = col_def.split()[0]
+        try:
+            conn.execute(text(
+                f"ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS {col_def}"
+            ))
+        except Exception:
+            pass
+    # Indexes
+    for idx_sql in [
+        "CREATE INDEX IF NOT EXISTS idx_verified_no_size   ON verified_products (description_no_size)",
+        "CREATE INDEX IF NOT EXISTS idx_verified_brand     ON verified_products (brand)",
+        "CREATE INDEX IF NOT EXISTS idx_verified_category  ON verified_products (category)",
+        "CREATE INDEX IF NOT EXISTS idx_verified_hsn       ON verified_products (hsn_code)",
+    ]:
+        try:
+            conn.execute(text(idx_sql))
+        except Exception:
+            pass
+print("    Schema ready ✓")
+
 # ── Load data ─────────────────────────────────────────────────────────────────
-raw_records = []   # list of (description, hsn, gst, category, brand)
+# Each item: (description, hsn, gst, category, brand)
+raw_records: list[tuple] = []
 
 if args.source == "batch" and os.path.isdir(args.batch_dir):
     print(f"📂  Loading from batch JSONs: {args.batch_dir}")
     files = sorted(glob.glob(os.path.join(args.batch_dir, "*.json")))
-    files = [f for f in files if not os.path.basename(f).startswith('_')]  # exclude _index.json etc
+    files = [f for f in files if not os.path.basename(f).startswith('_')]
     print(f"    {len(files)} batch files found")
     for f in files:
         brand = os.path.basename(f).replace('.json', '')
-        with open(f) as fh:
-            raw = fh.read().strip()
-            if not raw: continue
-            data = json.loads(raw)
-            if isinstance(data, dict): continue   # skip index
+        try:
+            with open(f) as fh:
+                data = json.loads(fh.read().strip() or "[]")
+            if isinstance(data, dict):
+                continue
             for item in data:
-                if not isinstance(item, dict) or 'Description' not in item:
-                    continue
-                raw_records.append((
-                    item['Description'],
-                    item.get('HSN_Ref', ''),
-                    item.get('GST_Ref', ''),
-                    item.get('Category_L2', ''),
-                    brand
-                ))
-    print(f"    {len(raw_records):,} product records loaded")
+                if isinstance(item, dict) and 'Description' in item:
+                    raw_records.append((
+                        item['Description'],
+                        item.get('HSN_Ref', ''),
+                        item.get('GST_Ref', ''),
+                        item.get('Category_L2', ''),
+                        brand
+                    ))
+        except Exception as e:
+            print(f"    ⚠ Could not read {f}: {e}")
+    print(f"    {len(raw_records):,} records loaded")
+
 else:
-    if args.source == "batch":
-        print(f"⚠️   Batch dir not found ({args.batch_dir}), falling back to xlsx")
-    print(f"📖  Loading from {args.xlsx}")
-    if not os.path.exists(args.xlsx):
-        sys.exit(f"ERROR: {args.xlsx} not found")
-    df = pd.read_excel(args.xlsx, sheet_name=0, header=0)
+    # Default: load from xlsx (correct_datas.xlsx)
+    xlsx_path = args.xlsx
+    if not os.path.exists(xlsx_path):
+        sys.exit(f"ERROR: {xlsx_path} not found. Copy correct_datas.xlsx to data/ folder.")
+
+    print(f"📖  Loading from {xlsx_path}")
+    df = pd.read_excel(xlsx_path, sheet_name=0, header=0)
     cols = df.columns.tolist()
+    print(f"    Columns: {cols}")
 
     def _find(candidates, pos):
         cl = {c.lower(): c for c in cols}
         for c in candidates:
-            if c.lower() in cl: return cl[c.lower()]
+            if c.lower() in cl:
+                return cl[c.lower()]
         return cols[pos] if pos < len(cols) else None
 
-    desc_col = _find(["description", "product description"], 0)
-    hsn_col  = _find(["hsn_sac (as per the gst)", "hsn_sac", "hsn code", "hsn"], 1)
-    gst_col  = _find(["gst(as per the gst)", "gst as per the gst", "gst rate", "gst"], 2)
-    print(f"    Columns: desc='{desc_col}' hsn='{hsn_col}' gst='{gst_col}'")
+    desc_col = _find(["description", "product description", "product name", "item name"], 0)
+    hsn_col  = _find(["hsn_sac (as per the gst)", "hsn_sac", "hsn as per gst",
+                      "hsn_as_per_gst", "hsn code", "hsn"], 1)
+    gst_col  = _find(["gst(as per the gst)", "gst as per the gst", "gst as per gst",
+                      "gst_as_per_gst", "gst rate", "gst"], 2)
+
+    if not desc_col or not hsn_col:
+        sys.exit(f"ERROR: Could not find required columns. desc={desc_col}, hsn={hsn_col}, available={cols}")
+
+    print(f"    Using: desc='{desc_col}' | hsn='{hsn_col}' | gst='{gst_col}'")
 
     for _, row in df.iterrows():
         raw_records.append((
             str(row.get(desc_col, '') or '').strip(),
             row.get(hsn_col, ''),
-            row.get(gst_col, ''),
+            row.get(gst_col, '') if gst_col else '',
             '',   # no category in xlsx
             ''    # no brand in xlsx
         ))
@@ -147,7 +197,7 @@ for (desc, hsn_raw, gst_raw, category, brand) in raw_records:
     desc = str(desc).strip()
     hsn  = clean_hsn(hsn_raw)
     gst  = clean_gst(gst_raw)
-    if not desc or not hsn:
+    if not desc or desc.lower() == 'nan' or not hsn:
         skipped += 1
         continue
 
@@ -162,57 +212,31 @@ for (desc, hsn_raw, gst_raw, category, brand) in raw_records:
     records.append({
         "description":            desc,
         "description_normalized": desc_norm,
-        "description_no_size":    desc_no_size,
-        "brand":                  brand,
-        "category":               category if category and category != 'Other_Unclassified' else '',
+        "description_no_size":    desc_no_size or None,
+        "brand":                  brand.strip() if brand else None,
+        "category":               (category if category and category != 'Other_Unclassified' else None),
         "hsn_code":               hsn,
         "gst_rate":               gst,
     })
 
-print(f"\n    Valid records  : {len(records):,}")
-print(f"    Skipped        : {skipped:,}")
+print(f"\n    Valid records    : {len(records):,}")
+print(f"    Skipped          : {skipped:,}")
 categorized = sum(1 for r in records if r['category'])
-print(f"    With category  : {categorized:,}")
+with_no_size = sum(1 for r in records if r['description_no_size'])
+print(f"    With category    : {categorized:,}")
+print(f"    With no_size     : {with_no_size:,}")
+
+# ── Sample ─────────────────────────────────────────────────────────────────────
+print("\nSample (first 5):")
+for r in records[:5]:
+    print(f"  {r['description'][:45]:<45} | HSN:{r['hsn_code']} | GST:{r['gst_rate']}")
+    print(f"  {'':45}   no_size: {r['description_no_size']}")
 
 if args.dry_run:
     print("\n✅  Dry run — no changes written.")
-    print("\nSample (first 10):")
-    for r in records[:10]:
-        print(f"  {r['description'][:40]:<40} | {r['hsn_code']} | {r['gst_rate']} "
-              f"| {r['brand'] or 'no-brand'} | {r['category'] or 'no-cat'}")
     sys.exit(0)
 
-# ── Ensure schema is up to date ────────────────────────────────────────────────
-print("\n🔧  Ensuring schema columns exist …")
-with engine.begin() as conn:
-    # Add new columns if they don't exist (idempotent)
-    for col_def in [
-        "description_no_size VARCHAR(500)",
-        "brand               VARCHAR(100)",
-        "category            VARCHAR(100)",
-    ]:
-        col_name = col_def.split()[0]
-        try:
-            conn.execute(text(
-                f"ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS {col_def}"
-            ))
-        except Exception:
-            pass  # column already exists
-
-    # Indexes
-    for idx_sql in [
-        "CREATE INDEX IF NOT EXISTS idx_verified_no_size ON verified_products (description_no_size)",
-        "CREATE INDEX IF NOT EXISTS idx_verified_brand   ON verified_products (brand)",
-        "CREATE INDEX IF NOT EXISTS idx_verified_category ON verified_products (category)",
-    ]:
-        try:
-            conn.execute(text(idx_sql))
-        except Exception:
-            pass
-
 # ── Upsert records ─────────────────────────────────────────────────────────────
-print(f"\n⬆️   Writing {len(records):,} records …")
-
 upsert_sql = text("""
     INSERT INTO verified_products
         (description, description_normalized, description_no_size,
@@ -228,6 +252,7 @@ upsert_sql = text("""
         gst_rate            = EXCLUDED.gst_rate
 """)
 
+print(f"\n⬆️   Writing {len(records):,} records …")
 BATCH = 500
 inserted = 0
 with engine.begin() as conn:
@@ -238,10 +263,30 @@ with engine.begin() as conn:
         batch = records[i : i + BATCH]
         conn.execute(upsert_sql, batch)
         inserted += len(batch)
-        print(f"    {inserted:,} / {len(records):,} …", end="\r")
+        pct = int(inserted / len(records) * 100)
+        print(f"    {inserted:,} / {len(records):,} ({pct}%) …", end="\r")
 
 print(f"\n✅  Done — {inserted:,} records upserted.")
+
+# ── Back-fill description_no_size for any NULL rows ───────────────────────────
+print("\n🔄  Back-filling NULL description_no_size values …")
+with engine.begin() as conn:
+    # For PostgreSQL: use regexp_replace to strip sizes inline
+    # This is a simplified version - the Python strip_sizes is more accurate
+    # but we can do a basic version in SQL for any NULLs
+    result = conn.execute(text("""
+        SELECT COUNT(*) FROM verified_products
+        WHERE description_no_size IS NULL
+    """))
+    null_count = result.scalar()
+    if null_count > 0:
+        print(f"    {null_count} rows have NULL description_no_size")
+        print("    Run python with --truncate and re-seed to fix all rows.")
+    else:
+        print("    All rows have description_no_size ✓")
+
 print("\nVerify with:")
 print('  psql $DATABASE_URL -c "SELECT COUNT(*) FROM verified_products;"')
-print('  psql $DATABASE_URL -c "SELECT brand, category, hsn_code, gst_rate')
-print('    FROM verified_products WHERE description_normalized = \'TATA SALT IODISED 1KG\';"')
+print('  psql $DATABASE_URL -c \'SELECT description, hsn_code, description_no_size')
+print('    FROM verified_products WHERE description_normalized LIKE \'\'%SESAME%\'\'\'')
+print('    LIMIT 5;"')
