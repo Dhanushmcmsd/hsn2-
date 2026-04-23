@@ -40,16 +40,36 @@ body {
   backdrop-filter: blur(18px);
 }
 
-.supra-text {
-  background: linear-gradient(90deg, #7dd3fc 0%, #60a5fa 28%, #6366f1 62%, #bae6fd 100%);
+.hero-glossy-fill {
+  display: inline-block;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 18%, rgba(255, 255, 255, 0.1) 22%, rgba(255, 255, 255, 0.92) 29%),
+    linear-gradient(90deg, #ff9933 0%, #fff7ea 42%, #ffffff 52%, #ecfff0 64%, #138808 100%);
+  background-size: 100% 100%, 140% 100%;
+  background-position: 0 0, 0% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 14px rgba(125, 211, 252, 0.16);
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.08));
+  transition: filter 300ms ease;
 }
 
-.group:hover .supra-text {
-  text-shadow: 0 0 22px rgba(125, 211, 252, 0.24);
+.hero-glossy-title:hover .hero-glossy-fill {
+  animation: heroFlagFlow 1.9s ease-in-out infinite alternate;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 153, 51, 0.16))
+    drop-shadow(0 0 18px rgba(255, 255, 255, 0.2))
+    drop-shadow(0 0 22px rgba(19, 136, 8, 0.12));
+}
+
+.hero-title-glow {
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 153, 51, 0.14) 36%,
+    rgba(19, 136, 8, 0.12) 72%,
+    transparent 100%
+  );
 }
 
 .chip-float-1 {
@@ -112,6 +132,15 @@ body {
   }
 }
 
+@keyframes heroFlagFlow {
+  0% {
+    background-position: 0 0, 0% 50%;
+  }
+  100% {
+    background-position: 0 0, 100% 50%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -123,5 +152,9 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .hero-glossy-title:hover .hero-glossy-fill {
+    animation: none !important;
   }
 }

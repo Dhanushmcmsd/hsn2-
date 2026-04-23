@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FlagBackground } from "@/components/FlagBackground";
 import { FloatingElements } from "@/components/FloatingElements";
 import { LogoAnimation } from "@/components/LogoAnimation";
 import { SupraPacificText } from "@/components/SupraPacificText";
@@ -91,14 +90,11 @@ export default function Home() {
           </div>
 
           <div className="mt-8">
-            <h1 className="group relative inline-flex max-w-full overflow-hidden rounded-[28px] border border-white/12 bg-white/[0.05] px-6 py-5 font-display text-[clamp(1.9rem,4vw,4rem)] font-black leading-none tracking-[-0.05em] text-white shadow-[0_24px_80px_rgba(2,6,23,0.55),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
-              <FlagBackground className="-inset-x-10 -inset-y-5 opacity-100" />
-              <span className="pointer-events-none absolute inset-0 noise-overlay opacity-[0.06]" />
-              <span className="pointer-events-none absolute inset-[1px] rounded-[27px] bg-gradient-to-b from-white/[0.08] to-white/[0.02]" />
-              <span className="pointer-events-none absolute inset-x-[18%] top-1/2 h-12 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.22)_0%,rgba(255,153,51,0.12)_36%,rgba(19,136,8,0.08)_70%,transparent_100%)] opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
-              <span className="relative z-10 whitespace-nowrap">
+            <h1 className="hero-glossy-title group relative inline-block font-display text-[clamp(2.05rem,4.4vw,4.5rem)] font-black leading-none tracking-[-0.06em] text-transparent">
+              <span className="hero-glossy-fill relative z-10 whitespace-nowrap">
                 India GST Classification
               </span>
+              <span className="hero-title-glow pointer-events-none absolute inset-x-[12%] top-1/2 h-12 -translate-y-1/2 rounded-full opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
             </h1>
           </div>
 
@@ -141,7 +137,7 @@ export default function Home() {
         </div>
 
         <div className="relative flex items-center justify-center pt-20 lg:pt-14">
-          <div className="absolute right-0 top-0 z-10 hidden w-full max-w-[280px] lg:block">
+          <div className="absolute right-0 top-0 z-10 hidden lg:block">
             <SupraPacificText />
           </div>
           <div className="absolute inset-x-[8%] top-[8%] h-40 rounded-full bg-blue-500/10 blur-3xl" />
