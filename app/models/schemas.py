@@ -1,5 +1,6 @@
 from __future__ import annotations
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class PredictRequest(BaseModel):
@@ -9,8 +10,12 @@ class PredictRequest(BaseModel):
 class HSNMatch(BaseModel):
     hsn_code: str
     description: str
+    full_description: Optional[str] = None
     score: float
     method: str = "semantic"
+    gst_rate: Optional[float] = None
+    chapter: Optional[str] = None
+    heading: Optional[str] = None
 
 
 class PredictResponse(BaseModel):
@@ -22,6 +27,20 @@ class PredictResponse(BaseModel):
     confidence_label: str
     needs_review: bool
     processing_time_ms: float
+
+
+class HSNRow(BaseModel):
+    hsn_code: str
+    description: str
+    full_description: str
+    gst_rate: float
+    category: Optional[str] = None
+    chapter: Optional[str] = None
+    heading: Optional[str] = None
+    section: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 
 class ResolveRequest(BaseModel):

@@ -522,7 +522,7 @@ FMCG_ABBREVIATIONS = {
     'phnyl': 'phenyl', 'dsinfct': 'disinfectant', 'airfsh': 'air freshener',
     'toilt': 'toilet', 'tolt': 'toilet', 'tlot': 'toilet', 'tlt': 'toilet',
     'clnr': 'cleaner', 'clnsng': 'cleansing',
-    'cookis': 'cookies', 'cooki': 'cookie', 'cashw': 'cashew',
+    'cookis': 'cookie', 'cooki': 'cookie', 'cashw': 'cashew',
     'digestve': 'digestive', 'choc': 'chocolate', 'choco': 'chocolate',
     'van': 'vanilla', 'vnlla': 'vanilla', 'strbry': 'strawberry',
     'rasbry': 'raspberry', 'bluebry': 'blueberry', 'blkbry': 'blackberry',
@@ -861,6 +861,66 @@ def build_tsquery_terms(tokens: list[str]) -> list[str]:
     return query_terms
 
 
+def build_enhanced_tsquery(tokens: list[str], *, operator: str = "&") -> str:
+    """
+    Build a synonym-aware tsquery string with prefix matching on the last term.
+
+    Example:
+      ["bathroom", "clean"] ->
+      "bathroom & (clean:* | cleanser:*)"
+    """
+    cleaned_tokens = [re.sub(r"[^a-z]", "", token.lower()) for token in tokens[:8]]
+    cleaned_tokens = [token for token in cleaned_tokens if len(token) >= 2]
+    if not cleaned_tokens:
+        return ""
+
+    ts_terms: list[str] = []
+    last_index = min(len(cleaned_tokens), 6) - 1
+    for idx, token in enumerate(cleaned_tokens[:6]):
+        variants = [token] + [
+            synonym.lower()
+            for synonym in SYNONYMS.get(token, [])
+            if " " not in synonym and len(synonym) >= 3
+        ]
+        variants = list(dict.fromkeys(
+            re.sub(r"[^a-z]", "", variant) for variant in variants
+        ))
+        variants = [variant for variant in variants if len(variant) >= 2]
+        if not variants:
+            continue
+
+        if idx == last_index:
+            variants = [f"{variant}:*" for variant in variants]
+
+        if len(variants) > 1:
+            ts_terms.append("(" + " | ".join(variants) + ")")
+        else:
+            ts_terms.append(variants[0])
+
+    return f" {operator} ".join(ts_terms)
+
+
+async def _pass1b_prefix_code(query: str, db: AsyncSession) -> list:
+    """Boost HSN rows that start with a numeric prefix found in the query."""
+    digit_match = re.search(r"\b(\d{4,8})\b", query)
+    if not digit_match:
+        return []
+
+    prefix = digit_match.group(1)
+    res = await db.execute(
+        text("""
+            SELECT h.hsn_code, h.description, h.gst_rate, h.category
+            FROM hsn_codes h
+            WHERE h.hsn_code LIKE :prefix
+              AND h.is_active = TRUE
+            ORDER BY LENGTH(h.hsn_code) ASC, h.hsn_code ASC
+            LIMIT 5
+        """),
+        {"prefix": prefix + "%"},
+    )
+    return res.fetchall()
+
+
 def compute_weighted_jaccard(tokens: list[str], desc_tokens: set[str]) -> float:
     query_weights: dict[str, int] = {}
     for token in tokens:
@@ -1136,7 +1196,8 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     Pass 0E2: top-60% words in description_normalized               → conf 0.44-0.78
     Pass 0F : ANY keyword (+ synonyms) in description_normalized    → conf 0.30-0.72
     Pass 1  : exact numeric HSN code
-    Pass 2  : full-text search (FTS) via hsn_search
+    Pass 1B : numeric prefix boost on HSN code
+    Pass 2  : weighted full-text search (FTS) on hsn_codes
     Pass 3  : trigram on hsn_search.normalized_description
     Pass 4  : ILIKE keyword fallback on hsn_codes
     """
@@ -1517,6 +1578,37 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             log.warning("pass1.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
+    # PASS 1B — Prefix code boost for numeric fragments embedded in query
+    # ══════════════════════════════════════════════════════════════════════════
+    try:
+        prefix_rows = await _pass1b_prefix_code(q_expanded, db)
+    except Exception as e:
+        log.warning("pass1b.error query=%s error=%s", q_stripped[:50], str(e))
+        prefix_rows = []
+
+    if prefix_rows:
+        top = prefix_rows[0]
+        alts = [
+            {
+                "hsn_code": normalize_hsn(r.hsn_code),
+                "description": r.description,
+                "gst_rate": float(r.gst_rate or 0),
+                "confidence": round(max(0.72, 0.88 - idx * 0.05), 3),
+            }
+            for idx, r in enumerate(prefix_rows[1:4], start=1)
+        ]
+        return HSNBatchResult(
+            query=query,
+            hsn_code=normalize_hsn(top.hsn_code),
+            description=top.description,
+            gst_rate=float(top.gst_rate or 0),
+            confidence=0.98,
+            confidence_label="high",
+            match_method="prefix_code",
+            alternatives=alts,
+        )
+
+    # ══════════════════════════════════════════════════════════════════════════
     # PASSES 2–4 — FTS / trigram / ILIKE on hsn_codes table
     # Layer 1: tokenize q_expanded (not q_stripped) for better FTS
     # Layer 3: intent bonus applied to each FTS result
@@ -1527,47 +1619,70 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
 
     domain_clause, domain_params = build_hsn_prefix_clause(tokens)
 
-    # Pass 2: full-text search (AND then OR fallback)
+    # Pass 2: weighted FTS on hsn_codes (AND then OR fallback)
     rows_fts = []
     try:
-        ts_query_terms = build_tsquery_terms(tokens)
-        ts_and = " & ".join(ts_query_terms[:8])
-        res = await db.execute(
-            text("""
-                SELECT h.hsn_code, h.description, h.gst_rate, h.category,
-                       ts_rank(s.search_vector, query) AS rank
-                FROM hsn_search s
-                JOIN hsn_codes h ON h.hsn_code = s.hsn_code
-                CROSS JOIN to_tsquery('english', :q) query
-                WHERE s.search_vector @@ query
-                  AND h.is_active = TRUE""" + domain_clause + """
-                ORDER BY rank DESC
-                LIMIT 15
-            """),
-            {"q": ts_and, **domain_params},
-        )
-        rows_fts = res.fetchall()
+        ts_and = build_enhanced_tsquery(tokens, operator="&")
+        if ts_and:
+            res = await db.execute(
+                text("""
+                    SELECT
+                        h.hsn_code,
+                        h.description,
+                        h.gst_rate,
+                        h.category,
+                        ts_rank_cd(
+                            setweight(to_tsvector('english', h.description), 'A') ||
+                            setweight(to_tsvector('english', COALESCE(h.category, '')), 'B'),
+                            query,
+                            32
+                        ) AS rank
+                    FROM hsn_codes h
+                    CROSS JOIN to_tsquery('english', :q) query
+                    WHERE (
+                        setweight(to_tsvector('english', h.description), 'A') ||
+                        setweight(to_tsvector('english', COALESCE(h.category, '')), 'B')
+                    ) @@ query
+                      AND h.is_active = TRUE""" + domain_clause + """
+                    ORDER BY rank DESC, h.hsn_code ASC
+                    LIMIT 20
+                """),
+                {"q": ts_and, **domain_params},
+            )
+            rows_fts = res.fetchall()
     except Exception:
         rows_fts = []
 
     if not rows_fts and len(tokens) > 1:
         try:
-            ts_or = " | ".join(ts_query_terms[:8])
-            res = await db.execute(
-                text("""
-                    SELECT h.hsn_code, h.description, h.gst_rate, h.category,
-                       ts_rank(s.search_vector, query) AS rank
-                    FROM hsn_search s
-                    JOIN hsn_codes h ON h.hsn_code = s.hsn_code
-                    CROSS JOIN to_tsquery('english', :q) query
-                    WHERE s.search_vector @@ query
-                      AND h.is_active = TRUE""" + domain_clause + """
-                    ORDER BY rank DESC
-                    LIMIT 15
-                """),
-                {"q": ts_or, **domain_params},
-            )
-            rows_fts = res.fetchall()
+            ts_or = build_enhanced_tsquery(tokens, operator="|")
+            if ts_or:
+                res = await db.execute(
+                    text("""
+                        SELECT
+                            h.hsn_code,
+                            h.description,
+                            h.gst_rate,
+                            h.category,
+                            ts_rank_cd(
+                                setweight(to_tsvector('english', h.description), 'A') ||
+                                setweight(to_tsvector('english', COALESCE(h.category, '')), 'B'),
+                                query,
+                                32
+                            ) AS rank
+                        FROM hsn_codes h
+                        CROSS JOIN to_tsquery('english', :q) query
+                        WHERE (
+                            setweight(to_tsvector('english', h.description), 'A') ||
+                            setweight(to_tsvector('english', COALESCE(h.category, '')), 'B')
+                        ) @@ query
+                          AND h.is_active = TRUE""" + domain_clause + """
+                        ORDER BY rank DESC, h.hsn_code ASC
+                        LIMIT 20
+                    """),
+                    {"q": ts_or, **domain_params},
+                )
+                rows_fts = res.fetchall()
         except Exception:
             rows_fts = []
 
@@ -1581,7 +1696,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             if not desc_tokens:
                 continue
             jaccard = compute_weighted_jaccard(tokens, desc_tokens)
-            fts_score = min(float(r.rank) * 2.5, 0.4)
+            fts_score = min(float(r.rank) * 2.8, 0.45)
             db_score = min(jaccard * 0.45 + fts_score, 1.0)
             final_score = compute_inverted_index_score(
                 q_expanded, r, lexical_index, doc_idx=idx, base_db_score=db_score,
@@ -1783,5 +1898,31 @@ async def startup():
                 CREATE INDEX IF NOT EXISTS idx_verified_no_size
                 ON verified_products (description_no_size)
             """))
+            await conn.execute(text("""
+                CREATE EXTENSION IF NOT EXISTS pg_trgm
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_vp_trgm_norm
+                ON verified_products USING gin (description_normalized gin_trgm_ops)
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_vp_trgm_no_size
+                ON verified_products USING gin (description_no_size gin_trgm_ops)
+            """))
         except Exception:
             pass  # Column already exists or table doesn't exist yet
+        try:
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_hsn_weighted_fts
+                ON hsn_codes
+                USING gin (
+                    setweight(to_tsvector('english', description), 'A') ||
+                    setweight(to_tsvector('english', COALESCE(category, '')), 'B')
+                )
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_hsn_code_prefix
+                ON hsn_codes (hsn_code text_pattern_ops)
+            """))
+        except Exception:
+            pass

@@ -5,7 +5,7 @@ from unittest.mock import patch, AsyncMock
 @pytest.mark.asyncio
 async def test_predict_no_key(client):
     resp = await client.post("/predict", json={"text": "laptop"})
-    assert resp.status_code == 422
+    assert resp.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -22,11 +22,28 @@ async def test_predict_valid(client, api_key):
         {"hsn_code": "8517", "description": "Phones", "score": 0.75, "method": "semantic"},
     ]
     with patch("app.routes.predict.get_matcher") as mock_m, \
+         patch("app.routes.predict.match_query", new_callable=AsyncMock, return_value=[]), \
          patch("app.routes.predict.get_cache", return_value=None), \
          patch("app.routes.predict.set_cache", new_callable=AsyncMock), \
-         patch("app.routes.predict.check_rate_limit", new_callable=AsyncMock), \
-         patch("app.models.database.async_session"):
+         patch("app.routes.predict.check_rate_limit", new_callable=AsyncMock):
         mock_m.return_value.match.return_value = mock_matches
         resp = await client.post("/predict", json={"text": "laptop computer"},
                                  headers={"X-API-Key": api_key})
     assert resp.status_code in (200, 500)
+
+
+@pytest.mark.asyncio
+async def test_predict_prefers_db_matcher(client, api_key):
+    db_matches = [
+        {"hsn_code": "19053100", "description": "Sweet biscuits", "score": 0.91, "method": "fulltext_fts"},
+        {"hsn_code": "19059040", "description": "Other bakery products", "score": 0.63, "method": "keyword_ilike"},
+    ]
+    with patch("app.routes.predict.match_query", new_callable=AsyncMock, return_value=db_matches), \
+         patch("app.routes.predict.get_matcher") as mock_m, \
+         patch("app.routes.predict.get_cache", return_value=None), \
+         patch("app.routes.predict.set_cache", new_callable=AsyncMock), \
+         patch("app.routes.predict.check_rate_limit", new_callable=AsyncMock):
+        resp = await client.post("/predict", json={"text": "cookis"},
+                                 headers={"X-API-Key": api_key})
+    assert resp.status_code in (200, 500)
+    assert mock_m.called is False

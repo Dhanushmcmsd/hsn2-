@@ -12,7 +12,7 @@ from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
 from app.models.database import init_db
 from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
-from app.routes import predict, review, health, auth, admin
+from app.routes import predict, review, health, auth, admin, hsn
 
 configure_logging()
 log = structlog.get_logger()
@@ -89,3 +89,4 @@ app.include_router(predict.router)
 app.include_router(review.router)
 app.include_router(health.router)
 app.include_router(admin.router)
+app.include_router(hsn.router)

@@ -845,7 +845,7 @@ export default function PremiumDashboard() {
                   <div className="lbl">Classified HSN Code</div>
                   <div className="hsn-big">{padHsn(result.top_match.hsn_code)}</div>
                   <div style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "0.75rem", maxWidth: 400, margin: "0.75rem auto 0" }}>
-                    {result.top_match.description}
+                    {result.top_match.full_description ?? result.top_match.description}
                   </div>
 
                   {/* Pills row: confidence + GST rate */}
@@ -878,7 +878,7 @@ export default function PremiumDashboard() {
                       <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: "0.6rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>HSN Chapter</div>
                         <div style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: "1.2rem", color: "#60a5fa", lineHeight: 1 }}>
-                          {padHsn(result.top_match.hsn_code).slice(0, 2)}
+                          {result.top_match.chapter ?? padHsn(result.top_match.hsn_code).slice(0, 2)}
                         </div>
                       </div>
                       <div style={{ width: 1, background: "rgba(255,255,255,0.06)", alignSelf: "stretch" }} />
@@ -907,7 +907,7 @@ export default function PremiumDashboard() {
                           <tr key={a.hsn_code}>
                             <td><span className="hsn-sm">{padHsn(a.hsn_code)}</span></td>
                             <td style={{ maxWidth: 280 }}>
-                              <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#475569" }}>{a.description}</span>
+                              <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#475569" }}>{a.full_description ?? a.description}</span>
                             </td>
                             <td>
                               <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#4ade80", fontWeight: 600 }}>

@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
+from app.services.db_matcher import match_query
 from app.services.confidence import score_result
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
@@ -50,11 +51,18 @@ async def predict(
 
     start = time.perf_counter()
 
-    # Pass 0: Check verified_products for exact match
+    # Pass 0: Check verified_products for exact / no-size match when available
     from sqlalchemy import select
-    verified_query = select(VerifiedProduct).where(VerifiedProduct.description_normalized == body.text.upper().strip())
-    verified_result = await db.execute(verified_query)
-    verified = await _scalar_one_or_none(verified_result)
+    verified = None
+    try:
+        verified_query = select(VerifiedProduct).where(
+            VerifiedProduct.description_normalized == body.text.upper().strip()
+        )
+        verified_result = await db.execute(verified_query)
+        verified = await _scalar_one_or_none(verified_result)
+    except Exception as exc:
+        log.info("predict.verified_exact_unavailable", error=str(exc))
+
     if _is_verified_product_match(verified):
         top = {
             "hsn_code": verified.hsn_code,
@@ -67,10 +75,16 @@ async def predict(
         needs_review = False
         elapsed = (time.perf_counter() - start) * 1000
     else:
-        # Pass 0B: Check for no-size match
-        verified_no_size_query = select(VerifiedProduct).where(VerifiedProduct.description_no_size == strip_sizes(body.text))
-        verified_no_size_result = await db.execute(verified_no_size_query)
-        verified = await _scalar_one_or_none(verified_no_size_result)
+        verified = None
+        try:
+            verified_no_size_query = select(VerifiedProduct).where(
+                VerifiedProduct.description_no_size == strip_sizes(body.text)
+            )
+            verified_no_size_result = await db.execute(verified_no_size_query)
+            verified = await _scalar_one_or_none(verified_no_size_result)
+        except Exception as exc:
+            log.info("predict.verified_no_size_unavailable", error=str(exc))
+
         if _is_verified_product_match(verified):
             top = {
                 "hsn_code": verified.hsn_code,
@@ -83,9 +97,11 @@ async def predict(
             needs_review = False
             elapsed = (time.perf_counter() - start) * 1000
         else:
-            # Pass 1+: AI matching
-            matcher = get_matcher()
-            matches = matcher.match(body.text, top_k=5)
+            # Pass 1+: upgraded DB-backed matching, then local matcher fallback
+            matches = await match_query(body.text, db, top_k=5)
+            if not matches:
+                matcher = get_matcher()
+                matches = matcher.match(body.text, top_k=5)
             if not matches:
                 raise HTTPException(status_code=422, detail="No HSN matches found for this description")
 
@@ -95,16 +111,23 @@ async def predict(
             needs_review = top["score"] < 0.55
             elapsed = (time.perf_counter() - start) * 1000
 
-    record = Prediction(
-        request_id=request_id,
-        input_text=body.text,
-        predicted_hsn=top["hsn_code"],
-        confidence=confidence,
-        needs_review=needs_review,
-        api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
-    )
-    db.add(record)
-    await db.commit()
+    try:
+        record = Prediction(
+            request_id=request_id,
+            input_text=body.text,
+            predicted_hsn=top["hsn_code"],
+            confidence=confidence,
+            needs_review=needs_review,
+            api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
+        )
+        db.add(record)
+        await db.commit()
+    except Exception as exc:
+        log.info("predict.persistence_unavailable", error=str(exc))
+        try:
+            await db.rollback()
+        except Exception:
+            pass
 
     result = PredictResponse(
         request_id=request_id,

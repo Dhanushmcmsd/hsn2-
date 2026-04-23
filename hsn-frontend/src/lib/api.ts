@@ -1,6 +1,25 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-export interface HSNMatch { hsn_code: string; description: string; score: number; method: string; }
+export interface HSNMatch {
+  hsn_code: string;
+  description: string;
+  full_description?: string;
+  score: number;
+  method: string;
+  gst_rate?: number;
+  chapter?: string;
+  heading?: string;
+}
+export interface HSNCodeRow {
+  hsn_code: string;
+  description: string;
+  full_description: string;
+  gst_rate: number;
+  category?: string | null;
+  chapter?: string | null;
+  heading?: string | null;
+  section?: string | null;
+}
 export interface PredictResponse {
   request_id: string; input_text: string; top_match: HSNMatch;
   alternatives: HSNMatch[]; confidence: number; confidence_label: "high" | "medium" | "low";
@@ -57,6 +76,7 @@ export const authApi = {
 
 export const hsnApi = {
   predict: (text: string) => request<PredictResponse>("/predict", { method: "POST", body: JSON.stringify({ text }) }),
+  getByCode: (code: string) => request<HSNCodeRow>(`/hsn/${encodeURIComponent(code)}`),
   expandAbbreviations: (text: string) => request<{ original: string; expanded: string; changed: boolean }>("/expand-abbreviations", { method: "POST", body: JSON.stringify({ text }) }),
   health: () => request<{ status: string }>("/health"),
   reviewPending: () => request<unknown[]>("/review/pending"),
