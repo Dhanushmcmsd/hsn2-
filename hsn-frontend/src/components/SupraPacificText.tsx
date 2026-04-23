@@ -8,7 +8,7 @@ export function SupraPacificText() {
 
   return (
     <motion.div
-      className="group relative inline-flex overflow-hidden"
+      className="group relative inline-flex overflow-hidden rounded-md"
       initial={reducedMotion ? false : { opacity: 0, y: 10 }}
       animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
       transition={reducedMotion ? undefined : { duration: 0.56, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -29,9 +29,9 @@ export function SupraPacificText() {
       {!reducedMotion ? (
         <motion.span
           aria-hidden="true"
-          className="absolute inset-y-0 left-[-18%] w-[22%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] blur-md"
-          animate={{ x: ["0%", "390%"] }}
-          transition={{ duration: 1.15, delay: 1, ease: "easeInOut" }}
+          className="pointer-events-none absolute inset-y-[-10%] left-[-32%] w-[34%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.08),rgba(255,255,255,0.45),rgba(255,255,255,0.08),transparent)] blur-md"
+          animate={{ x: ["0%", "450%"] }}
+          transition={{ duration: 1.9, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
         />
       ) : null}
     </motion.div>

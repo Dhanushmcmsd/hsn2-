@@ -94,7 +94,7 @@ export default function Home() {
               <span className="hero-glossy-fill relative z-10 whitespace-nowrap">
                 India GST Classification
               </span>
-              <span className="hero-title-glow pointer-events-none absolute inset-x-[12%] top-1/2 h-12 -translate-y-1/2 rounded-full opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
+              <span className="hero-title-glow pointer-events-none absolute inset-x-[12%] top-1/2 h-12 -translate-y-1/2 rounded-full opacity-70 blur-2xl transition duration-500 group-hover:opacity-100" />
             </h1>
           </div>
 
@@ -197,20 +197,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="absolute -bottom-5 left-4 flex flex-wrap gap-3">
-            {[
-              "Invoice aware",
-              "GST-ready export",
-              "Semantic match",
-            ].map((chip, index) => (
-              <div
-                key={chip}
-                className={`rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 font-mono-alt text-[11px] uppercase tracking-[0.2em] text-slate-300 shadow-[0_8px_30px_rgba(2,6,23,0.35)] chip-float-${index + 1}`}
-              >
-                {chip}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

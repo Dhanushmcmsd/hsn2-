@@ -44,22 +44,26 @@ body {
   display: inline-block;
   background-image:
     linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 18%, rgba(255, 255, 255, 0.1) 22%, rgba(255, 255, 255, 0.92) 29%),
-    linear-gradient(90deg, #ff9933 0%, #fff7ea 42%, #ffffff 52%, #ecfff0 64%, #138808 100%);
-  background-size: 100% 100%, 140% 100%;
+    linear-gradient(90deg, #ff9933 0%, #ffd2a1 18%, #fff4e6 34%, #ffffff 50%, #eefceb 66%, #9be29a 82%, #138808 100%);
+  background-size: 100% 100%, 180% 100%;
   background-position: 0 0, 0% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.08));
+  filter:
+    drop-shadow(0 0 10px rgba(255, 153, 51, 0.08))
+    drop-shadow(0 0 14px rgba(255, 255, 255, 0.12))
+    drop-shadow(0 0 10px rgba(19, 136, 8, 0.08));
   transition: filter 300ms ease;
+  animation: heroFlagFlow 10s ease-in-out infinite alternate;
 }
 
 .hero-glossy-title:hover .hero-glossy-fill {
-  animation: heroFlagFlow 1.9s ease-in-out infinite alternate;
+  animation: heroFlagFlow 3.2s ease-in-out infinite alternate;
   filter:
-    drop-shadow(0 0 12px rgba(255, 153, 51, 0.16))
-    drop-shadow(0 0 18px rgba(255, 255, 255, 0.2))
-    drop-shadow(0 0 22px rgba(19, 136, 8, 0.12));
+    drop-shadow(0 0 14px rgba(255, 153, 51, 0.16))
+    drop-shadow(0 0 20px rgba(255, 255, 255, 0.22))
+    drop-shadow(0 0 18px rgba(19, 136, 8, 0.14));
 }
 
 .hero-title-glow {
@@ -72,50 +76,8 @@ body {
   );
 }
 
-.chip-float-1 {
-  animation: chipFloatOne 5.4s ease-in-out infinite;
-}
-
-.chip-float-2 {
-  animation: chipFloatTwo 6.2s ease-in-out infinite;
-}
-
-.chip-float-3 {
-  animation: chipFloatThree 5.8s ease-in-out infinite;
-}
-
 .animate-scan-x {
   animation: scanX 4.5s linear infinite;
-}
-
-@keyframes chipFloatOne {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-1deg);
-  }
-  50% {
-    transform: translate3d(0, -8px, 0) rotate(1deg);
-  }
-}
-
-@keyframes chipFloatTwo {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -11px, 0);
-  }
-}
-
-@keyframes chipFloatThree {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(1deg);
-  }
-  50% {
-    transform: translate3d(0, -7px, 0) rotate(-1deg);
-  }
 }
 
 @keyframes scanX {
