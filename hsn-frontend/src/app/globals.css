@@ -1,5 +1,123 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=DM+Mono:wght@400;500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root { --radius: 0.5rem; }
+:root {
+  --radius: 0.5rem;
+  --font-sans: "Instrument Sans", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "DM Mono", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #020617;
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-alt {
+  font-family: var(--font-mono);
+}
+
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0_0_160_160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
+}
+
+.floating-surface {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+}
+
+.supra-text {
+  background: linear-gradient(90deg, #7dd3fc 0%, #60a5fa 28%, #6366f1 62%, #bae6fd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 14px rgba(125, 211, 252, 0.16);
+}
+
+.chip-float-1 {
+  animation: chipFloatOne 5.4s ease-in-out infinite;
+}
+
+.chip-float-2 {
+  animation: chipFloatTwo 6.2s ease-in-out infinite;
+}
+
+.chip-float-3 {
+  animation: chipFloatThree 5.8s ease-in-out infinite;
+}
+
+.animate-scan-x {
+  animation: scanX 4.5s linear infinite;
+}
+
+@keyframes chipFloatOne {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1deg);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(1deg);
+  }
+}
+
+@keyframes chipFloatTwo {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -11px, 0);
+  }
+}
+
+@keyframes chipFloatThree {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(1deg);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0) rotate(-1deg);
+  }
+}
+
+@keyframes scanX {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(540px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
