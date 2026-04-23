@@ -54,15 +54,15 @@ def upgrade() -> None:
     if _table_exists("hsn_codes"):
         has_category = _column_exists("hsn_codes", "category")
         if bind.dialect.name == "postgresql":
-            weighted_vector = (
-                "setweight(to_tsvector('english', description), 'A') || "
-                "setweight(to_tsvector('english', COALESCE(category, '')), 'B')"
-                if has_category
-                else "setweight(to_tsvector('english', description), 'A')"
-            )
             op.execute(
                 "CREATE INDEX IF NOT EXISTS idx_hsn_weighted_fts "
-                f"ON hsn_codes USING gin ({weighted_vector})"
+                "ON hsn_codes USING gin "
+                + (
+                    "((setweight(to_tsvector('english', description), 'A') || "
+                    "setweight(to_tsvector('english', COALESCE(category, '')), 'B')))"
+                    if has_category
+                    else "(setweight(to_tsvector('english', description), 'A'))"
+                )
             )
             op.execute(
                 "CREATE INDEX IF NOT EXISTS idx_hsn_code_prefix "

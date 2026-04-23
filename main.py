@@ -1989,8 +1989,10 @@ async def startup():
                 CREATE INDEX IF NOT EXISTS idx_hsn_weighted_fts
                 ON hsn_codes
                 USING gin (
-                    setweight(to_tsvector('english', description), 'A') ||
-                    setweight(to_tsvector('english', COALESCE(category, '')), 'B')
+                    (
+                        setweight(to_tsvector('english', description), 'A') ||
+                        setweight(to_tsvector('english', COALESCE(category, '')), 'B')
+                    )
                 )
             """))
             await conn.execute(text("""
