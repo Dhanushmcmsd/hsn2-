@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { authApi } from "@/lib/api";
+import { authApi, authStorage } from "@/lib/api";
 import { BarChart3, ArrowRight, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -18,8 +19,7 @@ export default function LoginPage() {
     setError(""); setLoading(true);
     try {
       const { access_token, refresh_token } = await authApi.login(email, password);
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
+      authStorage.setTokens(access_token, refresh_token, rememberMe);
       router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Authentication failed");
@@ -82,6 +82,33 @@ export default function LoginPage() {
         }
         .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
         label { display: block; font-size: 0.78rem; font-weight: 500; color: #CEDDFA88; margin-bottom: 0.5rem; letter-spacing: 0.03em; text-transform: uppercase; }
+        .remember-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-top: -0.1rem;
+        }
+        .remember-toggle {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 0.82rem;
+          color: #CEDDFAAA;
+          cursor: pointer;
+          user-select: none;
+        }
+        .remember-toggle input {
+          width: 15px;
+          height: 15px;
+          accent-color: #0180EB;
+          cursor: pointer;
+        }
+        .remember-hint {
+          font-size: 0.72rem;
+          color: #CEDDFA55;
+          text-align: right;
+        }
       `}</style>
 
       <div style={{ width: "100%", maxWidth: 420 }}>
@@ -150,6 +177,20 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
+            </div>
+
+            <div className="remember-row">
+              <label className="remember-toggle" style={{ marginBottom: 0, textTransform: "none", letterSpacing: 0 }}>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                Remember me
+              </label>
+              <span className="remember-hint">
+                {rememberMe ? "Keeps you signed in on this device" : "Signs out when this tab closes"}
+              </span>
             </div>
 
             {error && (

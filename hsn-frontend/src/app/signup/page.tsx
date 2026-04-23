@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { authApi } from "@/lib/api";
+import { authApi, authStorage } from "@/lib/api";
 import { BarChart3, ArrowRight, Eye, EyeOff } from "lucide-react";
 
 export default function SignupPage() {
@@ -21,8 +21,7 @@ export default function SignupPage() {
     try {
       await authApi.register(email, password, name);
       const { access_token, refresh_token } = await authApi.login(email, password);
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
+      authStorage.setTokens(access_token, refresh_token, true);
       router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration failed");

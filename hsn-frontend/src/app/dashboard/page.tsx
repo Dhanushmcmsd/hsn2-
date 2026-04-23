@@ -1,8 +1,9 @@
 // @ts-nocheck
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
+import * as XLSX from "xlsx";
+import { hsnApi } from "@/lib/api";
 
-const BASE_URL = "http://localhost:8000";
 const PAGE_SIZE = 20;
 
 function padHsn(code: string | null | undefined) {
@@ -15,6 +16,60 @@ function padHsn(code: string | null | undefined) {
 function gstLabel(rate: number | null | undefined): string {
   if (rate == null) return "—";
   return `${rate}%`;
+}
+
+function normalizeCellValue(value: unknown) {
+  if (value == null) return "";
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value).trim();
+}
+
+function pickDefaultColumn(columnNames: string[]) {
+  return (
+    columnNames.find((column) => /product|description|item|name/i.test(column)) ??
+    columnNames[0] ??
+    ""
+  );
+}
+
+function toBulkResult(query: string, response: any) {
+  return {
+    query,
+    hsn_code: response.top_match?.hsn_code ?? "",
+    description:
+      response.top_match?.full_description ??
+      response.top_match?.description ??
+      "",
+    gst_rate: response.gst_rate ?? response.top_match?.gst_rate ?? null,
+    confidence: response.confidence ?? response.top_match?.score ?? 0,
+    confidence_label: response.confidence_label ?? "low",
+    match_method: response.top_match?.method ?? "",
+    alternatives: response.alternatives ?? [],
+    needs_review: Boolean(response.needs_review),
+    error: "",
+  };
+}
+
+function toFailedBulkResult(query: string, error: unknown) {
+  const message = error instanceof Error ? error.message : "Prediction failed";
+  return {
+    query,
+    hsn_code: "",
+    description: "",
+    gst_rate: null,
+    confidence: 0,
+    confidence_label: "low",
+    match_method: "error",
+    alternatives: [],
+    needs_review: true,
+    error: message,
+  };
+}
+
+function escapeCsvValue(value: unknown) {
+  const text = value == null ? "" : String(value);
+  return `"${text.replace(/"/g, '""')}"`;
 }
 
 // ── Floating ambient icons (Indian GST context) ──────────────────────────────
@@ -525,42 +580,74 @@ export default function PremiumDashboard() {
     }
   `;
 
-  // ── Simulate predict ──────────────────────────────────────────────────────
+  // ── Single predict ────────────────────────────────────────────────────────
   async function handlePredict(e) {
     e?.preventDefault();
     if (!query.trim()) return;
     setSingleError(""); setSingleLoading(true); setResult(null);
-    await new Promise(r => setTimeout(r, 1200));
-    setSingleLoading(false);
-    setResult({
-      top_match: {
-        hsn_code: "33061010",
-        description: "Toothpaste and other oral hygiene preparations",
-        score: 0.94,
-        method: "verified_exact",
-        gst_rate: 12,
-      },
-      alternatives: [
-        { hsn_code: "33069090", description: "Other oral hygiene preparations", score: 0.73, method: "fts", gst_rate: 12 },
-        { hsn_code: "33049900", description: "Dental cosmetic preparations", score: 0.61, method: "semantic", gst_rate: 18 },
-      ],
-      confidence: 0.94,
-      confidence_label: "high",
-      needs_review: false,
-      gst_rate: 12,
-    });
+    try {
+      const prediction = await hsnApi.predict(query.trim());
+      setResult(prediction);
+    } catch (error) {
+      setSingleError(error instanceof Error ? error.message : "Prediction failed");
+    } finally {
+      setSingleLoading(false);
+    }
   }
 
   // ── File processing ───────────────────────────────────────────────────────
-  function processFile(file) {
+  async function processFile(file) {
     setFileName(file.name);
     setFileSize((file.size / 1024).toFixed(1) + " KB");
     setBulkResults([]); setBulkError(""); setBulkStats(null); setPage(0);
+    setProgress({ done: 0, total: 0 });
+    setProcessSteps([false, false, false]);
     setShowFileSuccess(false);
-    setTimeout(() => setShowFileSuccess(true), 300);
-    setColumns(["Product Description", "Item Code", "Category"]);
-    setSelectedCol("Product Description");
-    setRawRows(Array.from({ length: 24 }, (_, i) => ({ "Product Description": `Product ${i+1}` })));
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: "array", cellDates: true });
+      const firstSheetName = workbook.SheetNames[0];
+      if (!firstSheetName) throw new Error("The uploaded file does not contain any sheets.");
+
+      const worksheet = workbook.Sheets[firstSheetName];
+      const parsedRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+      const normalizedRows = parsedRows
+        .map((row) =>
+          Object.fromEntries(
+            Object.entries(row).map(([key, value]) => [String(key).trim(), normalizeCellValue(value)])
+          )
+        )
+        .filter((row) => Object.values(row).some((value) => String(value).trim() !== ""));
+
+      if (normalizedRows.length === 0) {
+        throw new Error("No data rows were found in the uploaded file.");
+      }
+
+      const columnNames = Array.from(
+        new Set(
+          normalizedRows.flatMap((row) =>
+            Object.keys(row).filter((key) => key && !key.startsWith("__EMPTY"))
+          )
+        )
+      );
+      if (columnNames.length === 0) {
+        throw new Error("The uploaded file is missing a usable header row.");
+      }
+
+      const defaultColumn = pickDefaultColumn(columnNames);
+      setColumns(columnNames);
+      setSelectedCol(defaultColumn);
+      setRawRows(normalizedRows);
+      setTimeout(() => setShowFileSuccess(true), 300);
+    } catch (error) {
+      setColumns([]);
+      setSelectedCol("");
+      setRawRows([]);
+      setFileName("");
+      setFileSize("");
+      setBulkError(error instanceof Error ? error.message : "Unable to read the uploaded file.");
+    }
   }
 
   function handleFileChange(e) {
@@ -576,56 +663,82 @@ export default function PremiumDashboard() {
 
   // ── Bulk process ──────────────────────────────────────────────────────────
   const handleBulkProcess = useCallback(async () => {
-    if (rawRows.length === 0) return;
+    if (rawRows.length === 0 || !selectedCol) return;
     setBulkLoading(true); setBulkError("");
     setBulkResults([]); setBulkStats(null); setPage(0);
 
     const steps = [false, false, false];
     setProcessSteps([...steps]);
 
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 200));
     steps[0] = true; setProcessSteps([...steps]);
-    await new Promise(r => setTimeout(r, 800));
+    await new Promise(r => setTimeout(r, 200));
     steps[1] = true; setProcessSteps([...steps]);
 
     const total = rawRows.length;
     setProgress({ done: 0, total });
+    const results = new Array(total);
+    let cursor = 0;
+    let completed = 0;
+    const concurrency = Math.min(4, total);
 
-    const hsnSamples = ["33061010","19053100","21069099","09041100","04061000","15131900","22011010","73239300"];
-    const descs = ["Oral hygiene prep","Sweet biscuits","Food supplement","Black pepper","Processed cheese","Coconut oil","Mineral water","SS household articles"];
-    const labels = ["high","high","medium","high","high","medium","high","medium"];
-    const gstRates = [12, 5, 18, 5, 12, 5, 5, 18];
+    try {
+      await Promise.all(
+        Array.from({ length: concurrency }, async () => {
+          while (true) {
+            const currentIndex = cursor++;
+            if (currentIndex >= total) break;
 
-    for (let i = 0; i < total; i++) {
-      await new Promise(r => setTimeout(r, 30));
-      setProgress({ done: i+1, total });
-      setBulkResults(prev => [...prev, {
-        query: rawRows[i][selectedCol] || `Row ${i+1}`,
-        hsn_code: hsnSamples[i % hsnSamples.length],
-        description: descs[i % descs.length],
-        gst_rate: gstRates[i % gstRates.length],
-        confidence: 0.72 + Math.random() * 0.26,
-        confidence_label: labels[i % labels.length],
-        match_method: "verified_exact",
-        alternatives: [],
-      }]);
+            const queryText = String(rawRows[currentIndex]?.[selectedCol] ?? "").trim();
+            if (!queryText) {
+              results[currentIndex] = toFailedBulkResult(`Row ${currentIndex + 1}`, "The selected column is empty for this row.");
+            } else {
+              try {
+                results[currentIndex] = toBulkResult(queryText, await hsnApi.predict(queryText));
+              } catch (error) {
+                results[currentIndex] = toFailedBulkResult(queryText, error);
+              }
+            }
+
+            completed += 1;
+            setProgress({ done: completed, total });
+            setBulkResults(results.filter(Boolean));
+          }
+        })
+      );
+
+      steps[2] = true; setProcessSteps([...steps]);
+      const finishedResults = results.filter(Boolean);
+      const matched = finishedResults.filter((row) => row.hsn_code).length;
+      const needsReview = finishedResults.filter((row) => row.needs_review || row.error).length;
+      setBulkResults(finishedResults);
+      setBulkStats({ matched, unmatched: needsReview, total });
+      if (finishedResults.some((row) => row.error)) {
+        setBulkError("Some rows could not be classified and were marked for review.");
+      }
+    } catch (error) {
+      setBulkError(error instanceof Error ? error.message : "Bulk processing failed.");
+    } finally {
+      setBulkLoading(false);
     }
-
-    steps[2] = true; setProcessSteps([...steps]);
-    setBulkStats({ matched: total, unmatched: 0, total });
-    setBulkLoading(false);
   }, [rawRows, selectedCol]);
 
   function handleDownload() {
+    if (bulkResults.length === 0) return;
     const rows = bulkResults.map(r => ({
       "Product Description": r.query,
       "HSN Code": padHsn(r.hsn_code),
-      "Description": r.description,
+      "Matched Description": r.description,
       "GST Rate (%)": r.gst_rate,
       "Confidence": `${Math.round(r.confidence * 100)}%`,
       "Confidence Label": r.confidence_label,
+      "Review Required": r.needs_review ? "Yes" : "No",
+      "Status": r.error ? r.error : "Matched",
     }));
-    const csv = [Object.keys(rows[0]).join(","), ...rows.map(r => Object.values(r).join(","))].join("\n");
+    const csv = [
+      Object.keys(rows[0]).map(escapeCsvValue).join(","),
+      ...rows.map((row) => Object.values(row).map(escapeCsvValue).join(",")),
+    ].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url;
@@ -1054,7 +1167,7 @@ export default function PremiumDashboard() {
                 <div style={{ marginTop: "auto" }}>
                   <button
                     onClick={handleBulkProcess}
-                    disabled={bulkLoading || columns.length === 0}
+                    disabled={bulkLoading || columns.length === 0 || !selectedCol}
                     className="btn-primary"
                     style={{ width: "100%", justifyContent: "center", padding: "0.8rem" }}
                   >
