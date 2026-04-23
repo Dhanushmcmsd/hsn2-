@@ -57,6 +57,8 @@ SYNONYMS = {
     # FIX: water/mineral carry drink/beverage signal for Ch 22 routing
     'water':     ['beverage', 'drink'],
     'mineral':   ['beverage', 'drink'],
+    'juice':     ['fruit juice', 'nectar fruit', 'beverage'],
+    'aerated':   ['carbonated', 'soda', 'soft drink'],
     # FIX #3: footwear synonyms for Ch 64 routing
     'chappal':   ['sandal', 'footwear', 'slipper'],
     'slipper':   ['sandal', 'footwear', 'chappal'],
@@ -250,6 +252,11 @@ def _query_intent_adjustment(normalized_query: str, item_tokens: set[str]) -> fl
             adjustment += 0.08
         if {"ball", "candy", "chikky"} & item_tokens:
             adjustment -= 0.04
+    if "JUICE" in normalized_query:
+        if {"fruit", "beverage", "drink", "orange", "mango", "apple"} & item_tokens:
+            adjustment += 0.12
+        if {"hair", "shampoo", "cleanser", "cleansing", "cream", "cosmetic"} & item_tokens:
+            adjustment -= 0.18
     if "FRUIT JAM" in normalized_query and "mixed" in item_tokens:
         adjustment += 0.06
     return adjustment

@@ -144,7 +144,8 @@ def test_detect_category_restrictions(monkeypatch):
     # Test high priority rules
     assert main.detect_category_restrictions(['tooth', 'paste']) == ['33']
     assert main.detect_category_restrictions(['note', 'book']) == ['48']
-    assert main.detect_category_restrictions(['puja', 'oil']) == ['33']  # puja overrides oil
+    assert main.detect_category_restrictions(['puja', 'oil']) == ['15']  # puja oil routes to oils
+    assert main.detect_category_restrictions(['fruit', 'juice']) == ['22']
 
     # Test lower priority rules
     assert main.detect_category_restrictions(['edible', 'oil']) == ['15']

@@ -643,7 +643,7 @@ SYNONYMS = {
     'jaggery': ['gur', 'brown sugar', 'cane jaggery'],
     'sugar': ['sucrose', 'cane sugar', 'jaggery'],
     'aerated': ['soft drink', 'pepsi', 'cola', 'soda'],
-    'juice': ['fruit juice', 'real juice', 'nectar'],
+    'juice': ['fruit juice', 'beverage'],
     'fish': ['seafood', 'prawn', 'shrimp', 'kozhuva', 'sardine'],
     'prawn': ['shrimp', 'fish', 'seafood'],
     'chicken': ['poultry', 'meat', 'chkn', 'broiler'],
@@ -738,49 +738,47 @@ DOMAIN_PREFIXES = {
 }
 
 CATEGORY_RULES = [
-    {'keywords': ['tooth', 'paste', 'toothpaste', 'dentifrice'],   'chapters': ['33']},
-    {'keywords': ['toothbrush', 'tbrush'],                          'chapters': ['96']},
-    {'keywords': ['note', 'book', 'notebook', 'copybook'],          'chapters': ['48']},
-    {'keywords': ['puja', 'pooja', 'thiri', 'wick', 'lamp oil'],    'chapters': ['33']},
-    {'keywords': ['agarbatti', 'agarbathi', 'incense', 'sambrani'], 'chapters': ['33']},
-    {'keywords': ['cleaning', 'cleaner', 'detergent', 'phenyl', 'disinfectant', 'harpic'], 'chapters': ['34']},
-    {'keywords': ['cosmetic', 'makeup', 'skincare', 'foundation', 'kajal', 'eyeshadow'], 'chapters': ['33']},
-    {'keywords': ['soap', 'toilet soap'],                           'chapters': ['34', '33']},
-    {'keywords': ['shampoo', 'conditioner', 'hair wash'],           'chapters': ['33']},
-    {'keywords': ['phone', 'mobile', 'smartphone'],                 'chapters': ['85']},
-    {'keywords': ['television', 'tv'],                              'chapters': ['85']},
-    {'keywords': ['computer', 'laptop'],                            'chapters': ['84']},
-    {'keywords': ['fridge', 'refrigerator'],                        'chapters': ['84']},
-    {'keywords': ['vkc', 'footwear', 'sandal', 'slipper', 'chappal', 'shoe', 'hawai'], 'chapters': ['64']},
-    {'keywords': ['toy', 'doll', 'puzzle', 'balloon', 'xmas', 'christmas'], 'chapters': ['95']},
-    {'keywords': ['pen', 'pencil', 'eraser', 'marker', 'highlighter'], 'chapters': ['96']},
-    {'keywords': ['umbrella', 'umbrla'],                            'chapters': ['66']},
-    {'keywords': ['match', 'matchbox', 'safety match'],             'chapters': ['36']},
-    {'keywords': ['camphor', 'karpoor'],                            'chapters': ['29']},
-    {'keywords': ['oil'],                                           'chapters': ['15']},
-    {'keywords': ['food', 'beverage', 'drink'],                     'chapters': ['04', '19', '20', '21', '22']},
-    {'keywords': ['clothing', 'garment', 'fabric', 'pants', 'shirt', 'palazzo'], 'chapters': ['61', '62', '63']},
-    {'keywords': ['furniture', 'sofa', 'chair', 'table'],          'chapters': ['94']},
-    {'keywords': ['steel', 'stainless'],                            'chapters': ['73']},
-    {'keywords': ['aluminium', 'aluminum'],                         'chapters': ['76']},
-    {'keywords': ['plastic', 'container', 'basket', 'hanger'],     'chapters': ['39']},
-    {'keywords': ['glass', 'ceramic', 'porcelain'],                 'chapters': ['70', '69']},
-    {'keywords': ['rice', 'basmati', 'matta'],                      'chapters': ['10']},
+    {'keywords': ['toothpaste', 'tooth paste', 'dentifrice', 'tooth', 'paste'], 'chapters': ['33']},
+    {'keywords': ['toothbrush', 't.brush', 'tbrush'],                            'chapters': ['96']},
+    {'keywords': ['agarbatti', 'agarbathi', 'agarbati', 'incense', 'sambrani'], 'chapters': ['33']},
+    {'keywords': ['harpic', 'lizol', 'toilet cleaner', 'cleaning', 'cleaner', 'detergent', 'phenyl', 'disinfectant'], 'chapters': ['34']},
+    {'keywords': ['shampoo', 'hair wash', 'hair cleanser', 'conditioner'],       'chapters': ['33']},
+    {'keywords': ['vkc', 'footwear', 'chappal', 'sandal', 'slipper', 'hawai', 'shoe'], 'chapters': ['64']},
+    {'keywords': ['notebook', 'note book', 'note', 'book', 'copybook', 'exercise book'], 'chapters': ['48']},
+    {'keywords': ['puja oil', 'pooja oil', 'puja', 'pooja', 'thiri', 'wick', 'lamp oil'], 'chapters': ['15']},
+    {'keywords': ['cosmetic', 'makeup', 'skincare', 'foundation', 'kajal', 'eyeshadow', 'lipstick'], 'chapters': ['33']},
+    {'keywords': ['soap', 'toilet soap'],                                         'chapters': ['34', '33']},
+    {'keywords': ['chocolate', 'cocoa', 'choco'],                                 'chapters': ['18']},
+    {'keywords': ['biscuit', 'cookie', 'wafer', 'cooki', 'cookis', 'chips', 'puff', 'snack', 'cereal', 'popcorn'], 'chapters': ['19']},
+    {'keywords': ['jam', 'jelly', 'marmalade', 'pickle', 'achar'],                'chapters': ['20']},
+    {'keywords': ['juice', 'fruit juice', 'vegetable juice', 'aerated', 'soft drink', 'water', 'soda'], 'chapters': ['22']},
+    {'keywords': ['ketchup', 'sauce', 'ice cream', 'supplement'],                 'chapters': ['21']},
+    {'keywords': ['rice', 'basmati', 'matta'],                                    'chapters': ['10']},
     {'keywords': ['atta', 'flour', 'maida', 'suji', 'rava', 'puttupodi', 'aval', 'poha'], 'chapters': ['11']},
     {'keywords': ['spice', 'masala', 'turmeric', 'chilli', 'pepper', 'cardamom'], 'chapters': ['09']},
-    {'keywords': ['chocolate', 'cocoa', 'choco'],                   'chapters': ['18']},
-    {'keywords': ['biscuit', 'cookie', 'wafer', 'chips', 'puff', 'snack', 'cereal', 'popcorn', 'cooki', 'cookis'], 'chapters': ['19']},
-    {'keywords': ['sugar', 'jaggery', 'candy', 'toffee'],           'chapters': ['17']},
+    {'keywords': ['oil'],                                                          'chapters': ['15']},
     {'keywords': ['dairy', 'milk', 'ghee', 'butter', 'cheese', 'paneer', 'curd', 'yogurt'], 'chapters': ['04']},
-    {'keywords': ['fish', 'prawn', 'seafood', 'shrimp'],            'chapters': ['03']},
-    {'keywords': ['chicken', 'meat', 'poultry'],                    'chapters': ['02']},
-    {'keywords': ['knife', 'scissors', 'razor', 'blade', 'cutter'], 'chapters': ['82']},
-    {'keywords': ['salt', 'iodised salt'],                          'chapters': ['25']},
-    {'keywords': ['pickle', 'achar'],                               'chapters': ['20']},
-    {'keywords': ['jam', 'jelly', 'marmalade'],                     'chapters': ['20']},
-    {'keywords': ['ketchup', 'sauce', 'ice cream', 'supplement'],   'chapters': ['21']},
-    {'keywords': ['juice', 'aerated', 'soft drink', 'water', 'soda'], 'chapters': ['22']},
-    {'keywords': ['cashew', 'cashw', 'kaju'],                       'chapters': ['08', '20']},
+    {'keywords': ['fish', 'prawn', 'seafood', 'shrimp'],                          'chapters': ['03']},
+    {'keywords': ['chicken', 'meat', 'poultry'],                                  'chapters': ['02']},
+    {'keywords': ['sugar', 'jaggery', 'candy', 'toffee'],                         'chapters': ['17']},
+    {'keywords': ['salt', 'iodised salt'],                                        'chapters': ['25']},
+    {'keywords': ['phone', 'mobile', 'smartphone'],                               'chapters': ['85']},
+    {'keywords': ['television', 'tv'],                                            'chapters': ['85']},
+    {'keywords': ['computer', 'laptop', 'fridge', 'refrigerator'],                'chapters': ['84']},
+    {'keywords': ['pen', 'pencil', 'eraser', 'marker', 'highlighter'],            'chapters': ['96']},
+    {'keywords': ['toy', 'doll', 'puzzle', 'balloon', 'xmas', 'christmas'],       'chapters': ['95']},
+    {'keywords': ['umbrella', 'umbrla'],                                          'chapters': ['66']},
+    {'keywords': ['match', 'matchbox', 'safety match'],                           'chapters': ['36']},
+    {'keywords': ['camphor', 'karpoor'],                                          'chapters': ['29']},
+    {'keywords': ['food', 'beverage', 'drink'],                                   'chapters': ['04', '19', '20', '21', '22']},
+    {'keywords': ['clothing', 'garment', 'fabric', 'pants', 'shirt', 'palazzo'], 'chapters': ['61', '62', '63']},
+    {'keywords': ['furniture', 'sofa', 'chair', 'table'],                         'chapters': ['94']},
+    {'keywords': ['steel', 'stainless'],                                          'chapters': ['73']},
+    {'keywords': ['aluminium', 'aluminum'],                                       'chapters': ['76']},
+    {'keywords': ['plastic', 'container', 'basket', 'hanger'],                    'chapters': ['39']},
+    {'keywords': ['glass', 'ceramic', 'porcelain'],                               'chapters': ['70', '69']},
+    {'keywords': ['knife', 'scissors', 'razor', 'blade', 'cutter'],               'chapters': ['82']},
+    {'keywords': ['cashew', 'cashw', 'kaju'],                                     'chapters': ['08', '20']},
 ]
 
 # ── Helper functions ───────────────────────────────────────────────────────────
@@ -1142,6 +1140,13 @@ INTENT_BOOSTS = {
     ("ghee", "ghee"):           +0.15,
     ("fruit", "fruit"):         +0.08,
     ("fruit", "cocktail"):      -0.18,
+    ("juice", "hair"):          -0.40,
+    ("juice", "cleansing"):     -0.35,
+    ("juice", "nectar shampoo"): -0.45,
+    ("juice", "amrutveni"):     -0.50,
+    ("juice", "fruit"):         +0.25,
+    ("juice", "vegetable"):     +0.20,
+    ("juice", "beverage"):      +0.20,
 }
 
 
@@ -1263,6 +1268,34 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     q_words_exp = [w for w in _re.findall(r'[A-Z]{2,}', q_ns_expanded.upper()) if len(w) >= 3]
     # Combined deduped word list for searching
     q_all_words = list(dict.fromkeys(q_words + q_words_exp))
+    domain_tokens = split_query_fields(q_expanded)["all_tokens"]
+    _expected_chapters = detect_category_restrictions(domain_tokens)
+
+    def _chapter_ok(hsn_code: str) -> bool:
+        if not _expected_chapters:
+            return True
+        normalized = re.sub(r'[^0-9]', '', str(hsn_code or ''))
+        return any(normalized.startswith(ch) for ch in _expected_chapters)
+
+    def _filter_vp_rows(rows, pass_name: str):
+        if not _expected_chapters:
+            return rows
+        filtered = [row for row in rows if _chapter_ok(row.hsn_code)]
+        if rows and not filtered:
+            chapters = sorted({
+                normalize_hsn(getattr(row, "hsn_code", ""))[:2]
+                for row in rows
+                if getattr(row, "hsn_code", None)
+            })
+            log.info(
+                "%s.chapter_mismatch", pass_name,
+                extra={
+                    "query": q_stripped[:50],
+                    "got_chapters": chapters,
+                    "expected": _expected_chapters,
+                }
+            )
+        return filtered
 
     vp_has_col = await _probe_vp_schema(db)
 
@@ -1302,6 +1335,16 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 {"q": exact_q},
             )
             row = res.fetchone()
+            if row and not _chapter_ok(row.hsn_code):
+                log.info(
+                    "pass0A.chapter_mismatch",
+                    extra={
+                        "query": q_stripped[:50],
+                        "got_chapter": normalize_hsn(row.hsn_code)[:2],
+                        "expected": _expected_chapters,
+                    }
+                )
+                continue
             if row:
                 conf = _calibrate_confidence(1.0, q_all_words, row.description, max_conf=1.0)
                 gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
@@ -1336,6 +1379,16 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     {"q": ns_q},
                 )
                 row = res.fetchone()
+                if row and not _chapter_ok(row.hsn_code):
+                    log.info(
+                        "pass0B.chapter_mismatch",
+                        extra={
+                            "query": q_stripped[:50],
+                            "got_chapter": normalize_hsn(row.hsn_code)[:2],
+                            "expected": _expected_chapters,
+                        }
+                    )
+                    continue
                 if row:
                     conf = _calibrate_confidence(0.95, q_all_words, row.description, max_conf=1.0)
                     gst_float = float(_re.sub(r'[^0-9.]', '', str(row.gst_rate or 0)) or 0)
@@ -1371,6 +1424,16 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     {"q": ns_q},
                 )
                 row = res.fetchone()
+                if row and not _chapter_ok(row.hsn_code):
+                    log.info(
+                        "pass0C.chapter_mismatch",
+                        extra={
+                            "query": q_stripped[:50],
+                            "got_chapter": normalize_hsn(row.hsn_code)[:2],
+                            "expected": _expected_chapters,
+                        }
+                    )
+                    continue
                 if row and float(row.sim) >= 0.60:
                     sim = float(row.sim)
                     conf = _calibrate_confidence(round(sim, 3), q_all_words, row.description, max_conf=1.0)
@@ -1414,6 +1477,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 {"prefix": prefix_q + "%"},
             )
             rows = res.fetchall()
+            rows = _filter_vp_rows(rows, "pass0D")
             if rows:
                 result = _build_vp_result("verified_prefix", rows, base_conf=0.62, max_conf=0.90)
                 if result and result.confidence >= 0.52:
@@ -1456,6 +1520,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     params,
                 )
                 rows = res.fetchall()
+                rows = _filter_vp_rows(rows, "pass0E")
                 if rows:
                     result = _build_vp_result(
                         "verified_allwords", rows, base_conf=0.55, max_conf=0.88
@@ -1494,6 +1559,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     params,
                 )
                 rows = res.fetchall()
+                rows = _filter_vp_rows(rows, "pass0E_ns")
                 if rows:
                     result = _build_vp_result(
                         "verified_allwords_ns", rows, base_conf=0.55, max_conf=0.88
@@ -1524,6 +1590,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 params,
             )
             rows = res.fetchall()
+            rows = _filter_vp_rows(rows, "pass0E2")
             if rows:
                 result = _build_vp_result(
                     "verified_partial", rows, base_conf=0.44, max_conf=0.78
@@ -1576,6 +1643,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     {"kw": f"%{kw}%"},
                 )
                 rows = res.fetchall()
+                rows = _filter_vp_rows(rows, "pass0F")
                 if rows:
                     result = _build_vp_result(
                         "verified_keyword", rows, base_conf=0.30, max_conf=0.72
@@ -1771,6 +1839,12 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             # Layer 3: apply intent bonus
             intent = _compute_intent_bonus(tokens, r.description)
             final_score = max(0.0, min(1.0, final_score + intent))
+            row_chapter = normalize_hsn(r.hsn_code)[:2]
+            if _expected_chapters:
+                if row_chapter in _expected_chapters:
+                    final_score = min(1.0, final_score + 0.08)
+                else:
+                    final_score = max(0.0, final_score - 0.30)
             fts_candidates.append({
                 "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
