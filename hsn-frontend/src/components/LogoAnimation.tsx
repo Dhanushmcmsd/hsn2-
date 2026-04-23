@@ -14,10 +14,10 @@ const redSquares = [
 ];
 
 const blueCorners = [
-  { key: "tl", x: 18, y: 18, path: "M0 16V0h16" },
-  { key: "tr", x: 66, y: 18, path: "M0 0h16v16" },
-  { key: "br", x: 66, y: 66, path: "M16 0v16H0" },
-  { key: "bl", x: 18, y: 66, path: "M16 16H0V0" },
+  { key: "tl", x: 8, y: 8, path: "M0 0H24V8H8V24H0Z" },
+  { key: "tr", x: 68, y: 8, path: "M0 0H24V24H16V8H0Z" },
+  { key: "br", x: 68, y: 68, path: "M16 0H24V24H0V16H16Z" },
+  { key: "bl", x: 8, y: 68, path: "M0 0H8V16H24V24H0Z" },
 ];
 
 export function LogoAnimation({ className = "" }: LogoAnimationProps) {
@@ -77,17 +77,11 @@ export function LogoAnimation({ className = "" }: LogoAnimationProps) {
         ))}
 
         {blueCorners.map((corner, index) => (
-          <motion.path
+          <motion.g
             key={corner.key}
-            d={corner.path}
-            fill="none"
-            stroke="#173f8a"
-            strokeWidth="8"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
             transform={`translate(${corner.x} ${corner.y})`}
-            initial={reducedMotion ? false : { pathLength: 0, opacity: 0, scale: 0.92 }}
-            animate={reducedMotion ? { pathLength: 1, opacity: 1, scale: 1 } : { pathLength: 1, opacity: 1, scale: 1 }}
+            initial={reducedMotion ? false : { opacity: 0, scale: 0.82 }}
+            animate={reducedMotion ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
             transition={
               reducedMotion
                 ? undefined
@@ -97,7 +91,9 @@ export function LogoAnimation({ className = "" }: LogoAnimationProps) {
                     ease: [0.22, 1, 0.36, 1],
                   }
             }
-          />
+          >
+            <path d={corner.path} fill="#173f8a" />
+          </motion.g>
         ))}
       </svg>
     </motion.div>

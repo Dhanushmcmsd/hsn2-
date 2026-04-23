@@ -263,7 +263,7 @@ export default function Home() {
             HSNiq · AI-powered GST classification for India
           </div>
           <div>
-            Built for modern finance teams by <span className="text-blue-300">Supra Pacific</span>
+            Built for <span className="text-blue-300">Supra Pacific</span> by Dhanush
           </div>
         </div>
       </footer>

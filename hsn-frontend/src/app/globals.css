@@ -43,35 +43,35 @@ body {
 .hero-glossy-fill {
   display: inline-block;
   background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 18%, rgba(255, 255, 255, 0.1) 22%, rgba(255, 255, 255, 0.92) 29%),
-    linear-gradient(90deg, #ff9933 0%, #ffd2a1 18%, #fff4e6 34%, #ffffff 50%, #eefceb 66%, #9be29a 82%, #138808 100%);
-  background-size: 100% 100%, 180% 100%;
-  background-position: 0 0, 0% 50%;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 18%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.18) 100%),
+    linear-gradient(90deg, #ff8f1f 0%, #ffb25a 18%, #fff2de 34%, #ffffff 50%, #f0ffe8 66%, #76d66d 84%, #138808 100%);
+  background-size: 100% 100%, 220% 100%;
+  background-position: 0 0, 6% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   filter:
-    drop-shadow(0 0 10px rgba(255, 153, 51, 0.08))
-    drop-shadow(0 0 14px rgba(255, 255, 255, 0.12))
-    drop-shadow(0 0 10px rgba(19, 136, 8, 0.08));
+    drop-shadow(0 0 10px rgba(255, 143, 31, 0.16))
+    drop-shadow(0 0 14px rgba(255, 255, 255, 0.16))
+    drop-shadow(0 0 12px rgba(19, 136, 8, 0.14));
   transition: filter 300ms ease;
-  animation: heroFlagFlow 10s ease-in-out infinite alternate;
+  animation: heroFlagFlow 8s ease-in-out infinite alternate;
 }
 
 .hero-glossy-title:hover .hero-glossy-fill {
-  animation: heroFlagFlow 3.2s ease-in-out infinite alternate;
+  animation: heroFlagFlow 2.2s ease-in-out infinite alternate;
   filter:
-    drop-shadow(0 0 14px rgba(255, 153, 51, 0.16))
-    drop-shadow(0 0 20px rgba(255, 255, 255, 0.22))
-    drop-shadow(0 0 18px rgba(19, 136, 8, 0.14));
+    drop-shadow(0 0 18px rgba(255, 143, 31, 0.24))
+    drop-shadow(0 0 24px rgba(255, 255, 255, 0.24))
+    drop-shadow(0 0 20px rgba(19, 136, 8, 0.2));
 }
 
 .hero-title-glow {
   background: radial-gradient(
     circle,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 153, 51, 0.14) 36%,
-    rgba(19, 136, 8, 0.12) 72%,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 143, 31, 0.2) 34%,
+    rgba(19, 136, 8, 0.18) 72%,
     transparent 100%
   );
 }
