@@ -6,6 +6,7 @@ import structlog
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.services.hsn_master import canonicalize_hsn
 from app.services.matcher import SYNONYMS, expand_fmcg_abbreviations, tokenize
 
 log = structlog.get_logger()
@@ -13,9 +14,29 @@ log = structlog.get_logger()
 _HSN_HAS_CATEGORY: bool | None = None
 
 
+def _rerank_matches(query: str, matches: list[dict], *, top_k: int) -> list[dict]:
+    if len(matches) <= 1:
+        return matches[:top_k]
+    try:
+        from app.services.nlp import extract_entities
+        from app.services.reranker import get_reranker
+
+        reranker = get_reranker()
+        entities = extract_entities(query)
+        return reranker.rerank(
+            query,
+            matches[: top_k * 2],
+            top_k=top_k,
+            query_entities=entities,
+        )
+    except Exception as exc:
+        log.warning("db_matcher.reranker_failed", error=str(exc))
+        return matches[:top_k]
+
+
 def _normalize_hsn(code: str) -> str:
-    digits = re.sub(r"[^0-9]", "", str(code or "").strip())
-    return digits.zfill(8) if digits else str(code or "").strip()
+    normalized = canonicalize_hsn(code)
+    return normalized or str(code or "").strip()
 
 
 async def _probe_hsn_category(db: AsyncSession) -> bool:
@@ -54,6 +75,17 @@ def _build_enhanced_tsquery(tokens: list[str], *, operator: str = "&") -> str:
     return f" {operator} ".join(terms)
 
 
+def _build_prefix_filter_clause(prefixes: list[str], *, alias: str = "h") -> tuple[str, dict[str, str]]:
+    cleaned = [re.sub(r"[^0-9]", "", prefix) for prefix in prefixes if prefix]
+    cleaned = [prefix for prefix in dict.fromkeys(cleaned) if len(prefix) >= 2]
+    if not cleaned:
+        return "", {}
+
+    clause_parts = [f"{alias}.hsn_code LIKE :prefix_{idx}" for idx in range(len(cleaned))]
+    params = {f"prefix_{idx}": f"{prefix}%" for idx, prefix in enumerate(cleaned)}
+    return " AND (" + " OR ".join(clause_parts) + ")", params
+
+
 async def _pass1b_prefix_code(query: str, db: AsyncSession) -> list[dict]:
     digit_match = re.search(r"\b(\d{4,8})\b", query)
     if not digit_match:
@@ -74,14 +106,23 @@ async def _pass1b_prefix_code(query: str, db: AsyncSession) -> list[dict]:
         {
             "hsn_code": _normalize_hsn(row.hsn_code),
             "description": row.description,
+            "gst_rate": float(row.gst_rate or 0),
             "score": round(max(0.72, 0.98 - idx * 0.08), 3),
             "method": "prefix_code",
+            "source": "hsn_codes",
         }
         for idx, row in enumerate(rows)
     ]
 
 
-async def _pass2_fts(query: str, tokens: list[str], db: AsyncSession, *, operator: str) -> list[dict]:
+async def _pass2_fts(
+    query: str,
+    tokens: list[str],
+    db: AsyncSession,
+    *,
+    operator: str,
+    chapter_hints: list[str] | None = None,
+) -> list[dict]:
     ts_query = _build_enhanced_tsquery(tokens, operator=operator)
     if not ts_query:
         return []
@@ -96,6 +137,8 @@ async def _pass2_fts(query: str, tokens: list[str], db: AsyncSession, *, operato
     else:
         category_select = "'' AS category,"
         weighted_vector = "setweight(to_tsvector('english', h.description), 'A')"
+
+    domain_clause, domain_params = _build_prefix_filter_clause(chapter_hints or [])
 
     try:
         result = await db.execute(
@@ -113,10 +156,11 @@ async def _pass2_fts(query: str, tokens: list[str], db: AsyncSession, *, operato
                 FROM hsn_codes h
                 CROSS JOIN to_tsquery('english', :q) query_ts
                 WHERE {weighted_vector} @@ query_ts
+                {domain_clause}
                 ORDER BY rank DESC, h.hsn_code ASC
                 LIMIT 20
             """),
-            {"q": ts_query},
+            {"q": ts_query, **domain_params},
         )
     except Exception as exc:
         log.info("db_matcher.pass2_unavailable", error=str(exc))
@@ -136,18 +180,26 @@ async def _pass2_fts(query: str, tokens: list[str], db: AsyncSession, *, operato
             {
                 "hsn_code": _normalize_hsn(row.hsn_code),
                 "description": row.description,
+                "gst_rate": float(row.gst_rate or 0),
                 "score": round(score, 3),
                 "method": "fulltext_fts",
+                "source": "hsn_codes",
             }
         )
     return ranked
 
 
-async def _pass4_ilike(tokens: list[str], db: AsyncSession) -> list[dict]:
+async def _pass4_ilike(
+    tokens: list[str],
+    db: AsyncSession,
+    *,
+    chapter_hints: list[str] | None = None,
+) -> list[dict]:
     if not tokens:
         return []
 
     candidates: dict[str, dict] = {}
+    domain_clause, domain_params = _build_prefix_filter_clause(chapter_hints or [])
     for token in tokens[:4]:
         if len(token) < 3:
             continue
@@ -157,9 +209,10 @@ async def _pass4_ilike(tokens: list[str], db: AsyncSession) -> list[dict]:
                     SELECT h.hsn_code, h.description, COALESCE(h.gst_rate, 0) AS gst_rate
                     FROM hsn_codes h
                     WHERE LOWER(h.description) LIKE :pattern
+                    """ + domain_clause + """
                     LIMIT 20
                 """),
-                {"pattern": f"%{token.lower()}%"},
+                {"pattern": f"%{token.lower()}%", **domain_params},
             )
         except Exception as exc:
             log.info("db_matcher.pass4_unavailable", error=str(exc))
@@ -172,8 +225,10 @@ async def _pass4_ilike(tokens: list[str], db: AsyncSession) -> list[dict]:
                 candidates[key] = {
                     "hsn_code": key,
                     "description": row.description,
+                    "gst_rate": float(row.gst_rate or 0),
                     "score": 0.22,
                     "method": "keyword_ilike",
+                    "source": "hsn_codes",
                     "_hits": 0,
                 }
                 current = candidates[key]
@@ -194,8 +249,20 @@ async def match_query(query: str, db: AsyncSession, *, top_k: int = 5) -> list[d
 
     expanded = expand_fmcg_abbreviations(q)
     tokens = tokenize(expanded)
+    chapter_hints: list[str] = []
+    try:
+        from app.services.nlp import entities_to_search_boost, extract_entities
+
+        entities = extract_entities(q)
+        nlp_boost = entities_to_search_boost(entities)
+        chapter_hints = nlp_boost["chapter_hints"]
+        if nlp_boost["boost_terms"]:
+            tokens = list(dict.fromkeys(tokens + nlp_boost["boost_terms"]))
+    except ImportError:
+        pass
 
     if re.fullmatch(r"\d{4,8}", q):
+        normalized_q = _normalize_hsn(q)
         result = await db.execute(
             text("""
                 SELECT h.hsn_code, h.description, COALESCE(h.gst_rate, 0) AS gst_rate
@@ -203,25 +270,31 @@ async def match_query(query: str, db: AsyncSession, *, top_k: int = 5) -> list[d
                 WHERE h.hsn_code = :code
                 LIMIT 1
             """),
-            {"code": q},
+            {"code": normalized_q},
         )
         row = result.fetchone()
         if row:
             return [{
                 "hsn_code": _normalize_hsn(row.hsn_code),
                 "description": row.description,
+                "gst_rate": float(row.gst_rate or 0),
                 "score": 1.0,
                 "method": "exact_code",
+                "source": "hsn_codes",
             }]
 
     prefix_rows = await _pass1b_prefix_code(expanded, db)
     if prefix_rows:
         return prefix_rows[:top_k]
 
-    rows = await _pass2_fts(expanded, tokens, db, operator="&")
+    rows = await _pass2_fts(expanded, tokens, db, operator="&", chapter_hints=chapter_hints)
     if not rows and len(tokens) > 1:
-        rows = await _pass2_fts(expanded, tokens, db, operator="|")
+        rows = await _pass2_fts(expanded, tokens, db, operator="|", chapter_hints=chapter_hints)
     if rows:
-        return rows[:top_k]
+        return _rerank_matches(query, rows, top_k=top_k)
 
-    return (await _pass4_ilike(tokens, db))[:top_k]
+    return _rerank_matches(
+        query,
+        await _pass4_ilike(tokens, db, chapter_hints=chapter_hints),
+        top_k=top_k,
+    )

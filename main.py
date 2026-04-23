@@ -132,8 +132,13 @@ def normalize_hsn(code: str) -> str:
     if not code or not str(code).strip():
         return code
     stripped = str(code).strip()
-    if re.match(r'^\d+$', stripped):
-        return stripped.zfill(8)
+    digits = re.sub(r'[^0-9]', '', stripped)
+    if digits:
+        if len(digits) >= 8:
+            return digits[:8]
+        if len(digits) in {2, 4, 6}:
+            return digits.ljust(8, '0')
+        return digits.zfill(8)
     return stripped
 
 # ── Size-stripping ────────────────────────────────────────────────────────────
@@ -398,6 +403,7 @@ async def predict_single(
         "top_match": {
             "hsn_code": top_hsn,
             "description": result.description or "Not classified",
+            "gst_rate": result.gst_rate,
             "score": result.confidence,
             "method": result.match_method,
         },
@@ -405,6 +411,7 @@ async def predict_single(
             {
                 "hsn_code": normalize_hsn(a.get("hsn_code", "")),
                 "description": a.get("description", ""),
+                "gst_rate": a.get("gst_rate"),
                 "score": a.get("confidence", 0),
                 "method": "search",
             }
@@ -1176,6 +1183,44 @@ def _calibrate_confidence(
     return round(conf, 3)
 
 
+def _rerank_candidate_dicts(
+    query: str,
+    candidates: list[dict],
+    *,
+    top_k: int = 5,
+    method_suffix: str = "reranked",
+) -> list[dict]:
+    if len(candidates) <= 1:
+        return candidates[:top_k]
+
+    try:
+        from app.services.nlp import extract_entities
+        from app.services.reranker import get_reranker
+
+        reranker = get_reranker()
+        entities = extract_entities(query)
+        prepared = []
+        for candidate in candidates:
+            updated = dict(candidate)
+            updated.setdefault("source", "hsn_codes")
+            updated.setdefault("score", float(updated.get("confidence", 0.0)))
+            prepared.append(updated)
+
+        reranked = reranker.rerank(
+            query,
+            prepared[: top_k * 2],
+            top_k=top_k,
+            query_entities=entities,
+            method_suffix=method_suffix,
+        )
+        for item in reranked:
+            item["confidence"] = round(float(item.get("score", item.get("confidence", 0.0))), 3)
+        return reranked
+    except Exception as e:
+        log.warning("reranker.failed query=%s error=%s", query[:50], str(e))
+        return candidates[:top_k]
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # CORE MATCHING ENGINE v3 — 4-layer fix applied
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1554,6 +1599,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     # ══════════════════════════════════════════════════════════════════════════
     if re.match(r'^\d{4,8}$', q_stripped):
         try:
+            normalized_q = normalize_hsn(q_stripped)
             res = await db.execute(
                 text("""
                     SELECT h.hsn_code, h.description, h.gst_rate, h.category
@@ -1561,7 +1607,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     WHERE h.hsn_code = :code AND h.is_active = TRUE
                     LIMIT 1
                 """),
-                {"code": q_stripped},
+                {"code": normalized_q},
             )
             row = res.fetchone()
             if row:
@@ -1618,6 +1664,29 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         return HSNBatchResult(query=query, match_method="none")
 
     domain_clause, domain_params = build_hsn_prefix_clause(tokens)
+
+    # Layer 3 NLP: entity extraction for attribute-aware boosts and chapter hints
+    try:
+        from app.services.nlp import extract_entities, entities_to_search_boost
+
+        entities = extract_entities(query)
+        nlp_boost = entities_to_search_boost(entities)
+
+        if nlp_boost["chapter_hints"] and not domain_clause:
+            nlp_prefixes = nlp_boost["chapter_hints"]
+            nlp_clause_parts = [
+                f"h.hsn_code LIKE :nlp_{i}" for i in range(len(nlp_prefixes))
+            ]
+            domain_clause = " AND (" + " OR ".join(nlp_clause_parts) + ")"
+            domain_params.update({
+                f"nlp_{i}": f"{prefix}%"
+                for i, prefix in enumerate(nlp_prefixes)
+            })
+
+        if nlp_boost["boost_terms"]:
+            tokens = list(dict.fromkeys(tokens + nlp_boost["boost_terms"]))
+    except ImportError:
+        pass
 
     # Pass 2: weighted FTS on hsn_codes (AND then OR fallback)
     rows_fts = []
@@ -1687,10 +1756,8 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             rows_fts = []
 
     if rows_fts:
-        best = None
-        best_score = 0.0
-        alts = []
         lexical_index = _build_candidate_lexical_index(q_expanded, rows_fts)
+        fts_candidates = []
         for idx, r in enumerate(rows_fts):
             desc_tokens = set(tokenize(r.description))
             if not desc_tokens:
@@ -1704,22 +1771,24 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             # Layer 3: apply intent bonus
             intent = _compute_intent_bonus(tokens, r.description)
             final_score = max(0.0, min(1.0, final_score + intent))
-
-            entry = {
+            fts_candidates.append({
                 "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
                 "gst_rate": float(r.gst_rate or 0),
                 "confidence": round(final_score, 3),
-            }
-            if final_score > best_score:
-                if best:
-                    alts.append(best)
-                best = entry
-                best_score = final_score
-            else:
-                alts.append(entry)
+                "method": "fulltext_fts",
+                "source": "hsn_codes",
+            })
 
-        if best and best_score > 0.05:
+        reranked_fts = _rerank_candidate_dicts(
+            query,
+            sorted(fts_candidates, key=lambda item: item["confidence"], reverse=True),
+            top_k=5,
+        )
+
+        if reranked_fts and reranked_fts[0]["confidence"] > 0.05:
+            best = reranked_fts[0]
+            best_score = best["confidence"]
             label = "high" if best_score >= 0.65 else ("medium" if best_score >= 0.35 else "low")
             return HSNBatchResult(
                 query=query,
@@ -1729,7 +1798,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 confidence=round(best_score, 3),
                 confidence_label=label,
                 match_method="fulltext_fts",
-                alternatives=alts[:4],
+                alternatives=reranked_fts[1:5],
             )
 
     # Pass 3: trigram on hsn_search
@@ -1754,7 +1823,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
 
     if rows_trgm:
         lexical_index = _build_candidate_lexical_index(q_expanded, rows_trgm)
-        ranked_trgm = []
+        trigram_candidates = []
         for idx, r in enumerate(rows_trgm):
             sim_score = min(float(r.sim), 1.0)
             final_score = compute_inverted_index_score(
@@ -1763,30 +1832,34 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             # Layer 3: intent bonus
             intent = _compute_intent_bonus(tokens, r.description)
             final_score = max(0.0, min(1.0, final_score + intent))
-            ranked_trgm.append((final_score, r))
-        ranked_trgm.sort(key=lambda item: item[0], reverse=True)
-        best_score, best = ranked_trgm[0]
-        best_base_score = min(float(best.sim), 1.0)
-        alts = [
-            {
+            trigram_candidates.append({
                 "hsn_code": normalize_hsn(r.hsn_code),
                 "description": r.description,
                 "gst_rate": float(r.gst_rate or 0),
-                "confidence": round(score, 3),
-            }
-            for score, r in ranked_trgm[1:4]
-        ]
-        if best_score > 0.15:
-            label = "high" if best_base_score >= 0.60 else ("medium" if best_base_score >= 0.30 else "low")
+                "confidence": round(final_score, 3),
+                "method": "trigram",
+                "source": "hsn_codes",
+            })
+
+        reranked_trgm = _rerank_candidate_dicts(
+            query,
+            sorted(trigram_candidates, key=lambda item: item["confidence"], reverse=True),
+            top_k=5,
+        )
+
+        if reranked_trgm and reranked_trgm[0]["confidence"] > 0.15:
+            best = reranked_trgm[0]
+            best_score = best["confidence"]
+            label = "high" if best_score >= 0.65 else ("medium" if best_score >= 0.35 else "low")
             return HSNBatchResult(
                 query=query,
-                hsn_code=normalize_hsn(best.hsn_code),
-                description=best.description,
-                gst_rate=float(best.gst_rate or 0),
+                hsn_code=best["hsn_code"],
+                description=best["description"],
+                gst_rate=float(best["gst_rate"] or 0),
                 confidence=round(best_score, 3),
                 confidence_label=label,
                 match_method="trigram",
-                alternatives=alts,
+                alternatives=reranked_trgm[1:5],
             )
 
     # Pass 4: ILIKE keyword fallback on hsn_codes
@@ -1821,7 +1894,8 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
 
     if candidates:
         candidate_rows = []
-        for candidate in candidates.values():
+        source_candidates = list(candidates.values())
+        for candidate in source_candidates:
             candidate_rows.append(
                 type("CandidateRow", (), {
                     "hsn_code":    candidate["hsn_code"],
@@ -1832,32 +1906,31 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             )
         lexical_index = _build_candidate_lexical_index(q_expanded, candidate_rows)
         total_tokens = max(len(tokens), 1)
-        scored = sorted(
-            [
-                (
-                    compute_inverted_index_score(
-                        q_expanded, row, lexical_index, doc_idx=idx,
-                        base_db_score=candidates[row.hsn_code]["hits"] / total_tokens,
-                    ),
-                    candidates[row.hsn_code],
-                )
-                for idx, row in enumerate(candidate_rows)
-            ],
-            key=lambda x: x[0],
-            reverse=True,
+        keyword_candidates = []
+        for idx, row in enumerate(candidate_rows):
+            base_score = candidates[row.hsn_code]["hits"] / total_tokens
+            final_score = compute_inverted_index_score(
+                q_expanded, row, lexical_index, doc_idx=idx, base_db_score=base_score,
+            )
+            keyword_candidates.append({
+                "hsn_code": candidates[row.hsn_code]["hsn_code"],
+                "description": candidates[row.hsn_code]["description"],
+                "gst_rate": candidates[row.hsn_code]["gst_rate"],
+                "confidence": round(final_score, 3),
+                "method": "keyword_ilike",
+                "source": "hsn_codes",
+            })
+
+        reranked_keyword = _rerank_candidate_dicts(
+            query,
+            sorted(keyword_candidates, key=lambda item: item["confidence"], reverse=True),
+            top_k=5,
         )
-        top_score, top_c = scored[0]
-        if top_score > 0.1:
+
+        if reranked_keyword and reranked_keyword[0]["confidence"] > 0.1:
+            top_c = reranked_keyword[0]
+            top_score = top_c["confidence"]
             label = "high" if top_score >= 0.65 else ("medium" if top_score >= 0.35 else "low")
-            alts = [
-                {
-                    "hsn_code":    c["hsn_code"],
-                    "description": c["description"],
-                    "gst_rate":    c["gst_rate"],
-                    "confidence":  round(s, 3),
-                }
-                for s, c in scored[1:4] if s > 0
-            ]
             return HSNBatchResult(
                 query=query,
                 hsn_code=top_c["hsn_code"],
@@ -1866,7 +1939,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 confidence=round(top_score, 3),
                 confidence_label=label,
                 match_method="keyword_ilike",
-                alternatives=alts,
+                alternatives=reranked_keyword[1:5],
             )
 
     return HSNBatchResult(query=query, match_method="none")

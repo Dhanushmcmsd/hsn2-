@@ -14,6 +14,27 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
 
 
+def _match_best_product_query(matcher, original_name: str) -> tuple[str, str, list[dict]]:
+    cleaned_description = normalize_product_description(original_name)
+    query_options = [original_name.strip()]
+    if cleaned_description and cleaned_description.strip():
+        cleaned = cleaned_description.strip()
+        if cleaned.lower() != query_options[0].lower():
+            query_options.append(cleaned)
+
+    best_query = query_options[0] if query_options else ""
+    best_matches: list[dict] = []
+    for query_text in query_options:
+        matches = matcher.match(query_text, top_k=5)
+        if not matches:
+            continue
+        if not best_matches or matches[0].get("score", 0.0) > best_matches[0].get("score", 0.0):
+            best_query = query_text
+            best_matches = matches
+
+    return best_query, cleaned_description, best_matches
+
+
 @router.get("/circuit-breakers")
 async def circuit_breakers(admin_key: str = Depends(require_admin_key)):
     return {"circuit_breakers": [], "status": "ok"}
@@ -60,17 +81,13 @@ async def analyze_product(
     product = products[body.product_index]
     original_name = product["product_name"]
     
-    # Normalize description
-    cleaned_description = normalize_product_description(original_name)
     pack_size = extract_pack_size(original_name)
+    matcher = get_matcher()
+    best_query, cleaned_description, matches = _match_best_product_query(matcher, original_name)
     
     # Update product with cleaned data
     product["cleaned_description"] = cleaned_description
     product["pack_or_size"] = pack_size
-    
-    # Run HSN analysis
-    matcher = get_matcher()
-    matches = matcher.match(cleaned_description, top_k=5)
     
     if not matches:
         product["status"] = "no_matches_found"
@@ -93,6 +110,7 @@ async def analyze_product(
         "confidence": confidence,
         "confidence_label": label,
         "method": top_match["method"],
+        "query_used": best_query,
         "alternatives": matches[1:]
     }
     
@@ -132,14 +150,15 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
             continue
             
         # Normalize and analyze
-        cleaned_description = normalize_product_description(product["product_name"])
         pack_size = extract_pack_size(product["product_name"])
+        matcher = get_matcher()
+        best_query, cleaned_description, matches = _match_best_product_query(
+            matcher,
+            product["product_name"],
+        )
         
         product["cleaned_description"] = cleaned_description
         product["pack_or_size"] = pack_size
-        
-        matcher = get_matcher()
-        matches = matcher.match(cleaned_description, top_k=5)
         
         if matches:
             top_match = matches[0]
@@ -154,6 +173,7 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
                     "product_name": product["product_name"],
                     "hsn_code": top_match["hsn_code"],
                     "confidence": confidence,
+                    "query_used": best_query,
                     "status": "auto_updated"
                 })
             else:
@@ -162,6 +182,7 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
                     "index": i,
                     "product_name": product["product_name"],
                     "confidence": confidence,
+                    "query_used": best_query,
                     "status": "review_recommended"
                 })
         else:

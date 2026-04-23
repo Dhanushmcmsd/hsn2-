@@ -1,17 +1,19 @@
 from __future__ import annotations
+import asyncio
 import csv
 import os
 import re
 from pathlib import Path
 from typing import AsyncGenerator
 
-from sqlalchemy import Boolean, Column, DateTime, Float, Index, Integer, String, Text, func, select
+from sqlalchemy import Boolean, Column, DateTime, Float, Index, Integer, String, Text, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 
 import structlog
 from app.config import settings
+from app.services.hsn_master import build_hsn_master_records
 
 log = structlog.get_logger()
 
@@ -34,6 +36,10 @@ else:
     }
 engine = create_async_engine(_db_url, **engine_kwargs)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
+_SCHEMA_LOCK = asyncio.Lock()
+_SCHEMA_DONE = False
+_INIT_LOCK = asyncio.Lock()
+_INIT_DONE = False
 
 
 class Base(DeclarativeBase):
@@ -84,18 +90,31 @@ class HsnCode(Base):
     """HSN / HS Code master reference table."""
     __tablename__ = "hsn_codes"
 
-    id          = Column(Integer, primary_key=True, index=True)
-    hsn_code    = Column(String(10),  unique=True, index=True, nullable=False)
-    description = Column(Text,        nullable=False)
-    source      = Column(String(50),  nullable=False, default="WCO_HS")
-    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+    id = Column(Integer, primary_key=True, index=True)
+    hsn_code = Column(String(10), unique=True, index=True, nullable=False)
+    hsn_chapter = Column(String(2), nullable=True)
+    hsn_heading = Column(String(4), nullable=True)
+    hsn_subheading = Column(String(6), nullable=True)
+    description = Column(Text, nullable=False)
+    cbic_description = Column(Text, nullable=True)
+    parent_heading_desc = Column(Text, nullable=True)
+    gst_rate = Column(Float, nullable=True)
+    category = Column(String(100), nullable=True)
+    schedule = Column(String(150), nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True)
+    source = Column(String(50), nullable=False, default="WCO_HS")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
-        Index(
-            "idx_hsn_codes_description_gin",
-            func.to_tsvector("english", description),
-            postgresql_using="gin",
-        ),
+        ()
+        if _is_sqlite
+        else (
+            Index(
+                "idx_hsn_codes_description_gin",
+                func.to_tsvector("english", description),
+                postgresql_using="gin",
+            ),
+        )
     )
 
 
@@ -170,33 +189,63 @@ _VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.x
 
 
 async def _seed_hsn_codes(session: AsyncSession) -> None:
-    """Seed hsn_codes table from CSV if the table is empty."""
-    if not _DATA_PATH.exists():
-        log.warning("seed.csv_missing", path=str(_DATA_PATH))
+    """Seed hsn_codes from the enriched local master view."""
+    records = build_hsn_master_records()
+    if not records:
+        log.warning("seed.hsn_codes_missing")
         return
 
-    result = await session.execute(select(func.count()).select_from(HsnCode))
-    count = result.scalar()
-    if count and count > 0:
-        log.info("seed.already_seeded", count=count)
-        return
+    existing_rows = {
+        row.hsn_code: row
+        for row in (await session.execute(select(HsnCode))).scalars().all()
+    }
+    target_codes = {record["hsn_code"] for record in records}
 
-    rows = []
-    with open(_DATA_PATH, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            hsn = row.get("hsn_code", "").strip()
-            desc = row.get("description", "").strip()
-            if hsn and desc:
-                rows.append(HsnCode(hsn_code=hsn, description=desc, source="CSV"))
+    removed = 0
+    for hsn_code, row in list(existing_rows.items()):
+        if hsn_code not in target_codes:
+            await session.delete(row)
+            removed += 1
 
-    if not rows:
-        log.warning("seed.no_rows_in_csv")
-        return
+    added = 0
+    updated = 0
+    tracked_fields = (
+        "hsn_chapter",
+        "hsn_heading",
+        "hsn_subheading",
+        "description",
+        "cbic_description",
+        "parent_heading_desc",
+        "gst_rate",
+        "category",
+        "schedule",
+        "is_active",
+        "source",
+    )
 
-    session.add_all(rows)
+    for record in records:
+        current = existing_rows.get(record["hsn_code"])
+        if current is None:
+            session.add(HsnCode(**record))
+            added += 1
+            continue
+
+        changed = False
+        for field in tracked_fields:
+            if getattr(current, field) != record[field]:
+                setattr(current, field, record[field])
+                changed = True
+        if changed:
+            updated += 1
+
     await session.commit()
-    log.info("seed.hsn_codes_done", count=len(rows))
+    log.info(
+        "seed.hsn_codes_done",
+        count=len(records),
+        added=added,
+        updated=updated,
+        removed=removed,
+    )
 
 
 async def _seed_verified_products(session: AsyncSession) -> None:
@@ -318,14 +367,53 @@ async def _seed_verified_products(session: AsyncSession) -> None:
     log.info("seed.verified_products_done", count=len(rows))
 
 
+async def _ensure_schema() -> None:
+    global _SCHEMA_DONE
+    if _SCHEMA_DONE:
+        return
+
+    async with _SCHEMA_LOCK:
+        if _SCHEMA_DONE:
+            return
+
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+            for ddl in (
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS hsn_chapter VARCHAR(2)",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS hsn_heading VARCHAR(4)",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS hsn_subheading VARCHAR(6)",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS cbic_description TEXT",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS parent_heading_desc TEXT",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_rate FLOAT",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS schedule VARCHAR(150)",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE",
+            ):
+                try:
+                    await conn.execute(text(ddl))
+                except Exception:
+                    pass
+        _SCHEMA_DONE = True
+
+
 async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    async with async_session() as session:
-        await _seed_hsn_codes(session)
-        await _seed_verified_products(session)
+    global _INIT_DONE
+    if _INIT_DONE:
+        return
+
+    async with _INIT_LOCK:
+        if _INIT_DONE:
+            return
+
+        await _ensure_schema()
+        async with async_session() as session:
+            await _seed_hsn_codes(session)
+            await _seed_verified_products(session)
+        _INIT_DONE = True
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    await _ensure_schema()
+    await init_db()
     async with async_session() as session:
         yield session

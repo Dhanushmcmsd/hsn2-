@@ -12,6 +12,8 @@ from zipfile import ZipFile
 
 import structlog
 
+from app.services.hsn_master import build_hsn_master_records
+
 log = structlog.get_logger()
 
 _DATASET: list[dict] = []
@@ -81,21 +83,18 @@ def _build_record(
 
 
 def _load_hsn_codes() -> list[dict]:
-    if not _DATA_PATH.exists():
-        log.warning("dataset.hsn_codes_missing", path=str(_DATA_PATH))
-        return []
-
     rows: list[dict] = []
-    with _DATA_PATH.open(newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            record = _build_record(
-                hsn_code=row.get("hsn_code", ""),
-                description=row.get("description", ""),
-                source="hsn_codes",
-            )
-            if record:
-                rows.append(record)
+    for row in build_hsn_master_records():
+        gst_rate = row.get("gst_rate")
+        record = _build_record(
+            hsn_code=row.get("hsn_code", ""),
+            description=row.get("description", ""),
+            source="hsn_codes",
+            gst_rate="" if gst_rate is None else str(gst_rate).rstrip("0").rstrip("."),
+            category=row.get("category", "") or "",
+        )
+        if record:
+            rows.append(record)
     return rows
 
 

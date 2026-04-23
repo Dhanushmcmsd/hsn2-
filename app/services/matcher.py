@@ -562,6 +562,23 @@ class HybridMatcher:
                     "method": f"{item['method']}_blended",
                 }
         results = sorted(merged.values(), key=lambda x: x["score"], reverse=True)
+
+        if len(results) > 1:
+            try:
+                from app.services.nlp import extract_entities
+                from app.services.reranker import get_reranker
+
+                reranker = get_reranker()
+                entities = extract_entities(text)
+                return reranker.rerank(
+                    text,
+                    results[: top_k * 2],
+                    top_k=top_k,
+                    query_entities=entities,
+                )
+            except Exception as exc:
+                log.warning("reranker.failed", error=str(exc))
+
         return results[:top_k]
 
     def _should_retry_with_core_product(self, text: str, matches: list[dict]) -> bool:

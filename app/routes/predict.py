@@ -67,6 +67,7 @@ async def predict(
         top = {
             "hsn_code": verified.hsn_code,
             "description": verified.description,
+            "gst_rate": float(verified.gst_rate or 0) if verified.gst_rate else None,
             "score": 1.0,
             "method": "verified_exact",
         }
@@ -89,6 +90,7 @@ async def predict(
             top = {
                 "hsn_code": verified.hsn_code,
                 "description": verified.description,
+                "gst_rate": float(verified.gst_rate or 0) if verified.gst_rate else None,
                 "score": 0.95,
                 "method": "verified_no_size",
             }

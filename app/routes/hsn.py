@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.database import get_db
 from app.models.schemas import HSNRow
+from app.services.hsn_master import canonicalize_hsn
 from app.utils.cache import get_cache, set_cache
 
 router = APIRouter(tags=["hsn"])
@@ -18,8 +19,8 @@ _HSN_COLUMN_CACHE: dict[str, bool] = {}
 
 
 def normalize_hsn(code: str) -> str:
-    digits = re.sub(r"[^0-9]", "", str(code or "").strip())
-    return digits.zfill(8) if digits else str(code or "").strip()
+    normalized = canonicalize_hsn(code)
+    return normalized or str(code or "").strip()
 
 
 def _build_full_description(

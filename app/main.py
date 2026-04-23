@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app import config as app_config
 from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
 from app.models.database import init_db
 from app.utils.logging import configure_logging
@@ -19,20 +20,21 @@ log = structlog.get_logger()
 
 
 def _validate_production_config():
-    if not settings.is_production:
+    cfg = app_config.settings
+    if not cfg.is_production:
         return
     errors = []
-    if settings.SECRET_KEY == DEV_SECRET or "change-me" in settings.SECRET_KEY:
+    if cfg.SECRET_KEY == DEV_SECRET or "change-me" in cfg.SECRET_KEY:
         errors.append("SECRET_KEY must not be the default placeholder")
-    if settings.API_KEY == DEV_API_KEY:
+    if cfg.API_KEY == DEV_API_KEY:
         errors.append("API_KEY must not be the default placeholder")
-    if settings.ADMIN_API_KEY == DEV_ADMIN_KEY:
+    if cfg.ADMIN_API_KEY == DEV_ADMIN_KEY:
         errors.append("ADMIN_API_KEY must not be the default placeholder")
-    if settings.API_KEY == settings.ADMIN_API_KEY:
+    if cfg.API_KEY == cfg.ADMIN_API_KEY:
         errors.append("API_KEY and ADMIN_API_KEY must be different")
-    if "sqlite" in settings.DATABASE_URL:
+    if "sqlite" in cfg.DATABASE_URL:
         errors.append("DATABASE_URL must be PostgreSQL in production")
-    if "*" in settings.CORS_ORIGINS:
+    if "*" in cfg.CORS_ORIGINS:
         errors.append("CORS_ORIGINS wildcard * is not allowed in production")
     if errors:
         raise RuntimeError("Production startup validation failed:\n" + "\n".join(f"  - {e}" for e in errors))
