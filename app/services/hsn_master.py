@@ -89,7 +89,7 @@ def _load_official_rows() -> list[dict[str, Any]]:
         log.warning("hsn_master.official_missing", path=str(_DATA_PATH))
         return []
 
-    rows: list[dict[str, Any]] = []
+    deduped: dict[str, dict[str, Any]] = {}
     with _DATA_PATH.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
         for row in reader:
@@ -97,15 +97,16 @@ def _load_official_rows() -> list[dict[str, Any]]:
             description = str(row.get("description", "")).strip()
             if not raw_code or not description:
                 continue
-            rows.append(
-                {
-                    "raw_hsn_code": raw_code,
-                    "hsn_code": canonicalize_hsn(raw_code),
-                    "description": description,
-                    "significance": len(raw_code),
-                }
-            )
-    return rows
+            candidate = {
+                "raw_hsn_code": raw_code,
+                "hsn_code": canonicalize_hsn(raw_code),
+                "description": description,
+                "significance": len(raw_code),
+            }
+            current = deduped.get(raw_code)
+            if current is None or len(description) > len(str(current["description"])):
+                deduped[raw_code] = candidate
+    return list(deduped.values())
 
 
 def _load_verified_rows() -> list[dict[str, Any]]:
@@ -195,6 +196,15 @@ def _pick_duplicate_official_description(descriptions: list[str], gst_rate: floa
     return default
 
 
+def _majority_gst_rate(votes: Counter[float]) -> float | None:
+    if not votes:
+        return None
+    most_common_rate, count = votes.most_common(1)[0]
+    if count >= 2 or len(votes) == 1:
+        return most_common_rate
+    return None
+
+
 def build_hsn_master_records(
     *,
     official_rows: list[dict[str, Any]] | None = None,
@@ -243,7 +253,7 @@ def build_hsn_master_records(
     records: list[dict[str, Any]] = []
     for code in sorted(all_codes):
         significance = significance_by_code.get(code, 8)
-        gst_rate = gst_votes[code].most_common(1)[0][0] if gst_votes.get(code) else None
+        gst_rate = _majority_gst_rate(gst_votes[code]) if gst_votes.get(code) else None
 
         official_candidates: list[tuple[int, str]] = []
         for length in (8, 6, 4, 2):

@@ -23,7 +23,6 @@ hsn_code,description
 0304,"Fish fillets, fresh/chilled/frozen"
 0305,"Fish, dried/salted/smoked"
 0306,Crustaceans (live/fresh/chilled/frozen)
-0306,"Crustaceans, dried/salted"
 0307,Molluscs (live/fresh/dried etc.)
 0308,Aquatic invertebrates
 0401,"Milk and cream, not concentrated"
@@ -34,7 +33,6 @@ hsn_code,description
 0406,Cheese and curd
 0407,"Birds' eggs, in shell"
 0408,"Birds' eggs, not in shell"
-0409,Natural honey
 0409,"Natural honey, in unit container"
 0410,Edible products of animal origin
 0501,"Human hair, unworked"
@@ -82,7 +80,6 @@ hsn_code,description
 0902,"Tea, green or black"
 0903,Mate
 0904,"Pepper, genus Piper (dried/crushed)"
-0904,"Pepper (in unit container, branded)"
 0905,Vanilla
 0906,Cinnamon and cinnamon-tree flowers
 0907,"Cloves (whole fruit, cloves, stems)"
@@ -97,7 +94,6 @@ hsn_code,description
 1006,Rice
 1007,Grain sorghum
 1008,"Buckwheat, millet and canary seed"
-1101,Wheat/meslin flour
 1101,"Wheat flour (branded, in unit container)"
 1102,Cereal flours (other than wheat)
 1103,"Cereal groats, meal and pellets"
@@ -209,12 +205,10 @@ hsn_code,description
 2307,Wine lees; argol
 2308,Vegetable materials for animal feeding
 2309,Preparations for animal feeding
-2309,Dog/cat food (retail sale)
 2401,Unmanufactured tobacco
 2402,"Cigars, cheroots, cigarillos, cigarettes"
 2403,Other manufactured tobacco
 2501,"Salt (including salt in brine, denatured)"
-2501,Industrial salt
 2502,Unroasted iron pyrites
 2503,Sulphur of all kinds
 2504,Natural graphite
@@ -276,7 +270,6 @@ hsn_code,description
 2710 12,Motor spirit (petrol)
 2710 19,Other petroleum oils
 2711,Petroleum gases
-2711 12 00,LPG for domestic use
 2711 12 00,LPG for commercial use
 2712,Petroleum jelly; paraffin wax
 2713,Petroleum coke
@@ -728,10 +721,8 @@ hsn_code,description
 6309,Worn clothing and other worn articles
 6310,"Used/new rags, scrap twine, worn-out cordage"
 6401,Waterproof footwear with outer sole of rubber/plastics
-6402,Other footwear with outer soles/uppers of rubber
 6402,Footwear with outer sole/upper of rubber <=Rs.500
 6403,Footwear with outer soles of rubber; uppers of leather
-6403,Footwear with outer sole of leather <=Rs.500
 6404,Footwear with outer soles of rubber; uppers of textile
 6405,Other footwear
 6406,"Parts of footwear; insoles, heel cushions"
@@ -1079,7 +1070,6 @@ hsn_code,description
 9002,"Lenses, prisms, mirrors for optical instruments"
 9003,"Frames and mountings for spectacles, goggles"
 9004,"Spectacles, goggles and the like (corrective/protective)"
-9004,Spectacles for vision correction
 9005,"Binoculars, monoculars, telescopes, astronomical instruments"
 9006,Photographic cameras; photographic flashlight apparatus
 9007,Cinematographic cameras and projectors

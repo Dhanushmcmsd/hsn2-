@@ -1,4 +1,6 @@
-from app.services.hsn_master import build_hsn_master_records, canonicalize_hsn
+from collections import Counter
+
+from app.services.hsn_master import _majority_gst_rate, build_hsn_master_records, canonicalize_hsn
 
 
 def test_canonicalize_hsn_right_pads_hierarchical_codes():
@@ -38,3 +40,8 @@ def test_build_hsn_master_records_uses_official_prefixes_and_majority_gst():
     assert flour["cbic_description"] == "Wheat flour"
     assert flour["parent_heading_desc"] is None
     assert flour["gst_rate"] == 5.0
+
+
+def test_majority_gst_rate_falls_back_when_only_single_conflicting_votes_exist():
+    assert _majority_gst_rate(Counter({5.0: 1, 18.0: 1})) is None
+    assert _majority_gst_rate(Counter({5.0: 2, 18.0: 1})) == 5.0
