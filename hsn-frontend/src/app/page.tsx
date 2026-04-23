@@ -67,9 +67,6 @@ export default function Home() {
           </Link>
 
           <div className="flex items-center gap-4 sm:gap-6">
-            <div className="hidden md:block">
-              <SupraPacificText />
-            </div>
             <Link
               href="/login"
               className="hidden text-sm text-slate-400 transition hover:text-slate-100 sm:block"
@@ -93,15 +90,17 @@ export default function Home() {
             India · GST · HSN Classification
           </div>
 
-          <h1 className="mt-8 max-w-4xl font-display text-[clamp(3rem,7vw,6.25rem)] font-black leading-[0.95] tracking-[-0.05em] text-white">
-            Classify products for{" "}
-            <span className="relative inline-flex px-2 text-slate-50">
-              <FlagBackground className="-inset-x-8 -inset-y-6" />
-              <span className="relative z-10">INDIA</span>
-            </span>
-            <br />
-            with accurate HSN precision.
-          </h1>
+          <div className="mt-8">
+            <h1 className="group relative inline-flex max-w-full overflow-hidden rounded-[28px] border border-white/12 bg-white/[0.05] px-6 py-5 font-display text-[clamp(1.9rem,4vw,4rem)] font-black leading-none tracking-[-0.05em] text-white shadow-[0_24px_80px_rgba(2,6,23,0.55),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
+              <FlagBackground className="-inset-x-10 -inset-y-5 opacity-100" />
+              <span className="pointer-events-none absolute inset-0 noise-overlay opacity-[0.06]" />
+              <span className="pointer-events-none absolute inset-[1px] rounded-[27px] bg-gradient-to-b from-white/[0.08] to-white/[0.02]" />
+              <span className="pointer-events-none absolute inset-x-[18%] top-1/2 h-12 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.22)_0%,rgba(255,153,51,0.12)_36%,rgba(19,136,8,0.08)_70%,transparent_100%)] opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
+              <span className="relative z-10 whitespace-nowrap">
+                India GST Classification
+              </span>
+            </h1>
+          </div>
 
           <p className="mt-8 max-w-xl text-lg leading-8 text-slate-400">
             Premium GST classification tooling for Indian traders, distributors, and finance teams.
@@ -141,9 +140,12 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center pt-20 lg:pt-14">
+          <div className="absolute right-0 top-0 z-10 hidden w-full max-w-[280px] lg:block">
+            <SupraPacificText />
+          </div>
           <div className="absolute inset-x-[8%] top-[8%] h-40 rounded-full bg-blue-500/10 blur-3xl" />
-          <div className="relative w-full max-w-xl overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] shadow-[0_30px_90px_rgba(2,6,23,0.65)] backdrop-blur-2xl">
+          <div className="relative w-full max-w-xl overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] shadow-[0_30px_90px_rgba(2,6,23,0.65)] backdrop-blur-2xl lg:mt-8">
             <div className="flex items-center justify-between border-b border-white/8 bg-slate-950/35 px-5 py-4">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />

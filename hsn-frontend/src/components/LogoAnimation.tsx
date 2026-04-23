@@ -40,7 +40,7 @@ export function LogoAnimation({ className = "" }: LogoAnimationProps) {
       }
       transition={reducedMotion ? undefined : { duration: 0.34, delay: 1.16, ease: [0.22, 1, 0.36, 1] }}
     >
-      <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible">
+      <svg viewBox="-8 -8 116 116" className="h-full w-full overflow-visible">
         <motion.rect
           x="42"
           y="42"

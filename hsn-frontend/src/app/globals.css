@@ -48,6 +48,10 @@ body {
   text-shadow: 0 0 14px rgba(125, 211, 252, 0.16);
 }
 
+.group:hover .supra-text {
+  text-shadow: 0 0 22px rgba(125, 211, 252, 0.24);
+}
+
 .chip-float-1 {
   animation: chipFloatOne 5.4s ease-in-out infinite;
 }
