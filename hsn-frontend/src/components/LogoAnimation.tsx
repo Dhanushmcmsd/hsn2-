@@ -15,14 +15,14 @@ const bracketPaths = [
   { key: "br", path: "M68 90H90V68H100V100H68Z", originX: 84, originY: 84 },
 ];
 
-const squareSize = 10;
+const squareSize = 12;
 const squareRadius = 1.5;
-const centerSquare = { x: 45, y: 45 };
+const centerSquare = { x: 44, y: 44 };
 const armSquares = [
-  { key: "top", x: 45, y: 30, delay: 0.35 },
-  { key: "left", x: 30, y: 45, delay: 0.39 },
-  { key: "right", x: 60, y: 45, delay: 0.43 },
-  { key: "bottom", x: 45, y: 60, delay: 0.47 },
+  { key: "top", x: 44, y: 28, delay: 0.35 },
+  { key: "left", x: 28, y: 44, delay: 0.39 },
+  { key: "right", x: 60, y: 44, delay: 0.43 },
+  { key: "bottom", x: 44, y: 60, delay: 0.47 },
 ];
 
 export function LogoAnimation({ className = "" }: LogoAnimationProps) {
