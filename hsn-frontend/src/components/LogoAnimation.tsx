@@ -14,10 +14,10 @@ const redSquares = [
 ];
 
 const blueCorners = [
-  { key: "tl", x: 8, y: 8, path: "M0 0H24V8H8V24H0Z" },
-  { key: "tr", x: 68, y: 8, path: "M0 0H24V24H16V8H0Z" },
-  { key: "br", x: 68, y: 68, path: "M16 0H24V24H0V16H16Z" },
-  { key: "bl", x: 8, y: 68, path: "M0 0H8V16H24V24H0Z" },
+  { key: "tl", x: 4, y: 4, path: "M0 0H28V10H10V28H0Z" },
+  { key: "tr", x: 68, y: 4, path: "M0 0H28V28H18V10H0Z" },
+  { key: "br", x: 68, y: 68, path: "M18 0H28V28H0V18H18Z" },
+  { key: "bl", x: 4, y: 68, path: "M0 0H10V18H28V28H0Z" },
 ];
 
 export function LogoAnimation({ className = "" }: LogoAnimationProps) {
@@ -40,7 +40,12 @@ export function LogoAnimation({ className = "" }: LogoAnimationProps) {
       }
       transition={reducedMotion ? undefined : { duration: 0.34, delay: 1.16, ease: [0.22, 1, 0.36, 1] }}
     >
-      <svg viewBox="-8 -8 116 116" className="h-full w-full overflow-visible">
+      <svg
+        viewBox="-12 -12 124 124"
+        className="h-full w-full"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ overflow: "visible" }}
+      >
         <motion.rect
           x="42"
           y="42"

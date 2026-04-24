@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authApi, authStorage } from "@/lib/api";
-import { BarChart3, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { LogoAnimation } from "@/components/LogoAnimation";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,11 +15,19 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setRememberMe(authStorage.getRememberPreference());
+    if (authStorage.getAccessToken()) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
       const { access_token, refresh_token } = await authApi.login(email, password);
+      authStorage.setRememberPreference(rememberMe);
       authStorage.setTokens(access_token, refresh_token, rememberMe);
       router.push("/dashboard");
     } catch (err: unknown) {
@@ -114,9 +123,9 @@ export default function LoginPage() {
       <div style={{ width: "100%", maxWidth: 420 }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-            <div style={{ width: 30, height: 30, background: "linear-gradient(135deg, #0180EB, #0a60c0)", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 14px rgba(1,128,235,0.5)" }}>
-              <BarChart3 size={15} color="#F5F8F3" />
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem" }}>
+            <div style={{ width: 34, height: 34 }}>
+              <LogoAnimation className="h-full w-full" />
             </div>
             <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "1rem", color: "#F5F8F3" }}>HSN Classifier</span>
           </div>
@@ -184,7 +193,10 @@ export default function LoginPage() {
                 <input
                   type="checkbox"
                   checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  onChange={(e) => {
+                    setRememberMe(e.target.checked);
+                    authStorage.setRememberPreference(e.target.checked);
+                  }}
                 />
                 Remember me
               </label>

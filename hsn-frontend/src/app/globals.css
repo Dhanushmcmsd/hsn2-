@@ -55,11 +55,11 @@ body {
     drop-shadow(0 0 14px rgba(255, 255, 255, 0.16))
     drop-shadow(0 0 12px rgba(19, 136, 8, 0.14));
   transition: filter 300ms ease;
-  animation: heroFlagFlow 8s ease-in-out infinite alternate;
+  animation: heroFlagFlow 5.2s ease-in-out infinite alternate;
 }
 
 .hero-glossy-title:hover .hero-glossy-fill {
-  animation: heroFlagFlow 2.2s ease-in-out infinite alternate;
+  animation: heroFlagFlow 1.45s ease-in-out infinite alternate;
   filter:
     drop-shadow(0 0 18px rgba(255, 143, 31, 0.24))
     drop-shadow(0 0 24px rgba(255, 255, 255, 0.24))

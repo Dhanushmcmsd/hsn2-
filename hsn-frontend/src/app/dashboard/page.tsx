@@ -1,8 +1,11 @@
 // @ts-nocheck
 "use client";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import * as XLSX from "xlsx";
-import { hsnApi } from "@/lib/api";
+import { authApi, authStorage, hsnApi } from "@/lib/api";
+import { LogOut } from "lucide-react";
+import { LogoAnimation } from "@/components/LogoAnimation";
 
 const PAGE_SIZE = 20;
 
@@ -222,6 +225,7 @@ function ProcessStep({ label, done, active }) {
 
 // ── Main component ───────────────────────────────────────────────────────────
 export default function PremiumDashboard() {
+  const router = useRouter();
   const fileInputRef = useRef(null);
   const [mode, setMode] = useState("single");
   const [query, setQuery] = useState("");
@@ -242,7 +246,8 @@ export default function PremiumDashboard() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [processSteps, setProcessSteps] = useState([false, false, false]);
   const [showFileSuccess, setShowFileSuccess] = useState(false);
-  const [userInitial] = useState("D");
+  const [userInitial, setUserInitial] = useState("U");
+  const [authReady, setAuthReady] = useState(false);
 
   const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap');
@@ -580,6 +585,49 @@ export default function PremiumDashboard() {
     }
   `;
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadUser() {
+      const token = authStorage.getAccessToken();
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+
+      try {
+        const user = await authApi.me();
+        if (cancelled) return;
+        const source = (user.full_name || user.email || "U").trim();
+        setUserInitial(source.charAt(0).toUpperCase() || "U");
+        setAuthReady(true);
+      } catch {
+        authStorage.clearTokens();
+        if (!cancelled) {
+          router.replace("/login");
+        }
+      }
+    }
+
+    loadUser();
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  function handleLogout() {
+    authStorage.clearTokens();
+    router.replace("/login");
+  }
+
+  if (!authReady) {
+    return (
+      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif" }}>
+        Loading dashboard…
+      </div>
+    );
+  }
+
   // ── Single predict ────────────────────────────────────────────────────────
   async function handlePredict(e) {
     e?.preventDefault();
@@ -795,18 +843,8 @@ export default function PremiumDashboard() {
       }}>
         {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          <div style={{
-            width: 30, height: 30,
-            background: "linear-gradient(135deg, #2563eb, #3b82f6)",
-            borderRadius: 8,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 0 16px rgba(37,99,235,0.5)",
-          }}>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <rect x="1" y="8" width="3" height="7" fill="white" rx="1"/>
-              <rect x="6" y="5" width="3" height="10" fill="white" rx="1"/>
-              <rect x="11" y="2" width="3" height="13" fill="white" rx="1"/>
-            </svg>
+          <div style={{ width: 34, height: 34 }}>
+            <LogoAnimation className="h-full w-full" />
           </div>
           <span style={{ fontFamily: "'Cabinet Grotesk', sans-serif", fontWeight: 800, fontSize: "1rem", color: "#f8fafc", letterSpacing: "-0.01em" }}>
             HSN<span style={{ color: "#3b82f6" }}>iq</span>
@@ -825,13 +863,16 @@ export default function PremiumDashboard() {
           </button>
         </div>
 
-        {/* Right — usage bar only (user menu removed) */}
+        {/* Right */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.65rem", color: "#475569", marginBottom: 3, fontFamily: "'DM Mono', monospace" }}>120 / 500 rows used</div>
             <div className="usage-bar" style={{ width: 80 }}><div className="usage-fill" /></div>
           </div>
-          {/* Avatar — display only, no menu */}
+          <button onClick={handleLogout} className="btn-ghost" style={{ fontSize: "0.75rem", padding: "0.55rem 0.9rem" }}>
+            <LogOut size={14} />
+            Logout
+          </button>
           <div style={{
             width: 34, height: 34, borderRadius: "50%",
             background: "linear-gradient(135deg, #2563eb, #60a5fa)",

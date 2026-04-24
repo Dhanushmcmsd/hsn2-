@@ -1,6 +1,7 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
+const REMEMBER_ME_KEY = "remember_me";
 
 function getAvailableStorages(): Storage[] {
   if (typeof window === "undefined") return [];
@@ -56,12 +57,19 @@ type Opts = RequestInit & { skipAuth?: boolean };
 export const authStorage = {
   getAccessToken: () => getToken(ACCESS_TOKEN_KEY),
   getRefreshToken: () => getToken(REFRESH_TOKEN_KEY),
+  getRememberPreference: () => {
+    if (typeof window === "undefined") return true;
+    const value = localStorage.getItem(REMEMBER_ME_KEY);
+    if (value == null) return true;
+    return value === "true";
+  },
   setTokens(accessToken: string, refreshToken: string, remember = true) {
     if (typeof window === "undefined") return;
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.setItem(REMEMBER_ME_KEY, String(remember));
 
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem(ACCESS_TOKEN_KEY, accessToken);
@@ -82,6 +90,10 @@ export const authStorage = {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+  },
+  setRememberPreference(remember: boolean) {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(REMEMBER_ME_KEY, String(remember));
   },
 };
 
