@@ -84,6 +84,11 @@ npx vercel
 npx vercel --prod
 ```
 
+The frontend does not use NextAuth in its current implementation.
+Production login depends on:
+- `NEXT_PUBLIC_API_URL` in Vercel
+- `SECRET_KEY` on the backend
+
 ## Running Tests
 ```bash
 pip install -r requirements.txt

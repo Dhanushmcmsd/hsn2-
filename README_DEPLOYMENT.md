@@ -105,6 +105,11 @@ Your frontend is already on Vercel. Just update the backend URL:
    ```
 3. Redeploy (Vercel → **Deployments → Redeploy**).
 
+> The current frontend does **not** use NextAuth. `NEXTAUTH_URL`,
+> `NEXTAUTH_SECRET`, and `JWT_SECRET` are not required by this app.
+> Frontend login calls the backend `/auth/*` routes, and the backend
+> validates tokens using its `SECRET_KEY`.
+
 ---
 
 ## Environment Variables Reference
