@@ -19,10 +19,10 @@ const squareSize = 12;
 const squareRadius = 1.5;
 const centerSquare = { x: 44, y: 44 };
 const armSquares = [
-  { key: "top", x: 44, y: 28, delay: 0.35 },
-  { key: "left", x: 28, y: 44, delay: 0.39 },
-  { key: "right", x: 60, y: 44, delay: 0.43 },
-  { key: "bottom", x: 44, y: 60, delay: 0.47 },
+  { key: "top-left", x: 28, y: 28, delay: 0.35 },
+  { key: "top-right", x: 60, y: 28, delay: 0.39 },
+  { key: "bottom-left", x: 28, y: 60, delay: 0.43 },
+  { key: "bottom-right", x: 60, y: 60, delay: 0.47 },
 ];
 
 export function LogoAnimation({ className = "" }: LogoAnimationProps) {
