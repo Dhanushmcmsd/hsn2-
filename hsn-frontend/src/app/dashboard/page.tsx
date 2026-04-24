@@ -667,14 +667,6 @@ export default function PremiumDashboard() {
     router.replace("/login");
   }
 
-  if (!authReady) {
-    return (
-      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif" }}>
-        Loading dashboard…
-      </div>
-    );
-  }
-
   // ── Single predict ────────────────────────────────────────────────────────
   async function handlePredict(e) {
     e?.preventDefault();
@@ -811,6 +803,14 @@ export default function PremiumDashboard() {
       setBulkLoading(false);
     }
   }, [rawRows, selectedCol]);
+
+  if (!authReady) {
+    return (
+      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif" }}>
+        Loading dashboard…
+      </div>
+    );
+  }
 
   function handleDownload() {
     if (bulkResults.length === 0) return;
