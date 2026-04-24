@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
+from app.services.kerala_search import expand_kerala_query
 from app.services.db_matcher import match_query
 from app.services.confidence import score_result
 from app.utils.auth import require_api_key
@@ -76,6 +77,32 @@ async def predict(
         needs_review = False
         elapsed = (time.perf_counter() - start) * 1000
     else:
+        verified = None
+        try:
+            kerala_expanded = expand_kerala_query(body.text)
+            if kerala_expanded != body.text.upper().strip():
+                verified_query2 = select(VerifiedProduct).where(
+                    VerifiedProduct.description_normalized == kerala_expanded
+                )
+                verified_result2 = await db.execute(verified_query2)
+                verified2 = await _scalar_one_or_none(verified_result2)
+                if _is_verified_product_match(verified2):
+                    top = {
+                        "hsn_code": verified2.hsn_code,
+                        "description": verified2.description,
+                        "gst_rate": float(verified2.gst_rate or 0) if verified2.gst_rate else None,
+                        "score": 0.92,
+                        "method": "verified_kerala_expanded",
+                    }
+                    alternatives = []
+                    confidence, label = score_result(0.92)
+                    needs_review = False
+                    elapsed = (time.perf_counter() - start) * 1000
+                    verified = verified2
+        except Exception as exc:
+            log.info("predict.verified_kerala_expanded_unavailable", error=str(exc))
+
+    if not _is_verified_product_match(verified):
         verified = None
         try:
             verified_no_size_query = select(VerifiedProduct).where(

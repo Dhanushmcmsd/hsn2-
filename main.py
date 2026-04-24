@@ -15,6 +15,14 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
 log = logging.getLogger("hsn_main")
 
+from app.services.kerala_aliases import (
+    KERALA_ABBREVIATIONS,
+    KERALA_BRAND_WORDS,
+    KERALA_CATEGORY_RULES,
+    KERALA_DOMAIN_PREFIXES,
+    KERALA_SYNONYMS,
+)
+
 # ── Config ────────────────────────────────────────────────────────────────────
 DATABASE_URL  = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql+asyncpg://", 1)
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "change-me")
@@ -518,6 +526,7 @@ BRANDS = {
     'craze','unibic','bauli','elko','pearl','indigate','noltai','suryan',
     'crazee','urbans','daileco','om','shanthi','natural','spices',
 }
+BRANDS.update(KERALA_BRAND_WORDS)
 
 FMCG_ABBREVIATIONS = {
     'btrm': 'bathroom', 'bthrm': 'bathroom', 'clnr': 'cleaner',
@@ -565,6 +574,7 @@ FMCG_ABBREVIATIONS = {
     'iodised': 'iodized', 'brandedjaggry': 'jaggery',
     'nc': 'nice', 'noltai': 'nolta',
 }
+FMCG_ABBREVIATIONS.update(KERALA_ABBREVIATIONS)
 
 SYNONYMS = {
     'wash': ['soap', 'cleanser', 'liquid'],
@@ -662,6 +672,7 @@ SYNONYMS = {
     'match': ['matchbox', 'safety match', 'fire match'],
     'christmas': ['xmas', 'decoration', 'festive', 'x-mas tree'],
 }
+SYNONYMS.update(KERALA_SYNONYMS)
 
 DOMAIN_PREFIXES = {
     'footwear': ['64'], 'shoe': ['64'], 'sandal': ['64'],
@@ -736,6 +747,7 @@ DOMAIN_PREFIXES = {
     'umbrella': ['66'],
     'insole': ['64'],
 }
+DOMAIN_PREFIXES.update(KERALA_DOMAIN_PREFIXES)
 
 CATEGORY_RULES = [
     {'keywords': ['toothpaste', 'tooth paste', 'dentifrice', 'tooth', 'paste'], 'chapters': ['33']},
@@ -780,19 +792,31 @@ CATEGORY_RULES = [
     {'keywords': ['knife', 'scissors', 'razor', 'blade', 'cutter'],               'chapters': ['82']},
     {'keywords': ['cashew', 'cashw', 'kaju'],                                     'chapters': ['08', '20']},
 ]
+CATEGORY_RULES = KERALA_CATEGORY_RULES + CATEGORY_RULES
 
 # ── Helper functions ───────────────────────────────────────────────────────────
 
 def expand_fmcg_abbreviations(text: str) -> str:
+    text = re.sub(r'\bSS\b', 'stainless steel', text, flags=re.IGNORECASE)
+    text = re.sub(r'\bFTGR\b', 'fenugreek collection footwear', text, flags=re.IGNORECASE)
+    text = re.sub(r'\bTR\.\s*', 'kitchen treasure ', text, flags=re.IGNORECASE)
+    text = re.sub(r'\bTR\b', 'kitchen treasure', text, flags=re.IGNORECASE)
+
     words = text.split()
     expanded_words = []
     for word in words:
-        lower_word = word.lower()
+        lower_word = word.lower().rstrip('.')
         if lower_word in FMCG_ABBREVIATIONS:
             expanded_words.append(FMCG_ABBREVIATIONS[lower_word])
         else:
             expanded_words.append(lower_word)
-    return ' '.join(expanded_words)
+
+    deduped: list[str] = []
+    for word in expanded_words:
+        if deduped and deduped[-1] == word:
+            continue
+        deduped.append(word)
+    return ' '.join(deduped)
 
 
 def _extract_alpha_tokens(text: str) -> list[str]:
@@ -2015,6 +2039,26 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 match_method="keyword_ilike",
                 alternatives=reranked_keyword[1:5],
             )
+
+    # Pass 5 — Kerala-specific fallback (secondary search layer)
+    try:
+        from app.services.kerala_search import kerala_fallback_search
+
+        kerala_results = await kerala_fallback_search(query, db, top_k=5)
+        if kerala_results:
+            top = kerala_results[0]
+            return HSNBatchResult(
+                query=query,
+                hsn_code=normalize_hsn(top["hsn_code"]),
+                description=top["description"],
+                gst_rate=float(top.get("gst_rate") or 0),
+                confidence=round(float(top.get("score", 0.55)), 3),
+                confidence_label="medium" if top.get("score", 0) >= 0.55 else "low",
+                match_method=top.get("method", "kerala_fallback"),
+                alternatives=kerala_results[1:5],
+            )
+    except Exception as e:
+        log.warning("pass5.kerala.error query=%s error=%s", q_stripped[:50], str(e))
 
     return HSNBatchResult(query=query, match_method="none")
 

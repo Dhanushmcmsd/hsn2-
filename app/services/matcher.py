@@ -5,6 +5,12 @@ import structlog
 from collections import defaultdict
 from functools import lru_cache
 
+from app.services.kerala_aliases import (
+    KERALA_ABBREVIATIONS,
+    KERALA_BRAND_WORDS,
+    KERALA_SYNONYMS,
+)
+
 log = structlog.get_logger()
 _matcher_instance = None
 
@@ -43,6 +49,7 @@ BRANDS = {
     'kitchen',  # "kitchen treasure" after TR expansion — brand word 1
     'treasure', # "kitchen treasure" after TR expansion — brand word 2
 }
+BRANDS.update(KERALA_BRAND_WORDS)
 
 SYNONYMS = {
     'wash':      ['soap', 'cleanser'],
@@ -71,6 +78,7 @@ SYNONYMS = {
     'fenugreek': ['methi', 'spice'],
     'methi':     ['fenugreek', 'spice'],
 }
+SYNONYMS.update(KERALA_SYNONYMS)
 
 # FIX #1–#6: Expanded abbreviation table
 FMCG_ABBREVIATIONS = {
@@ -148,6 +156,7 @@ FMCG_ABBREVIATIONS = {
     'dom':    'domestic',
     'froz':   'frozen',
 }
+FMCG_ABBREVIATIONS.update(KERALA_ABBREVIATIONS)
 
 
 def expand_fmcg_abbreviations(text: str) -> str:
