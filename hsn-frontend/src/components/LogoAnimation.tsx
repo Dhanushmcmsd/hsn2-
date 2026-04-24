@@ -6,18 +6,23 @@ type LogoAnimationProps = {
   className?: string;
 };
 
-const redSquares = [
-  { key: "tl", x: -20, y: -20 },
-  { key: "tr", x: 20, y: -20 },
-  { key: "bl", x: -20, y: 20 },
-  { key: "br", x: 20, y: 20 },
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
+const bracketPaths = [
+  { key: "tl", path: "M0 0H32V10H10V32H0Z", originX: 16, originY: 16 },
+  { key: "tr", path: "M68 0H100V32H90V10H68Z", originX: 84, originY: 16 },
+  { key: "bl", path: "M0 68H10V90H32V100H0Z", originX: 16, originY: 84 },
+  { key: "br", path: "M68 90H90V68H100V100H68Z", originX: 84, originY: 84 },
 ];
 
-const blueCorners = [
-  { key: "tl", x: 4, y: 4, path: "M0 0H28V10H10V28H0Z" },
-  { key: "tr", x: 68, y: 4, path: "M0 0H28V28H18V10H0Z" },
-  { key: "br", x: 68, y: 68, path: "M18 0H28V28H0V18H18Z" },
-  { key: "bl", x: 4, y: 68, path: "M0 0H10V18H28V28H0Z" },
+const squareSize = 10;
+const squareRadius = 1.5;
+const centerSquare = { x: 45, y: 45 };
+const armSquares = [
+  { key: "top", x: 45, y: 30, delay: 0.35 },
+  { key: "left", x: 30, y: 45, delay: 0.39 },
+  { key: "right", x: 60, y: 45, delay: 0.43 },
+  { key: "bottom", x: 45, y: 60, delay: 0.47 },
 ];
 
 export function LogoAnimation({ className = "" }: LogoAnimationProps) {
@@ -26,79 +31,99 @@ export function LogoAnimation({ className = "" }: LogoAnimationProps) {
   return (
     <motion.div
       className={className}
-      initial={reducedMotion ? false : { filter: "drop-shadow(0 0 0 rgba(96,165,250,0))" }}
+      initial={
+        reducedMotion
+          ? false
+          : { filter: "drop-shadow(0 0 6px rgba(232,25,44,0.15))" }
+      }
       animate={
         reducedMotion
           ? undefined
           : {
               filter: [
-                "drop-shadow(0 0 0 rgba(96,165,250,0))",
-                "drop-shadow(0 0 14px rgba(96,165,250,0.2))",
-                "drop-shadow(0 0 9px rgba(96,165,250,0.1))",
+                "drop-shadow(0 0 6px rgba(232,25,44,0.15))",
+                "drop-shadow(0 0 12px rgba(232,25,44,0.28))",
+                "drop-shadow(0 0 6px rgba(232,25,44,0.15))",
               ],
             }
       }
-      transition={reducedMotion ? undefined : { duration: 0.34, delay: 1.16, ease: [0.22, 1, 0.36, 1] }}
+      transition={
+        reducedMotion
+          ? undefined
+          : { duration: 3.5, delay: 0.8, ease: "easeInOut", repeat: Infinity }
+      }
     >
       <svg
-        viewBox="-12 -12 124 124"
+        viewBox="0 0 100 100"
         className="h-full w-full"
         preserveAspectRatio="xMidYMid meet"
         style={{ overflow: "visible" }}
       >
-        <motion.rect
-          x="42"
-          y="42"
-          width="16"
-          height="16"
-          rx="1.5"
-          fill="#ef2b2d"
-          initial={reducedMotion ? false : { scale: 0.92, opacity: 0.96 }}
-          animate={reducedMotion ? undefined : { scale: 1, opacity: 1 }}
-          transition={reducedMotion ? undefined : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        />
-
-        {redSquares.map((square, index) => (
-          <motion.rect
-            key={square.key}
-            x="42"
-            y="42"
-            width="16"
-            height="16"
-            rx="1.5"
-            fill="#ef2b2d"
-            initial={reducedMotion ? false : { x: 0, y: 0, scale: 0.55, opacity: 0 }}
-            animate={reducedMotion ? { x: square.x, y: square.y, scale: 1, opacity: 1 } : { x: square.x, y: square.y, scale: 1, opacity: 1 }}
-            transition={
-              reducedMotion
-                ? undefined
-                : {
-                    duration: 0.42,
-                    delay: 0.16 + index * 0.06,
-                    ease: [0.22, 1, 0.36, 1],
-                  }
-            }
-          />
-        ))}
-
-        {blueCorners.map((corner, index) => (
+        {bracketPaths.map((corner) => (
           <motion.g
             key={corner.key}
-            transform={`translate(${corner.x} ${corner.y})`}
-            initial={reducedMotion ? false : { opacity: 0, scale: 0.82 }}
+            style={{ originX: corner.originX, originY: corner.originY }}
+            initial={reducedMotion ? false : { opacity: 0, scale: 0.7 }}
             animate={reducedMotion ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
             transition={
               reducedMotion
                 ? undefined
                 : {
-                    duration: 0.34,
-                    delay: 0.62 + index * 0.06,
-                    ease: [0.22, 1, 0.36, 1],
+                    duration: 0.38,
+                    ease: easeOut,
                   }
             }
           >
             <path d={corner.path} fill="#173f8a" />
           </motion.g>
+        ))}
+
+        <motion.rect
+          x={centerSquare.x}
+          y={centerSquare.y}
+          width={squareSize}
+          height={squareSize}
+          rx={squareRadius}
+          fill="#e8192c"
+          style={{ originX: centerSquare.x + squareSize / 2, originY: centerSquare.y + squareSize / 2 }}
+          initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
+          animate={
+            reducedMotion
+              ? { scale: 1, opacity: 1 }
+              : { scale: [0, 1.15, 1], opacity: [0, 1, 1] }
+          }
+          transition={
+            reducedMotion
+              ? undefined
+              : { duration: 0.28, delay: 0.2, ease: easeOut, times: [0, 0.72, 1] }
+          }
+        />
+
+        {armSquares.map((square) => (
+          <motion.rect
+            key={square.key}
+            x={centerSquare.x}
+            y={centerSquare.y}
+            width={squareSize}
+            height={squareSize}
+            rx={squareRadius}
+            fill="#e8192c"
+            initial={reducedMotion ? false : { x: 0, y: 0, opacity: 0 }}
+            animate={
+              reducedMotion
+                ? { x: square.x - centerSquare.x, y: square.y - centerSquare.y, opacity: 1 }
+                : { x: square.x - centerSquare.x, y: square.y - centerSquare.y, opacity: 1 }
+            }
+            transition={
+              reducedMotion
+                ? undefined
+                : {
+                    duration: 0.32,
+                    delay: square.delay,
+                    ease: easeOut,
+                  }
+            }
+          />
         ))}
       </svg>
     </motion.div>
