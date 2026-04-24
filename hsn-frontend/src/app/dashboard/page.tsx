@@ -2,7 +2,8 @@
 "use client";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import * as XLSX from "xlsx";
+import Papa from "papaparse";
+import readXlsxFile from "read-excel-file/browser";
 import { authApi, authStorage, hsnApi } from "@/lib/api";
 import { LogOut } from "lucide-react";
 import { LogoAnimation } from "@/components/LogoAnimation";
@@ -34,6 +35,52 @@ function pickDefaultColumn(columnNames: string[]) {
     columnNames[0] ??
     ""
   );
+}
+
+function normalizeParsedRows(parsedRows: Array<Record<string, unknown>>) {
+  return parsedRows
+    .map((row) =>
+      Object.fromEntries(
+        Object.entries(row).map(([key, value]) => [String(key).trim(), normalizeCellValue(value)])
+      )
+    )
+    .filter((row) => Object.values(row).some((value) => String(value).trim() !== ""));
+}
+
+async function parseCsvFile(file: File) {
+  const text = await file.text();
+  const parsed = Papa.parse<Record<string, unknown>>(text, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (header) => String(header).trim(),
+  });
+  if (parsed.errors.length > 0) {
+    throw new Error(parsed.errors[0]?.message || "Unable to parse the uploaded CSV file.");
+  }
+  return normalizeParsedRows(parsed.data);
+}
+
+async function parseXlsxFile(file: File) {
+  const rows = await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" });
+  if (!rows.length) {
+    throw new Error("The uploaded file does not contain any sheets.");
+  }
+
+  const [headerRow, ...dataRows] = rows;
+  const headers = (headerRow || []).map((cell, index) => {
+    const normalized = normalizeCellValue(cell);
+    return normalized || `COLUMN_${index + 1}`;
+  });
+
+  const parsedRows = dataRows
+    .filter((row) => row.some((cell) => normalizeCellValue(cell) !== ""))
+    .map((row) =>
+      Object.fromEntries(
+        headers.map((header, index) => [header, row[index] ?? ""])
+      )
+    );
+
+  return normalizeParsedRows(parsedRows);
 }
 
 function toBulkResult(query: string, response: any) {
@@ -653,20 +700,14 @@ export default function PremiumDashboard() {
     setShowFileSuccess(false);
 
     try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data, { type: "array", cellDates: true });
-      const firstSheetName = workbook.SheetNames[0];
-      if (!firstSheetName) throw new Error("The uploaded file does not contain any sheets.");
+      const lowerName = String(file.name || "").toLowerCase();
+      if (lowerName.endsWith(".xls")) {
+        throw new Error("Legacy .xls files are no longer supported for security reasons. Please re-save the sheet as .xlsx or .csv and upload again.");
+      }
 
-      const worksheet = workbook.Sheets[firstSheetName];
-      const parsedRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-      const normalizedRows = parsedRows
-        .map((row) =>
-          Object.fromEntries(
-            Object.entries(row).map(([key, value]) => [String(key).trim(), normalizeCellValue(value)])
-          )
-        )
-        .filter((row) => Object.values(row).some((value) => String(value).trim() !== ""));
+      const normalizedRows = lowerName.endsWith(".csv")
+        ? await parseCsvFile(file)
+        : await parseXlsxFile(file);
 
       if (normalizedRows.length === 0) {
         throw new Error("No data rows were found in the uploaded file.");
@@ -1153,7 +1194,7 @@ export default function PremiumDashboard() {
                       </p>
                     </>
                   )}
-                  <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: "none" }} onChange={handleFileChange} />
+                  <input ref={fileInputRef} type="file" accept=".xlsx,.csv" style={{ display: "none" }} onChange={handleFileChange} />
                 </div>
               </div>
 
@@ -1328,7 +1369,7 @@ export default function PremiumDashboard() {
             {bulkResults.length === 0 && !bulkLoading && columns.length === 0 && (
               <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
                 <p style={{ fontSize: "0.8rem", color: "#334155", marginBottom: 4 }}>Upload a spreadsheet to begin</p>
-                <p style={{ fontSize: "0.72rem", color: "#1e293b" }}>Supports .xlsx, .xls, and .csv</p>
+                <p style={{ fontSize: "0.72rem", color: "#1e293b" }}>Supports .xlsx and .csv</p>
               </div>
             )}
           </div>
