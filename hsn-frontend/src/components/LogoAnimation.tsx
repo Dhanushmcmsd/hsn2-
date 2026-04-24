@@ -7,10 +7,10 @@ type LogoAnimationProps = {
 };
 
 const redSquares = [
-  { key: "top", x: 0, y: -20 },
-  { key: "right", x: 20, y: 0 },
-  { key: "bottom", x: 0, y: 20 },
-  { key: "left", x: -20, y: 0 },
+  { key: "tl", x: -20, y: -20 },
+  { key: "tr", x: 20, y: -20 },
+  { key: "bl", x: -20, y: 20 },
+  { key: "br", x: 20, y: 20 },
 ];
 
 const blueCorners = [
