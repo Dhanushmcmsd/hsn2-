@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 import pytest
@@ -86,7 +85,3 @@ async def test_kerala_search_cases_resolve_to_expected_chapters():
             )
 
     await engine.dispose()
-
-
-if __name__ == "__main__":
-    asyncio.run(test_kerala_search_cases_resolve_to_expected_chapters())

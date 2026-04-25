@@ -6,4 +6,5 @@ predict_latency = Histogram("hsn_prediction_latency_ms", "Prediction latency", b
 
 
 async def metrics_endpoint(request: Request) -> Response:
+    # TODO: Wire this endpoint into app/main.py router registration.
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)

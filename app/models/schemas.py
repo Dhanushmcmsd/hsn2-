@@ -19,6 +19,8 @@ class HSNMatch(BaseModel):
 
 
 class PredictResponse(BaseModel):
+    # NOTE: This schema is used by app/routes/predict.py.
+    # main.py exposes a separate /predict contract for its standalone runtime.
     request_id: str
     input_text: str
     top_match: HSNMatch
@@ -30,6 +32,8 @@ class PredictResponse(BaseModel):
 
 
 class HSNRow(BaseModel):
+    # NOTE: HSNRow models /hsn lookup rows and is not equivalent to main.py's
+    # HSNBatchResult, which models batch prediction output.
     hsn_code: str
     description: str
     full_description: str

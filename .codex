@@ -1,0 +1,26 @@
+HSN Classifier Workspace Prompt
+
+Stack
+- Backend: FastAPI, SQLAlchemy async, PostgreSQL (Supabase), Redis (Upstash), Alembic
+- ML: sentence-transformers, FAISS, scikit-learn
+- Frontend: Next.js 15, TypeScript, Tailwind CSS
+
+Critical constraints
+- Do not modify multi-pass matching behavior in main.py `_match_one`.
+- Do not edit KERALA_* dictionaries in app/services/kerala_aliases.py.
+- Do not modify existing Alembic migration files.
+- Keep verified_products seeding integrity intact.
+- Preserve asyncpg/Supabase TLS connect_args and statement cache settings.
+
+Architecture notes
+- `main.py` is a separate FastAPI app used by entrypoint.sh.
+- `app/main.py` is the package app used by router-based deployment.
+- `app/routes/predict.py` and `main.py` both implement prediction for different targets.
+- Similar helpers across modules may be intentionally non-identical; diff behavior before deduping.
+
+Verification commands
+- `pytest -v --tb=short`
+- `python -c "from app.main import app; print('app/main OK')"`
+- `python -c "from main import app; print('main.py OK')"`
+- `python -c "from app.services.matcher import get_matcher; print('matcher OK')"`
+- `cd hsn-frontend && npx tsc --noEmit && npm run lint`

@@ -152,7 +152,7 @@ async def predict(
         db.add(record)
         await db.commit()
     except Exception as exc:
-        log.info("predict.persistence_unavailable", error=str(exc))
+        log.warning("predict.persistence_unavailable", error=str(exc))
         try:
             await db.rollback()
         except Exception:
