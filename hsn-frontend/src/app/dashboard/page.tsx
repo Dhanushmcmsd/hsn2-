@@ -90,18 +90,25 @@ async function parseCsvFile(file: File): Promise<RowData[]> {
 }
 
 async function parseXlsxFile(file: File): Promise<RowData[]> {
-  const rows = (await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" }) as unknown) as unknown[][];
-  if (!rows.length) {
+  const rawRows = (await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" }) as unknown) as unknown;
+  if (!Array.isArray(rawRows) || rawRows.length === 0) {
     throw new Error("The uploaded file does not contain any sheets.");
   }
 
-  const [headerRow, ...dataRows] = rows;
-  const headers = (headerRow || []).map((cell: unknown, index: number) => {
+  const toRow = (value: unknown): unknown[] => {
+    if (Array.isArray(value)) return value;
+    if (value == null) return [];
+    return [value];
+  };
+
+  const [headerValue, ...dataValues] = rawRows;
+  const headers = toRow(headerValue).map((cell: unknown, index: number) => {
     const normalized = normalizeCellValue(cell);
     return normalized || `COLUMN_${index + 1}`;
   });
 
-  const parsedRows = dataRows
+  const parsedRows = dataValues
+    .map((row: unknown) => toRow(row))
     .filter((row: unknown[]) => row.some((cell: unknown) => normalizeCellValue(cell) !== ""))
     .map((row: unknown[]) =>
       Object.fromEntries(
