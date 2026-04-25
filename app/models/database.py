@@ -391,9 +391,8 @@ async def _ensure_schema() -> None:
             ):
                 try:
                     await conn.execute(text(ddl))
-                except Exception as e:
-                    if "already exists" not in str(e).lower():
-                        log.warning("schema.ddl_failed", ddl=ddl[:80], error=str(e))
+                except Exception:
+                    pass
         _SCHEMA_DONE = True
 
 

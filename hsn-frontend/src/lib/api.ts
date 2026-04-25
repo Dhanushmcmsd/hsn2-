@@ -44,23 +44,9 @@ export interface HSNCodeRow {
   section?: string | null;
 }
 export interface PredictResponse {
-  // Matches app/models/schemas.py PredictResponse.
-  // main.py's standalone /predict endpoint intentionally uses a different shape.
   request_id: string; input_text: string; top_match: HSNMatch;
   alternatives: HSNMatch[]; confidence: number; confidence_label: "high" | "medium" | "low";
   needs_review: boolean; processing_time_ms: number;
-}
-export interface BulkResult {
-  query: string;
-  hsn_code: string;
-  description: string;
-  gst_rate: number | null;
-  confidence: number;
-  confidence_label: "high" | "medium" | "low";
-  match_method: string;
-  alternatives: HSNMatch[];
-  needs_review: boolean;
-  error: string;
 }
 export interface UserOut { id: number; email: string; full_name?: string; is_active: boolean; }
 export interface TokenResponse { access_token: string; refresh_token: string; token_type: string; }

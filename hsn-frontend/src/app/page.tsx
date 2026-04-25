@@ -206,7 +206,7 @@ export default function Home() {
             Premium workflow
           </div>
           <h2 className="mt-4 font-display text-4xl font-black tracking-[-0.04em] text-white md:text-5xl">
-            Built for India&apos;s classification edge cases.
+            Built for India's classification edge cases.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-7 text-slate-400">
             A restrained fintech surface with invoice context, trade vocabulary, and high-signal export flows.

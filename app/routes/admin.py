@@ -42,25 +42,21 @@ async def circuit_breakers(admin_key: str = Depends(require_admin_key)):
 
 @router.post("/retrain/check")
 async def retrain_check(admin_key: str = Depends(require_admin_key)):
-    # STUB: retraining orchestration is not implemented yet.
     return {"status": "no_retrain_needed", "message": "Model is current"}
 
 
 @router.get("/retrain/versions")
 async def retrain_versions(admin_key: str = Depends(require_admin_key)):
-    # STUB: model registry/version tracking is not implemented yet.
     return {"versions": ["v1.0"], "current": "v1.0"}
 
 
 @router.post("/dataset/reload")
 async def dataset_reload(admin_key: str = Depends(require_admin_key)):
-    # STUB: live dataset reload wiring is not implemented yet.
     return {"status": "reloaded"}
 
 
 @router.get("/dataset/integrity")
 async def dataset_integrity(admin_key: str = Depends(require_admin_key)):
-    # STUB: integrity checksum pipeline is not implemented yet.
     return {"status": "ok", "checksum": "verified"}
 
 

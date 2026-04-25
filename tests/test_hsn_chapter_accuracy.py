@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 import pytest
@@ -88,3 +89,7 @@ async def test_hsn_chapter_accuracy():
             )
 
     await engine.dispose()
+
+
+if __name__ == "__main__":
+    asyncio.run(test_hsn_chapter_accuracy())

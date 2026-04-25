@@ -7,7 +7,6 @@ from typing import List, Dict, Any
 
 log = structlog.get_logger()
 
-# PROTOTYPE: This feature is not integrated into the main prediction flow.
 IMPORTANT_PRODUCTS_FILE = Path("data/csv.json")
 _important_products: List[Dict[str, Any]] = []
 

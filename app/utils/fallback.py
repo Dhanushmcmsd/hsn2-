@@ -2,7 +2,6 @@ from app.models.schemas import PredictResponse, HSNMatch
 
 
 def fallback_response(text: str, request_id: str) -> PredictResponse:
-    # TODO: Hook this fallback into predict flow when service-level fallback is enabled.
     return PredictResponse(
         request_id=request_id,
         input_text=text,

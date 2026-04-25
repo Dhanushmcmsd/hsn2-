@@ -7,16 +7,18 @@ import re
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
+from xml.etree import ElementTree as ET
+from zipfile import ZipFile
 
 import structlog
-
-from app.utils.xlsx import read_xlsx_rows
 
 log = structlog.get_logger()
 
 _DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
 _VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.xlsx"))
 _PRODUCT_BATCH_DIR = Path(os.getenv("PRODUCT_BATCH_DIR", "data/product_batches"))
+
+_XL_NS = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 
 _GST_QUALIFIER_TOKENS = (
     "branded",
@@ -51,6 +53,37 @@ def _normalise_category(raw: object) -> str | None:
     return value
 
 
+def _read_xlsx_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+
+    with ZipFile(path) as archive:
+        sheet_xml = archive.read("xl/worksheets/sheet1.xml")
+
+    root = ET.fromstring(sheet_xml)
+    rows: list[list[str]] = []
+    for row_node in root.findall(".//x:sheetData/x:row", _XL_NS):
+        values: list[str] = []
+        for cell in row_node.findall("x:c", _XL_NS):
+            inline = cell.find("x:is/x:t", _XL_NS)
+            if inline is not None:
+                values.append(inline.text or "")
+                continue
+            value = cell.find("x:v", _XL_NS)
+            values.append(value.text if value is not None else "")
+        rows.append(values)
+
+    if not rows:
+        return []
+
+    headers = [str(v or "").strip() for v in rows[0]]
+    data_rows: list[dict[str, str]] = []
+    for row in rows[1:]:
+        padded = row + [""] * max(0, len(headers) - len(row))
+        data_rows.append({headers[idx]: padded[idx] for idx in range(len(headers))})
+    return data_rows
+
+
 def _load_official_rows() -> list[dict[str, Any]]:
     if not _DATA_PATH.exists():
         log.warning("hsn_master.official_missing", path=str(_DATA_PATH))
@@ -82,7 +115,7 @@ def _load_verified_rows() -> list[dict[str, Any]]:
         return []
 
     try:
-        raw_rows = read_xlsx_rows(_VERIFIED_DATA_PATH)
+        raw_rows = _read_xlsx_rows(_VERIFIED_DATA_PATH)
     except Exception as exc:
         log.warning("hsn_master.verified_read_failed", error=str(exc))
         return []

@@ -34,8 +34,8 @@ STOPWORDS = {
     'cover', 'wrapper', 'wt', 'weight', 'net', 'gross',
 }
 
-# Kerala-heavy invoices frequently mention VKC footwear and CB branded goods.
-# "tr" stays out of BRANDS because abbreviation expansion handles that token.
+# FIX #2 & #7: VKC (footwear), CB (multi-category Kerala brand) added.
+# "tr" kept OUT — abbreviation expander handles it before tokenisation.
 BRANDS = {
     'patanjali', 'nestle', 'amul', 'tata', 'godrej', 'dettol', 'lifebuoy', 'colgate',
     'pepsodent', 'nivea', 'garnier', 'loreal', 'sony', 'samsung', 'apple',
@@ -57,36 +57,35 @@ SYNONYMS = {
     'tv':        ['television'],
     'fridge':    ['refrigerator'],
     'laptop':    ['notebook'],
-    # Garment routing for chapters 61-63.
+    # FIX: shirt carries garment/clothing signal for Ch 61-63 routing
     'biscuit':   ['cookie', 'confectionery'],
     'cookie':    ['biscuit', 'confectionery'],
     'shirt':     ['tshirt', 'garment', 'clothing'],
-    # Beverage routing for chapter 22.
+    # FIX: water/mineral carry drink/beverage signal for Ch 22 routing
     'water':     ['beverage', 'drink'],
     'mineral':   ['beverage', 'drink'],
     'juice':     ['fruit juice', 'nectar fruit', 'beverage'],
     'aerated':   ['carbonated', 'soda', 'soft drink'],
-    # Footwear routing for chapter 64.
+    # FIX #3: footwear synonyms for Ch 64 routing
     'chappal':   ['sandal', 'footwear', 'slipper'],
     'slipper':   ['sandal', 'footwear', 'chappal'],
     'sandal':    ['footwear', 'slipper', 'chappal'],
     'shoe':      ['footwear'],
     'hawai':     ['slipper', 'footwear'],
-    # Steel utensils and household goods commonly use "SS" shorthand.
+    # FIX #6: stainless steel
     'stainless': ['steel', 'metal'],
-    # Spice alias normalisation used in Kerala grocery bills.
+    # FIX #5: fenugreek / methi
     'fenugreek': ['methi', 'spice'],
     'methi':     ['fenugreek', 'spice'],
 }
 SYNONYMS.update(KERALA_SYNONYMS)
 
-# NOTE: Do not merge this dictionary with main.py's table.
-# main.py intentionally carries a different superset for its standalone runtime.
+# FIX #1–#6: Expanded abbreviation table
 FMCG_ABBREVIATIONS = {
-    # Common invoice abbreviations used in Kerala trade data.
-    'tr':     'kitchen treasure',
-    'ftgr':   'fenugreek',
-    'ss':     'stainless steel',
+    # v2.2.0 additions
+    'tr':     'kitchen treasure',   # FIX #4: Kitchen Treasure masala brand prefix
+    'ftgr':   'fenugreek',          # FIX #5: fenugreek / methi seeds
+    'ss':     'stainless steel',    # FIX #6: SS PLATE, SS OVAL etc.
     'ss.':    'stainless steel',
     # Cleaning
     'btrm':   'bathroom',
@@ -166,9 +165,11 @@ def expand_fmcg_abbreviations(text: str) -> str:
     Pattern-based rules run first (handles word-boundary cases),
     then token-by-token dictionary lookup.
     """
-    # Pattern-first replacements preserve boundary-sensitive trade shorthand.
+    # FIX #6: SS prefix → stainless steel
     text = re.sub(r'\bSS\b', 'stainless steel', text, flags=re.IGNORECASE)
+    # FIX #5: FTGR → fenugreek
     text = re.sub(r'\bFTGR\b', 'fenugreek', text, flags=re.IGNORECASE)
+    # FIX #4: TR. or TR (word boundary) → kitchen treasure
     text = re.sub(r'\bTR\.\s*', 'kitchen treasure ', text, flags=re.IGNORECASE)
     text = re.sub(r'\bTR\b', 'kitchen treasure', text, flags=re.IGNORECASE)
 
@@ -363,10 +364,7 @@ class HybridMatcher:
             self._ready = True
             log.info("matcher.ready", count=len(self._dataset))
         except Exception as e:
-            log.warning(
-                "FAISS/sentence-transformers unavailable - semantic matching disabled, falling back to keyword matching.",
-                error=str(e),
-            )
+            log.warning("matcher.load_error", error=str(e))
 
     def _exact_code_match(self, text: str) -> list[dict]:
         text_lower = text.lower()

@@ -1,11 +1,3 @@
-"""
-MODULE_ARCHITECTURE
-
-This file is a standalone FastAPI deployment target used by entrypoint.sh.
-It intentionally coexists with app/main.py and selectively imports from app/
-services without sharing the full router/schema stack from app/.
-"""
-
 from fastapi import FastAPI, Depends, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
@@ -16,7 +8,7 @@ from pydantic import BaseModel, field_validator
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
-from typing import Optional, TypedDict, NotRequired
+from typing import Optional
 import os, json, re, uuid, math
 
 import logging
@@ -210,20 +202,7 @@ class BatchQuery(BaseModel):
 class SingleQuery(BaseModel):
     text: str
 
-
-class AlternativeMatch(TypedDict, total=False):
-    hsn_code: str
-    description: str
-    gst_rate: float
-    confidence: float
-    score: NotRequired[float]
-    method: NotRequired[str]
-    source: NotRequired[str]
-
-
 class HSNBatchResult(BaseModel):
-    # NOTE: This batch schema is local to main.py and is not the same contract as
-    # app.models.schemas.HSNRow (which powers /hsn responses in app/ routes).
     query: str
     hsn_code: Optional[str] = None
     description: Optional[str] = None
@@ -231,7 +210,7 @@ class HSNBatchResult(BaseModel):
     confidence: float = 0.0
     confidence_label: str = "low"
     match_method: str = "none"
-    alternatives: list["AlternativeMatch"] = []
+    alternatives: list[dict] = []
     error: Optional[str] = None
 
 class BatchResponse(BaseModel):
@@ -243,9 +222,6 @@ class BatchResponse(BaseModel):
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(title="HSN Classifier API", version="2.3.0")
 
-# NOTE: Some preview origins below are legacy deployment artifacts kept for
-# backwards compatibility. Prefer configuring active origins via environment for
-# long-term maintenance.
 ALLOWED_ORIGINS = [
     "https://hsn2.vercel.app",
     "https://hsn2-git-main-d3d.vercel.app",
@@ -413,8 +389,6 @@ async def predict_single(
     x_api_key: str = Header(default="", alias="x-api-key"),
     db: AsyncSession = Depends(get_db),
 ):
-    # NOTE: This endpoint response shape intentionally differs from
-    # app.models.schemas.PredictResponse used by app/routes/predict.py.
     if authorization.startswith("Bearer "):
         token = authorization[7:]
         try:
@@ -601,8 +575,6 @@ FMCG_ABBREVIATIONS = {
     'nc': 'nice', 'noltai': 'nolta',
 }
 FMCG_ABBREVIATIONS.update(KERALA_ABBREVIATIONS)
-# Keep plural typo normalization aligned with historical main.py behavior.
-FMCG_ABBREVIATIONS["cookis"] = "cookie"
 
 SYNONYMS = {
     'wash': ['soap', 'cleanser', 'liquid'],
@@ -824,8 +796,6 @@ CATEGORY_RULES = KERALA_CATEGORY_RULES + CATEGORY_RULES
 
 # ── Helper functions ───────────────────────────────────────────────────────────
 
-# NOTE: This expander is intentionally not merged with app/services/matcher.py.
-# main.py keeps a broader abbreviation table for standalone deployment behavior.
 def expand_fmcg_abbreviations(text: str) -> str:
     text = re.sub(r'\bSS\b', 'stainless steel', text, flags=re.IGNORECASE)
     text = re.sub(r'\bFTGR\b', 'fenugreek collection footwear', text, flags=re.IGNORECASE)
@@ -1109,10 +1079,6 @@ def compute_inverted_index_score(
 
 # ── Schema probe (cached) ──────────────────────────────────────────────────────
 _VP_HAS_NO_SIZE_COL: Optional[bool] = None
-# Tri-state cache:
-#   None  -> unknown (probe has not run yet)
-#   True  -> column exists
-#   False -> column missing (passes 0B/0C disabled)
 
 async def _probe_vp_schema(db: AsyncSession) -> bool:
     global _VP_HAS_NO_SIZE_COL
@@ -1416,7 +1382,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                     match_method="verified_exact",
                 )
         except Exception as e:
-            log.warning("pass0A.error query=%s error=%s", q_stripped[:50], str(e), exc_info=True)
+            log.warning("pass0A.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
     # PASS 0B — Size-stripped exact match
@@ -1460,7 +1426,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                         match_method="verified_no_size",
                     )
             except Exception as e:
-                log.warning("pass0B.error query=%s error=%s", q_stripped[:50], str(e), exc_info=True)
+                log.warning("pass0B.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
     # PASS 0C — Trigram on description_no_size (≥0.60)
@@ -1506,7 +1472,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                         match_method="verified_trigram",
                     )
             except Exception as e:
-                log.warning("pass0C.error query=%s error=%s", q_stripped[:50], str(e), exc_info=True)
+                log.warning("pass0C.error query=%s error=%s", q_stripped[:50], str(e))
 
     # ══════════════════════════════════════════════════════════════════════════
     # LAYER 2 FIX: Passes 0D–0F now search description_normalized (PRIMARY)
@@ -2114,43 +2080,42 @@ async def startup():
             CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)
         """))
         # Ensure description_no_size column exists in verified_products
-        for ddl in (
-            """
-            ALTER TABLE verified_products
-            ADD COLUMN IF NOT EXISTS description_no_size VARCHAR(500)
-            """,
-            """
-            CREATE INDEX IF NOT EXISTS idx_verified_no_size
-            ON verified_products (description_no_size)
-            """,
-            """
-            CREATE EXTENSION IF NOT EXISTS pg_trgm
-            """,
-            """
-            CREATE INDEX IF NOT EXISTS idx_vp_trgm_norm
-            ON verified_products USING gin (description_normalized gin_trgm_ops)
-            """,
-            """
-            CREATE INDEX IF NOT EXISTS idx_vp_trgm_no_size
-            ON verified_products USING gin (description_no_size gin_trgm_ops)
-            """,
-            """
-            CREATE INDEX IF NOT EXISTS idx_hsn_weighted_fts
-            ON hsn_codes
-            USING gin (
-                (
-                    setweight(to_tsvector('english', description), 'A') ||
-                    setweight(to_tsvector('english', COALESCE(category, '')), 'B')
+        try:
+            await conn.execute(text("""
+                ALTER TABLE verified_products
+                ADD COLUMN IF NOT EXISTS description_no_size VARCHAR(500)
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_verified_no_size
+                ON verified_products (description_no_size)
+            """))
+            await conn.execute(text("""
+                CREATE EXTENSION IF NOT EXISTS pg_trgm
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_vp_trgm_norm
+                ON verified_products USING gin (description_normalized gin_trgm_ops)
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_vp_trgm_no_size
+                ON verified_products USING gin (description_no_size gin_trgm_ops)
+            """))
+        except Exception:
+            pass  # Column already exists or table doesn't exist yet
+        try:
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_hsn_weighted_fts
+                ON hsn_codes
+                USING gin (
+                    (
+                        setweight(to_tsvector('english', description), 'A') ||
+                        setweight(to_tsvector('english', COALESCE(category, '')), 'B')
+                    )
                 )
-            )
-            """,
-            """
-            CREATE INDEX IF NOT EXISTS idx_hsn_code_prefix
-            ON hsn_codes (hsn_code text_pattern_ops)
-            """,
-        ):
-            try:
-                await conn.execute(text(ddl))
-            except Exception as e:
-                if "already exists" not in str(e).lower():
-                    log.warning("startup.ddl_failed", ddl=ddl.strip()[:80], error=str(e))
+            """))
+            await conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_hsn_code_prefix
+                ON hsn_codes (hsn_code text_pattern_ops)
+            """))
+        except Exception:
+            pass

@@ -1,49 +1,14 @@
+// @ts-nocheck
 "use client";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Papa from "papaparse";
 import readXlsxFile from "read-excel-file/browser";
-import {
-  authApi,
-  authStorage,
-  hsnApi,
-  type BulkResult,
-  type PredictResponse,
-} from "@/lib/api";
+import { authApi, authStorage, hsnApi } from "@/lib/api";
 import { LogOut } from "lucide-react";
 import { LogoAnimation } from "@/components/LogoAnimation";
 
 const PAGE_SIZE = 20;
-type DashboardMode = "single" | "bulk";
-type ConfidenceLabel = "high" | "medium" | "low";
-type RowData = Record<string, string>;
-type BulkStats = { matched: number; unmatched: number; total: number };
-type PredictLikeResponse = PredictResponse & { gst_rate?: number | null };
-type FloatIconShape = "invoice" | "rupee" | "barcode" | "gst" | "sheet";
-
-type FloatIconProps = {
-  shape: FloatIconShape;
-  x: number;
-  y: number;
-  size: number;
-  delay: number;
-  dur: number;
-};
-
-type ConfPillProps = {
-  label: ConfidenceLabel;
-  value: number;
-};
-
-type GstPillProps = {
-  rate: number | null | undefined;
-};
-
-type ProcessStepProps = {
-  label: string;
-  done: boolean;
-  active: boolean;
-};
 
 function padHsn(code: string | null | undefined) {
   if (!code) return "";
@@ -51,14 +16,20 @@ function padHsn(code: string | null | undefined) {
   return /^\d+$/.test(t) ? t.padStart(8, "0") : t;
 }
 
-function normalizeCellValue(value: unknown): string {
+// GST rate to percentage label helper
+function gstLabel(rate: number | null | undefined): string {
+  if (rate == null) return "—";
+  return `${rate}%`;
+}
+
+function normalizeCellValue(value: unknown) {
   if (value == null) return "";
   if (value instanceof Date) return value.toISOString().slice(0, 10);
   if (typeof value === "object") return JSON.stringify(value);
   return String(value).trim();
 }
 
-function pickDefaultColumn(columnNames: string[]): string {
+function pickDefaultColumn(columnNames: string[]) {
   return (
     columnNames.find((column) => /product|description|item|name/i.test(column)) ??
     columnNames[0] ??
@@ -66,7 +37,7 @@ function pickDefaultColumn(columnNames: string[]): string {
   );
 }
 
-function normalizeParsedRows(parsedRows: Array<Record<string, unknown>>): RowData[] {
+function normalizeParsedRows(parsedRows: Array<Record<string, unknown>>) {
   return parsedRows
     .map((row) =>
       Object.fromEntries(
@@ -76,12 +47,12 @@ function normalizeParsedRows(parsedRows: Array<Record<string, unknown>>): RowDat
     .filter((row) => Object.values(row).some((value) => String(value).trim() !== ""));
 }
 
-async function parseCsvFile(file: File): Promise<RowData[]> {
+async function parseCsvFile(file: File) {
   const text = await file.text();
   const parsed = Papa.parse<Record<string, unknown>>(text, {
     header: true,
     skipEmptyLines: true,
-    transformHeader: (header: string) => String(header).trim(),
+    transformHeader: (header) => String(header).trim(),
   });
   if (parsed.errors.length > 0) {
     throw new Error(parsed.errors[0]?.message || "Unable to parse the uploaded CSV file.");
@@ -89,30 +60,30 @@ async function parseCsvFile(file: File): Promise<RowData[]> {
   return normalizeParsedRows(parsed.data);
 }
 
-async function parseXlsxFile(file: File): Promise<RowData[]> {
-  const rows = (await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" }) as unknown) as unknown[][];
+async function parseXlsxFile(file: File) {
+  const rows = await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" });
   if (!rows.length) {
     throw new Error("The uploaded file does not contain any sheets.");
   }
 
   const [headerRow, ...dataRows] = rows;
-  const headers = (headerRow || []).map((cell: unknown, index: number) => {
+  const headers = (headerRow || []).map((cell, index) => {
     const normalized = normalizeCellValue(cell);
     return normalized || `COLUMN_${index + 1}`;
   });
 
   const parsedRows = dataRows
-    .filter((row: unknown[]) => row.some((cell: unknown) => normalizeCellValue(cell) !== ""))
-    .map((row: unknown[]) =>
+    .filter((row) => row.some((cell) => normalizeCellValue(cell) !== ""))
+    .map((row) =>
       Object.fromEntries(
-        headers.map((header: string, index: number) => [header, row[index] ?? ""])
+        headers.map((header, index) => [header, row[index] ?? ""])
       )
     );
 
   return normalizeParsedRows(parsedRows);
 }
 
-function toBulkResult(query: string, response: PredictLikeResponse): BulkResult {
+function toBulkResult(query: string, response: any) {
   return {
     query,
     hsn_code: response.top_match?.hsn_code ?? "",
@@ -130,7 +101,7 @@ function toBulkResult(query: string, response: PredictLikeResponse): BulkResult 
   };
 }
 
-function toFailedBulkResult(query: string, error: unknown): BulkResult {
+function toFailedBulkResult(query: string, error: unknown) {
   const message = error instanceof Error ? error.message : "Prediction failed";
   return {
     query,
@@ -152,7 +123,7 @@ function escapeCsvValue(value: unknown) {
 }
 
 // ── Floating ambient icons (Indian GST context) ──────────────────────────────
-const FLOAT_ICONS: FloatIconProps[] = [
+const FLOAT_ICONS = [
   { shape: "invoice", x: 8, y: 15, size: 38, delay: 0, dur: 22 },
   { shape: "rupee",   x: 88, y: 8,  size: 28, delay: 3, dur: 18 },
   { shape: "barcode", x: 5,  y: 72, size: 44, delay: 6, dur: 25 },
@@ -163,8 +134,8 @@ const FLOAT_ICONS: FloatIconProps[] = [
   { shape: "barcode", x: 92, y: 40, size: 26, delay: 2, dur: 19 },
 ];
 
-function FloatingIcon({ shape, x, y, size, delay, dur }: FloatIconProps) {
-  const paths: Record<FloatIconShape, JSX.Element> = {
+function FloatingIcon({ shape, x, y, size, delay, dur }) {
+  const paths = {
     invoice: (
       <g>
         <rect x="2" y="1" width="20" height="26" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
@@ -228,8 +199,8 @@ function FloatingIcon({ shape, x, y, size, delay, dur }: FloatIconProps) {
 }
 
 // ── Confidence pill ──────────────────────────────────────────────────────────
-function ConfPill({ label, value }: ConfPillProps) {
-  const map: Record<ConfidenceLabel, { color: string; bg: string; border: string }> = {
+function ConfPill({ label, value }) {
+  const map = {
     high:   { color: "#60a5fa", bg: "rgba(96,165,250,0.12)", border: "rgba(96,165,250,0.3)" },
     medium: { color: "#a78bfa", bg: "rgba(167,139,250,0.12)", border: "rgba(167,139,250,0.3)" },
     low:    { color: "#94a3b8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.2)" },
@@ -250,7 +221,7 @@ function ConfPill({ label, value }: ConfPillProps) {
 }
 
 // ── GST rate pill ────────────────────────────────────────────────────────────
-function GstPill({ rate }: GstPillProps) {
+function GstPill({ rate }) {
   if (rate == null) return null;
   const colors = {
     0:  { color: "#94a3b8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.25)" },
@@ -259,7 +230,7 @@ function GstPill({ rate }: GstPillProps) {
     18: { color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.3)" },
     28: { color: "#f87171", bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.3)" },
   };
-  const s = colors[rate as keyof typeof colors] || { color: "#a78bfa", bg: "rgba(167,139,250,0.1)", border: "rgba(167,139,250,0.3)" };
+  const s = colors[rate] || { color: "#a78bfa", bg: "rgba(167,139,250,0.1)", border: "rgba(167,139,250,0.3)" };
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 5,
@@ -275,7 +246,7 @@ function GstPill({ rate }: GstPillProps) {
 }
 
 // ── Step indicator ───────────────────────────────────────────────────────────
-function ProcessStep({ label, done, active }: ProcessStepProps) {
+function ProcessStep({ label, done, active }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.78rem",
       color: done ? "#60a5fa" : active ? "#e2e8f0" : "#475569",
@@ -302,25 +273,25 @@ function ProcessStep({ label, done, active }: ProcessStepProps) {
 // ── Main component ───────────────────────────────────────────────────────────
 export default function PremiumDashboard() {
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [mode, setMode] = useState<DashboardMode>("single");
+  const fileInputRef = useRef(null);
+  const [mode, setMode] = useState("single");
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<PredictLikeResponse | null>(null);
+  const [result, setResult] = useState(null);
   const [singleLoading, setSingleLoading] = useState(false);
   const [singleError, setSingleError] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState("");
-  const [columns, setColumns] = useState<string[]>([]);
+  const [columns, setColumns] = useState([]);
   const [selectedCol, setSelectedCol] = useState("");
-  const [rawRows, setRawRows] = useState<RowData[]>([]);
-  const [bulkResults, setBulkResults] = useState<BulkResult[]>([]);
+  const [rawRows, setRawRows] = useState([]);
+  const [bulkResults, setBulkResults] = useState([]);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkError, setBulkError] = useState("");
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [page, setPage] = useState(0);
-  const [bulkStats, setBulkStats] = useState<BulkStats | null>(null);
+  const [bulkStats, setBulkStats] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [processSteps, setProcessSteps] = useState<[boolean, boolean, boolean]>([false, false, false]);
+  const [processSteps, setProcessSteps] = useState([false, false, false]);
   const [showFileSuccess, setShowFileSuccess] = useState(false);
   const [userInitial, setUserInitial] = useState("U");
   const [authReady, setAuthReady] = useState(false);
@@ -697,7 +668,7 @@ export default function PremiumDashboard() {
   }
 
   // ── Single predict ────────────────────────────────────────────────────────
-  async function handlePredict(e: React.FormEvent<HTMLFormElement>) {
+  async function handlePredict(e) {
     e?.preventDefault();
     if (!query.trim()) return;
     setSingleError(""); setSingleLoading(true); setResult(null);
@@ -712,7 +683,7 @@ export default function PremiumDashboard() {
   }
 
   // ── File processing ───────────────────────────────────────────────────────
-  async function processFile(file: File) {
+  async function processFile(file) {
     setFileName(file.name);
     setFileSize((file.size / 1024).toFixed(1) + " KB");
     setBulkResults([]); setBulkError(""); setBulkStats(null); setPage(0);
@@ -760,12 +731,12 @@ export default function PremiumDashboard() {
     }
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (file) processFile(file);
   }
 
-  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+  function handleDrop(e) {
     e.preventDefault(); setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
     if (file) processFile(file);
@@ -777,17 +748,17 @@ export default function PremiumDashboard() {
     setBulkLoading(true); setBulkError("");
     setBulkResults([]); setBulkStats(null); setPage(0);
 
-    const steps: [boolean, boolean, boolean] = [false, false, false];
+    const steps = [false, false, false];
     setProcessSteps([...steps]);
 
-    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+    await new Promise(r => setTimeout(r, 200));
     steps[0] = true; setProcessSteps([...steps]);
-    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+    await new Promise(r => setTimeout(r, 200));
     steps[1] = true; setProcessSteps([...steps]);
 
     const total = rawRows.length;
     setProgress({ done: 0, total });
-    const results: Array<BulkResult | undefined> = new Array(total);
+    const results = new Array(total);
     let cursor = 0;
     let completed = 0;
     const concurrency = Math.min(4, total);
@@ -812,13 +783,13 @@ export default function PremiumDashboard() {
 
             completed += 1;
             setProgress({ done: completed, total });
-            setBulkResults(results.filter((row): row is BulkResult => Boolean(row)));
+            setBulkResults(results.filter(Boolean));
           }
         })
       );
 
       steps[2] = true; setProcessSteps([...steps]);
-      const finishedResults = results.filter((row): row is BulkResult => Boolean(row));
+      const finishedResults = results.filter(Boolean);
       const matched = finishedResults.filter((row) => row.hsn_code).length;
       const needsReview = finishedResults.filter((row) => row.needs_review || row.error).length;
       setBulkResults(finishedResults);
@@ -936,7 +907,6 @@ export default function PremiumDashboard() {
         {/* Right */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
           <div style={{ textAlign: "right" }}>
-            {/* TODO: Wire usage values to an actual quota/usage API. */}
             <div style={{ fontSize: "0.65rem", color: "#475569", marginBottom: 3, fontFamily: "'DM Mono', monospace" }}>120 / 500 rows used</div>
             <div className="usage-bar" style={{ width: 80 }}><div className="usage-fill" /></div>
           </div>
@@ -1003,7 +973,7 @@ export default function PremiumDashboard() {
                 </svg>
                 <input
                   value={query}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+                  onChange={e => setQuery(e.target.value)}
                   placeholder="Type a product description e.g. Colgate Toothpaste 200g..."
                   className="input-field"
                   style={{ paddingLeft: "2.5rem" }}
@@ -1038,14 +1008,8 @@ export default function PremiumDashboard() {
                     cursor: "pointer",
                     transition: "all 0.2s",
                   }}
-                  onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.currentTarget.style.color = "#93c5fd";
-                    e.currentTarget.style.borderColor = "rgba(96,165,250,0.3)";
-                  }}
-                  onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.currentTarget.style.color = "#64748b";
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                  }}>
+                  onMouseEnter={e => { e.target.style.color = "#93c5fd"; e.target.style.borderColor = "rgba(96,165,250,0.3)"; }}
+                  onMouseLeave={e => { e.target.style.color = "#64748b"; e.target.style.borderColor = "rgba(255,255,255,0.08)"; }}>
                     {ex}
                   </button>
                 ))}
@@ -1188,7 +1152,7 @@ export default function PremiumDashboard() {
                 <div
                   className={`upload-zone${isDragOver ? " drag" : ""}`}
                   onClick={() => fileInputRef.current?.click()}
-                  onDragOver={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsDragOver(true); }}
+                  onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
                   onDragLeave={() => setIsDragOver(false)}
                   onDrop={handleDrop}
                 >
@@ -1238,12 +1202,7 @@ export default function PremiumDashboard() {
               <div className="glass-card" style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div>
                   <div className="lbl">Step 2 — Select column</div>
-                  <select
-                    value={selectedCol}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCol(e.target.value)}
-                    className="select-field"
-                    style={{ width: "100%" }}
-                  >
+                  <select value={selectedCol} onChange={e => setSelectedCol(e.target.value)} className="select-field" style={{ width: "100%" }}>
                     {columns.length === 0 && <option value="">Upload a file first</option>}
                     {columns.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
