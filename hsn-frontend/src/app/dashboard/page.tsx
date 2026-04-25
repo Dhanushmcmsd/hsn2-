@@ -25,7 +25,13 @@ function gstLabel(rate: number | null | undefined): string {
 function normalizeCellValue(value: unknown) {
   if (value == null) return "";
   if (value instanceof Date) return value.toISOString().slice(0, 10);
-  if (typeof value === "object") return JSON.stringify(value);
+  if (typeof value === "object") {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "";
+    }
+  }
   return String(value).trim();
 }
 
@@ -38,7 +44,9 @@ function pickDefaultColumn(columnNames: string[]) {
 }
 
 function normalizeParsedRows(parsedRows: Array<Record<string, unknown>>) {
+  if (!Array.isArray(parsedRows)) return [];
   return parsedRows
+    .filter((row) => row && typeof row === "object" && !Array.isArray(row))
     .map((row) =>
       Object.fromEntries(
         Object.entries(row).map(([key, value]) => [String(key).trim(), normalizeCellValue(value)])
@@ -57,22 +65,51 @@ async function parseCsvFile(file: File) {
   if (parsed.errors.length > 0) {
     throw new Error(parsed.errors[0]?.message || "Unable to parse the uploaded CSV file.");
   }
-  return normalizeParsedRows(parsed.data);
+  return normalizeParsedRows(Array.isArray(parsed.data) ? parsed.data : []);
 }
 
 async function parseXlsxFile(file: File) {
-  const rows = await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" });
-  if (!rows.length) {
+  const raw = await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" });
+
+  let rows = null;
+  if (Array.isArray(raw)) {
+    // Some files/parsers can return a sheet bundle shape: [{ sheet, data }]
+    if (
+      raw.length > 0 &&
+      raw[0] &&
+      typeof raw[0] === "object" &&
+      !Array.isArray(raw[0]) &&
+      Array.isArray(raw[0].data)
+    ) {
+      rows = raw[0].data;
+    } else {
+      rows = raw;
+    }
+  } else if (raw && typeof raw === "object") {
+    // Defensive support for object-return signatures ({ rows, errors } / { data })
+    if (Array.isArray(raw.rows)) {
+      rows = raw.rows;
+    } else if (Array.isArray(raw.data)) {
+      rows = raw.data;
+    }
+  }
+
+  if (!Array.isArray(rows) || rows.length === 0) {
     throw new Error("The uploaded file does not contain any sheets.");
   }
 
   const [headerRow, ...dataRows] = rows;
-  const headers = (headerRow || []).map((cell, index) => {
+  if (!Array.isArray(headerRow)) {
+    throw new Error("Could not read the header row from this Excel file.");
+  }
+
+  const headers = headerRow.map((cell, index) => {
     const normalized = normalizeCellValue(cell);
     return normalized || `COLUMN_${index + 1}`;
   });
 
   const parsedRows = dataRows
+    .filter((row) => Array.isArray(row))
     .filter((row) => row.some((cell) => normalizeCellValue(cell) !== ""))
     .map((row) =>
       Object.fromEntries(
@@ -744,7 +781,7 @@ export default function PremiumDashboard() {
 
   // ── Bulk process ──────────────────────────────────────────────────────────
   const handleBulkProcess = useCallback(async () => {
-    if (rawRows.length === 0 || !selectedCol) return;
+    if (!Array.isArray(rawRows) || rawRows.length === 0 || !selectedCol) return;
     setBulkLoading(true); setBulkError("");
     setBulkResults([]); setBulkStats(null); setPage(0);
 
@@ -783,13 +820,13 @@ export default function PremiumDashboard() {
 
             completed += 1;
             setProgress({ done: completed, total });
-            setBulkResults(results.filter(Boolean));
+            setBulkResults(results.filter((row) => row != null));
           }
         })
       );
 
       steps[2] = true; setProcessSteps([...steps]);
-      const finishedResults = results.filter(Boolean);
+      const finishedResults = results.filter((row) => row != null);
       const matched = finishedResults.filter((row) => row.hsn_code).length;
       const needsReview = finishedResults.filter((row) => row.needs_review || row.error).length;
       setBulkResults(finishedResults);
