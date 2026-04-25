@@ -89,36 +89,26 @@ async function parseCsvFile(file: File): Promise<RowData[]> {
   return normalizeParsedRows(parsed.data);
 }
 
-type XlsxSheetLike = { data?: unknown };
-
 async function parseXlsxFile(file: File): Promise<RowData[]> {
-  const workbook = (await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" }) as unknown) as unknown;
-  let rows = workbook;
-
-  // Keep the pre-cleanup "rows-first" parsing flow; unwrap only when parser returns sheet bundles.
-  if (
-    Array.isArray(rows) &&
-    rows.length > 0 &&
-    rows[0] &&
-    typeof rows[0] === "object" &&
-    !Array.isArray(rows[0]) &&
-    Array.isArray((rows[0] as XlsxSheetLike).data)
-  ) {
-    rows = (rows[0] as XlsxSheetLike).data as unknown;
-  }
-
-  if (!Array.isArray(rows) || rows.length === 0) {
+  const rawRows = (await readXlsxFile(file, { dateFormat: "YYYY-MM-DD" }) as unknown) as unknown;
+  if (!Array.isArray(rawRows) || rawRows.length === 0) {
     throw new Error("The uploaded file does not contain any sheets.");
   }
 
-  const [headerRow, ...dataRows] = rows;
-  const headers = (Array.isArray(headerRow) ? headerRow : []).map((cell: unknown, index: number) => {
+  const toRow = (value: unknown): unknown[] => {
+    if (Array.isArray(value)) return value;
+    if (value == null) return [];
+    return [value];
+  };
+
+  const [headerValue, ...dataValues] = rawRows;
+  const headers = toRow(headerValue).map((cell: unknown, index: number) => {
     const normalized = normalizeCellValue(cell);
     return normalized || `COLUMN_${index + 1}`;
   });
 
-  const parsedRows = dataRows
-    .filter((row: unknown): row is unknown[] => Array.isArray(row))
+  const parsedRows = dataValues
+    .map((row: unknown) => toRow(row))
     .filter((row: unknown[]) => row.some((cell: unknown) => normalizeCellValue(cell) !== ""))
     .map((row: unknown[]) =>
       Object.fromEntries(
