@@ -16,7 +16,8 @@ from pydantic import BaseModel, field_validator
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
-from typing import Optional, TypedDict, NotRequired
+from typing import Optional
+from typing_extensions import TypedDict, NotRequired
 import os, json, re, uuid, math
 
 import logging
