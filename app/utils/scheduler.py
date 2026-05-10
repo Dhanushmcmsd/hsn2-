@@ -9,23 +9,15 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 # --- GST SYNC START ---
-from prometheus_client import Gauge
 from sqlalchemy import select, text
 
 from app.models.database import async_session, HsnCode
 from app.services.gst_fetcher import fetch_all_gst_rates
+from app.utils.metrics import gst_sync_last_run_timestamp, gst_sync_updated_total
 # --- GST SYNC END ---
 
 log = structlog.get_logger()
 _scheduler: AsyncIOScheduler | None = None
-
-# --- GST SYNC START ---
-# Prometheus gauge — exposed via existing /metrics endpoint
-gst_sync_last_run_timestamp = Gauge(
-    "gst_sync_last_run_timestamp",
-    "Unix timestamp of the last successful GST nightly sync",
-)
-# --- GST SYNC END ---
 
 
 # --- GST SYNC START ---
@@ -35,7 +27,7 @@ async def sync_gst_rates() -> dict:
       1. Fetch all GST rates via 3-layer fallback (gst_fetcher.py)
       2. For each HSN code, compare with DB and update if changed / NULL
       3. Insert a row into gst_change_log for every changed rate
-      4. Log summary and update Prometheus gauge
+      4. Log summary and update Prometheus gauges
     Returns a stats dict (also used by trigger_gst_sync_now).
     """
     started_at = time.monotonic()
@@ -53,7 +45,6 @@ async def sync_gst_rates() -> dict:
 
     try:
         async with async_session() as session:
-            # Load all HsnCode rows in one query — keyed by hsn_code string
             result = await session.execute(select(HsnCode))
             db_rows: dict[str, HsnCode] = {
                 row.hsn_code: row for row in result.scalars().all()
@@ -69,7 +60,6 @@ async def sync_gst_rates() -> dict:
 
                 row = db_rows.get(hsn_code)
                 if row is None:
-                    # HSN not in our DB yet — skip silently
                     unchanged += 1
                     continue
 
@@ -82,12 +72,10 @@ async def sync_gst_rates() -> dict:
                 rate_changed = (old_rate is None) or (abs(old_rate - new_rate) > 1e-4)
 
                 if rate_changed:
-                    # Update the hsn_codes row
                     row.gst_rate_numeric = new_rate
                     row.gst_effective_from = new_eff_from
                     row.gst_updated_at = datetime.now(timezone.utc)
 
-                    # Stage a gst_change_log insert
                     change_log_rows.append(
                         {
                             "hsn_code": hsn_code,
@@ -100,7 +88,6 @@ async def sync_gst_rates() -> dict:
                 else:
                     unchanged += 1
 
-            # Bulk-insert change log rows (raw SQL — tolerates missing table gracefully)
             if change_log_rows:
                 try:
                     await session.execute(
@@ -115,7 +102,6 @@ async def sync_gst_rates() -> dict:
                         change_log_rows,
                     )
                 except Exception as log_exc:
-                    # Don't fail the whole sync if the log table is missing
                     logger.warning(
                         "GST_SYNC: gst_change_log insert failed (table may not exist yet): %s",
                         log_exc,
@@ -138,8 +124,10 @@ async def sync_gst_rates() -> dict:
         duration_ms,
     )
 
-    # Update Prometheus gauge
+    # ── Prometheus gauges ──────────────────────────────────────────────────
     gst_sync_last_run_timestamp.set(time.time())
+    gst_sync_updated_total.set(updated)
+    # ───────────────────────────────────────────────────────────────────────
 
     return {
         "updated": updated,
@@ -153,7 +141,6 @@ async def trigger_gst_sync_now() -> dict:
     """
     Manual trigger for the GST sync job.
     Returns {updated, unchanged, source, duration_ms}.
-    Can be wired to a POST /admin/gst-sync endpoint.
     """
     log.info("GST_SYNC: manual trigger invoked")
     return await sync_gst_rates()
