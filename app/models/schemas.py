@@ -1,6 +1,7 @@
 from __future__ import annotations
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import date, datetime              # --- ADDED: GST ---
 
 
 class PredictRequest(BaseModel):
@@ -27,6 +28,12 @@ class PredictResponse(BaseModel):
     confidence_label: str
     needs_review: bool
     processing_time_ms: float
+    # --- ADDED: GST ---
+    gst_rate: Optional[float] = None
+    gst_note: Optional[str] = None
+    gst_effective_from: Optional[str] = None     # ISO date string YYYY-MM-DD
+    gst_effective_to: Optional[str] = None       # null = currently active
+    # --- ADDED: GST ---
 
 
 class HSNRow(BaseModel):
@@ -80,3 +87,26 @@ class ProductAnalysisResponse(BaseModel):
     hsn_analysis: dict
     auto_updated: bool
     message: str
+
+
+# --- ADDED: GST ---
+class GstChangeItem(BaseModel):
+    """One row from gst_change_log, returned by GET /admin/gst/changes."""
+    id: int
+    hsn_code: str
+    old_rate: Optional[float] = None
+    new_rate: float
+    changed_at: datetime
+    source: str
+    notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class GstChangesResponse(BaseModel):
+    items: list[GstChangeItem]
+    total: int
+    page: int
+    per_page: int
+# --- ADDED: GST ---

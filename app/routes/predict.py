@@ -1,13 +1,17 @@
 from __future__ import annotations
+import csv                                   # --- ADDED: GST ---
 import hashlib
 import inspect
+import io                                    # --- ADDED: GST ---
 import time
 import uuid
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import StreamingResponse  # --- ADDED: GST ---
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select                # --- ADDED: GST ---
 
-from app.models.database import get_db, Prediction, VerifiedProduct
+from app.models.database import get_db, Prediction, VerifiedProduct, HsnCode  # --- ADDED: GST ---
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
 from app.services.kerala_search import expand_kerala_query
@@ -16,6 +20,9 @@ from app.services.confidence import score_result
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
 from app.utils.rate_limit import check_rate_limit
+# --- ADDED: GST ---
+from app.services.gst_fetcher import fetch_gst_rate_for_hsn
+# --- ADDED: GST ---
 
 router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
@@ -32,6 +39,67 @@ def _is_verified_product_match(candidate) -> bool:
     return isinstance(getattr(candidate, "hsn_code", None), str) and isinstance(
         getattr(candidate, "description", None), str
     )
+
+
+# --- ADDED: GST ---
+async def _build_gst_fields(hsn_code: str, db: AsyncSession) -> dict:
+    """
+    Look up GST rate for a predicted HSN code.
+    Priority: hsn_codes.gst_rate_numeric (DB, already synced) → gst_fetcher live lookup.
+    Returns dict with keys: gst_rate, gst_note, gst_effective_from, gst_effective_to
+    """
+    gst_rate = None
+    gst_note = None
+    gst_effective_from = None
+    gst_effective_to = None
+
+    try:
+        # Fast path: already in DB from nightly sync
+        result = await db.execute(
+            select(HsnCode.gst_rate_numeric, HsnCode.gst_effective_from, HsnCode.gst_effective_to)
+            .where(HsnCode.hsn_code == hsn_code)
+        )
+        row = result.fetchone()
+        if row and row.gst_rate_numeric is not None:
+            gst_rate = float(row.gst_rate_numeric)
+            eff_from = row.gst_effective_from
+            eff_to = row.gst_effective_to
+            if gst_rate is not None and eff_from:
+                gst_note = f"GST {gst_rate:.0f}% \u2014 effective {eff_from:%d-%b-%Y}"
+                gst_effective_from = eff_from.isoformat()
+            elif gst_rate is not None:
+                gst_note = f"GST {gst_rate:.0f}%"
+            gst_effective_to = eff_to.isoformat() if eff_to else None
+            return {
+                "gst_rate": gst_rate,
+                "gst_note": gst_note,
+                "gst_effective_from": gst_effective_from,
+                "gst_effective_to": gst_effective_to,
+            }
+    except Exception as exc:
+        log.debug("predict.gst_db_lookup_failed", hsn=hsn_code, error=str(exc))
+
+    # Slow path: live gst_fetcher lookup (uses Redis cache + 3-layer fallback)
+    try:
+        fetched = await fetch_gst_rate_for_hsn(hsn_code)
+        if fetched:
+            gst_rate = float(fetched["rate"])
+            eff_from = fetched["effective_from"]
+            if gst_rate is not None and eff_from:
+                gst_note = f"GST {gst_rate:.0f}% \u2014 effective {eff_from:%d-%b-%Y}"
+                gst_effective_from = eff_from.isoformat()
+            elif gst_rate is not None:
+                gst_note = f"GST {gst_rate:.0f}%"
+    except Exception as exc:
+        log.debug("predict.gst_fetcher_lookup_failed", hsn=hsn_code, error=str(exc))
+
+    return {
+        "gst_rate": gst_rate,
+        "gst_note": gst_note,
+        "gst_effective_from": gst_effective_from,
+        "gst_effective_to": gst_effective_to,
+    }
+# --- ADDED: GST ---
 
 
 @router.post("/predict", response_model=PredictResponse)
@@ -53,7 +121,6 @@ async def predict(
     start = time.perf_counter()
 
     # Pass 0: Check verified_products for exact / no-size match when available
-    from sqlalchemy import select
     verified = None
     try:
         verified_query = select(VerifiedProduct).where(
@@ -158,6 +225,10 @@ async def predict(
         except Exception:
             pass
 
+    # --- ADDED: GST ---
+    gst_fields = await _build_gst_fields(top["hsn_code"], db)
+    # --- ADDED: GST ---
+
     result = PredictResponse(
         request_id=request_id,
         input_text=body.text,
@@ -167,6 +238,102 @@ async def predict(
         confidence_label=label,
         needs_review=needs_review,
         processing_time_ms=round(elapsed, 1),
+        # --- ADDED: GST ---
+        gst_rate=gst_fields["gst_rate"],
+        gst_note=gst_fields["gst_note"],
+        gst_effective_from=gst_fields["gst_effective_from"],
+        gst_effective_to=gst_fields["gst_effective_to"],
+        # --- ADDED: GST ---
     )
     await set_cache(cache_key, result.model_dump())
     return result
+
+
+# --- ADDED: GST ---
+@router.post(
+    "/predict/bulk",
+    summary="Bulk predict HSN codes and export as CSV",
+    response_class=StreamingResponse,
+)
+async def predict_bulk(
+    body: list[PredictRequest],
+    request: Request,
+    api_key: str = Depends(require_api_key),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Accept a JSON array of {"text": "..."} objects.
+    Returns a CSV file with columns:
+      Input Text, HSN Code, Description, Confidence, Method, GST %
+    Max 200 items per request.
+    """
+    if len(body) > 200:
+        raise HTTPException(status_code=422, detail="Maximum 200 items per bulk request")
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Input Text", "HSN Code", "Description", "Confidence", "Method", "GST %"])
+
+    for item in body:
+        try:
+            cache_key = f"predict:{item.text.strip().lower()}"
+            cached = await get_cache(cache_key)
+
+            if cached:
+                top = cached.get("top_match", {})
+                confidence = cached.get("confidence", 0.0)
+                gst_rate = cached.get("gst_rate")
+            else:
+                # Verified exact match
+                verified = None
+                try:
+                    vq = select(VerifiedProduct).where(
+                        VerifiedProduct.description_normalized == item.text.upper().strip()
+                    )
+                    vr = await db.execute(vq)
+                    verified = await _scalar_one_or_none(vr)
+                except Exception:
+                    pass
+
+                if _is_verified_product_match(verified):
+                    top = {
+                        "hsn_code": verified.hsn_code,
+                        "description": verified.description,
+                        "score": 1.0,
+                        "method": "verified_exact",
+                    }
+                    confidence, _ = score_result(1.0)
+                else:
+                    matches = await match_query(item.text, db, top_k=1)
+                    if not matches:
+                        matcher = get_matcher()
+                        matches = matcher.match(item.text, top_k=1)
+                    if not matches:
+                        writer.writerow([item.text, "NOT FOUND", "", "", "", "N/A"])
+                        continue
+                    top = matches[0]
+                    confidence, _ = score_result(top["score"])
+
+                gst_fields = await _build_gst_fields(top["hsn_code"], db)
+                gst_rate = gst_fields["gst_rate"]
+
+            gst_str = f"{gst_rate:.2f}" if gst_rate is not None else "N/A"
+            writer.writerow([
+                item.text,
+                top.get("hsn_code", ""),
+                top.get("description", ""),
+                f"{confidence:.4f}",
+                top.get("method", ""),
+                gst_str,
+            ])
+        except Exception as exc:
+            log.warning("predict.bulk_item_error", text=item.text[:50], error=str(exc))
+            writer.writerow([item.text, "ERROR", str(exc)[:80], "", "", "N/A"])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=hsn_predictions.csv"},
+    )
+# --- ADDED: GST ---

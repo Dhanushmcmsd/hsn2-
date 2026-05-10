@@ -1,15 +1,24 @@
 from __future__ import annotations
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query  # --- ADDED: GST ---
 from typing import List
+from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
+from sqlalchemy import text, func, select                   # --- ADDED: GST ---
 from app.utils.auth import require_admin_key
 from app.services.important_products import get_important_products, save_important_products
-from app.models.schemas import ImportantProduct, ProductAnalysisRequest, ProductAnalysisResponse
+from app.models.schemas import (
+    ImportantProduct,
+    ProductAnalysisRequest,
+    ProductAnalysisResponse,
+    GstChangeItem,          # --- ADDED: GST ---
+    GstChangesResponse,     # --- ADDED: GST ---
+)
 from app.utils.text_utils import normalize_product_description, extract_pack_size
 from app.services.matcher import get_matcher
 from app.services.confidence import score_result
 from app.config import settings
-from app.utils.scheduler import trigger_gst_sync_now   # GST manual trigger
+from app.utils.scheduler import trigger_gst_sync_now
+from app.models.database import get_db, GstChangeLog       # --- ADDED: GST ---
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
@@ -194,20 +203,25 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
     return {"results": results, "total_processed": len(results)}
 
 
+# kept for backwards compat — redirects to the canonical /gst/sync
+@router.post("/gst-sync", include_in_schema=False)
+async def manual_gst_sync_legacy(admin_key: str = Depends(require_admin_key)) -> dict:
+    return await manual_gst_sync(admin_key=admin_key)
+
+
 # ---------------------------------------------------------------------------
-# GST Sync — manual trigger
+# GST endpoints                                          # --- ADDED: GST ---
 # ---------------------------------------------------------------------------
 
 @router.post(
-    "/gst-sync",
+    "/gst/sync",
     summary="Manually trigger the nightly GST rate sync",
-    response_description="Stats: updated, unchanged, source, duration_ms",
 )
 async def manual_gst_sync(admin_key: str = Depends(require_admin_key)) -> dict:
     """
     Immediately runs the same job that the nightly cron fires at 02:00 IST.
     Protected by ADMIN_API_KEY.
-    Returns: {updated, unchanged, source, duration_ms}
+    Returns: {status, updated, unchanged, source, duration_ms}
     """
     try:
         result = await trigger_gst_sync_now()
@@ -216,3 +230,68 @@ async def manual_gst_sync(admin_key: str = Depends(require_admin_key)) -> dict:
     except Exception as exc:
         log.error("admin.gst_sync_failed", error=str(exc))
         raise HTTPException(status_code=500, detail=f"GST sync failed: {exc}")
+
+
+@router.get(
+    "/gst/changes",
+    response_model=GstChangesResponse,
+    summary="Paginated audit log of GST rate changes",
+)
+async def gst_change_log(
+    page: int = Query(default=1, ge=1, description="Page number (1-indexed)"),
+    per_page: int = Query(default=50, ge=1, le=200, description="Items per page"),
+    hsn_code: str | None = Query(default=None, description="Filter by exact HSN code"),
+    admin_key: str = Depends(require_admin_key),
+    db: AsyncSession = Depends(get_db),
+) -> GstChangesResponse:
+    """
+    Returns paginated rows from gst_change_log.
+    Each item: {id, hsn_code, old_rate, new_rate, changed_at, source, notes}
+    Ordered by changed_at DESC (most recent first).
+    """
+    offset = (page - 1) * per_page
+
+    try:
+        # Build base query
+        base_q = select(GstChangeLog)
+        count_q = select(func.count()).select_from(GstChangeLog)
+
+        if hsn_code:
+            base_q = base_q.where(GstChangeLog.hsn_code == hsn_code)
+            count_q = count_q.where(GstChangeLog.hsn_code == hsn_code)
+
+        total_result = await db.execute(count_q)
+        total = total_result.scalar() or 0
+
+        rows_result = await db.execute(
+            base_q
+            .order_by(GstChangeLog.changed_at.desc())
+            .limit(per_page)
+            .offset(offset)
+        )
+        rows = rows_result.scalars().all()
+
+        items = [
+            GstChangeItem(
+                id=row.id,
+                hsn_code=row.hsn_code,
+                old_rate=float(row.old_rate) if row.old_rate is not None else None,
+                new_rate=float(row.new_rate),
+                changed_at=row.changed_at,
+                source=row.source,
+                notes=None,   # reserved for future use
+            )
+            for row in rows
+        ]
+
+        return GstChangesResponse(
+            items=items,
+            total=total,
+            page=page,
+            per_page=per_page,
+        )
+
+    except Exception as exc:
+        log.error("admin.gst_changes_failed", error=str(exc))
+        raise HTTPException(status_code=500, detail=f"Failed to fetch GST change log: {exc}")
+# --- ADDED: GST ---
