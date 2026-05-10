@@ -261,7 +261,7 @@ function ConfPill({ label, value }) {
       whiteSpace: "nowrap",
     }}>
       <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
-      {label} \u00b7 {Math.round(value * 100)}%
+      {label} &middot; {Math.round(value * 100)}%
     </span>
   );
 }
@@ -341,6 +341,7 @@ export default function PremiumDashboard() {
   const [showFileSuccess, setShowFileSuccess] = useState(false);
   const [userInitial, setUserInitial] = useState("U");
   const [authReady, setAuthReady] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap');
@@ -723,10 +724,23 @@ export default function PremiumDashboard() {
         const source = (user.full_name || user.email || "U").trim();
         setUserInitial(source.charAt(0).toUpperCase() || "U");
         setAuthReady(true);
-      } catch {
-        authStorage.clearTokens();
-        if (!cancelled) {
+      } catch (err: any) {
+        if (cancelled) return;
+        // Only clear tokens and redirect on a real 401 Unauthorized.
+        // Network errors, timeouts, or AbortErrors should NOT log the user out.
+        const isAuthError =
+          err?.message?.toLowerCase().includes("unauthorized") ||
+          err?.message?.toLowerCase().includes("401") ||
+          err?.message?.toLowerCase().includes("not authenticated") ||
+          err?.message?.toLowerCase().includes("could not validate");
+
+        if (isAuthError) {
+          authStorage.clearTokens();
           router.replace("/login");
+        } else {
+          // Network/timeout error — backend is cold-starting or offline.
+          // Show error message but keep the user on this page with their token intact.
+          setAuthError("Backend is waking up\u2026 Please refresh in a few seconds.");
         }
       }
     }
@@ -881,8 +895,27 @@ export default function PremiumDashboard() {
 
   if (!authReady) {
     return (
-      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif" }}>
-        Loading dashboard\u2026
+      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif", gap: "1rem" }}>
+        {authError ? (
+          <>
+            <div style={{ fontSize: "0.9rem", color: "#fca5a5", textAlign: "center", maxWidth: 320 }}>{authError}</div>
+            <button
+              onClick={() => { setAuthError(""); window.location.reload(); }}
+              style={{ background: "rgba(37,99,235,0.2)", border: "1px solid rgba(59,130,246,0.4)", color: "#93c5fd", padding: "0.5rem 1.25rem", borderRadius: 10, cursor: "pointer", fontSize: "0.82rem" }}
+            >
+              Retry
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="loading-dots" style={{ display: "flex" }}>
+              <style>{`.loading-dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#60a5fa;margin:0 3px;}.loading-dots span:nth-child(1){animation:dotBounce 1.4s ease-in-out 0s infinite}.loading-dots span:nth-child(2){animation:dotBounce 1.4s ease-in-out 0.2s infinite}.loading-dots span:nth-child(3){animation:dotBounce 1.4s ease-in-out 0.4s infinite}@keyframes dotBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}`}</style>
+              <span/><span/><span/>
+            </div>
+            <div style={{ fontSize: "0.85rem", color: "#475569" }}>Loading dashboard&hellip;</div>
+            <div style={{ fontSize: "0.72rem", color: "#334155", fontFamily: "monospace" }}>Connecting to backend&hellip;</div>
+          </>
+        )}
       </div>
     );
   }
@@ -1018,7 +1051,7 @@ export default function PremiumDashboard() {
             </div>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", boxShadow: "0 0 8px rgba(59,130,246,0.8)", position: "relative", zIndex: 1 }} />
             <span style={{ fontSize: "0.68rem", color: "#3b82f6", fontFamily: "'DM Mono', monospace", letterSpacing: "0.12em", textTransform: "uppercase", position: "relative", zIndex: 1 }}>
-              India \u00b7 GST Classification
+              India &middot; GST Classification
             </span>
           </div>
           <h1 style={{
@@ -1233,7 +1266,7 @@ export default function PremiumDashboard() {
                   ].map((item, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>{item.prod}</span>
-                      <span style={{ color: "#334155", fontSize: "0.7rem" }}>\u2192</span>
+                      <span style={{ color: "#334155", fontSize: "0.7rem" }}>&rarr;</span>
                       <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>{item.hsn}</span>
                       <ConfPill label="high" value={item.conf} />
                       <GstPill rate={item.gst} />
@@ -1251,7 +1284,7 @@ export default function PremiumDashboard() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", animation: "fadeUp 0.5s ease both" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div className="glass-card" style={{ padding: "1.5rem" }}>
-                <div className="lbl">Step 1 \u2014 Upload Excel / CSV</div>
+                <div className="lbl">Step 1 &mdash; Upload Excel / CSV</div>
                 <div
                   className={`upload-zone${isDragOver ? " drag" : ""}`}
                   onClick={() => fileInputRef.current?.click()}
@@ -1278,7 +1311,7 @@ export default function PremiumDashboard() {
                       </div>
                       <p style={{ fontSize: "0.85rem", color: "#f8fafc", margin: "0 0 4px", fontWeight: 600 }}>{fileName}</p>
                       <p style={{ fontSize: "0.72rem", color: "#64748b", margin: 0, fontFamily: "'DM Mono', monospace" }}>
-                        {fileSize} \u00b7 {rawRows.length} rows detected
+                        {fileSize} &middot; {rawRows.length} rows detected
                       </p>
                     </div>
                   ) : (
@@ -1293,7 +1326,7 @@ export default function PremiumDashboard() {
                         Drop your Excel here or <span style={{ color: "#60a5fa" }}>browse files</span>
                       </p>
                       <p style={{ fontSize: "0.7rem", color: "#334155", margin: 0, fontFamily: "'DM Mono', monospace" }}>
-                        XLSX \u00b7 CSV \u00b7 up to 500 rows
+                        XLSX &middot; CSV &middot; up to 500 rows
                       </p>
                     </>
                   )}
@@ -1303,7 +1336,7 @@ export default function PremiumDashboard() {
 
               <div className="glass-card" style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div>
-                  <div className="lbl">Step 2 \u2014 Select column</div>
+                  <div className="lbl">Step 2 &mdash; Select column</div>
                   <select value={selectedCol} onChange={e => setSelectedCol(e.target.value)} className="select-field" style={{ width: "100%" }}>
                     {columns.length === 0 && <option value="">Upload a file first</option>}
                     {columns.map(c => <option key={c} value={c}>{c}</option>)}
@@ -1456,12 +1489,12 @@ export default function PremiumDashboard() {
                     borderTop: "1px solid rgba(255,255,255,0.05)",
                   }}>
                     <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#334155" }}>
-                      {page * PAGE_SIZE + 1}\u2013{Math.min((page+1)*PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
+                      {page * PAGE_SIZE + 1}&ndash;{Math.min((page+1)*PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
                     </span>
                     <div style={{ display: "flex", gap: "0.35rem" }}>
-                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>\u2190</button>
+                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>&larr;</button>
                       <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#475569", padding: "0 0.35rem", display: "flex", alignItems: "center" }}>{page+1}/{totalPages}</span>
-                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>\u2192</button>
+                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>&rarr;</button>
                     </div>
                   </div>
                 )}
@@ -1486,7 +1519,7 @@ export default function PremiumDashboard() {
       }}>
         <div style={{ maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: "0.68rem", color: "#1e293b", fontFamily: "'DM Mono', monospace" }}>
-            HSNiq \u00b7 AI-powered GST classification for India
+            HSNiq &middot; AI-powered GST classification for India
           </span>
           <span style={{ fontSize: "0.68rem", color: "#334155" }}>
             Built by <span style={{ color: "#3b82f6" }}>DhanushRaghav</span>
