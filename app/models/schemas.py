@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # ---------------------------------------------------------------------------
@@ -42,13 +42,15 @@ class PredictResponse(BaseModel):
     gst_effective_to: Optional[date] = None
     # --- GST fields ---
 
-    @validator("gst_note", always=True, pre=False)
-    def build_gst_note(cls, v, values):
+    @field_validator("gst_note", mode="after")
+    @classmethod
+    def build_gst_note(cls, v, info):
         """Auto-build gst_note from gst_rate + gst_effective_from if not explicitly set."""
         if v is not None:
-            return v  # caller provided an explicit value — respect it
-        rate = values.get("gst_rate")
-        eff_from = values.get("gst_effective_from")
+            return v
+        data = info.data
+        rate = data.get("gst_rate")
+        eff_from = data.get("gst_effective_from")
         if rate is not None and eff_from is not None:
             return f"GST {rate:.0f}% \u2014 effective {eff_from.strftime('%d-%b-%Y')}"
         if rate is not None:
@@ -61,6 +63,8 @@ class PredictResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 class HSNRow(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     hsn_code: str
     description: str
     full_description: str
@@ -69,9 +73,6 @@ class HSNRow(BaseModel):
     chapter: Optional[str] = None
     heading: Optional[str] = None
     section: Optional[str] = None
-
-    class Config:
-        from_attributes = True
 
 
 # ---------------------------------------------------------------------------
@@ -84,13 +85,12 @@ class ResolveRequest(BaseModel):
 
 
 class ReviewItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     request_id: str
     input_text: str
     predicted_hsn: str
     confidence: float
-
-    class Config:
-        from_attributes = True
 
 
 # ---------------------------------------------------------------------------
@@ -126,7 +126,8 @@ class ProductAnalysisResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 class GSTChangeRecord(BaseModel):
-    """One row from gst_change_log."""
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     hsn_code: str
     old_rate: Optional[float] = None
@@ -135,17 +136,12 @@ class GSTChangeRecord(BaseModel):
     source: Optional[str] = None
     notes: Optional[str] = None
 
-    class Config:
-        orm_mode = True          # Pydantic v1 compat
-        from_attributes = True   # Pydantic v2 compat
-
 
 # Alias kept for backwards compat with existing admin routes
 GstChangeItem = GSTChangeRecord
 
 
 class PaginatedGSTChanges(BaseModel):
-    """Paginated wrapper for gst_change_log rows."""
     items: List[GSTChangeRecord]
     total: int
     page: int
@@ -161,7 +157,6 @@ GstChangesResponse = PaginatedGSTChanges
 # ---------------------------------------------------------------------------
 
 class GSTSyncResult(BaseModel):
-    """Returned by POST /admin/gst/sync and trigger_gst_sync_now()."""
     status: str
     updated: int
     unchanged: int
