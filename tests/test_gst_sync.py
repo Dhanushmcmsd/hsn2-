@@ -11,78 +11,101 @@ Covers:
 from __future__ import annotations
 
 import pytest
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timezone
-from unittest.mock import AsyncMock, patch
-from sqlalchemy import select, func, text
+from unittest.mock import AsyncMock, patch, MagicMock
+from sqlalchemy import select, func
 
 
 # ---------------------------------------------------------------------------
-# Shared mock GST data (3 HSN codes with updated rates)
+# Shared mock GST data (3 HSN codes with new rates)
 # ---------------------------------------------------------------------------
 
 _MOCK_RATES = {
-    "0101": {"rate": 5.0,  "effective_from": date(2017, 7, 1),  "source": "cbic"},
-    "1001": {"rate": 12.0, "effective_from": date(2017, 7, 1),  "source": "cbic"},
-    "2201": {"rate": 18.0, "effective_from": date(2024, 1, 1),  "source": "cbic"},
+    "0101": {"rate": 5.0,  "effective_from": date(2017, 7, 1), "source": "cbic"},
+    "1001": {"rate": 12.0, "effective_from": date(2017, 7, 1), "source": "cbic"},
+    "2201": {"rate": 18.0, "effective_from": date(2024, 1, 1), "source": "cbic"},
 }
 
 
 # ---------------------------------------------------------------------------
-# Test 1 — sync_gst_rates() inserts rows into gst_change_log
+# Test 1 - sync_gst_rates() inserts rows into gst_change_log
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_sync_job_writes_change_log(async_db_session):
     """
-    Mock fetch_all_gst_rates() + async_session to use our in-memory SQLite.
-    Run sync_gst_rates() and assert 3 rows appear in gst_change_log.
+    Mock fetch_all_gst_rates() + async_session to use in-memory SQLite.
+    The raw SQL INSERT uses NOW() which is PostgreSQL-only, so we also
+    patch session.execute to swap in ORM inserts for the change-log step.
     """
     from app.models.database import HsnCode, GstChangeLog
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from contextlib import asynccontextmanager
+    import app.utils.scheduler as scheduler_mod
 
-    # Seed 3 HsnCode rows in the test DB so the sync can find them
-    seed_rows = [
+    # Seed 3 HsnCode rows (all gst_rate_numeric=NULL -> will trigger change)
+    async_db_session.add_all([
         HsnCode(
             hsn_code=hsn,
             description=f"Test product {hsn}",
-            gst_rate_numeric=None,        # NULL → will trigger a change
+            gst_rate_numeric=None,
             gst_effective_from=None,
             gst_updated_at=None,
         )
         for hsn in _MOCK_RATES
-    ]
-    async_db_session.add_all(seed_rows)
+    ])
     await async_db_session.commit()
 
-    # Patch async_session to return our test session
+    # The scheduler's raw SQL INSERT uses NOW() which SQLite doesn't support.
+    # We intercept execute() calls: pass SELECT calls through normally,
+    # and replace the INSERT INTO gst_change_log call with ORM inserts.
+    _original_execute = async_db_session.execute
+
+    async def _patched_execute(statement, *args, **kwargs):
+        # Detect the change-log raw SQL insert by inspecting the string
+        stmt_str = str(statement) if hasattr(statement, '__str__') else ""
+        if "INSERT INTO gst_change_log" in stmt_str and args:
+            # args[0] is the list of dicts from the scheduler
+            rows_data = args[0]
+            for row in rows_data:
+                async_db_session.add(GstChangeLog(
+                    hsn_code=row["hsn_code"],
+                    old_rate=row["old_rate"],
+                    new_rate=row["new_rate"],
+                    source=row["source"],
+                    changed_at=datetime.now(timezone.utc),
+                ))
+            await async_db_session.flush()
+            # Return a mock result that the scheduler doesn't use
+            return MagicMock()
+        return await _original_execute(statement, *args, **kwargs)
+
+    async_db_session.execute = _patched_execute
+
     @asynccontextmanager
     async def _fake_session():
         yield async_db_session
 
-    with patch("app.utils.scheduler.fetch_all_gst_rates", new_callable=AsyncMock, return_value=_MOCK_RATES), \
-         patch("app.utils.scheduler.async_session", return_value=_fake_session()), \
-         patch("app.utils.scheduler.gst_sync_last_run_timestamp") as mock_gauge:
+    with patch.object(scheduler_mod, "fetch_all_gst_rates", new_callable=AsyncMock, return_value=_MOCK_RATES), \
+         patch.object(scheduler_mod, "async_session", return_value=_fake_session()), \
+         patch.object(scheduler_mod, "gst_sync_last_run_timestamp") as mock_ts_gauge, \
+         patch.object(scheduler_mod, "gst_sync_updated_total") as mock_upd_gauge:
 
-        from app.utils.scheduler import sync_gst_rates
-        stats = await sync_gst_rates()
+        stats = await scheduler_mod.sync_gst_rates()
 
-    # All 3 rates were NULL → all 3 should be updated
     assert stats["updated"] == 3, f"Expected 3 updates, got {stats['updated']}"
 
-    # Verify gst_change_log rows
     result = await async_db_session.execute(
         select(func.count()).select_from(GstChangeLog)
     )
     log_count = result.scalar()
     assert log_count == 3, f"Expected 3 rows in gst_change_log, got {log_count}"
 
-    # Gauge was set
-    mock_gauge.set.assert_called_once()
+    mock_ts_gauge.set.assert_called_once()
+    mock_upd_gauge.set.assert_called_once_with(3)
 
 
 # ---------------------------------------------------------------------------
-# Test 2 — POST /admin/gst/sync returns 200 {status: ok, updated: N}
+# Test 2 - POST /admin/gst/sync returns 200 {status: ok, updated: N}
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
@@ -111,7 +134,7 @@ async def test_admin_sync_endpoint(admin_client, admin_key):
 
 
 # ---------------------------------------------------------------------------
-# Test 3 — GET /admin/gst/changes pagination
+# Test 3 - GET /admin/gst/changes pagination
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
@@ -123,7 +146,6 @@ async def test_admin_changes_endpoint_pagination(admin_client, admin_key, seeded
     from app.models.database import get_db
     from app.main import app
 
-    # Override the get_db dependency to use our seeded SQLite session
     async def _override_db():
         yield seeded_change_log
 
@@ -142,10 +164,6 @@ async def test_admin_changes_endpoint_pagination(admin_client, admin_key, seeded
     body = resp.json()
 
     assert body["page"] == 2
-    assert len(body["items"]) == 25, (
-        f"Expected 25 items on page 2, got {len(body['items'])}"
-    )
-    assert body["total"] >= 55, (
-        f"Expected total >= 55, got {body['total']}"
-    )
+    assert len(body["items"]) == 25, f"Expected 25 items on page 2, got {len(body['items'])}"
+    assert body["total"] >= 55, f"Expected total >= 55, got {body['total']}"
     assert body["per_page"] == 25
