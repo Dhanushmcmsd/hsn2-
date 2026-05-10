@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from typing import AsyncGenerator
 
-from sqlalchemy import Boolean, Column, DateTime, Float, Index, Integer, String, Text, func, select, text
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, Index, Integer, Numeric, String, Text, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -105,8 +105,19 @@ class HsnCode(Base):
     source = Column(String(50), nullable=False, default="WCO_HS")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+    # GST rate columns — synced nightly by gst_fetcher
+    gst_rate_numeric = Column(Numeric(5, 2), nullable=True, default=None)
+    gst_effective_from = Column(Date, nullable=True, default=None)
+    gst_effective_to = Column(Date, nullable=True, default=None)
+    gst_updated_at = Column(
+        DateTime(timezone=True),
+        nullable=True,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
     __table_args__ = (
-        ()
+        (())
         if _is_sqlite
         else (
             Index(
@@ -388,6 +399,11 @@ async def _ensure_schema() -> None:
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS schedule VARCHAR(150)",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE",
+                # GST rate columns — synced nightly by gst_fetcher
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_rate_numeric NUMERIC(5,2)",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_effective_from DATE",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_effective_to DATE",
+                "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_updated_at TIMESTAMPTZ DEFAULT NOW()",
             ):
                 try:
                     await conn.execute(text(ddl))
