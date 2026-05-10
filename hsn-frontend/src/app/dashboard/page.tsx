@@ -7,6 +7,7 @@ import readXlsxFile from "read-excel-file/browser";
 import { authApi, authStorage, hsnApi } from "@/lib/api";
 import { LogOut } from "lucide-react";
 import { LogoAnimation } from "@/components/LogoAnimation";
+import { GSTBadge } from "@/components/GSTBadge"; // --- ADDED: GST ---
 
 const PAGE_SIZE = 20;
 
@@ -18,7 +19,7 @@ function padHsn(code: string | null | undefined) {
 
 // GST rate to percentage label helper
 function gstLabel(rate: number | null | undefined): string {
-  if (rate == null) return "—";
+  if (rate == null) return "\u2014";
   return `${rate}%`;
 }
 
@@ -73,7 +74,6 @@ async function parseXlsxFile(file: File) {
 
   let rows = null;
   if (Array.isArray(raw)) {
-    // Some files/parsers can return a sheet bundle shape: [{ sheet, data }]
     if (
       raw.length > 0 &&
       raw[0] &&
@@ -86,7 +86,6 @@ async function parseXlsxFile(file: File) {
       rows = raw;
     }
   } else if (raw && typeof raw === "object") {
-    // Defensive support for object-return signatures ({ rows, errors } / { data })
     if (Array.isArray(raw.rows)) {
       rows = raw.rows;
     } else if (Array.isArray(raw.data)) {
@@ -129,6 +128,11 @@ function toBulkResult(query: string, response: any) {
       response.top_match?.description ??
       "",
     gst_rate: response.gst_rate ?? response.top_match?.gst_rate ?? null,
+    // --- ADDED: GST ---
+    gst_effective_from: response.gst_effective_from ?? null,
+    gst_effective_to: response.gst_effective_to ?? null,
+    gst_note: response.gst_note ?? null,
+    // --- ADDED: GST ---
     confidence: response.confidence ?? response.top_match?.score ?? 0,
     confidence_label: response.confidence_label ?? "low",
     match_method: response.top_match?.method ?? "",
@@ -145,6 +149,11 @@ function toFailedBulkResult(query: string, error: unknown) {
     hsn_code: "",
     description: "",
     gst_rate: null,
+    // --- ADDED: GST ---
+    gst_effective_from: null,
+    gst_effective_to: null,
+    gst_note: null,
+    // --- ADDED: GST ---
     confidence: 0,
     confidence_label: "low",
     match_method: "error",
@@ -184,7 +193,7 @@ function FloatingIcon({ shape, x, y, size, delay, dur }) {
     ),
     rupee: (
       <g>
-        <text x="4" y="22" fontSize="22" fill="currentColor" fontFamily="serif" fontWeight="bold">₹</text>
+        <text x="4" y="22" fontSize="22" fill="currentColor" fontFamily="serif" fontWeight="bold">&#x20B9;</text>
       </g>
     ),
     barcode: (
@@ -252,19 +261,19 @@ function ConfPill({ label, value }) {
       whiteSpace: "nowrap",
     }}>
       <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
-      {label} · {Math.round(value * 100)}%
+      {label} \u00b7 {Math.round(value * 100)}%
     </span>
   );
 }
 
-// ── GST rate pill ────────────────────────────────────────────────────────────
+// ── GST rate pill (colour-coded by slab) ─────────────────────────────────────
 function GstPill({ rate }) {
   if (rate == null) return null;
   const colors = {
     0:  { color: "#94a3b8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.25)" },
-    5:  { color: "#4ade80", bg: "rgba(74,222,128,0.1)", border: "rgba(74,222,128,0.3)" },
-    12: { color: "#fb923c", bg: "rgba(251,146,60,0.1)", border: "rgba(251,146,60,0.3)" },
-    18: { color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.3)" },
+    5:  { color: "#4ade80", bg: "rgba(74,222,128,0.1)",  border: "rgba(74,222,128,0.3)"  },
+    12: { color: "#fb923c", bg: "rgba(251,146,60,0.1)",  border: "rgba(251,146,60,0.3)"  },
+    18: { color: "#f59e0b", bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.3)"  },
     28: { color: "#f87171", bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.3)" },
   };
   const s = colors[rate] || { color: "#a78bfa", bg: "rgba(167,139,250,0.1)", border: "rgba(167,139,250,0.3)" };
@@ -276,7 +285,7 @@ function GstPill({ rate }) {
       fontSize: "0.7rem", fontWeight: 600, fontFamily: "'DM Mono', monospace",
       whiteSpace: "nowrap",
     }}>
-      <span style={{ fontSize: "0.65rem", opacity: 0.7 }}>₹</span>
+      <span style={{ fontSize: "0.65rem", opacity: 0.7 }}>&#x20B9;</span>
       GST {rate}%
     </span>
   );
@@ -667,6 +676,35 @@ export default function PremiumDashboard() {
       border-radius:10px;
       padding:0.6rem 1rem;
     }
+
+    /* GSTBadge Tailwind compat overrides for dark glass surface */
+    .gst-tailwind-pill {
+      display:inline-flex;
+      flex-direction:column;
+      align-items:center;
+      gap:2px;
+    }
+    .gst-tailwind-pill-inner {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:rgba(74,222,128,0.12);
+      border:1px solid rgba(74,222,128,0.3);
+      color:#4ade80;
+      padding:3px 10px;
+      border-radius:9999px;
+      font-size:0.7rem;
+      font-weight:600;
+      font-family:'DM Mono',monospace;
+      white-space:nowrap;
+    }
+    .gst-tailwind-date {
+      font-size:0.65rem;
+      color:#475569;
+      margin-top:1px;
+      font-family:'DM Mono',monospace;
+      white-space:nowrap;
+    }
   `;
 
   useEffect(() => {
@@ -844,22 +882,25 @@ export default function PremiumDashboard() {
   if (!authReady) {
     return (
       <div style={{ minHeight: "100vh", background: "#020617", display: "flex", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif" }}>
-        Loading dashboard…
+        Loading dashboard\u2026
       </div>
     );
   }
 
+  // --- ADDED: GST --- CSV download with GST % as toFixed(2) and effective dates
   function handleDownload() {
     if (bulkResults.length === 0) return;
     const rows = bulkResults.map(r => ({
-      "Product Description": r.query,
-      "HSN Code": padHsn(r.hsn_code),
-      "Matched Description": r.description,
-      "GST Rate (%)": r.gst_rate,
-      "Confidence": `${Math.round(r.confidence * 100)}%`,
-      "Confidence Label": r.confidence_label,
-      "Review Required": r.needs_review ? "Yes" : "No",
-      "Status": r.error ? r.error : "Matched",
+      "Product Description":  r.query,
+      "HSN Code":             padHsn(r.hsn_code),
+      "Matched Description":  r.description,
+      "GST %":                r.gst_rate != null ? r.gst_rate.toFixed(2) : "N/A",
+      "GST Effective From":   r.gst_effective_from ?? "",
+      "GST Effective To":     r.gst_effective_to ?? "",
+      "Confidence":           `${Math.round(r.confidence * 100)}%`,
+      "Confidence Label":     r.confidence_label,
+      "Review Required":      r.needs_review ? "Yes" : "No",
+      "Status":               r.error ? r.error : "Matched",
     }));
     const csv = [
       Object.keys(rows[0]).map(escapeCsvValue).join(","),
@@ -871,6 +912,7 @@ export default function PremiumDashboard() {
     a.download = `hsn_results_${Date.now()}.csv`; a.click();
     URL.revokeObjectURL(url);
   }
+  // --- ADDED: GST ---
 
   const pageSlice = bulkResults.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(bulkResults.length / PAGE_SIZE);
@@ -919,7 +961,6 @@ export default function PremiumDashboard() {
         borderBottom: "1px solid rgba(255,255,255,0.06)",
         boxShadow: "0 1px 30px rgba(0,0,0,0.4)",
       }}>
-        {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
           <div style={{ width: 34, height: 34 }}>
             <LogoAnimation className="h-full w-full" />
@@ -929,7 +970,6 @@ export default function PremiumDashboard() {
           </span>
         </div>
 
-        {/* Center nav tabs */}
         <div style={{ display: "flex", gap: "0.25rem", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "0.25rem" }}>
           <button onClick={() => setMode("single")} className={`tab-btn ${mode === "single" ? "tab-active" : "tab-inactive"}`}>
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="4" stroke="currentColor" strokeWidth="1.5"/><path d="M2 13c0-2.2 2.7-4 6-4s6 1.8 6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -941,7 +981,6 @@ export default function PremiumDashboard() {
           </button>
         </div>
 
-        {/* Right */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.65rem", color: "#475569", marginBottom: 3, fontFamily: "'DM Mono', monospace" }}>120 / 500 rows used</div>
@@ -965,10 +1004,8 @@ export default function PremiumDashboard() {
       {/* ── Main ────────────────────────────────────────────────────────── */}
       <div style={{ maxWidth: 1080, margin: "0 auto", padding: "2.5rem 1.5rem", position: "relative", zIndex: 1 }}>
 
-        {/* Page header */}
         <div style={{ marginBottom: "2rem", animation: "fadeUp 0.6s ease both" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem", position: "relative" }}>
-            {/* Subtle flowing flag behind the "India · GST Classification" eyebrow */}
             <div style={{ position: "absolute", left: -20, top: -28, zIndex: 0, pointerEvents: "none" }}>
               <div className="india-flag-watermark" style={{ width: 180, height: 108 }}>
                 <div className="flag-stripe-saffron" />
@@ -981,7 +1018,7 @@ export default function PremiumDashboard() {
             </div>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3b82f6", boxShadow: "0 0 8px rgba(59,130,246,0.8)", position: "relative", zIndex: 1 }} />
             <span style={{ fontSize: "0.68rem", color: "#3b82f6", fontFamily: "'DM Mono', monospace", letterSpacing: "0.12em", textTransform: "uppercase", position: "relative", zIndex: 1 }}>
-              India · GST Classification
+              India \u00b7 GST Classification
             </span>
           </div>
           <h1 style={{
@@ -1000,7 +1037,6 @@ export default function PremiumDashboard() {
         {/* ════════════════════ SINGLE MODE ════════════════════ */}
         {mode === "single" && (
           <div style={{ animation: "fadeUp 0.5s ease both" }}>
-            {/* Search bar */}
             <form onSubmit={handlePredict} style={{ display: "flex", gap: "0.625rem", marginBottom: "1.5rem" }}>
               <div style={{ flex: 1, position: "relative" }}>
                 <svg style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", opacity: 0.35 }}
@@ -1030,7 +1066,6 @@ export default function PremiumDashboard() {
               </button>
             </form>
 
-            {/* Example chips */}
             {!result && !singleLoading && (
               <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "2rem" }}>
                 {["Colgate Toothpaste 200g", "Horlicks Womens 400g", "VKC Chappal 7", "Basmati Rice 5kg"].map(ex => (
@@ -1061,13 +1096,12 @@ export default function PremiumDashboard() {
                 color: "#fca5a5", fontSize: "0.8rem",
                 padding: "0.75rem 1rem", borderRadius: 12, marginBottom: "1rem",
               }}>
-                ⚠ {singleError}
+                &#9888; {singleError}
               </div>
             )}
 
             {result && (
               <div style={{ animation: "fadeUp 0.4s ease both" }}>
-                {/* Big HSN result card */}
                 <div className="glass-card-bright" style={{ padding: "3rem 2rem", textAlign: "center", marginBottom: "0.875rem", position: "relative", overflow: "hidden" }}>
                   <div style={{
                     position: "absolute", inset: 0,
@@ -1088,6 +1122,27 @@ export default function PremiumDashboard() {
                       via {result.top_match.method}
                     </span>
                   </div>
+
+                  {/* --- ADDED: GST --- GSTBadge with effective dates */}
+                  {(result.gst_rate != null || result.top_match?.gst_rate != null) && (
+                    <div style={{ marginTop: "1rem", display: "flex", justifyContent: "center" }}>
+                      <div className="gst-tailwind-pill">
+                        <div className="gst-tailwind-pill-inner">
+                          <span style={{ fontSize: "0.65rem", opacity: 0.7 }}>&#x20B9;</span>
+                          GST {result.gst_rate ?? result.top_match?.gst_rate}%
+                        </div>
+                        {result.gst_effective_from && (
+                          <div className="gst-tailwind-date">
+                            {result.gst_effective_to
+                              ? `${result.gst_effective_from}\u2013${result.gst_effective_to}`
+                              : `Effective from ${result.gst_effective_from}`
+                            }
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {/* --- ADDED: GST --- */}
 
                   {/* GST detail bar */}
                   {(result.gst_rate != null || result.top_match.gst_rate != null) && (
@@ -1114,6 +1169,19 @@ export default function PremiumDashboard() {
                         </div>
                       </div>
                       <div style={{ width: 1, background: "rgba(255,255,255,0.06)", alignSelf: "stretch" }} />
+                      {/* --- ADDED: GST --- Effective From column in detail bar */}
+                      {result.gst_effective_from && (
+                        <>
+                          <div style={{ textAlign: "center" }}>
+                            <div style={{ fontSize: "0.6rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>Effective From</div>
+                            <div style={{ fontSize: "0.72rem", color: "#94a3b8", fontFamily: "'DM Mono', monospace", fontWeight: 500 }}>
+                              {result.gst_effective_from}
+                            </div>
+                          </div>
+                          <div style={{ width: 1, background: "rgba(255,255,255,0.06)", alignSelf: "stretch" }} />
+                        </>
+                      )}
+                      {/* --- ADDED: GST --- */}
                       <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: "0.6rem", color: "#334155", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>Review</div>
                         <div style={{ fontSize: "0.8rem", color: result.needs_review ? "#f87171" : "#4ade80", fontWeight: 600 }}>
@@ -1124,7 +1192,6 @@ export default function PremiumDashboard() {
                   )}
                 </div>
 
-                {/* Alternatives */}
                 {result.alternatives.length > 0 && (
                   <div className="glass-card" style={{ overflow: "hidden" }}>
                     <div style={{ padding: "1rem 1.25rem 0.5rem" }}>
@@ -1143,7 +1210,7 @@ export default function PremiumDashboard() {
                             </td>
                             <td>
                               <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#4ade80", fontWeight: 600 }}>
-                                {a.gst_rate != null ? `${a.gst_rate}%` : "—"}
+                                {a.gst_rate != null ? `${a.gst_rate}%` : "\u2014"}
                               </span>
                             </td>
                             <td><ConfPill label={a.score >= 0.8 ? "high" : a.score >= 0.55 ? "medium" : "low"} value={a.score} /></td>
@@ -1166,7 +1233,7 @@ export default function PremiumDashboard() {
                   ].map((item, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "'DM Mono', monospace" }}>{item.prod}</span>
-                      <span style={{ color: "#334155", fontSize: "0.7rem" }}>→</span>
+                      <span style={{ color: "#334155", fontSize: "0.7rem" }}>\u2192</span>
                       <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.72rem", color: "#3b82f6" }}>{item.hsn}</span>
                       <ConfPill label="high" value={item.conf} />
                       <GstPill rate={item.gst} />
@@ -1183,9 +1250,8 @@ export default function PremiumDashboard() {
         {mode === "bulk" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", animation: "fadeUp 0.5s ease both" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              {/* Upload zone */}
               <div className="glass-card" style={{ padding: "1.5rem" }}>
-                <div className="lbl">Step 1 — Upload Excel / CSV</div>
+                <div className="lbl">Step 1 \u2014 Upload Excel / CSV</div>
                 <div
                   className={`upload-zone${isDragOver ? " drag" : ""}`}
                   onClick={() => fileInputRef.current?.click()}
@@ -1212,7 +1278,7 @@ export default function PremiumDashboard() {
                       </div>
                       <p style={{ fontSize: "0.85rem", color: "#f8fafc", margin: "0 0 4px", fontWeight: 600 }}>{fileName}</p>
                       <p style={{ fontSize: "0.72rem", color: "#64748b", margin: 0, fontFamily: "'DM Mono', monospace" }}>
-                        {fileSize} · {rawRows.length} rows detected
+                        {fileSize} \u00b7 {rawRows.length} rows detected
                       </p>
                     </div>
                   ) : (
@@ -1227,7 +1293,7 @@ export default function PremiumDashboard() {
                         Drop your Excel here or <span style={{ color: "#60a5fa" }}>browse files</span>
                       </p>
                       <p style={{ fontSize: "0.7rem", color: "#334155", margin: 0, fontFamily: "'DM Mono', monospace" }}>
-                        XLSX · CSV · up to 500 rows
+                        XLSX \u00b7 CSV \u00b7 up to 500 rows
                       </p>
                     </>
                   )}
@@ -1235,10 +1301,9 @@ export default function PremiumDashboard() {
                 </div>
               </div>
 
-              {/* Config + process panel */}
               <div className="glass-card" style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div>
-                  <div className="lbl">Step 2 — Select column</div>
+                  <div className="lbl">Step 2 \u2014 Select column</div>
                   <select value={selectedCol} onChange={e => setSelectedCol(e.target.value)} className="select-field" style={{ width: "100%" }}>
                     {columns.length === 0 && <option value="">Upload a file first</option>}
                     {columns.map(c => <option key={c} value={c}>{c}</option>)}
@@ -1251,7 +1316,7 @@ export default function PremiumDashboard() {
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                       fontFamily: "'DM Mono', monospace",
                     }}>
-                      {String(r[selectedCol] || "").slice(0,60) || "—"}
+                      {String(r[selectedCol] || "").slice(0,60) || "\u2014"}
                     </div>
                   ))}
                 </div>
@@ -1308,17 +1373,16 @@ export default function PremiumDashboard() {
 
             {bulkError && (
               <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)", color: "#fca5a5", fontSize: "0.8rem", padding: "0.75rem 1rem", borderRadius: 12 }}>
-                ⚠ {bulkError}
+                &#9888; {bulkError}
               </div>
             )}
 
-            {/* Stats */}
             {bulkStats && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.875rem" }}>
                 {[
-                  { label: "Total Rows", val: bulkStats.total, color: "#e2e8f0", icon: "📋" },
-                  { label: "Matched", val: bulkStats.matched, color: "#4ade80", icon: "✓" },
-                  { label: "Needs Review", val: bulkStats.unmatched, color: "#fb923c", icon: "⚠" },
+                  { label: "Total Rows", val: bulkStats.total, color: "#e2e8f0", icon: "\uD83D\uDCCB" },
+                  { label: "Matched", val: bulkStats.matched, color: "#4ade80", icon: "\u2713" },
+                  { label: "Needs Review", val: bulkStats.unmatched, color: "#fb923c", icon: "\u26A0" },
                 ].map(s => (
                   <div key={s.label} className="stat-card">
                     <div style={{ fontSize: "1.2rem", marginBottom: "0.4rem", opacity: 0.7 }}>{s.icon}</div>
@@ -1333,7 +1397,6 @@ export default function PremiumDashboard() {
               </div>
             )}
 
-            {/* Results table */}
             {bulkResults.length > 0 && (
               <div className="glass-card" style={{ overflow: "hidden" }}>
                 <div style={{
@@ -1360,7 +1423,8 @@ export default function PremiumDashboard() {
                       <th style={{ width: 40 }}>#</th>
                       <th>Description</th>
                       <th>HSN Code</th>
-                      <th>GST%</th>
+                      {/* --- ADDED: GST --- header now says GST % */}
+                      <th>GST %</th>
                       <th>Confidence</th>
                     </tr></thead>
                     <tbody>
@@ -1373,8 +1437,9 @@ export default function PremiumDashboard() {
                               <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "0.78rem", color: "#64748b" }}>{r.query}</span>
                             </td>
                             <td><span className="hsn-sm">{padHsn(r.hsn_code)}</span></td>
+                            {/* --- ADDED: GST --- toFixed(2) in table cell */}
                             <td style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.75rem", color: "#4ade80", fontWeight: 600 }}>
-                              {r.gst_rate != null ? `${r.gst_rate}%` : "—"}
+                              {r.gst_rate != null ? `${r.gst_rate.toFixed(2)}%` : "\u2014"}
                             </td>
                             <td><ConfPill label={r.confidence_label} value={r.confidence} /></td>
                           </tr>
@@ -1391,12 +1456,12 @@ export default function PremiumDashboard() {
                     borderTop: "1px solid rgba(255,255,255,0.05)",
                   }}>
                     <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#334155" }}>
-                      {page * PAGE_SIZE + 1}–{Math.min((page+1)*PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
+                      {page * PAGE_SIZE + 1}\u2013{Math.min((page+1)*PAGE_SIZE, bulkResults.length)} of {bulkResults.length.toLocaleString()}
                     </span>
                     <div style={{ display: "flex", gap: "0.35rem" }}>
-                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>←</button>
+                      <button onClick={() => setPage(Math.max(0,page-1))} disabled={page===0} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>\u2190</button>
                       <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "0.7rem", color: "#475569", padding: "0 0.35rem", display: "flex", alignItems: "center" }}>{page+1}/{totalPages}</span>
-                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>→</button>
+                      <button onClick={() => setPage(Math.min(totalPages-1,page+1))} disabled={page>=totalPages-1} className="btn-ghost" style={{ padding: "0.35rem 0.6rem" }}>\u2192</button>
                     </div>
                   </div>
                 )}
@@ -1413,7 +1478,6 @@ export default function PremiumDashboard() {
         )}
       </div>
 
-      {/* ── Footer ──────────────────────────────────────────────────────── */}
       <footer style={{
         borderTop: "1px solid rgba(255,255,255,0.04)",
         padding: "1rem 1.5rem",
@@ -1422,7 +1486,7 @@ export default function PremiumDashboard() {
       }}>
         <div style={{ maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: "0.68rem", color: "#1e293b", fontFamily: "'DM Mono', monospace" }}>
-            HSNiq · AI-powered GST classification for India
+            HSNiq \u00b7 AI-powered GST classification for India
           </span>
           <span style={{ fontSize: "0.68rem", color: "#334155" }}>
             Built by <span style={{ color: "#3b82f6" }}>DhanushRaghav</span>
