@@ -129,6 +129,25 @@ class HsnCode(Base):
     )
 
 
+class GstChangeLog(Base):
+    """
+    Audit log for every GST rate change detected during the nightly sync.
+    One row per (hsn_code, sync_run) where the rate differed from the DB value.
+    """
+    __tablename__ = "gst_change_log"
+
+    id = Column(Integer, primary_key=True, index=True)
+    hsn_code = Column(String(10), nullable=False, index=True)
+    old_rate = Column(Numeric(5, 2), nullable=True)   # NULL means first-time population
+    new_rate = Column(Numeric(5, 2), nullable=False)
+    source = Column(String(50), nullable=False)        # cbic / gst-services / csv-fallback
+    changed_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+
 class VerifiedProduct(Base):
     """
     Pre-verified products from correct_datas.xlsx for exact/fast lookup.
@@ -159,7 +178,7 @@ class VerifiedProduct(Base):
     )
 
 
-# ── Normalisation helpers ──────────────────────────────────────────────────────
+# ── Normalisation helpers ─────────────────────────────────────────────────────────────────
 
 _SIZE_PAT = re.compile(
     r'\b\d+(?:\.\d+)?\s*(?:G|GM|GMS|KG|KGS|ML|L|LTR|LITRE|LITER|'
@@ -193,7 +212,7 @@ def _clean_gst(raw) -> str | None:
     return m.group(1) + '%' if m else None
 
 
-# ── Data paths ─────────────────────────────────────────────────────────────────
+# ── Data paths ─────────────────────────────────────────────────────────────────────────
 
 _DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
 _VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.xlsx"))
@@ -294,13 +313,9 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         log.error("seed.verified_read_error", error=str(e))
         return
 
-    # ── Resolve column positions robustly ────────────────────────────────────
-    # The file has 3 columns regardless of exact header text.
-    # We use positional fallback so renamed headers don't break seeding.
     cols = df.columns.tolist()
 
     def _find_col(candidates: list[str], position: int) -> str:
-        """Return matching column name or fall back to positional index."""
         cols_lower = {c.lower(): c for c in cols}
         for cand in candidates:
             if cand.lower() in cols_lower:
@@ -334,9 +349,8 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         desc=desc_col, hsn=hsn_col, gst=gst_col, total_rows=len(df),
     )
 
-    # ── Build rows ────────────────────────────────────────────────────────────
     rows: list[VerifiedProduct] = []
-    seen_exact: set[str] = set()        # guard against duplicate normalised keys
+    seen_exact: set[str] = set()
 
     for _, row in df.iterrows():
         raw_desc = row.get(desc_col)
@@ -354,7 +368,7 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         desc_no_size = _strip_sizes(desc)
 
         if desc_norm in seen_exact:
-            continue          # keep first occurrence (most representative)
+            continue
         seen_exact.add(desc_norm)
 
         rows.append(VerifiedProduct(
@@ -369,7 +383,6 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         log.warning("seed.verified_no_valid_rows")
         return
 
-    # Batch insert
     BATCH = 500
     for i in range(0, len(rows), BATCH):
         session.add_all(rows[i : i + BATCH])
@@ -404,6 +417,19 @@ async def _ensure_schema() -> None:
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_effective_from DATE",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_effective_to DATE",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_updated_at TIMESTAMPTZ DEFAULT NOW()",
+                # gst_change_log table (idempotent — CREATE TABLE IF NOT EXISTS)
+                """
+                CREATE TABLE IF NOT EXISTS gst_change_log (
+                    id          SERIAL PRIMARY KEY,
+                    hsn_code    VARCHAR(10)   NOT NULL,
+                    old_rate    NUMERIC(5,2)  NULL,
+                    new_rate    NUMERIC(5,2)  NOT NULL,
+                    source      VARCHAR(50)   NOT NULL,
+                    changed_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+                )
+                """,
+                "CREATE INDEX IF NOT EXISTS idx_gst_change_log_hsn ON gst_change_log (hsn_code)",
+                "CREATE INDEX IF NOT EXISTS idx_gst_change_log_changed_at ON gst_change_log (changed_at DESC)",
             ):
                 try:
                     await conn.execute(text(ddl))

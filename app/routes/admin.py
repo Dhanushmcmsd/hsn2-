@@ -9,6 +9,7 @@ from app.utils.text_utils import normalize_product_description, extract_pack_siz
 from app.services.matcher import get_matcher
 from app.services.confidence import score_result
 from app.config import settings
+from app.utils.scheduler import trigger_gst_sync_now   # GST manual trigger
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
@@ -74,21 +75,20 @@ async def analyze_product(
 ) -> ProductAnalysisResponse:
     """Analyze a single important product and potentially auto-update HSN."""
     products = get_important_products()
-    
+
     if body.product_index < 0 or body.product_index >= len(products):
         raise HTTPException(status_code=404, detail="Product index out of range")
-    
+
     product = products[body.product_index]
     original_name = product["product_name"]
-    
+
     pack_size = extract_pack_size(original_name)
     matcher = get_matcher()
     best_query, cleaned_description, matches = _match_best_product_query(matcher, original_name)
-    
-    # Update product with cleaned data
+
     product["cleaned_description"] = cleaned_description
     product["pack_or_size"] = pack_size
-    
+
     if not matches:
         product["status"] = "no_matches_found"
         save_important_products(products)
@@ -100,10 +100,10 @@ async def analyze_product(
             auto_updated=False,
             message="No matches found for cleaned description"
         )
-    
+
     top_match = matches[0]
     confidence, label = score_result(top_match["score"])
-    
+
     hsn_analysis = {
         "hsn_code": top_match["hsn_code"],
         "description": top_match["description"],
@@ -113,8 +113,7 @@ async def analyze_product(
         "query_used": best_query,
         "alternatives": matches[1:]
     }
-    
-    # Auto-update if confidence is high or force_update is True
+
     auto_updated = False
     if confidence >= settings.CONFIDENCE_HIGH or body.force_update:
         product["hsn_code"] = top_match["hsn_code"]
@@ -125,9 +124,9 @@ async def analyze_product(
     else:
         product["status"] = "review_recommended"
         message = f"Review recommended - confidence {confidence:.2f} below threshold"
-    
+
     save_important_products(products)
-    
+
     return ProductAnalysisResponse(
         product_index=body.product_index,
         original_name=original_name,
@@ -143,27 +142,25 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
     """Analyze all important products that don't have HSN codes yet."""
     products = get_important_products()
     results = []
-    
+
     for i, product in enumerate(products):
-        # Skip if already has HSN and not pending
         if product.get("hsn_code") and product.get("status") != "pending":
             continue
-            
-        # Normalize and analyze
+
         pack_size = extract_pack_size(product["product_name"])
         matcher = get_matcher()
         best_query, cleaned_description, matches = _match_best_product_query(
             matcher,
             product["product_name"],
         )
-        
+
         product["cleaned_description"] = cleaned_description
         product["pack_or_size"] = pack_size
-        
+
         if matches:
             top_match = matches[0]
             confidence, label = score_result(top_match["score"])
-            
+
             if confidence >= settings.CONFIDENCE_HIGH:
                 product["hsn_code"] = top_match["hsn_code"]
                 product["confidence"] = confidence
@@ -192,6 +189,30 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
                 "product_name": product["product_name"],
                 "status": "no_matches_found"
             })
-    
+
     save_important_products(products)
     return {"results": results, "total_processed": len(results)}
+
+
+# ---------------------------------------------------------------------------
+# GST Sync — manual trigger
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/gst-sync",
+    summary="Manually trigger the nightly GST rate sync",
+    response_description="Stats: updated, unchanged, source, duration_ms",
+)
+async def manual_gst_sync(admin_key: str = Depends(require_admin_key)) -> dict:
+    """
+    Immediately runs the same job that the nightly cron fires at 02:00 IST.
+    Protected by ADMIN_API_KEY.
+    Returns: {updated, unchanged, source, duration_ms}
+    """
+    try:
+        result = await trigger_gst_sync_now()
+        log.info("admin.gst_sync_triggered", **result)
+        return {"status": "ok", **result}
+    except Exception as exc:
+        log.error("admin.gst_sync_failed", error=str(exc))
+        raise HTTPException(status_code=500, detail=f"GST sync failed: {exc}")
