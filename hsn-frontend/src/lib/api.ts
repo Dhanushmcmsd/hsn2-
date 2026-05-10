@@ -3,6 +3,15 @@ const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 const REMEMBER_ME_KEY = "remember_me";
 
+// Render free tier cold-starts can take up to 50s — we wait up to 55s total.
+const DEFAULT_TIMEOUT_MS = 55_000;
+
+function fetchWithTimeout(input: RequestInfo, init: RequestInit = {}, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(id));
+}
+
 function getAvailableStorages(): Storage[] {
   if (typeof window === "undefined") return [];
   return [localStorage, sessionStorage];
@@ -52,7 +61,7 @@ export interface UserOut { id: number; email: string; full_name?: string; is_act
 export interface TokenResponse { access_token: string; refresh_token: string; token_type: string; }
 export interface AuthTokenResponse extends TokenResponse { expires_in?: number; }
 
-type Opts = RequestInit & { skipAuth?: boolean };
+type Opts = RequestInit & { skipAuth?: boolean; timeoutMs?: number };
 
 export const authStorage = {
   getAccessToken: () => getToken(ACCESS_TOKEN_KEY),
@@ -98,25 +107,25 @@ export const authStorage = {
 };
 
 async function request<T>(path: string, opts: Opts = {}): Promise<T> {
-  const { skipAuth, ...init } = opts;
+  const { skipAuth, timeoutMs = DEFAULT_TIMEOUT_MS, ...init } = opts;
   const headers: Record<string, string> = { "Content-Type": "application/json", ...(init.headers as Record<string, string>) };
   if (!skipAuth && typeof window !== "undefined") {
     const token = authStorage.getAccessToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
   }
-  let res = await fetch(`${BASE_URL}${path}`, { ...init, headers });
+  let res = await fetchWithTimeout(`${BASE_URL}${path}`, { ...init, headers }, timeoutMs);
   if (res.status === 401 && !skipAuth && typeof window !== "undefined") {
     const refresh = authStorage.getRefreshToken();
     if (refresh) {
-      const rr = await fetch(`${BASE_URL}/auth/refresh`, {
+      const rr = await fetchWithTimeout(`${BASE_URL}/auth/refresh`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh_token: refresh }),
-      });
+      }, timeoutMs);
       if (rr.ok) {
         const data = await rr.json();
         authStorage.updateTokens(data.access_token, data.refresh_token);
         headers["Authorization"] = `Bearer ${data.access_token}`;
-        res = await fetch(`${BASE_URL}${path}`, { ...init, headers });
+        res = await fetchWithTimeout(`${BASE_URL}${path}`, { ...init, headers }, timeoutMs);
       } else { authStorage.clearTokens(); window.location.href = "/login"; }
     }
   }
