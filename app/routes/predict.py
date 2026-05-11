@@ -34,12 +34,6 @@ from app.services.gst_fetcher import fetch_gst_rate_for_hsn
 router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
 
-# Role Access Table:
-# - POST /predict: BRANCH_USER, BRANCH_MANAGER, REGIONAL_ADMIN, HQ_ADMIN, AUDITOR
-# - POST /predict/bulk: API key based (legacy)
-# - POST /predict/bulk/upload: BRANCH_USER+
-# - GET /predict/bulk/{import_id}/export: BRANCH_USER+ (branch-scoped unless HQ_ADMIN)
-
 
 async def _scalar_one_or_none(result):
     value = result.scalar_one_or_none()
@@ -181,19 +175,19 @@ async def predict(
     body: PredictRequest,
     request: Request,
     api_key: str = Depends(require_api_key),
-    current_user: User = Depends(
-        require_role(
-            UserRole.BRANCH_USER,
-            UserRole.BRANCH_MANAGER,
-            UserRole.REGIONAL_ADMIN,
-            UserRole.HQ_ADMIN,
-            UserRole.AUDITOR,
-        )
-    ),
     db: AsyncSession = Depends(get_db),
 ):
     await check_rate_limit(api_key, endpoint="predict")
     request_id = str(uuid.uuid4())
+    current_user = None
+    if api_key.startswith("jwt:"):
+        try:
+            user_id = int(api_key.split(":", 1)[1])
+            current_user = (
+                await db.execute(select(User).where(User.id == user_id, User.is_active == True))
+            ).scalars().first()
+        except Exception:
+            current_user = None
 
     cache_key = f"predict:{body.text.strip().lower()}"
     cached = await get_cache(cache_key)
@@ -298,7 +292,7 @@ async def predict(
             confidence=confidence,
             needs_review=needs_review,
             api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
-            branch_id=current_user.branch_id,
+            branch_id=getattr(current_user, "branch_id", None),
         )
         db.add(record)
         await db.flush()

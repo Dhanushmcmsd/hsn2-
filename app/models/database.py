@@ -8,7 +8,7 @@ import uuid
 from pathlib import Path
 from typing import AsyncGenerator
 
-from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Enum as SAEnum, Float, ForeignKey, Index, Integer, Numeric, String, Text, UniqueConstraint, Uuid, func, select, text
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Float, ForeignKey, Index, Integer, Numeric, String, Text, UniqueConstraint, Uuid, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -65,17 +65,7 @@ class User(Base):
     full_name = Column(String(255), nullable=True)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
-    role = Column(
-        SAEnum(
-            UserRole,
-            native_enum=False,
-            length=50,
-            values_callable=lambda enum_cls: [member.value for member in enum_cls],
-        ),
-        nullable=False,
-        default=UserRole.BRANCH_USER.value,
-        server_default=UserRole.BRANCH_USER.value,
-    )
+    role = Column(String(50), nullable=False, default=UserRole.BRANCH_USER.value, server_default=UserRole.BRANCH_USER.value)
     region_code = Column(String(10), nullable=True)
     branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
