@@ -575,19 +575,6 @@ async def fetch_and_sync_gst_rates(
                 if existing is not None:
                     existing.gst_rate = gst_rate
                     existing.fetched_at = datetime.utcnow()
-
-                    prior_rows = (
-                        await session.execute(
-                            select(GSTRateHistory).where(
-                                GSTRateHistory.hsn_code == hsn_code,
-                                GSTRateHistory.effective_to.is_(None),
-                                GSTRateHistory.effective_from < effective_from,
-                            )
-                        )
-                    ).scalars().all()
-
-                    for prior in prior_rows:
-                        prior.effective_to = effective_from - timedelta(days=1)
                 else:
                     prior_rows = (
                         await session.execute(
