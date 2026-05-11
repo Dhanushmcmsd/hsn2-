@@ -9,6 +9,7 @@ from typing import AsyncIterator, List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request  # --- ADDED: GST ---
+from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
@@ -35,6 +36,10 @@ from app.services.notifier import deliver_webhooks
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
+
+
+class ApiKeyTierUpdate(BaseModel):
+    tier: str
 
 
 async def _require_audit_log_access(
@@ -537,12 +542,12 @@ async def admin_deactivate_user(
 @router.patch("/api-keys/{key_id}/tier")
 async def admin_update_api_key_tier(
     key_id: int,
-    tier: str = Query(..., description="free | standard | enterprise"),
+    body: ApiKeyTierUpdate,
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
     _ = current_user
-    normalized = tier.strip().lower()
+    normalized = body.tier.strip().lower()
     if normalized not in {"free", "standard", "enterprise"}:
         raise HTTPException(status_code=422, detail="tier must be one of: free, standard, enterprise")
     row = (await db.execute(select(ApiKey).where(ApiKey.id == key_id))).scalars().first()

@@ -34,7 +34,7 @@ async def test_hq_admin_can_update_api_key_tier(client):
 
     resp = await client.patch(
         f"/admin/api-keys/{key_id}/tier",
-        params={"tier": "enterprise"},
+        json={"tier": "enterprise"},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert resp.status_code == 200, resp.text
