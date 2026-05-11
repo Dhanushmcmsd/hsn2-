@@ -2,15 +2,11 @@ from __future__ import annotations
 import time
 import uuid
 from contextlib import asynccontextmanager
-from contextvars import ContextVar
 
 import structlog
-from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
 
 from app import config as app_config
 from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
@@ -19,33 +15,12 @@ from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
 from app.utils.metrics import metrics_endpoint          # existing Prometheus handler
 from app.utils.scheduler import start_scheduler, stop_scheduler  # GST cron
-from app.utils.seed import seed_default_org
-from app.routes import predict, review, health, auth, admin, hsn, admin_orgs
-from app.routes import reports, analytics
+from app.utils.seed import seed_default_org             # multi-tenancy seed
+from app.routes import predict, review, health, auth, admin, hsn
+from app.routes.admin_orgs import router as admin_orgs_router
 
 configure_logging()
 log = structlog.get_logger()
-request_id_ctx_var: ContextVar[str | None] = ContextVar("request_id", default=None)
-
-
-class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        request_id = str(uuid.uuid4())
-        request_id_ctx_var.set(request_id)
-        request.state.request_id = request_id
-        start = time.perf_counter()
-        response = await call_next(request)
-        elapsed = (time.perf_counter() - start) * 1000
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["X-XSS-Protection"] = "1; mode=block"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; object-src 'none'"
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-        response.headers["X-Request-ID"] = request_id
-        response.headers["X-Process-Time-Ms"] = f"{elapsed:.1f}"
-        return response
 
 
 def _validate_production_config():
@@ -73,9 +48,9 @@ def _validate_production_config():
 async def lifespan(app: FastAPI):
     _validate_production_config()
     await init_db()
-    await seed_default_org()
     await init_cache()
     await start_scheduler()          # starts AsyncIOScheduler + registers GST cron
+    await seed_default_org()         # ensure HQ org + Default Branch exist
     log.info("app.startup", env=settings.APP_ENV)
     yield
     await stop_scheduler()           # clean shutdown
@@ -98,27 +73,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(SecurityHeadersMiddleware)
 
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    import logging
-    logging.getLogger(__name__).error("Validation error on %s: %s", request.url, exc.errors())
-    return JSONResponse(
-        status_code=422,
-        content={"error": "invalid_request", "detail": "One or more fields failed validation."},
-    )
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    start = time.perf_counter()
+    response = await call_next(request)
+    elapsed = (time.perf_counter() - start) * 1000
+    response.headers["X-Request-ID"] = request_id
+    response.headers["X-Process-Time-Ms"] = f"{elapsed:.1f}"
+    return response
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    log.error(
-        "unhandled_exception",
-        error=str(exc),
-        path=request.url.path,
-        request_id=getattr(request.state, "request_id", None),
-    )
+    log.error("unhandled_exception", error=str(exc), path=request.url.path)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
@@ -127,10 +98,8 @@ app.include_router(predict.router)
 app.include_router(review.router)
 app.include_router(health.router)
 app.include_router(admin.router)
-app.include_router(admin_orgs.router)
 app.include_router(hsn.router)
-app.include_router(reports.router)
-app.include_router(analytics.router)
+app.include_router(admin_orgs_router)   # multi-tenancy admin API
 
 # Prometheus metrics endpoint — exposes all registered gauges/counters/histograms
 app.add_route("/metrics", metrics_endpoint)

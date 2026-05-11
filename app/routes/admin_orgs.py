@@ -1,150 +1,158 @@
+"""Admin API for Organisation and Branch management.
+
+All endpoints require the ADMIN_API_KEY header.
+"""
 from __future__ import annotations
 
+from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, select
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.database import Branch, Organisation, get_db
-from app.models.schemas import BranchCreate, BranchRead, BranchUpdate, OrganisationCreate, OrganisationRead
-from app.utils.auth import require_admin_key
+from app.config import settings
+from app.models.database import get_db, Organisation, Branch
+from app.models.schemas import (
+    BranchCreate, BranchRead,
+    OrganisationCreate, OrganisationRead,
+)
 
 router = APIRouter(prefix="/admin", tags=["admin-orgs"])
 
 
-@router.post("/orgs", response_model=OrganisationRead)
+def _require_admin(x_admin_api_key: str = Header(..., alias="X-Admin-API-Key")) -> None:
+    if x_admin_api_key != settings.ADMIN_API_KEY:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid admin key")
+
+
+# ---------------------------------------------------------------------------
+# Organisation endpoints
+# ---------------------------------------------------------------------------
+
+@router.post("/orgs", response_model=OrganisationRead, status_code=status.HTTP_201_CREATED)
 async def create_org(
-    body: OrganisationCreate,
-    admin_key: str = Depends(require_admin_key),
+    payload: OrganisationCreate,
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(_require_admin),
 ):
-    _ = admin_key
-    exists = (
-        await db.execute(select(Organisation).where(Organisation.name == body.name))
-    ).scalars().first()
-    if exists:
-        raise HTTPException(status_code=409, detail="Organisation already exists")
-    org = Organisation(name=body.name, gstin_prefix=body.gstin_prefix, is_active=True)
+    """Create a new organisation."""
+    existing = (await db.execute(
+        select(Organisation).where(Organisation.name == payload.name)
+    )).scalar_one_or_none()
+    if existing:
+        raise HTTPException(status_code=409, detail="Organisation name already exists")
+
+    org = Organisation(**payload.model_dump())
     db.add(org)
     await db.commit()
     await db.refresh(org)
+
+    branch_count = (await db.execute(
+        select(func.count()).select_from(Branch).where(Branch.organisation_id == org.id)
+    )).scalar()
     return OrganisationRead(
-        id=org.id,
-        name=org.name,
-        gstin_prefix=org.gstin_prefix,
-        is_active=org.is_active,
-        created_at=org.created_at,
-        branch_count=0,
+        id=org.id, name=org.name, gstin_prefix=org.gstin_prefix,
+        is_active=org.is_active, created_at=org.created_at,
+        branch_count=branch_count,
     )
 
 
-@router.get("/orgs", response_model=list[OrganisationRead])
+@router.get("/orgs", response_model=List[OrganisationRead])
 async def list_orgs(
-    admin_key: str = Depends(require_admin_key),
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(_require_admin),
 ):
-    _ = admin_key
-    rows = await db.execute(
-        select(
-            Organisation,
-            func.count(Branch.id).label("branch_count"),
-        )
-        .outerjoin(Branch, Branch.organisation_id == Organisation.id)
-        .group_by(Organisation.id)
-        .order_by(Organisation.created_at.asc())
-    )
-    return [
-        OrganisationRead(
-            id=org.id,
-            name=org.name,
-            gstin_prefix=org.gstin_prefix,
-            is_active=org.is_active,
-            created_at=org.created_at,
-            branch_count=int(branch_count or 0),
-        )
-        for org, branch_count in rows.all()
-    ]
+    """List all organisations with their branch count."""
+    orgs = (await db.execute(select(Organisation))).scalars().all()
+    result = []
+    for org in orgs:
+        branch_count = (await db.execute(
+            select(func.count()).select_from(Branch).where(Branch.organisation_id == org.id)
+        )).scalar()
+        result.append(OrganisationRead(
+            id=org.id, name=org.name, gstin_prefix=org.gstin_prefix,
+            is_active=org.is_active, created_at=org.created_at,
+            branch_count=branch_count,
+        ))
+    return result
 
 
-@router.post("/orgs/{org_id}/branches", response_model=BranchRead)
+# ---------------------------------------------------------------------------
+# Branch endpoints
+# ---------------------------------------------------------------------------
+
+@router.post("/orgs/{org_id}/branches", response_model=BranchRead, status_code=status.HTTP_201_CREATED)
 async def create_branch(
     org_id: UUID,
-    body: BranchCreate,
-    admin_key: str = Depends(require_admin_key),
+    payload: BranchCreate,
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(_require_admin),
 ):
-    _ = admin_key
-    org = (
-        await db.execute(select(Organisation).where(Organisation.id == org_id))
-    ).scalars().first()
-    if org is None:
+    """Create a branch under an organisation."""
+    org = (await db.execute(select(Organisation).where(Organisation.id == org_id))).scalar_one_or_none()
+    if not org:
         raise HTTPException(status_code=404, detail="Organisation not found")
-    branch = Branch(
-        organisation_id=org.id,
-        name=body.name,
-        city=body.city,
-        state_code=body.state_code,
-        gstin=body.gstin,
-        is_active=True,
-    )
+
+    branch = Branch(organisation_id=org_id, **payload.model_dump())
     db.add(branch)
-    await db.commit()
-    await db.refresh(branch)
+    try:
+        await db.commit()
+        await db.refresh(branch)
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=409, detail="Branch name already exists in this organisation")
     return branch
 
 
-@router.get("/orgs/{org_id}/branches", response_model=list[BranchRead])
+@router.get("/orgs/{org_id}/branches", response_model=List[BranchRead])
 async def list_branches(
     org_id: UUID,
-    admin_key: str = Depends(require_admin_key),
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(_require_admin),
 ):
-    _ = admin_key
-    rows = await db.execute(
-        select(Branch).where(Branch.organisation_id == org_id).order_by(Branch.created_at.asc())
-    )
-    return rows.scalars().all()
+    """List all branches for an organisation."""
+    org = (await db.execute(select(Organisation).where(Organisation.id == org_id))).scalar_one_or_none()
+    if not org:
+        raise HTTPException(status_code=404, detail="Organisation not found")
+
+    branches = (await db.execute(
+        select(Branch).where(Branch.organisation_id == org_id)
+    )).scalars().all()
+    return branches
 
 
 @router.patch("/branches/{branch_id}", response_model=BranchRead)
 async def update_branch(
     branch_id: UUID,
-    body: BranchUpdate,
-    admin_key: str = Depends(require_admin_key),
+    payload: BranchCreate,
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(_require_admin),
 ):
-    _ = admin_key
-    branch = (
-        await db.execute(select(Branch).where(Branch.id == branch_id))
-    ).scalars().first()
-    if branch is None:
+    """Update branch fields."""
+    branch = (await db.execute(select(Branch).where(Branch.id == branch_id))).scalar_one_or_none()
+    if not branch:
         raise HTTPException(status_code=404, detail="Branch not found")
-    if body.name is not None:
-        branch.name = body.name
-    if body.city is not None:
-        branch.city = body.city
-    if body.state_code is not None:
-        branch.state_code = body.state_code
-    if body.gstin is not None:
-        branch.gstin = body.gstin
+
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(branch, field, value)
     await db.commit()
     await db.refresh(branch)
     return branch
 
 
-@router.delete("/branches/{branch_id}")
-async def soft_delete_branch(
+@router.delete("/branches/{branch_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_branch(
     branch_id: UUID,
-    admin_key: str = Depends(require_admin_key),
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(_require_admin),
 ):
-    _ = admin_key
-    branch = (
-        await db.execute(select(Branch).where(Branch.id == branch_id))
-    ).scalars().first()
-    if branch is None:
+    """Soft-delete a branch (sets is_active=False)."""
+    branch = (await db.execute(select(Branch).where(Branch.id == branch_id))).scalar_one_or_none()
+    if not branch:
         raise HTTPException(status_code=404, detail="Branch not found")
-    branch.is_active = False
+
+    await db.execute(
+        update(Branch).where(Branch.id == branch_id).values(is_active=False)
+    )
     await db.commit()
-    return {"status": "ok", "branch_id": str(branch.id), "is_active": branch.is_active}
