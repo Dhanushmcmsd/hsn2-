@@ -8,6 +8,7 @@ import os, sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app.models.database import Base
+from app.models.gst_rate_history import GSTRateHistory  # noqa: F401 — registers model with Base.metadata
 from app.config import settings
 
 config = context.config
