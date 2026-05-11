@@ -1,9 +1,13 @@
 from __future__ import annotations
+import json
+import os
 import re
+import time
 import numpy as np
 import structlog
 from collections import defaultdict
 from functools import lru_cache
+from pathlib import Path
 
 from app.services.kerala_aliases import (
     KERALA_ABBREVIATIONS,
@@ -13,6 +17,9 @@ from app.services.kerala_aliases import (
 
 log = structlog.get_logger()
 _matcher_instance = None
+_FULL_CSV_PATH = Path(os.getenv("HSN_FULL_DATA_PATH", "data/hsn_codes_full.csv"))
+_FAISS_INDEX_PATH = Path("data/faiss_index.bin")
+_FAISS_META_PATH = Path("data/faiss_index.meta.json")
 
 STOPWORDS = {
     'the', 'a', 'an', 'and', 'or', 'of', 'in', 'is', 'for', 'to', 'with', 'on', 'at',
@@ -336,6 +343,7 @@ class HybridMatcher:
     def _load(self):
         from app.services.dataset import get_dataset
         from app.config import settings
+        started = time.perf_counter()
         self._dataset = get_dataset()
         if not self._dataset:
             log.warning("matcher.empty_dataset")
@@ -357,12 +365,34 @@ class HybridMatcher:
             import faiss
             self._model = SentenceTransformer(settings.EMBEDDING_MODEL)
             texts = [d["description"] for d in self._dataset]
-            self._embeddings = self._model.encode(texts, normalize_embeddings=True)
-            dim = self._embeddings.shape[1]
-            self._index = faiss.IndexFlatIP(dim)
-            self._index.add(self._embeddings.astype(np.float32))
+            index_fresh = False
+            csv_mtime = _FULL_CSV_PATH.stat().st_mtime if _FULL_CSV_PATH.exists() else 0
+            if _FAISS_INDEX_PATH.exists() and _FAISS_META_PATH.exists():
+                try:
+                    meta = json.loads(_FAISS_META_PATH.read_text(encoding="utf-8"))
+                    if float(meta.get("csv_mtime", 0)) >= float(csv_mtime):
+                        self._index = faiss.read_index(str(_FAISS_INDEX_PATH))
+                        self._embeddings = None
+                        index_fresh = True
+                except Exception:
+                    index_fresh = False
+
+            if not index_fresh:
+                self._embeddings = self._model.encode(texts, normalize_embeddings=True)
+                dim = self._embeddings.shape[1]
+                self._index = faiss.IndexFlatIP(dim)
+                self._index.add(self._embeddings.astype(np.float32))
+                try:
+                    faiss.write_index(self._index, str(_FAISS_INDEX_PATH))
+                    _FAISS_META_PATH.write_text(
+                        json.dumps({"csv_mtime": csv_mtime, "rows": len(texts)}),
+                        encoding="utf-8",
+                    )
+                except Exception:
+                    pass
             self._ready = True
-            log.info("matcher.ready", count=len(self._dataset))
+            elapsed_ms = int((time.perf_counter() - started) * 1000)
+            log.info("HSN dataset loaded: %d codes, FAISS index built in %dms", len(self._dataset), elapsed_ms)
         except Exception as e:
             log.warning("matcher.load_error", error=str(e))
 

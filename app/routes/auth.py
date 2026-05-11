@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
-from app.models.database import get_db, User
+from app.models.database import Branch, User, UserRole, get_db
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 log = structlog.get_logger()
@@ -88,7 +88,23 @@ async def get_current_user(
     user = result.scalar_one_or_none()
     if user is None or not user.is_active:
         raise credentials_exc
+    user.jwt_role = payload.get("role")
+    user.jwt_branch_id = payload.get("branch_id")
+    user.jwt_org_id = payload.get("org_id")
     return user
+
+
+def require_role(*roles: UserRole):
+    async def _inner(
+        current_user: Annotated[User, Depends(get_current_user)],
+    ) -> User:
+        current_role = getattr(current_user, "role", UserRole.BRANCH_USER.value)
+        allowed = {r.value if isinstance(r, UserRole) else str(r) for r in roles}
+        if current_role not in allowed:
+            raise HTTPException(status_code=403, detail="Insufficient role")
+        return current_user
+
+    return _inner
 
 
 @router.post("/register", response_model=UserOut, status_code=201)
@@ -119,8 +135,21 @@ async def login(
         raise HTTPException(status_code=401, detail="Invalid email or password")
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account disabled")
+    org_id = None
+    if user.branch_id:
+        branch = (
+            await db.execute(select(Branch).where(Branch.id == user.branch_id))
+        ).scalar_one_or_none()
+        if branch is not None:
+            org_id = str(branch.organisation_id)
     access_token = create_token(
-        {"sub": str(user.id), "type": "access"},
+        {
+            "sub": str(user.id),
+            "type": "access",
+            "role": getattr(user, "role", UserRole.BRANCH_USER.value),
+            "branch_id": str(user.branch_id) if user.branch_id else None,
+            "org_id": org_id,
+        },
         timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = create_token(
@@ -146,7 +175,23 @@ async def refresh(body: RefreshRequest, db: AsyncSession = Depends(get_db)):
     if not user or not user.is_active:
         raise HTTPException(status_code=401, detail="User not found")
 
-    access_token = create_token({"sub": str(user.id), "type": "access"}, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    org_id = None
+    if user.branch_id:
+        branch = (
+            await db.execute(select(Branch).where(Branch.id == user.branch_id))
+        ).scalar_one_or_none()
+        if branch is not None:
+            org_id = str(branch.organisation_id)
+    access_token = create_token(
+        {
+            "sub": str(user.id),
+            "type": "access",
+            "role": getattr(user, "role", UserRole.BRANCH_USER.value),
+            "branch_id": str(user.branch_id) if user.branch_id else None,
+            "org_id": org_id,
+        },
+        timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
     new_refresh = create_token({"sub": str(user.id), "type": "refresh"}, timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS))
     return TokenResponse(access_token=access_token, refresh_token=new_refresh)
 

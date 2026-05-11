@@ -1,12 +1,14 @@
 from __future__ import annotations
 import asyncio
 import csv
+import enum
 import os
 import re
+import uuid
 from pathlib import Path
 from typing import AsyncGenerator
 
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, Index, Integer, Numeric, String, Text, func, select, text
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Float, ForeignKey, Index, Integer, Numeric, String, Text, UniqueConstraint, Uuid, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -46,6 +48,14 @@ class Base(DeclarativeBase):
     pass
 
 
+class UserRole(str, enum.Enum):
+    BRANCH_USER = "branch_user"
+    BRANCH_MANAGER = "branch_manager"
+    REGIONAL_ADMIN = "regional_admin"
+    HQ_ADMIN = "hq_admin"
+    AUDITOR = "auditor"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -55,6 +65,9 @@ class User(Base):
     full_name = Column(String(255), nullable=True)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
+    role = Column(String(50), nullable=False, default=UserRole.BRANCH_USER.value, server_default=UserRole.BRANCH_USER.value)
+    region_code = Column(String(10), nullable=True)
+    branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -71,6 +84,7 @@ class Prediction(Base):
     resolved = Column(Boolean, default=False)
     corrected_hsn = Column(String(20), nullable=True)
     api_key_hash = Column(Integer, nullable=True)
+    branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -81,6 +95,7 @@ class ApiKey(Base):
     key_hash = Column(String(64), unique=True, index=True)
     label = Column(String(100), nullable=True)
     tier = Column(String(20), default="standard")
+    branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=True, index=True)
     is_active = Column(Boolean, default=True)
     requests_today = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -176,6 +191,50 @@ class VerifiedProduct(Base):
         Index("idx_verified_desc", "description_normalized"),
         Index("idx_verified_no_size", "description_no_size"),
     )
+
+
+class Organisation(Base):
+    __tablename__ = "organisations"
+
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    name = Column(String(255), nullable=False, unique=True, index=True)
+    gstin_prefix = Column(String(15), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+
+
+class Branch(Base):
+    __tablename__ = "branches"
+
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    organisation_id = Column(Uuid, ForeignKey("organisations.id"), nullable=False, index=True)
+    name = Column(String(255), nullable=False)
+    city = Column(String(100), nullable=True)
+    state_code = Column(String(2), nullable=True)
+    gstin = Column(String(15), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+
+    __table_args__ = (
+        UniqueConstraint("organisation_id", "name", name="uq_branches_org_name"),
+    )
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_log"
+
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+    actor_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    actor_role = Column(String(50), nullable=True)
+    branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=True)
+    event_type = Column(String(100), nullable=False, index=True)
+    entity_type = Column(String(50), nullable=True)
+    entity_id = Column(String(100), nullable=True)
+    old_value = Column(JSON, nullable=True)
+    new_value = Column(JSON, nullable=True)
+    ip_address = Column(String(45), nullable=True)
+    metadata_json = Column("metadata", JSON, nullable=True)
 
 
 # ── Normalisation helpers ─────────────────────────────────────────────────────────────────────────────────────
@@ -444,12 +503,105 @@ async def _ensure_schema() -> None:
                 """,
                 "CREATE INDEX IF NOT EXISTS idx_gst_rate_history_hsn ON gst_rate_history (hsn_code)",
                 "CREATE INDEX IF NOT EXISTS idx_gst_rate_history_effective_from ON gst_rate_history (effective_from DESC)",
+                # organisations / branches (multi-tenancy)
+                """
+                CREATE TABLE IF NOT EXISTS organisations (
+                    id UUID PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL UNIQUE,
+                    gstin_prefix VARCHAR(15),
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    is_active BOOLEAN NOT NULL DEFAULT TRUE
+                )
+                """,
+                """
+                CREATE TABLE IF NOT EXISTS branches (
+                    id UUID PRIMARY KEY,
+                    organisation_id UUID NOT NULL REFERENCES organisations(id),
+                    name VARCHAR(255) NOT NULL,
+                    city VARCHAR(100),
+                    state_code VARCHAR(2),
+                    gstin VARCHAR(15),
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                    CONSTRAINT uq_branches_org_name UNIQUE (organisation_id, name)
+                )
+                """,
+                """
+                CREATE TABLE IF NOT EXISTS audit_log (
+                    id UUID PRIMARY KEY,
+                    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    actor_user_id INTEGER NULL REFERENCES users(id),
+                    actor_role VARCHAR(50),
+                    branch_id UUID NULL REFERENCES branches(id),
+                    event_type VARCHAR(100) NOT NULL,
+                    entity_type VARCHAR(50),
+                    entity_id VARCHAR(100),
+                    old_value JSONB NULL,
+                    new_value JSONB NULL,
+                    ip_address VARCHAR(45),
+                    metadata JSONB NULL
+                )
+                """,
+                "CREATE INDEX IF NOT EXISTS idx_audit_log_timestamp ON audit_log (timestamp DESC)",
+                "CREATE INDEX IF NOT EXISTS idx_audit_log_event_type ON audit_log (event_type)",
+                "CREATE INDEX IF NOT EXISTS idx_predictions_branch ON predictions (branch_id)",
+                "CREATE INDEX IF NOT EXISTS idx_users_branch ON users (branch_id)",
             ):
                 try:
                     await conn.execute(text(ddl))
                 except Exception:
                     pass
+            # Add nullable branch_id columns non-destructively.
+            for alter in (
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'branch_user'",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS region_code VARCHAR(10)",
+                "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+            ):
+                try:
+                    await conn.execute(text(alter))
+                except Exception:
+                    pass
         _SCHEMA_DONE = True
+
+
+async def _ensure_runtime_alters() -> None:
+    async with engine.begin() as conn:
+        if _is_sqlite:
+            def _sqlite_columns(sync_conn, table_name: str) -> set[str]:
+                rows = sync_conn.exec_driver_sql(f"PRAGMA table_info({table_name})").fetchall()
+                return {row[1] for row in rows}
+
+            users_cols = await conn.run_sync(_sqlite_columns, "users")
+            if "role" not in users_cols:
+                await conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'branch_user'"))
+            if "region_code" not in users_cols:
+                await conn.execute(text("ALTER TABLE users ADD COLUMN region_code VARCHAR(10)"))
+            if "branch_id" not in users_cols:
+                await conn.execute(text("ALTER TABLE users ADD COLUMN branch_id VARCHAR(36)"))
+
+            pred_cols = await conn.run_sync(_sqlite_columns, "predictions")
+            if "branch_id" not in pred_cols:
+                await conn.execute(text("ALTER TABLE predictions ADD COLUMN branch_id VARCHAR(36)"))
+
+            key_cols = await conn.run_sync(_sqlite_columns, "api_keys")
+            if "branch_id" not in key_cols:
+                await conn.execute(text("ALTER TABLE api_keys ADD COLUMN branch_id VARCHAR(36)"))
+
+        for ddl in (
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'branch_user'",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS region_code VARCHAR(10)",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+            "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+            "CREATE INDEX IF NOT EXISTS idx_predictions_branch ON predictions (branch_id)",
+            "CREATE INDEX IF NOT EXISTS idx_users_branch ON users (branch_id)",
+        ):
+            try:
+                await conn.execute(text(ddl))
+            except Exception:
+                pass
 
 
 async def init_db():
@@ -462,6 +614,7 @@ async def init_db():
             return
 
         await _ensure_schema()
+        await _ensure_runtime_alters()
         async with async_session() as session:
             await _seed_hsn_codes(session)
             await _seed_verified_products(session)
@@ -470,6 +623,7 @@ async def init_db():
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     await _ensure_schema()
+    await _ensure_runtime_alters()
     await init_db()
     async with async_session() as session:
         yield session

@@ -12,6 +12,7 @@ from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import select, text
 
 from app.models.database import async_session, HsnCode
+from app.services.audit import EventType, log_event
 from app.services.gst_fetcher import (
     fetch_all_gst_rates,
     _cache_set,
@@ -96,6 +97,18 @@ async def sync_gst_rates() -> dict:
                     unchanged += 1
 
             if change_log_rows:
+                for change in change_log_rows:
+                    await log_event(
+                        session=session,
+                        event_type=EventType.GST_RATE_CHANGED,
+                        actor_user_id=None,
+                        actor_role="system",
+                        branch_id=None,
+                        entity_type="gst_rate",
+                        entity_id=change["hsn_code"],
+                        old_value={"rate": change["old_rate"]},
+                        new_value={"rate": change["new_rate"]},
+                    )
                 try:
                     await session.execute(
                         text(

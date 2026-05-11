@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from typing import List, Optional
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -162,3 +163,47 @@ class GSTSyncResult(BaseModel):
     unchanged: int
     source: str
     duration_ms: int
+
+
+class OrganisationCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255)
+    gstin_prefix: Optional[str] = Field(default=None, max_length=15)
+
+
+class OrganisationRead(BaseModel):
+    id: UUID
+    name: str
+    gstin_prefix: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+    branch_count: Optional[int] = None
+
+
+class BranchCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255)
+    city: Optional[str] = Field(default=None, max_length=100)
+    state_code: Optional[str] = Field(default=None, min_length=2, max_length=2)
+    gstin: Optional[str] = Field(default=None, max_length=15)
+
+
+class BranchRead(BaseModel):
+    id: UUID
+    organisation_id: UUID
+    name: str
+    city: Optional[str] = None
+    state_code: Optional[str] = None
+    gstin: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+
+
+class BranchUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    city: Optional[str] = Field(default=None, max_length=100)
+    state_code: Optional[str] = Field(default=None, min_length=2, max_length=2)
+    gstin: Optional[str] = Field(default=None, max_length=15)
+
+
+class UserRoleUpdate(BaseModel):
+    role: str = Field(..., min_length=3, max_length=50)
+    branch_id: Optional[UUID] = None

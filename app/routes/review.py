@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.database import get_db, Prediction
+from app.models.database import Prediction, User, UserRole, get_db
 from app.models.schemas import ResolveRequest, ReviewItem
-from app.utils.auth import require_api_key
+from app.services.audit import EventType, log_event
+from app.routes.auth import require_role
 
 router = APIRouter(prefix="/review", tags=["review"])
 log = structlog.get_logger()
@@ -14,15 +15,23 @@ log = structlog.get_logger()
 
 @router.get("/pending", response_model=list[ReviewItem])
 async def get_pending(
-    api_key: str = Depends(require_api_key),
+    current_user: User = Depends(
+        require_role(
+            UserRole.BRANCH_MANAGER,
+            UserRole.REGIONAL_ADMIN,
+            UserRole.HQ_ADMIN,
+            UserRole.AUDITOR,
+        )
+    ),
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(
-        select(Prediction).where(
-            Prediction.needs_review == True,
-            Prediction.resolved == False,
-        ).limit(100)
+    q = select(Prediction).where(
+        Prediction.needs_review == True,
+        Prediction.resolved == False,
     )
+    if getattr(current_user, "role", None) != UserRole.HQ_ADMIN.value:
+        q = q.where(Prediction.branch_id == current_user.branch_id)
+    result = await db.execute(q.limit(100))
     rows = result.scalars().all()
     return [ReviewItem.model_validate(r) for r in rows]
 
@@ -30,7 +39,13 @@ async def get_pending(
 @router.post("/resolve")
 async def resolve_review(
     body: ResolveRequest,
-    api_key: str = Depends(require_api_key),
+    current_user: User = Depends(
+        require_role(
+            UserRole.BRANCH_MANAGER,
+            UserRole.REGIONAL_ADMIN,
+            UserRole.HQ_ADMIN,
+        )
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -41,8 +56,20 @@ async def resolve_review(
         raise HTTPException(status_code=404, detail="Prediction not found")
     if pred.resolved:
         raise HTTPException(status_code=409, detail="Already resolved")
+    old_status = "pending"
     pred.corrected_hsn = body.corrected_hsn
     pred.resolved = True
+    await log_event(
+        session=db,
+        event_type=EventType.REVIEW_RESOLVED,
+        actor_user_id=current_user.id,
+        actor_role=current_user.role,
+        branch_id=getattr(pred, "branch_id", None),
+        entity_type="prediction",
+        entity_id=str(pred.id),
+        old_value={"status": old_status},
+        new_value={"status": "resolved", "corrected_hsn": body.corrected_hsn},
+    )
     await db.commit()
     log.info("review.resolved", request_id=body.request_id, corrected=body.corrected_hsn)
     return {"status": "resolved", "request_id": body.request_id}

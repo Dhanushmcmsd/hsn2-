@@ -13,12 +13,13 @@ from fastapi.responses import StreamingResponse  # --- ADDED: GST ---
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select                # --- ADDED: GST ---
 
-from app.models.database import get_db, Prediction, VerifiedProduct, HsnCode  # --- ADDED: GST ---
+from app.models.database import HsnCode, Prediction, User, VerifiedProduct, get_db  # --- ADDED: GST ---
 from app.models.gst_rate_history import GSTRateHistory
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
 from app.services.kerala_search import expand_kerala_query
 from app.services.db_matcher import match_query
+from app.services.audit import EventType, log_event
 from app.services.confidence import score_result
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
@@ -173,8 +174,17 @@ async def predict(
     api_key: str = Depends(require_api_key),
     db: AsyncSession = Depends(get_db),
 ):
-    await check_rate_limit(api_key)
+    await check_rate_limit(api_key, endpoint="predict")
     request_id = str(uuid.uuid4())
+    current_user = None
+    if api_key.startswith("jwt:"):
+        try:
+            user_id = int(api_key.split(":", 1)[1])
+            current_user = (
+                await db.execute(select(User).where(User.id == user_id, User.is_active == True))
+            ).scalars().first()
+        except Exception:
+            current_user = None
 
     cache_key = f"predict:{body.text.strip().lower()}"
     cached = await get_cache(cache_key)
@@ -279,8 +289,25 @@ async def predict(
             confidence=confidence,
             needs_review=needs_review,
             api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
+            branch_id=getattr(current_user, "branch_id", None),
         )
         db.add(record)
+        await db.flush()
+        await log_event(
+            session=db,
+            event_type=EventType.PREDICTION_CREATED,
+            actor_user_id=None,
+            actor_role="api_key",
+            branch_id=getattr(record, "branch_id", None),
+            entity_type="prediction",
+            entity_id=str(record.id) if record.id is not None else None,
+            new_value={
+                "hsn_code": top["hsn_code"],
+                "confidence": confidence,
+                "gst_rate": top.get("gst_rate"),
+            },
+            ip_address=request.client.host if request.client else None,
+        )
         await db.commit()
     except Exception as exc:
         log.info("predict.persistence_unavailable", error=str(exc))

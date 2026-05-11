@@ -1,10 +1,14 @@
 from __future__ import annotations
+import csv
+import io
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query  # --- ADDED: GST ---
+from fastapi.responses import StreamingResponse
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
 from app.utils.auth import require_admin_key
+from app.routes.auth import require_role
 from app.services.important_products import get_important_products, save_important_products
 from app.models.schemas import (
     ImportantProduct,
@@ -12,13 +16,15 @@ from app.models.schemas import (
     ProductAnalysisResponse,
     GstChangeItem,          # --- ADDED: GST ---
     GstChangesResponse,     # --- ADDED: GST ---
+    UserRoleUpdate,
 )
 from app.utils.text_utils import normalize_product_description, extract_pack_size
 from app.services.matcher import get_matcher
 from app.services.confidence import score_result
 from app.config import settings
 from app.utils.scheduler import trigger_gst_sync_now
-from app.models.database import get_db, GstChangeLog       # --- ADDED: GST ---
+from app.models.database import ApiKey, AuditLog, GstChangeLog, User, UserRole, get_db       # --- ADDED: GST ---
+from app.services.audit import EventType, log_event
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
@@ -295,3 +301,185 @@ async def gst_change_log(
         log.error("admin.gst_changes_failed", error=str(exc))
         raise HTTPException(status_code=500, detail=f"Failed to fetch GST change log: {exc}")
 # --- ADDED: GST ---
+
+
+@router.get("/audit-log")
+async def audit_log_list(
+    branch_id: str | None = Query(default=None),
+    event_type: str | None = Query(default=None),
+    actor_user_id: int | None = Query(default=None),
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    admin_key: str = Depends(require_admin_key),
+    db: AsyncSession = Depends(get_db),
+):
+    _ = admin_key
+    q = select(AuditLog)
+    cq = select(func.count()).select_from(AuditLog)
+    if branch_id:
+        q = q.where(AuditLog.branch_id == branch_id)
+        cq = cq.where(AuditLog.branch_id == branch_id)
+    if event_type:
+        q = q.where(AuditLog.event_type == event_type)
+        cq = cq.where(AuditLog.event_type == event_type)
+    if actor_user_id is not None:
+        q = q.where(AuditLog.actor_user_id == actor_user_id)
+        cq = cq.where(AuditLog.actor_user_id == actor_user_id)
+
+    total = (await db.execute(cq)).scalar() or 0
+    rows = (
+        await db.execute(q.order_by(AuditLog.timestamp.desc()).limit(limit).offset(offset))
+    ).scalars().all()
+    items = [
+        {
+            "id": str(r.id),
+            "timestamp": r.timestamp.isoformat() if r.timestamp else None,
+            "actor_user_id": r.actor_user_id,
+            "actor_role": r.actor_role,
+            "branch_id": str(r.branch_id) if r.branch_id else None,
+            "event_type": r.event_type,
+            "entity_type": r.entity_type,
+            "entity_id": r.entity_id,
+            "old_value": r.old_value,
+            "new_value": r.new_value,
+            "ip_address": r.ip_address,
+            "metadata": r.metadata_json,
+        }
+        for r in rows
+    ]
+    from fastapi.responses import JSONResponse
+    resp = JSONResponse(content=items)
+    resp.headers["X-Total-Count"] = str(total)
+    return resp
+
+
+@router.get("/audit-log/export")
+async def audit_log_export(
+    branch_id: str | None = Query(default=None),
+    event_type: str | None = Query(default=None),
+    admin_key: str = Depends(require_admin_key),
+    db: AsyncSession = Depends(get_db),
+):
+    _ = admin_key
+    q = select(AuditLog)
+    if branch_id:
+        q = q.where(AuditLog.branch_id == branch_id)
+    if event_type:
+        q = q.where(AuditLog.event_type == event_type)
+    rows = (await db.execute(q.order_by(AuditLog.timestamp.desc()))).scalars().all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(
+        [
+            "id", "timestamp", "actor_user_id", "actor_role", "branch_id",
+            "event_type", "entity_type", "entity_id", "old_value", "new_value",
+            "ip_address", "metadata",
+        ]
+    )
+    for r in rows:
+        writer.writerow(
+            [
+                str(r.id),
+                r.timestamp.isoformat() if r.timestamp else "",
+                r.actor_user_id if r.actor_user_id is not None else "",
+                r.actor_role or "",
+                str(r.branch_id) if r.branch_id else "",
+                r.event_type,
+                r.entity_type or "",
+                r.entity_id or "",
+                r.old_value or {},
+                r.new_value or {},
+                r.ip_address or "",
+                r.metadata_json or {},
+            ]
+        )
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=audit_log_export.csv"},
+    )
+
+
+@router.get("/users")
+async def admin_list_users(
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    _ = current_user
+    rows = (await db.execute(select(User).order_by(User.created_at.desc()))).scalars().all()
+    return [
+        {
+            "id": row.id,
+            "email": row.email,
+            "role": row.role,
+            "branch_id": str(row.branch_id) if row.branch_id else None,
+            "last_login": None,
+            "is_active": row.is_active,
+        }
+        for row in rows
+    ]
+
+
+@router.patch("/users/{user_id}/role")
+async def admin_update_user_role(
+    user_id: int,
+    body: UserRoleUpdate,
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    target = (await db.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
+    if target is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    old_role = target.role
+    target.role = body.role
+    target.branch_id = body.branch_id
+    await log_event(
+        session=db,
+        event_type=EventType.USER_ROLE_CHANGED,
+        actor_user_id=current_user.id,
+        actor_role=current_user.role,
+        branch_id=current_user.branch_id,
+        entity_type="user",
+        entity_id=str(target.id),
+        old_value={"role": old_role},
+        new_value={"role": body.role},
+    )
+    await db.commit()
+    return {"status": "ok", "user_id": target.id, "old_role": old_role, "new_role": target.role}
+
+
+@router.post("/users/{user_id}/deactivate")
+async def admin_deactivate_user(
+    user_id: int,
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    _ = current_user
+    target = (await db.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
+    if target is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    target.is_active = False
+    await db.commit()
+    return {"status": "ok", "user_id": target.id, "is_active": target.is_active}
+
+
+@router.patch("/api-keys/{key_id}/tier")
+async def admin_update_api_key_tier(
+    key_id: int,
+    tier: str = Query(..., description="free | standard | enterprise"),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    _ = current_user
+    normalized = tier.strip().lower()
+    if normalized not in {"free", "standard", "enterprise"}:
+        raise HTTPException(status_code=422, detail="tier must be one of: free, standard, enterprise")
+    row = (await db.execute(select(ApiKey).where(ApiKey.id == key_id))).scalars().first()
+    if row is None:
+        raise HTTPException(status_code=404, detail="API key not found")
+    old_tier = row.tier
+    row.tier = normalized
+    await db.commit()
+    return {"status": "ok", "key_id": row.id, "old_tier": old_tier, "new_tier": row.tier}

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+from dataclasses import dataclass
 import hashlib
 import json
 import os
@@ -22,8 +23,18 @@ _VERSION = "v2.0"
 _DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
 _VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.xlsx"))
 _PRODUCT_BATCH_DIR = Path(os.getenv("PRODUCT_BATCH_DIR", "data/product_batches"))
+_FULL_DATA_PATH = Path(os.getenv("HSN_FULL_DATA_PATH", "data/hsn_codes_full.csv"))
 
 _XL_NS = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+
+
+@dataclass
+class HsnEntry:
+    hsn_code: str
+    description: str
+    gst_rate: str
+    chapter: str
+    section: str
 
 
 def _normalize_text(text: str) -> str:
@@ -83,6 +94,27 @@ def _build_record(
 
 
 def _load_hsn_codes() -> list[dict]:
+    if _FULL_DATA_PATH.exists():
+        rows: list[dict] = []
+        with _FULL_DATA_PATH.open(newline="", encoding="utf-8") as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                description = (row.get("description") or "").strip()
+                hsn_code = (row.get("hsn_code") or "").strip()
+                record = _build_record(
+                    hsn_code=hsn_code,
+                    description=description,
+                    source="hsn_codes",
+                    gst_rate=str(row.get("gst_rate", "")).strip(),
+                    category=str(row.get("section", "") or "").strip(),
+                )
+                if record:
+                    record["chapter"] = str(row.get("chapter", "") or "").strip() or record["hsn_code"][:2]
+                    record["section"] = str(row.get("section", "") or "").strip()
+                    rows.append(record)
+        if rows:
+            return rows
+
     rows: list[dict] = []
     for row in build_hsn_master_records():
         gst_rate = row.get("gst_rate")
@@ -94,6 +126,8 @@ def _load_hsn_codes() -> list[dict]:
             category=row.get("category", "") or "",
         )
         if record:
+            record["chapter"] = record["hsn_code"][:2]
+            record["section"] = ""
             rows.append(record)
     return rows
 
@@ -267,3 +301,25 @@ def get_dataset() -> list[dict]:
 
 def get_dataset_version() -> str:
     return _VERSION
+
+
+def get_hsn_by_chapter(chapter: str) -> list[HsnEntry]:
+    chapter = str(chapter or "").strip()
+    if not chapter:
+        return []
+    rows = get_dataset()
+    results: list[HsnEntry] = []
+    for row in rows:
+        row_chapter = str(row.get("chapter") or row.get("hsn_code", "")[:2])
+        if row_chapter != chapter:
+            continue
+        results.append(
+            HsnEntry(
+                hsn_code=row["hsn_code"],
+                description=row["description"],
+                gst_rate=str(row.get("gst_rate", "") or ""),
+                chapter=row_chapter,
+                section=str(row.get("section", "") or row.get("category", "") or ""),
+            )
+        )
+    return results

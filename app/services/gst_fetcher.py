@@ -31,6 +31,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.database import async_session
 from app.models.gst_rate_history import GSTRateHistory
+from app.services.audit import EventType, log_event
 
 logger = logging.getLogger(__name__)
 log = structlog.get_logger(__name__)
@@ -361,6 +362,21 @@ async def fetch_all_gst_rates() -> dict[str, GSTRate]:
         )
         from app.utils.metrics import gst_cbic_scrape_failures_total
         gst_cbic_scrape_failures_total.labels(fallback_source="csv").inc()
+        try:
+            async with async_session() as session:
+                await log_event(
+                    session=session,
+                    event_type=EventType.CBIC_SCRAPE_FAILED,
+                    actor_user_id=None,
+                    actor_role="system",
+                    branch_id=None,
+                    entity_type="gst_sync",
+                    entity_id=None,
+                    metadata={"fallback": "csv", "cbic_url": CBIC_URL, "rates_loaded": len(rates)},
+                )
+                await session.commit()
+        except Exception:
+            pass
 
     if rates:
         await _cache_set(REDIS_KEY, _serialise_rates(rates), REDIS_TTL)
