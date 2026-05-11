@@ -369,6 +369,17 @@ async def predict_bulk(
                 gst_rate = cached.get("gst_rate")
                 gst_effective_from = cached.get("gst_effective_from")
                 gst_effective_to = cached.get("gst_effective_to")
+
+                # --- FIX: cache hit with missing GST fields (pre-GST cache entries) ---
+                if gst_rate is None and top.get("hsn_code") is not None:
+                    gst_fields = await _build_gst_fields(top["hsn_code"], db)
+                    gst_dates = await get_gst_dates(top["hsn_code"], db)
+                    if gst_dates["gst_effective_from"] is not None:
+                        gst_effective_from = gst_dates["gst_effective_from"]
+                        gst_effective_to = gst_dates["gst_effective_to"]
+                    gst_rate = gst_fields["gst_rate"]
+                # --- END FIX ---
+
             else:
                 # Verified exact match
                 verified = None
