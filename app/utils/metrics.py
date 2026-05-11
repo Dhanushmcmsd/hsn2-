@@ -33,6 +33,16 @@ gst_sync_updated_total = Gauge(
 )
 
 # ---------------------------------------------------------------------------
+# CBIC scrape failure counter
+# ---------------------------------------------------------------------------
+
+gst_cbic_scrape_failures_total = Counter(
+    "gst_cbic_scrape_failures_total",
+    "Total number of times the CBIC live scrape failed and fell back to a static source",
+    ["fallback_source"],
+)
+
+# ---------------------------------------------------------------------------
 # /metrics endpoint handler
 # ---------------------------------------------------------------------------
 
