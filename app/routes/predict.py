@@ -5,6 +5,8 @@ import inspect
 import io                                    # --- ADDED: GST ---
 import time
 import uuid
+from datetime import date
+
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse  # --- ADDED: GST ---
@@ -12,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select                # --- ADDED: GST ---
 
 from app.models.database import get_db, Prediction, VerifiedProduct, HsnCode  # --- ADDED: GST ---
+from app.models.gst_rate_history import GSTRateHistory
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
 from app.services.kerala_search import expand_kerala_query
@@ -100,6 +103,66 @@ async def _build_gst_fields(hsn_code: str, db: AsyncSession) -> dict:
         "gst_effective_to": gst_effective_to,
     }
 # --- ADDED: GST ---
+
+
+async def get_gst_dates(hsn_code: str, db: AsyncSession) -> dict:
+    """
+    Query GSTRateHistory for the currently-active rate window for a given HSN code.
+
+    Conditions:
+      - hsn_code matches exactly
+      - effective_from <= today
+      - effective_to IS NULL  OR  effective_to >= today  (NULL = currently active)
+
+    Returns the most recently started window (ORDER BY effective_from DESC, LIMIT 1).
+
+    Returns
+    -------
+    dict with keys:
+        gst_effective_from : str | None   (ISO 8601 date, e.g. "2024-04-01")
+        gst_effective_to   : str | None   (ISO 8601 date, or None when open-ended)
+        gst_note           : str | None   (human-readable summary for the response)
+    """
+    try:
+        today = date.today()
+        result = await db.execute(
+            select(GSTRateHistory)
+            .where(
+                GSTRateHistory.hsn_code == hsn_code,
+                GSTRateHistory.effective_from <= today,
+                (
+                    GSTRateHistory.effective_to.is_(None)
+                    | (GSTRateHistory.effective_to >= today)
+                ),
+            )
+            .order_by(GSTRateHistory.effective_from.desc())
+            .limit(1)
+        )
+        row: GSTRateHistory | None = result.scalars().first()
+
+        if row is None:
+            return {"gst_effective_from": None, "gst_effective_to": None, "gst_note": None}
+
+        eff_from_str = row.effective_from.isoformat() if row.effective_from else None
+        eff_to_str = row.effective_to.isoformat() if row.effective_to else None
+
+        if eff_from_str:
+            gst_note = (
+                f"GST {row.gst_rate:.0f}% — effective {row.effective_from:%d-%b-%Y}"
+                + (f" to {row.effective_to:%d-%b-%Y}" if row.effective_to else " (currently active)")
+            )
+        else:
+            gst_note = f"GST {row.gst_rate:.0f}%" if row.gst_rate is not None else None
+
+        return {
+            "gst_effective_from": eff_from_str,
+            "gst_effective_to": eff_to_str,
+            "gst_note": gst_note,
+        }
+
+    except Exception as exc:
+        log.debug("predict.get_gst_dates_failed", hsn=hsn_code, error=str(exc))
+        return {"gst_effective_from": None, "gst_effective_to": None, "gst_note": None}
 
 
 @router.post("/predict", response_model=PredictResponse)
@@ -226,7 +289,14 @@ async def predict(
             pass
 
     # --- ADDED: GST ---
+    # Primary GST fields: rate + dates from hsn_codes (nightly sync) or live fetcher
     gst_fields = await _build_gst_fields(top["hsn_code"], db)
+    # Overlay effective_from / effective_to / gst_note from GSTRateHistory if available
+    gst_dates = await get_gst_dates(top["hsn_code"], db)
+    if gst_dates["gst_effective_from"] is not None:
+        gst_fields["gst_effective_from"] = gst_dates["gst_effective_from"]
+        gst_fields["gst_effective_to"] = gst_dates["gst_effective_to"]
+        gst_fields["gst_note"] = gst_dates["gst_note"]
     # --- ADDED: GST ---
 
     result = PredictResponse(
