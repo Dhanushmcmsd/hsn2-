@@ -22,6 +22,7 @@ from app.utils.scheduler import start_scheduler, stop_scheduler  # GST cron
 from app.utils.seed import seed_default_org
 from app.routes import predict, review, health, auth, admin, hsn, admin_orgs
 from app.routes import reports, analytics
+from app.routes import bulk
 
 configure_logging()
 log = structlog.get_logger()
@@ -124,6 +125,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 app.include_router(auth.router)
 app.include_router(predict.router)
+app.include_router(bulk.router)
 app.include_router(review.router)
 app.include_router(health.router)
 app.include_router(admin.router)
