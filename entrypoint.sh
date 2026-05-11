@@ -7,13 +7,13 @@ set -e
 # so keep --workers 1 (or 2 at most).  Render will OOM-kill with more workers.
 # Change to --workers 2 only if you upgrade to a paid Render plan (1 GB+).
 
-echo "[entrypoint] Running Alembic migrations..."
-timeout 30 alembic upgrade head || exit 1
-if [ -f "data/hsn_codes_full.csv" ]; then
-  echo "[entrypoint] Seeding GST history from full dataset..."
-  python -m app.utils.seed_gst_history || true
-fi
-echo "[entrypoint] Migrations complete. Starting server..."
+echo "Running DB migrations..."
+alembic upgrade head
+
+echo "Seeding HSN GST history..."
+python -m app.utils.seed_gst_history || echo "WARNING: seed_gst_history failed, continuing..."
+
+echo "Starting server..."
 
 exec gunicorn app.main:app \
   --worker-class uvicorn.workers.UvicornWorker \
