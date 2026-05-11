@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+import re
 from typing import List, Optional
 from uuid import UUID
 
@@ -13,6 +14,16 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class PredictRequest(BaseModel):
     text: str = Field(..., min_length=2, max_length=500, description="Product description")
+
+    @field_validator("text")
+    @classmethod
+    def validate_text(cls, value: str) -> str:
+        v = value.strip()
+        if re.search(r"[\x00-\x1f\x7f]", v):
+            raise ValueError("Control characters are not allowed")
+        if len(v) > 2000:
+            raise ValueError("Maximum 2000 characters allowed")
+        return v
 
 
 class HSNMatch(BaseModel):
@@ -83,6 +94,14 @@ class HSNRow(BaseModel):
 class ResolveRequest(BaseModel):
     request_id: str
     corrected_hsn: str
+
+    @field_validator("corrected_hsn")
+    @classmethod
+    def validate_hsn(cls, value: str) -> str:
+        v = value.strip()
+        if not re.match(r"^[0-9]{2,8}$", v):
+            raise ValueError("HSN code must match ^[0-9]{2,8}$")
+        return v
 
 
 class ReviewItem(BaseModel):

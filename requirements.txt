@@ -28,6 +28,8 @@ faiss-cpu==1.8.0
 scikit-learn==1.5.0
 numpy==1.26.4
 pandas==2.2.2
+openpyxl==3.1.5
+reportlab==4.2.2
 
 # ── Web scraping (used by gst_fetcher.py Layer 1) ─────────────────────────────
 beautifulsoup4==4.12.3
@@ -39,6 +41,7 @@ structlog==24.2.0
 httpx==0.27.0
 python-multipart==0.0.9
 tenacity==8.3.0
+sendgrid==6.11.0
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 passlib[bcrypt]==1.7.4

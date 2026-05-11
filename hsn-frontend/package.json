@@ -19,7 +19,9 @@
     "papaparse": "^5.5.3",
     "react": "^18",
     "react-dom": "^18",
+    "recharts": "^2.12.7",
     "read-excel-file": "^9.0.6",
+    "swr": "^2.2.5",
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {

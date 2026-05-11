@@ -9,6 +9,10 @@ set -e
 
 echo "[entrypoint] Running Alembic migrations..."
 timeout 30 alembic upgrade head || exit 1
+if [ -f "data/hsn_codes_full.csv" ]; then
+  echo "[entrypoint] Seeding GST history from full dataset..."
+  python -m app.utils.seed_gst_history || true
+fi
 echo "[entrypoint] Migrations complete. Starting server..."
 
 exec gunicorn main:app \

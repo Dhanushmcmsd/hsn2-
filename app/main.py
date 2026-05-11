@@ -2,9 +2,11 @@ from __future__ import annotations
 import time
 import uuid
 from contextlib import asynccontextmanager
+from contextvars import ContextVar
 
 import structlog
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -17,9 +19,11 @@ from app.utils.metrics import metrics_endpoint          # existing Prometheus ha
 from app.utils.scheduler import start_scheduler, stop_scheduler  # GST cron
 from app.utils.seed import seed_default_org
 from app.routes import predict, review, health, auth, admin, hsn, admin_orgs
+from app.routes import reports, analytics
 
 configure_logging()
 log = structlog.get_logger()
+request_id_ctx_var: ContextVar[str | None] = ContextVar("request_id", default=None)
 
 
 def _validate_production_config():
@@ -77,18 +81,45 @@ app.add_middleware(
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
     request_id = str(uuid.uuid4())
+    request_id_ctx_var.set(request_id)
     request.state.request_id = request_id
     start = time.perf_counter()
     response = await call_next(request)
     elapsed = (time.perf_counter() - start) * 1000
     response.headers["X-Request-ID"] = request_id
     response.headers["X-Process-Time-Ms"] = f"{elapsed:.1f}"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; object-src 'none'"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
     return response
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    log.warning(
+        "request_validation_error",
+        path=request.url.path,
+        errors=exc.errors(),
+        request_id=getattr(request.state, "request_id", None),
+    )
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Invalid request payload", "request_id": getattr(request.state, "request_id", None)},
+    )
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    log.error("unhandled_exception", error=str(exc), path=request.url.path)
+    log.error(
+        "unhandled_exception",
+        error=str(exc),
+        path=request.url.path,
+        request_id=getattr(request.state, "request_id", None),
+    )
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
@@ -99,6 +130,8 @@ app.include_router(health.router)
 app.include_router(admin.router)
 app.include_router(admin_orgs.router)
 app.include_router(hsn.router)
+app.include_router(reports.router)
+app.include_router(analytics.router)
 
 # Prometheus metrics endpoint — exposes all registered gauges/counters/histograms
 app.add_route("/metrics", metrics_endpoint)

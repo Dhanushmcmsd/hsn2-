@@ -1,0 +1,13 @@
+{
+  "title": "HSN Business Dashboard",
+  "panels": [
+    { "title": "Predictions per hour by branch", "type": "timeseries", "targets": [{ "expr": "sum by (branch_id) (rate(hsn_predictions_total[1h]))" }] },
+    { "title": "Confidence histogram", "type": "heatmap", "targets": [{ "expr": "hsn_confidence_bucket" }] },
+    { "title": "GST rate breakdown", "type": "piechart", "targets": [{ "expr": "sum by (gst_rate) (hsn_predictions_gst_rate_total)" }] },
+    { "title": "CBIC scrape failures", "type": "stat", "targets": [{ "expr": "gst_cbic_scrape_failures_total" }], "thresholds": [{ "color": "red", "value": 1 }] },
+    { "title": "Pending reviews per branch", "type": "barchart", "targets": [{ "expr": "sum by (branch_id) (hsn_pending_reviews_total)" }] },
+    { "title": "Cache hit rate", "type": "timeseries", "targets": [{ "expr": "sum(rate(cache_hits_total[5m])) / (sum(rate(cache_hits_total[5m])) + sum(rate(cache_misses_total[5m])))" }] }
+  ],
+  "schemaVersion": 38,
+  "version": 1
+}

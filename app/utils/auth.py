@@ -1,8 +1,13 @@
 # app/utils/auth.py
 from __future__ import annotations
+import asyncio
+from datetime import datetime, timezone
+import hashlib
 from fastapi import HTTPException, Request, status
 from jose import JWTError, jwt
+from sqlalchemy import select
 from app.config import settings
+from app.models.database import ApiKey, async_session
 
 ALGORITHM = "HS256"
 
@@ -13,6 +18,29 @@ async def require_api_key(request: Request) -> str:
     if x_api_key:
         if x_api_key in (settings.API_KEY, settings.ADMIN_API_KEY):
             return x_api_key
+        key_hash = hashlib.sha256(x_api_key.encode()).hexdigest()
+        async with async_session() as db:
+            row = (await db.execute(select(ApiKey).where(ApiKey.key_hash == key_hash, ApiKey.is_active == True))).scalars().first()
+            if row:
+                if row.expires_at is not None and row.expires_at < datetime.now(timezone.utc):
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail={
+                            "error": "api_key_expired",
+                            "message": "Please rotate your API key via the admin console",
+                        },
+                    )
+                async def _touch_last_used(key_id: int) -> None:
+                    try:
+                        async with async_session() as s2:
+                            key = (await s2.execute(select(ApiKey).where(ApiKey.id == key_id))).scalars().first()
+                            if key:
+                                key.last_used_at = datetime.now(timezone.utc)
+                                await s2.commit()
+                    except Exception:
+                        return
+                asyncio.create_task(_touch_last_used(row.id))
+                return x_api_key
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
 
     auth = request.headers.get("Authorization", "")

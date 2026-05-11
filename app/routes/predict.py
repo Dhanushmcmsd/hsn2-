@@ -6,14 +6,17 @@ import io                                    # --- ADDED: GST ---
 import time
 import uuid
 from datetime import date
+from datetime import datetime, timezone
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from fastapi.responses import StreamingResponse  # --- ADDED: GST ---
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select                # --- ADDED: GST ---
+import pandas as pd
 
-from app.models.database import HsnCode, Prediction, User, VerifiedProduct, get_db  # --- ADDED: GST ---
+from app.models.database import BulkImport, HsnCode, Prediction, User, UserRole, VerifiedProduct, get_db  # --- ADDED: GST ---
+from app.routes.auth import require_role
 from app.models.gst_rate_history import GSTRateHistory
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
@@ -470,3 +473,147 @@ async def predict_bulk(
         headers={"Content-Disposition": "attachment; filename=hsn_predictions.csv"},
     )
 # --- ADDED: GST ---
+
+
+@router.post("/predict/bulk/upload")
+async def predict_bulk_upload(
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_role(UserRole.BRANCH_USER, UserRole.BRANCH_MANAGER, UserRole.REGIONAL_ADMIN, UserRole.HQ_ADMIN, UserRole.AUDITOR)),
+    db: AsyncSession = Depends(get_db),
+):
+    raw = await file.read()
+    if len(raw) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=422, detail="File exceeds 5MB")
+    filename = file.filename or "bulk_upload"
+    if filename.lower().endswith(".csv"):
+        df = pd.read_csv(io.BytesIO(raw))
+    elif filename.lower().endswith(".xlsx"):
+        df = pd.read_excel(io.BytesIO(raw))
+    else:
+        raise HTTPException(status_code=422, detail="Only .csv and .xlsx are supported")
+    if "product_description" not in df.columns:
+        raise HTTPException(status_code=422, detail="Missing required column: product_description")
+    if len(df) > 1000:
+        raise HTTPException(status_code=422, detail="Maximum 1000 rows allowed")
+    import_row = BulkImport(
+        branch_id=current_user.branch_id,
+        user_id=current_user.id,
+        filename=filename,
+        row_count=len(df),
+        status="completed",
+        completed_at=datetime.now(timezone.utc),
+    )
+    db.add(import_row)
+    await db.flush()
+    results = []
+    for idx, row in df.iterrows():
+        text = str(row.get("product_description", "")).strip()
+        if not text:
+            continue
+        matches = await match_query(text, db, top_k=5)
+        if not matches:
+            matcher = get_matcher()
+            matches = matcher.match(text, top_k=5)
+        if not matches:
+            continue
+        top = matches[0]
+        confidence, label = score_result(top["score"])
+        needs_review = confidence < 0.7
+        gst_fields = await _build_gst_fields(top["hsn_code"], db)
+        pred = Prediction(
+            request_id=str(uuid.uuid4()),
+            input_text=text,
+            predicted_hsn=top["hsn_code"],
+            confidence=confidence,
+            needs_review=needs_review,
+            api_key_hash=None,
+            branch_id=current_user.branch_id,
+        )
+        db.add(pred)
+        results.append(
+            {
+                "row_index": int(idx),
+                "product_description": text,
+                "hsn_code": top["hsn_code"],
+                "confidence": confidence,
+                "confidence_label": label,
+                "gst_rate": gst_fields["gst_rate"],
+                "gst_effective_from": gst_fields["gst_effective_from"],
+                "needs_review": needs_review,
+            }
+        )
+    await log_event(
+        session=db,
+        event_type=EventType.BULK_IMPORT,
+        actor_user_id=current_user.id,
+        actor_role=current_user.role,
+        branch_id=current_user.branch_id,
+        entity_type="bulk_import",
+        entity_id=str(import_row.id),
+        new_value={"filename": filename, "row_count": len(df), "branch_id": str(current_user.branch_id)},
+    )
+    await db.commit()
+    return {"import_id": str(import_row.id), "results": results}
+
+
+@router.get("/predict/bulk/{import_id}/export")
+async def export_bulk_import(
+    import_id: str,
+    current_user: User = Depends(require_role(UserRole.BRANCH_USER, UserRole.BRANCH_MANAGER, UserRole.REGIONAL_ADMIN, UserRole.HQ_ADMIN, UserRole.AUDITOR)),
+    db: AsyncSession = Depends(get_db),
+):
+    import_row = (await db.execute(select(BulkImport).where(BulkImport.id == import_id))).scalars().first()
+    if not import_row:
+        raise HTTPException(status_code=404, detail="Bulk import not found")
+    if current_user.role != UserRole.HQ_ADMIN.value and import_row.branch_id != current_user.branch_id:
+        raise HTTPException(status_code=403, detail="Not allowed")
+    preds = (
+        await db.execute(
+            select(Prediction).where(
+                Prediction.branch_id == import_row.branch_id,
+                Prediction.created_at >= import_row.created_at,
+            )
+        )
+    ).scalars().all()
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Classifications"
+    headers = ["product_description", "hsn_code", "confidence", "confidence_label", "gst_rate", "effective_from", "needs_review"]
+    ws.append(headers)
+    bold = Font(bold=True)
+    fill = PatternFill(start_color="BDD7EE", end_color="BDD7EE", fill_type="solid")
+    for cell in ws[1]:
+        cell.font = bold
+        cell.fill = fill
+    high = 0
+    low = 0
+    tiers = {0: 0, 5: 0, 12: 0, 18: 0, 28: 0}
+    for p in preds:
+        label = "high" if p.confidence >= 0.8 else ("medium" if p.confidence >= 0.55 else "low")
+        gst = (await db.execute(select(HsnCode.gst_rate_numeric, HsnCode.gst_effective_from).where(HsnCode.hsn_code == p.predicted_hsn))).first()
+        rate = float(gst.gst_rate_numeric) if gst and gst.gst_rate_numeric is not None else None
+        if p.confidence >= 0.8:
+            high += 1
+        else:
+            low += 1
+        if rate in tiers:
+            tiers[int(rate)] += 1
+        ws.append([p.input_text, p.predicted_hsn, p.confidence, label, rate, gst.gst_effective_from if gst else None, p.needs_review])
+    for col in ws.columns:
+        ws.column_dimensions[col[0].column_letter].width = min(max(len(str(c.value or "")) for c in col) + 2, 50)
+    ws2 = wb.create_sheet("Summary")
+    ws2.append(["total rows", "high confidence count", "low confidence count", "breakdown by GST tier"])
+    ws2.append([len(preds), high, low, str(tiers)])
+    for cell in ws2[1]:
+        cell.font = bold
+        cell.fill = fill
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    return StreamingResponse(
+        out,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename=hsn_classification_{import_row.branch_id}_{date.today().isoformat()}.xlsx"},
+    )

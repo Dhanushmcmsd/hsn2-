@@ -23,8 +23,12 @@ from app.services.matcher import get_matcher
 from app.services.confidence import score_result
 from app.config import settings
 from app.utils.scheduler import trigger_gst_sync_now
-from app.models.database import ApiKey, AuditLog, GstChangeLog, User, UserRole, get_db       # --- ADDED: GST ---
+from app.models.database import ApiKey, AuditLog, Branch, GstChangeLog, Organisation, User, UserRole, WebhookEndpoint, get_db       # --- ADDED: GST ---
 from app.services.audit import EventType, log_event
+from app.services.notifier import deliver_webhooks
+import secrets
+import hashlib
+from datetime import datetime, timedelta, timezone
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
@@ -310,10 +314,10 @@ async def audit_log_list(
     actor_user_id: int | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
-    admin_key: str = Depends(require_admin_key),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
     db: AsyncSession = Depends(get_db),
 ):
-    _ = admin_key
+    _ = current_user
     q = select(AuditLog)
     cq = select(func.count()).select_from(AuditLog)
     if branch_id:
@@ -325,6 +329,12 @@ async def audit_log_list(
     if actor_user_id is not None:
         q = q.where(AuditLog.actor_user_id == actor_user_id)
         cq = cq.where(AuditLog.actor_user_id == actor_user_id)
+    if from_date:
+        q = q.where(AuditLog.timestamp >= from_date)
+        cq = cq.where(AuditLog.timestamp >= from_date)
+    if to_date:
+        q = q.where(AuditLog.timestamp <= to_date)
+        cq = cq.where(AuditLog.timestamp <= to_date)
 
     total = (await db.execute(cq)).scalar() or 0
     rows = (
@@ -357,15 +367,21 @@ async def audit_log_list(
 async def audit_log_export(
     branch_id: str | None = Query(default=None),
     event_type: str | None = Query(default=None),
-    admin_key: str = Depends(require_admin_key),
+    from_date: str | None = Query(default=None),
+    to_date: str | None = Query(default=None),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
     db: AsyncSession = Depends(get_db),
 ):
-    _ = admin_key
+    _ = current_user
     q = select(AuditLog)
     if branch_id:
         q = q.where(AuditLog.branch_id == branch_id)
     if event_type:
         q = q.where(AuditLog.event_type == event_type)
+    if from_date:
+        q = q.where(AuditLog.timestamp >= from_date)
+    if to_date:
+        q = q.where(AuditLog.timestamp <= to_date)
     rows = (await db.execute(q.order_by(AuditLog.timestamp.desc()))).scalars().all()
 
     output = io.StringIO()
@@ -398,7 +414,7 @@ async def audit_log_export(
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=audit_log_export.csv"},
+        headers={"Content-Disposition": f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"},
     )
 
 
@@ -483,3 +499,102 @@ async def admin_update_api_key_tier(
     row.tier = normalized
     await db.commit()
     return {"status": "ok", "key_id": row.id, "old_tier": old_tier, "new_tier": row.tier}
+
+
+@router.post("/api-keys/{key_id}/rotate")
+async def rotate_api_key(
+    key_id: int,
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    row = (await db.execute(select(ApiKey).where(ApiKey.id == key_id))).scalars().first()
+    if not row:
+        raise HTTPException(status_code=404, detail="API key not found")
+    raw_key = f"hsn_{secrets.token_urlsafe(32)}"
+    new_key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
+    new_key = ApiKey(
+        key_hash=new_key_hash,
+        label=f"{row.label or 'rotated'}-rotated",
+        tier=row.tier,
+        branch_id=row.branch_id,
+        role=row.role,
+        is_active=True,
+    )
+    db.add(new_key)
+    row.expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    await log_event(
+        session=db,
+        event_type=EventType.API_KEY_ROTATED,
+        actor_user_id=current_user.id,
+        actor_role=current_user.role,
+        branch_id=current_user.branch_id,
+        entity_type="api_key",
+        entity_id=str(row.id),
+        new_value={"new_key_id": None},
+    )
+    await db.commit()
+    await db.refresh(new_key)
+    return {"status": "ok", "new_api_key": raw_key, "new_key_id": new_key.id, "old_key_expires_at": row.expires_at}
+
+
+@router.post("/webhooks")
+async def register_webhook(
+    url: str = Query(...),
+    events: str = Query(default="gst_rate.changed"),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    org_id = None
+    if current_user.branch_id:
+        branch = (await db.execute(select(Branch).where(Branch.id == current_user.branch_id))).scalars().first()
+        if branch:
+            org_id = branch.organisation_id
+    if org_id is None:
+        org = (await db.execute(select(Organisation))).scalars().first()
+        org_id = org.id if org else None
+    if org_id is None:
+        raise HTTPException(status_code=400, detail="No organisation configured")
+    secret = secrets.token_hex(32)
+    row = WebhookEndpoint(org_id=org_id, url=url, secret=secret, events=[e.strip() for e in events.split(",") if e.strip()], is_active=True)
+    db.add(row)
+    await db.commit()
+    await db.refresh(row)
+    return {"id": str(row.id), "url": row.url, "events": row.events, "secret": secret}
+
+
+@router.get("/webhooks")
+async def list_webhooks(
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    rows = (await db.execute(select(WebhookEndpoint))).scalars().all()
+    return [{"id": str(r.id), "url": r.url, "events": r.events, "is_active": r.is_active} for r in rows]
+
+
+@router.delete("/webhooks/{webhook_id}")
+async def delete_webhook(
+    webhook_id: str,
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    row = (await db.execute(select(WebhookEndpoint).where(WebhookEndpoint.id == webhook_id))).scalars().first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    await db.delete(row)
+    await db.commit()
+    return {"status": "deleted"}
+
+
+@router.post("/webhooks/{webhook_id}/test")
+async def test_webhook(
+    webhook_id: str,
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    db: AsyncSession = Depends(get_db),
+):
+    row = (await db.execute(select(WebhookEndpoint).where(WebhookEndpoint.id == webhook_id))).scalars().first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    await deliver_webhooks("gst_rate.changed", {"test": True, "webhook_id": webhook_id})
+    return {"status": "sent"}
+    from_date: str | None = Query(default=None),
+    to_date: str | None = Query(default=None),

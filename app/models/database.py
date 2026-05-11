@@ -96,6 +96,10 @@ class ApiKey(Base):
     label = Column(String(100), nullable=True)
     tier = Column(String(20), default="standard")
     branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=True, index=True)
+    role = Column(String(50), nullable=False, default=UserRole.BRANCH_USER.value, server_default=UserRole.BRANCH_USER.value)
+    expires_at = Column(DateTime(timezone=True), nullable=True)
+    last_used_at = Column(DateTime(timezone=True), nullable=True)
+    rotation_reminder_sent = Column(Boolean, nullable=False, default=False, server_default=text("false"))
     is_active = Column(Boolean, default=True)
     requests_today = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -235,6 +239,31 @@ class AuditLog(Base):
     new_value = Column(JSON, nullable=True)
     ip_address = Column(String(45), nullable=True)
     metadata_json = Column("metadata", JSON, nullable=True)
+
+
+class WebhookEndpoint(Base):
+    __tablename__ = "webhook_endpoints"
+
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    org_id = Column(Uuid, ForeignKey("organisations.id"), nullable=False, index=True)
+    url = Column(String(500), nullable=False)
+    secret = Column(String(128), nullable=False)
+    events = Column(JSON, nullable=False, default=list)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class BulkImport(Base):
+    __tablename__ = "bulk_imports"
+
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    branch_id = Column(Uuid, ForeignKey("branches.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    filename = Column(String(255), nullable=False)
+    row_count = Column(Integer, nullable=False, default=0)
+    status = Column(String(30), nullable=False, default="completed")
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
 # ── Normalisation helpers ─────────────────────────────────────────────────────────────────────────────────────

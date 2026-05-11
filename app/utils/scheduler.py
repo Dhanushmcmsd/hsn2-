@@ -20,6 +20,7 @@ from app.services.gst_fetcher import (
     REDIS_KEY,
     REDIS_TTL,
 )
+from app.services.notifier import notify_gst_rate_change, deliver_webhooks
 from app.utils.metrics import gst_sync_last_run_timestamp, gst_sync_updated_total
 # --- GST SYNC END ---
 
@@ -97,6 +98,8 @@ async def sync_gst_rates() -> dict:
                     unchanged += 1
 
             if change_log_rows:
+                await notify_gst_rate_change(change_log_rows)
+                await deliver_webhooks("gst_rate.changed", {"changes": change_log_rows})
                 for change in change_log_rows:
                     await log_event(
                         session=session,
@@ -199,6 +202,13 @@ async def start_scheduler():
         misfire_grace_time=3600,
         replace_existing=True,
     )
+    _scheduler.add_job(
+        key_expiry_reminder,
+        trigger=CronTrigger(day_of_week="mon", hour=9, minute=0, timezone="Asia/Kolkata"),
+        id="api_key_expiry_reminder",
+        name="Weekly API key expiry reminder",
+        replace_existing=True,
+    )
     log.info("scheduler.gst_nightly_sync_registered", schedule="02:00 IST daily")
     # --- GST SYNC END ---
 
@@ -209,3 +219,25 @@ async def start_scheduler():
 async def stop_scheduler():
     if _scheduler and _scheduler.running:
         _scheduler.shutdown(wait=False)
+
+
+async def key_expiry_reminder() -> None:
+    from datetime import timedelta
+    from app.models.database import ApiKey
+    now = datetime.now(timezone.utc)
+    cutoff = now + timedelta(days=14)
+    async with async_session() as session:
+        rows = (
+            await session.execute(
+                select(ApiKey).where(
+                    ApiKey.expires_at.is_not(None),
+                    ApiKey.expires_at < cutoff,
+                    ApiKey.rotation_reminder_sent == False,  # noqa: E712
+                    ApiKey.is_active == True,  # noqa: E712
+                )
+            )
+        ).scalars().all()
+        for row in rows:
+            row.rotation_reminder_sent = True
+        await session.commit()
+    log.info("scheduler.key_expiry_reminder", count=len(rows))
