@@ -19,7 +19,7 @@ import json
 import logging
 import os
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional, TypedDict
 
@@ -60,6 +60,7 @@ _DEFAULT_DATE = date(2017, 7, 1)  # GST rollout date — used when date is absen
 _HTTP_TIMEOUT = 20.0
 _RATE_RE = re.compile(r"(\d+(?:\.\d+)?)\s*%")
 _DATE_RE = re.compile(r"(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})")
+_HSN_RE = re.compile(r"\b\d{2,8}\b")
 
 HEADERS = {
     "User-Agent": (
@@ -477,6 +478,15 @@ def _parse_rate(title: str) -> Optional[float]:
     return float(m.group(1)) if m else None
 
 
+def _parse_hsn_code(title: str) -> str:
+    """
+    Extract an HSN-like numeric token from a notification title.
+    Falls back to 00000000 when unavailable.
+    """
+    m = _HSN_RE.search(title)
+    return m.group(0) if m else "00000000"
+
+
 async def fetch_and_sync_gst_rates(
     db: Optional[AsyncSession] = None,
 ) -> None:
@@ -521,6 +531,7 @@ async def fetch_and_sync_gst_rates(
             title: str = notif["title"]
             date_raw: str = notif["date"]
             source_url: str = notif["url"]
+            hsn_code = _parse_hsn_code(title)
 
             effective_from = _parse_date(date_raw)
             gst_rate = _parse_rate(title)
@@ -549,9 +560,22 @@ async def fetch_and_sync_gst_rates(
                     existing.gst_rate = gst_rate
                     existing.fetched_at = datetime.utcnow()
                 else:
+                    prior_rows = (
+                        await session.execute(
+                            select(GSTRateHistory).where(
+                                GSTRateHistory.hsn_code == hsn_code,
+                                GSTRateHistory.effective_to.is_(None),
+                                GSTRateHistory.effective_from < effective_from,
+                            )
+                        )
+                    ).scalars().all()
+
+                    for prior in prior_rows:
+                        prior.effective_to = effective_from - timedelta(days=1)
+
                     session.add(
                         GSTRateHistory(
-                            hsn_code="00000000",
+                            hsn_code=hsn_code,
                             gst_rate=gst_rate,
                             effective_from=effective_from,
                             effective_to=None,

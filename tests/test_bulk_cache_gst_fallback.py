@@ -69,6 +69,16 @@ def _make_db():
     return MagicMock()
 
 
+async def _read_streaming_body(response) -> bytes:
+    chunks: list[bytes] = []
+    async for chunk in response.body_iterator:
+        if isinstance(chunk, str):
+            chunks.append(chunk.encode("utf-8"))
+        else:
+            chunks.append(chunk)
+    return b"".join(chunks)
+
+
 # ---------------------------------------------------------------------------
 # Test 1 — cache hit WITH gst_rate: fallback must NOT be called
 # ---------------------------------------------------------------------------
@@ -89,14 +99,13 @@ async def test_bulk_cache_hit_with_gst_no_fallback():
         patch("app.routes.predict.get_gst_dates", new_callable=AsyncMock) as mock_dates,
     ):
         from app.routes.predict import predict_bulk
-        import io
         response = await predict_bulk(
             body=payload,
             request=fake_request,
             api_key="test-key",
             db=fake_db,
         )
-        content = b"".join([chunk async for chunk in response.body_iterator] if hasattr(response, 'body_iterator') else [response.body_iterator])
+        content = await _read_streaming_body(response)
 
     mock_build.assert_not_called()
     mock_dates.assert_not_called()
@@ -140,7 +149,7 @@ async def test_bulk_cache_hit_missing_gst_triggers_fallback():
             api_key="test-key",
             db=fake_db,
         )
-        content = b"".join([chunk async for chunk in response.body_iterator] if hasattr(response, 'body_iterator') else [response.body_iterator])
+        content = await _read_streaming_body(response)
 
     mock_build.assert_called_once_with("09011110", fake_db)
     mock_dates.assert_called_once_with("09011110", fake_db)
@@ -161,6 +170,7 @@ async def test_bulk_cache_miss_calls_build_gst_fields():
 
     payload = [PredictRequest(text="coffee beans")]
     fake_db = MagicMock()
+    fake_db.execute = AsyncMock(side_effect=Exception("no db"))
     fake_request = MagicMock()
 
     _match = [{"hsn_code": "09011110", "description": "Coffee, not roasted", "score": 0.91, "method": "db_match"}]
@@ -168,7 +178,6 @@ async def test_bulk_cache_miss_calls_build_gst_fields():
     with (
         patch("app.routes.predict.check_rate_limit", new_callable=AsyncMock),
         patch("app.routes.predict.get_cache", new_callable=AsyncMock, return_value=None),
-        patch("app.routes.predict.db.execute", new_callable=AsyncMock, side_effect=Exception("no db")),
         patch("app.routes.predict.match_query", new_callable=AsyncMock, return_value=_match),
         patch("app.routes.predict.score_result", return_value=(0.91, "high")),
         patch(
@@ -189,7 +198,7 @@ async def test_bulk_cache_miss_calls_build_gst_fields():
             api_key="test-key",
             db=fake_db,
         )
-        content = b"".join([chunk async for chunk in response.body_iterator] if hasattr(response, 'body_iterator') else [response.body_iterator])
+        content = await _read_streaming_body(response)
 
     mock_build.assert_called_once_with("09011110", fake_db)
     csv_text = content.decode()
