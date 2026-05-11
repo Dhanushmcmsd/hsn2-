@@ -268,6 +268,7 @@ def load_dataset() -> list[dict]:
     global _DATASET, _VERSION
 
     rows = []
+    source_file = str(_FULL_DATA_PATH if _FULL_DATA_PATH.exists() else _DATA_PATH)
     rows.extend(_load_hsn_codes())
     rows.extend(_load_verified_rows())
     rows.extend(_load_product_batch_rows())
@@ -289,6 +290,7 @@ def load_dataset() -> list[dict]:
         f"-verified{counts['correct_datas']}"
         f"-batch{counts['product_batch']}"
     )
+    log.info("HSN dataset loaded: %d codes from %s", len(_DATASET), source_file)
     log.info("dataset.loaded", count=len(_DATASET), version=_VERSION, sources=dict(counts))
     return _DATASET
 
@@ -311,7 +313,7 @@ def get_hsn_by_chapter(chapter: str) -> list[HsnEntry]:
     results: list[HsnEntry] = []
     for row in rows:
         row_chapter = str(row.get("chapter") or row.get("hsn_code", "")[:2])
-        if row_chapter != chapter:
+        if not str(row.get("hsn_code", "")).startswith(chapter):
             continue
         results.append(
             HsnEntry(
@@ -323,3 +325,20 @@ def get_hsn_by_chapter(chapter: str) -> list[HsnEntry]:
             )
         )
     return results
+
+
+def load_hsn_dataset() -> list[HsnEntry]:
+    rows = get_dataset()
+    items: list[HsnEntry] = []
+    for row in rows:
+        chapter = str(row.get("chapter") or row.get("hsn_code", "")[:2])
+        items.append(
+            HsnEntry(
+                hsn_code=str(row.get("hsn_code", "")),
+                description=str(row.get("description", "")),
+                gst_rate=str(row.get("gst_rate", "") or ""),
+                chapter=chapter,
+                section=str(row.get("section", "") or row.get("category", "") or ""),
+            )
+        )
+    return items

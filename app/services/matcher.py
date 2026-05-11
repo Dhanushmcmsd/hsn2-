@@ -378,7 +378,16 @@ class HybridMatcher:
                     index_fresh = False
 
             if not index_fresh:
+                if _FAISS_INDEX_PATH.exists() and _FULL_CSV_PATH.exists():
+                    idx_mtime = _FAISS_INDEX_PATH.stat().st_mtime
+                    if _FULL_CSV_PATH.stat().st_mtime > idx_mtime:
+                        try:
+                            _FAISS_INDEX_PATH.unlink(missing_ok=True)
+                            _FAISS_META_PATH.unlink(missing_ok=True)
+                        except Exception:
+                            pass
                 self._embeddings = self._model.encode(texts, normalize_embeddings=True)
+                faiss.normalize_L2(self._embeddings)
                 dim = self._embeddings.shape[1]
                 self._index = faiss.IndexFlatIP(dim)
                 self._index.add(self._embeddings.astype(np.float32))
@@ -392,6 +401,7 @@ class HybridMatcher:
                     pass
             self._ready = True
             elapsed_ms = int((time.perf_counter() - started) * 1000)
+            log.info("FAISS index built: %d vectors, dim=%d, took %dms", len(texts), dim, elapsed_ms)
             log.info("HSN dataset loaded: %d codes, FAISS index built in %dms", len(self._dataset), elapsed_ms)
         except Exception as e:
             log.warning("matcher.load_error", error=str(e))
