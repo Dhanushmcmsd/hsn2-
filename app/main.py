@@ -15,8 +15,8 @@ from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
 from app.models.database import init_db
 from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
-from app.utils.metrics import metrics_endpoint          # existing Prometheus handler
-from app.utils.scheduler import start_scheduler, stop_scheduler  # GST cron
+from app.utils.metrics import metrics_endpoint
+from app.utils.scheduler import start_scheduler, stop_scheduler
 from app.utils.seed import seed_default_org
 from app.routes import predict, review, health, auth, admin, hsn, admin_orgs, admin_users
 from app.routes import reports, analytics
@@ -53,17 +53,29 @@ async def lifespan(app: FastAPI):
     await init_db()
     await seed_default_org()
     await init_cache()
-    await start_scheduler()          # starts AsyncIOScheduler + registers GST cron
+    await start_scheduler()
     log.info("app.startup", env=settings.APP_ENV)
     yield
-    await stop_scheduler()           # clean shutdown
+    await stop_scheduler()
     log.info("app.shutdown")
 
 
+tags_metadata = [
+    {"name": "Authentication", "description": "Login, API key and token workflows."},
+    {"name": "Classification", "description": "HSN prediction and lookup endpoints."},
+    {"name": "Reports", "description": "GST summary and compliance reports."},
+    {"name": "Admin", "description": "Administrative and governance operations."},
+    {"name": "Health", "description": "System health and observability endpoints."},
+]
+
 app = FastAPI(
-    title="HSN Classifier",
-    version="1.0.0",
-    description="AI-powered HSN/GST code classifier for Indian products",
+    title="HSN Classifier API",
+    version="2.0.0",
+    description="AI-powered HSN code classification and GST rate lookup for Indian businesses.",
+    contact={"name": "Support", "email": "support@yourdomain.com"},
+    license_info={"name": "Proprietary"},
+    terms_of_service="https://yourdomain.com/terms",
+    openapi_tags=tags_metadata,
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -134,5 +146,4 @@ app.include_router(hsn.router)
 app.include_router(reports.router)
 app.include_router(analytics.router)
 
-# Prometheus metrics endpoint — exposes all registered gauges/counters/histograms
 app.add_route("/metrics", metrics_endpoint)

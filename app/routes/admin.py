@@ -2,7 +2,7 @@ from __future__ import annotations
 import csv
 import io
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Query  # --- ADDED: GST ---
+from fastapi import APIRouter, Body, Depends, HTTPException, Query  # --- ADDED: GST ---
 from fastapi.responses import StreamingResponse
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
@@ -254,7 +254,7 @@ async def gst_change_log(
     page: int = Query(default=1, ge=1, description="Page number (1-indexed)"),
     per_page: int = Query(default=50, ge=1, le=200, description="Items per page"),
     hsn_code: str | None = Query(default=None, description="Filter by exact HSN code"),
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
     db: AsyncSession = Depends(get_db),
 ) -> GstChangesResponse:
     """
@@ -320,7 +320,7 @@ async def audit_log_list(
     actor_user_id: int | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
     db: AsyncSession = Depends(get_db),
 ):
     _ = current_user
@@ -427,12 +427,12 @@ async def audit_log_export(
 @router.patch("/api-keys/{key_id}/tier")
 async def admin_update_api_key_tier(
     key_id: int,
-    tier: str = Query(..., description="free | standard | enterprise"),
+    body: dict = Body(..., description='{"tier":"free|standard|enterprise"}'),
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
     _ = current_user
-    normalized = tier.strip().lower()
+    normalized = str(body.get("tier", "")).strip().lower()
     if normalized not in {"free", "standard", "enterprise"}:
         raise HTTPException(status_code=422, detail="tier must be one of: free, standard, enterprise")
     row = (await db.execute(select(ApiKey).where(ApiKey.id == key_id))).scalars().first()
@@ -539,5 +539,3 @@ async def test_webhook(
         raise HTTPException(status_code=404, detail="Webhook not found")
     await deliver_webhooks("gst_rate.changed", {"test": True, "webhook_id": webhook_id})
     return {"status": "sent"}
-    from_date: str | None = Query(default=None),
-    to_date: str | None = Query(default=None),
