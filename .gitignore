@@ -42,3 +42,5 @@ hsn-frontend/.env.local
 *.log
 .DS_Store
 Thumbs.db
+.venv-1/
+.venv*/
