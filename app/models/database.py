@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import AsyncGenerator
 
 from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Float, ForeignKey, Index, Integer, Numeric, String, Text, UniqueConstraint, Uuid, func, select, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -227,7 +228,7 @@ class Branch(Base):
 class AuditLog(Base):
     __tablename__ = "audit_log"
 
-    id = Column(Uuid, primary_key=True, default=uuid.uuid4)
+    id = Column(Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     actor_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     actor_role = Column(String(50), nullable=True)
@@ -235,10 +236,10 @@ class AuditLog(Base):
     event_type = Column(String(100), nullable=False, index=True)
     entity_type = Column(String(50), nullable=True)
     entity_id = Column(String(100), nullable=True)
-    old_value = Column(JSON, nullable=True)
-    new_value = Column(JSON, nullable=True)
+    old_value = Column(JSONB().with_variant(JSON(), "sqlite"), nullable=True)
+    new_value = Column(JSONB().with_variant(JSON(), "sqlite"), nullable=True)
     ip_address = Column(String(45), nullable=True)
-    metadata_json = Column("metadata", JSON, nullable=True)
+    metadata_json = Column("metadata", JSONB().with_variant(JSON(), "sqlite"), nullable=True)
 
 
 class WebhookEndpoint(Base):
@@ -573,6 +574,8 @@ async def _ensure_schema() -> None:
                 """,
                 "CREATE INDEX IF NOT EXISTS idx_audit_log_timestamp ON audit_log (timestamp DESC)",
                 "CREATE INDEX IF NOT EXISTS idx_audit_log_event_type ON audit_log (event_type)",
+                "REVOKE UPDATE, DELETE ON audit_log FROM PUBLIC",
+                "GRANT INSERT, SELECT ON audit_log TO PUBLIC",
                 "CREATE INDEX IF NOT EXISTS idx_predictions_branch ON predictions (branch_id)",
                 "CREATE INDEX IF NOT EXISTS idx_users_branch ON users (branch_id)",
             ):

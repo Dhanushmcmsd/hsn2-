@@ -1,11 +1,15 @@
 from __future__ import annotations
-import csv
-import io
-import structlog
 from datetime import date, datetime, timedelta, timezone
+import csv
+import hashlib
+import io
+import secrets
+import structlog
+from typing import AsyncIterator, List
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request  # --- ADDED: GST ---
 from fastapi.responses import StreamingResponse
-from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
 from jose import JWTError, jwt
@@ -28,8 +32,6 @@ from app.utils.scheduler import trigger_gst_sync_now
 from app.models.database import ApiKey, AuditLog, Branch, GstChangeLog, Organisation, User, UserRole, WebhookEndpoint, get_db       # --- ADDED: GST ---
 from app.services.audit import EventType, log_event
 from app.services.notifier import deliver_webhooks
-import secrets
-import hashlib
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
@@ -49,7 +51,8 @@ async def _require_audit_log_access(
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
             user_id = int(payload.get("sub"))
-            if payload.get("type") != "access":
+            token_type = payload.get("type")
+            if token_type != "access":
                 raise HTTPException(status_code=401, detail="Invalid token")
             user = (await db.execute(select(User).where(User.id == user_id, User.is_active == True))).scalars().first()
             if not user:
@@ -338,7 +341,7 @@ async def gst_change_log(
 
 @router.get("/audit-log")
 async def audit_log_list(
-    branch_id: str | None = Query(default=None),
+    branch_id: UUID | None = Query(default=None),
     event_type: str | None = Query(default=None),
     from_date: date | None = Query(default=None),
     to_date: date | None = Query(default=None),
@@ -398,7 +401,7 @@ async def audit_log_list(
 
 @router.get("/audit-log/export")
 async def audit_log_export(
-    branch_id: str | None = Query(default=None),
+    branch_id: UUID | None = Query(default=None),
     event_type: str | None = Query(default=None),
     from_date: date | None = Query(default=None),
     to_date: date | None = Query(default=None),
@@ -421,7 +424,7 @@ async def audit_log_export(
     if to_date:
         q = q.where(AuditLog.timestamp <= datetime.combine(to_date, datetime.max.time(), tzinfo=timezone.utc))
 
-    async def _csv_rows():
+    async def _csv_rows() -> AsyncIterator[str]:
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow(
@@ -460,7 +463,11 @@ async def audit_log_export(
     return StreamingResponse(
         _csv_rows(),
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"},
+        headers={
+            "Content-Disposition": (
+                f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"
+            )
+        },
     )
 
 
@@ -642,5 +649,3 @@ async def test_webhook(
         raise HTTPException(status_code=404, detail="Webhook not found")
     await deliver_webhooks("gst_rate.changed", {"test": True, "webhook_id": webhook_id})
     return {"status": "sent"}
-    from_date: str | None = Query(default=None),
-    to_date: str | None = Query(default=None),

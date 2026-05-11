@@ -16,14 +16,12 @@ class EventType:
     USER_ROLE_CHANGED = "user.role_changed"
     CBIC_SCRAPE_FAILED = "cbic.scrape_failed"
     BULK_IMPORT = "bulk.import"
-    NOTIFICATION_SENT = "notification.sent"
-    API_KEY_ROTATED = "api_key.rotated"
 
 
 async def log_event(
     session: AsyncSession,
     event_type: str,
-    actor_user_id: int | None,
+    actor_user_id: UUID | int | None,
     actor_role: str | None,
     branch_id: UUID | None,
     entity_type: str,

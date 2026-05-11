@@ -370,7 +370,7 @@ async def fetch_all_gst_rates() -> dict[str, GSTRate]:
                     actor_user_id=None,
                     actor_role="system",
                     branch_id=None,
-                    entity_type="gst_sync",
+                    entity_type="cbic_sync",
                     entity_id=None,
                     metadata={"fallback": "csv", "cbic_url": CBIC_URL, "rates_loaded": len(rates)},
                 )
