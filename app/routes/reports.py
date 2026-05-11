@@ -2,20 +2,21 @@ from __future__ import annotations
 
 import csv
 import io
-from datetime import date, datetime
+from datetime import date, datetime, time, timedelta, timezone
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.database import Branch, HsnCode, Prediction, User, UserRole, get_db
+from app.models.database import Branch, Prediction, User, UserRole, get_db
 from app.models.gst_rate_history import GSTRateHistory
-from app.routes.auth import require_role
+from app.utils.auth import require_role
+from app.services.dataset import get_dataset
 from app.services.report_generator import generate_gst_pdf
 
-router = APIRouter(prefix="/reports", tags=["reports"])
+router = APIRouter(tags=["reports"])
 
 
 def _can_access_branch(current_user: User, branch_id: UUID) -> bool:
@@ -35,46 +36,54 @@ async def gst_summary(
 ):
     if not _can_access_branch(current_user, branch_id):
         raise HTTPException(status_code=403, detail="Not allowed for this branch")
+    start_dt = datetime.combine(from_date, time.min).replace(tzinfo=timezone.utc)
+    end_dt = datetime.combine(to_date + timedelta(days=1), time.min).replace(tzinfo=timezone.utc)
+    normalized_format = format.strip().lower()
     rows = (
         await db.execute(
             select(
                 Prediction.predicted_hsn.label("hsn_code"),
-                HsnCode.description.label("description"),
-                HsnCode.gst_rate_numeric.label("gst_rate"),
                 func.count(Prediction.id).label("transaction_count"),
             )
-            .join(HsnCode, HsnCode.hsn_code == Prediction.predicted_hsn, isouter=True)
             .where(
                 Prediction.branch_id == branch_id,
-                Prediction.created_at >= from_date,
-                Prediction.created_at <= to_date,
+                Prediction.created_at >= start_dt,
+                Prediction.created_at < end_dt,
             )
-            .group_by(Prediction.predicted_hsn, HsnCode.description, HsnCode.gst_rate_numeric)
+            .group_by(Prediction.predicted_hsn)
+            .order_by(func.count(Prediction.id).desc())
         )
     ).all()
+    dataset_lookup = {
+        row.get("hsn_code"): {
+            "description": row.get("description", ""),
+            "gst_rate": row.get("gst_rate"),
+        }
+        for row in get_dataset()
+    }
     payload = [
         {
             "hsn_code": r.hsn_code,
-            "description": r.description,
-            "gst_rate": float(r.gst_rate) if r.gst_rate is not None else None,
+            "description": dataset_lookup.get(r.hsn_code, {}).get("description", ""),
+            "gst_rate": dataset_lookup.get(r.hsn_code, {}).get("gst_rate"),
             "transaction_count": int(r.transaction_count),
-            "effective_from": None,
-            "effective_to": None,
         }
         for r in rows
     ]
-    if format == "json":
+    if normalized_format == "json":
         return payload
-    if format == "csv":
+    if normalized_format == "csv":
         out = io.StringIO()
-        writer = csv.DictWriter(out, fieldnames=list(payload[0].keys()) if payload else ["hsn_code", "description", "gst_rate", "transaction_count", "effective_from", "effective_to"])
+        writer = csv.DictWriter(out, fieldnames=list(payload[0].keys()) if payload else ["hsn_code", "description", "gst_rate", "transaction_count"])
         writer.writeheader()
         for row in payload:
             writer.writerow(row)
         return StreamingResponse(iter([out.getvalue()]), media_type="text/csv", headers={"Content-Disposition": f"attachment; filename=gst_report_{branch_id}_{from_date}_{to_date}.csv"})
-    if format == "pdf":
+    if normalized_format == "pdf":
         branch = (await db.execute(select(Branch).where(Branch.id == branch_id))).scalars().first()
-        pdf_bytes = generate_gst_pdf(payload, branch, f"{from_date} to {to_date}")
+        if branch is None:
+            raise HTTPException(status_code=404, detail="Branch not found")
+        pdf_bytes = generate_gst_pdf(payload, branch.name, branch.gstin or "N/A", f"{from_date} to {to_date}")
         return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=gst_report.pdf"})
     raise HTTPException(status_code=422, detail="format must be json|csv|pdf")
 
@@ -101,15 +110,16 @@ async def gst_rate_changes(
                 GSTRateHistory.effective_from >= from_date,
                 GSTRateHistory.effective_from <= to_date,
             )
+            .order_by(GSTRateHistory.effective_from.desc())
         )
     ).scalars().all()
     return [
         {
             "hsn_code": r.hsn_code,
-            "gst_rate": r.gst_rate,
+            "old_rate": None,
+            "new_rate": r.gst_rate,
             "effective_from": r.effective_from,
             "effective_to": r.effective_to,
-            "source_url": r.source_url,
         }
         for r in rows
     ]
@@ -125,21 +135,24 @@ async def gst_unclassified(
 ):
     if not _can_access_branch(current_user, branch_id):
         raise HTTPException(status_code=403, detail="Not allowed for this branch")
+    start_dt = datetime.combine(from_date, time.min).replace(tzinfo=timezone.utc)
+    end_dt = datetime.combine(to_date + timedelta(days=1), time.min).replace(tzinfo=timezone.utc)
     rows = (
         await db.execute(
             select(Prediction).where(
                 Prediction.branch_id == branch_id,
+                Prediction.created_at >= start_dt,
+                Prediction.created_at < end_dt,
                 or_(Prediction.confidence < 0.7, Prediction.needs_review == True),  # noqa: E712
             )
         )
     ).scalars().all()
     return [
         {
-            "request_id": r.request_id,
-            "input_text": r.input_text,
-            "predicted_hsn": r.predicted_hsn,
+            "id": r.id,
+            "product_description": r.input_text,
+            "hsn_code": r.predicted_hsn,
             "confidence": r.confidence,
-            "needs_review": r.needs_review,
             "created_at": r.created_at,
         }
         for r in rows

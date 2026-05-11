@@ -129,7 +129,7 @@ app.include_router(health.router)
 app.include_router(admin.router)
 app.include_router(admin_orgs.router)
 app.include_router(hsn.router)
-app.include_router(reports.router)
+app.include_router(reports.router, prefix="/reports")
 app.include_router(analytics.router)
 
 # Prometheus metrics endpoint — exposes all registered gauges/counters/histograms
