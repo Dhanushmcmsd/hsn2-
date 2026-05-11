@@ -33,7 +33,7 @@ from app.models.database import async_session
 from app.models.gst_rate_history import GSTRateHistory
 
 logger = logging.getLogger(__name__)
-log = structlog.get_logger()
+log = structlog.get_logger(__name__)
 
 # ---------------------------------------------------------------------------
 # Types
@@ -313,7 +313,7 @@ def _load_from_csv() -> dict[str, GSTRate]:
 
 
 # ---------------------------------------------------------------------------
-# Bulk public API (existing)
+# Bulk public API
 # ---------------------------------------------------------------------------
 
 async def fetch_all_gst_rates() -> dict[str, GSTRate]:
@@ -321,23 +321,45 @@ async def fetch_all_gst_rates() -> dict[str, GSTRate]:
     Fetch all GST rates using the 3-layer fallback chain.
     Results are cached in Redis for 23 hours.
     Returns dict[hsn_code, GSTRate].
+
+    On CBIC scrape failure:
+      - emits a stdlib logger.error (human-readable, Grafana-loggable)
+      - emits a structlog log.error event (machine-parseable, SIEM-ready)
+      - increments Prometheus counter gst_cbic_scrape_failures_total
     """
     cached = await _cache_get(REDIS_KEY)
     if cached:
         logger.info("GST_SYNC: Returning cached GST rates (%d entries)", len(cached))
         return _deserialise_rates(cached)
 
+    cbic_failed = False
     rates: dict[str, GSTRate] = {}
 
     try:
         rates = await _fetch_from_cbic()
     except Exception as exc:
-        logger.warning("GST_SYNC: Layer 1 (CBIC) failed: %s — trying Layer 2", exc)
-        try:
-            raise ValueError("Layer 2 bulk fetch skipped; use fetch_gst_rate_for_hsn for targeted lookup")
-        except Exception as exc2:
-            logger.warning("GST_SYNC: Layer 2 skipped: %s — using CSV fallback", exc2)
-            rates = _load_from_csv()
+        cbic_failed = True
+        logger.warning(
+            "GST_SYNC: Layer 1 (CBIC) failed: %s | url=%s — falling back to CSV",
+            exc,
+            CBIC_URL,
+        )
+        rates = _load_from_csv()
+
+    if cbic_failed:
+        logger.error(
+            "GST_SYNC: CBIC scrape FAILED — response is from CSV fallback (may be stale)."
+            " Check %s",
+            CBIC_URL,
+        )
+        log.error(
+            "gst_fetcher.cbic_scrape_failed_using_fallback",
+            fallback="csv",
+            cbic_url=CBIC_URL,
+            rates_loaded=len(rates),
+        )
+        from app.utils.metrics import gst_cbic_scrape_failures_total
+        gst_cbic_scrape_failures_total.labels(fallback_source="csv").inc()
 
     if rates:
         await _cache_set(REDIS_KEY, _serialise_rates(rates), REDIS_TTL)
@@ -529,7 +551,7 @@ async def fetch_and_sync_gst_rates(
                 else:
                     session.add(
                         GSTRateHistory(
-                            hsn_code="00000000",  # CBIC page-level notifications have no single HSN
+                            hsn_code="00000000",
                             gst_rate=gst_rate,
                             effective_from=effective_from,
                             effective_to=None,
