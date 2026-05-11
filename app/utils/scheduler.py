@@ -107,7 +107,7 @@ async def sync_gst_rates() -> dict:
                         actor_user_id=None,
                         actor_role="system",
                         branch_id=None,
-                        entity_type="gst_rate",
+                        entity_type="gst_rate_history",
                         entity_id=change["hsn_code"],
                         old_value={"rate": change["old_rate"]},
                         new_value={"rate": change["new_rate"]},

@@ -299,8 +299,8 @@ async def predict(
         await log_event(
             session=db,
             event_type=EventType.PREDICTION_CREATED,
-            actor_user_id=None,
-            actor_role="api_key",
+            actor_user_id=getattr(current_user, "id", None),
+            actor_role=getattr(current_user, "role", None),
             branch_id=getattr(record, "branch_id", None),
             entity_type="prediction",
             entity_id=str(record.id) if record.id is not None else None,

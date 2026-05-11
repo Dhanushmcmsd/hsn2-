@@ -68,7 +68,7 @@ async def resolve_review(
         entity_type="prediction",
         entity_id=str(pred.id),
         old_value={"status": old_status},
-        new_value={"status": "resolved", "corrected_hsn": body.corrected_hsn},
+        new_value={"status": "resolved", "corrected_hsn": body.corrected_hsn, "resolved_by": str(current_user.id)},
     )
     await db.commit()
     log.info("review.resolved", request_id=body.request_id, corrected=body.corrected_hsn)
