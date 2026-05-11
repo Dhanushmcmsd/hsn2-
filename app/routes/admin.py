@@ -8,7 +8,8 @@ import structlog
 from typing import AsyncIterator, List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request  # --- ADDED: GST ---
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
@@ -32,9 +33,14 @@ from app.utils.scheduler import trigger_gst_sync_now
 from app.models.database import ApiKey, AuditLog, Branch, GstChangeLog, Organisation, User, UserRole, WebhookEndpoint, get_db       # --- ADDED: GST ---
 from app.services.audit import EventType, log_event
 from app.services.notifier import deliver_webhooks
+from app.utils.cache import get_redis
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
+
+
+class ApiKeyTierUpdate(BaseModel):
+    tier: str
 
 
 async def _require_audit_log_access(
@@ -537,12 +543,12 @@ async def admin_deactivate_user(
 @router.patch("/api-keys/{key_id}/tier")
 async def admin_update_api_key_tier(
     key_id: int,
-    tier: str = Query(..., description="free | standard | enterprise"),
+    body: ApiKeyTierUpdate,
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
     _ = current_user
-    normalized = tier.strip().lower()
+    normalized = body.tier.strip().lower()
     if normalized not in {"free", "standard", "enterprise"}:
         raise HTTPException(status_code=422, detail="tier must be one of: free, standard, enterprise")
     row = (await db.execute(select(ApiKey).where(ApiKey.id == key_id))).scalars().first()
@@ -550,7 +556,24 @@ async def admin_update_api_key_tier(
         raise HTTPException(status_code=404, detail="API key not found")
     old_tier = row.tier
     row.tier = normalized
+    await log_event(
+        session=db,
+        event_type="api_key.tier_changed",
+        actor_user_id=current_user.id,
+        actor_role=current_user.role,
+        branch_id=current_user.branch_id,
+        entity_type="api_key",
+        entity_id=str(row.id),
+        old_value={"tier": old_tier},
+        new_value={"tier": normalized},
+    )
     await db.commit()
+    r = await get_redis()
+    if r:
+        try:
+            await r.delete(f"apikey_tier:{(row.key_hash or '')[:8]}")
+        except Exception:
+            pass
     return {"status": "ok", "key_id": row.id, "old_tier": old_tier, "new_tier": row.tier}
 
 
