@@ -15,7 +15,7 @@ if [ -f "data/hsn_codes_full.csv" ]; then
 fi
 echo "[entrypoint] Migrations complete. Starting server..."
 
-exec gunicorn main:app \
+exec gunicorn app.main:app \
   --worker-class uvicorn.workers.UvicornWorker \
   --workers 1 \
   --bind 0.0.0.0:${PORT:-8000} \
