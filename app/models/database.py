@@ -6,7 +6,11 @@ import re
 from pathlib import Path
 from typing import AsyncGenerator
 
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, Index, Integer, Numeric, String, Text, func, select, text
+from sqlalchemy import (
+    Boolean, Column, Date, DateTime, Float, Index, Integer,
+    Numeric, String, Text, UniqueConstraint, func, select, text
+)
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
@@ -46,6 +50,52 @@ class Base(DeclarativeBase):
     pass
 
 
+# ---------------------------------------------------------------------------
+# Multi-tenancy: Organisation + Branch
+# ---------------------------------------------------------------------------
+
+class Organisation(Base):
+    __tablename__ = "organisations"
+
+    id = Column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+    )
+    name = Column(String(255), nullable=False, unique=True)
+    gstin_prefix = Column(String(15), nullable=True)   # first 2 digits = state code
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_active = Column(Boolean, default=True)
+
+
+class Branch(Base):
+    __tablename__ = "branches"
+
+    id = Column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+    )
+    organisation_id = Column(
+        PG_UUID(as_uuid=True),
+        nullable=False,
+    )
+    name = Column(String(255), nullable=False)
+    city = Column(String(100), nullable=True)
+    state_code = Column(String(2), nullable=True)   # e.g. "KL", "MH"
+    gstin = Column(String(15), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_active = Column(Boolean, default=True)
+
+    __table_args__ = (
+        UniqueConstraint("organisation_id", "name", name="uq_branch_org_name"),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Core application models
+# ---------------------------------------------------------------------------
+
 class User(Base):
     __tablename__ = "users"
 
@@ -57,6 +107,8 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    # multi-tenancy FK — nullable so existing rows are not broken
+    branch_id = Column(PG_UUID(as_uuid=True), nullable=True)
 
 
 class Prediction(Base):
@@ -72,6 +124,8 @@ class Prediction(Base):
     corrected_hsn = Column(String(20), nullable=True)
     api_key_hash = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    # multi-tenancy FK — nullable so existing rows are not broken
+    branch_id = Column(PG_UUID(as_uuid=True), nullable=True)
 
 
 class ApiKey(Base):
@@ -84,6 +138,8 @@ class ApiKey(Base):
     is_active = Column(Boolean, default=True)
     requests_today = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    # multi-tenancy FK — nullable so existing rows are not broken
+    branch_id = Column(PG_UUID(as_uuid=True), nullable=True)
 
 
 class HsnCode(Base):
@@ -178,7 +234,7 @@ class VerifiedProduct(Base):
     )
 
 
-# ── Normalisation helpers ─────────────────────────────────────────────────────────────────────────────────────
+# ── Normalisation helpers ──────────────────────────────────────────────────
 
 _SIZE_PAT = re.compile(
     r'\b\d+(?:\.\d+)?\s*(?:G|GM|GMS|KG|KGS|ML|L|LTR|LITRE|LITER|'
@@ -212,7 +268,7 @@ def _clean_gst(raw) -> str | None:
     return m.group(1) + '%' if m else None
 
 
-# ── Data paths ────────────────────────────────────────────────────────────────────────────────────────
+# ── Data paths ────────────────────────────────────────────────────────────
 
 _DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
 _VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.xlsx"))
@@ -430,7 +486,7 @@ async def _ensure_schema() -> None:
                 """,
                 "CREATE INDEX IF NOT EXISTS idx_gst_change_log_hsn ON gst_change_log (hsn_code)",
                 "CREATE INDEX IF NOT EXISTS idx_gst_change_log_changed_at ON gst_change_log (changed_at DESC)",
-                # gst_rate_history table — one row per (hsn_code, effective_from) rate window
+                # gst_rate_history table
                 """
                 CREATE TABLE IF NOT EXISTS gst_rate_history (
                     id             SERIAL PRIMARY KEY,
@@ -444,6 +500,12 @@ async def _ensure_schema() -> None:
                 """,
                 "CREATE INDEX IF NOT EXISTS idx_gst_rate_history_hsn ON gst_rate_history (hsn_code)",
                 "CREATE INDEX IF NOT EXISTS idx_gst_rate_history_effective_from ON gst_rate_history (effective_from DESC)",
+                # multi-tenancy columns (idempotent)
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+                "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+                "CREATE INDEX IF NOT EXISTS idx_predictions_branch ON predictions(branch_id)",
+                "CREATE INDEX IF NOT EXISTS idx_users_branch ON users(branch_id)",
             ):
                 try:
                     await conn.execute(text(ddl))

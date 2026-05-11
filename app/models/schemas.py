@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from typing import List, Optional
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -162,3 +163,43 @@ class GSTSyncResult(BaseModel):
     unchanged: int
     source: str
     duration_ms: int
+
+
+# ---------------------------------------------------------------------------
+# Organisation + Branch schemas (multi-tenancy)
+# ---------------------------------------------------------------------------
+
+class OrganisationCreate(BaseModel):
+    name: str = Field(..., max_length=255)
+    gstin_prefix: Optional[str] = Field(None, max_length=15)
+
+
+class OrganisationRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    name: str
+    gstin_prefix: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+    branch_count: int = 0
+
+
+class BranchCreate(BaseModel):
+    name: str = Field(..., max_length=255)
+    city: Optional[str] = Field(None, max_length=100)
+    state_code: Optional[str] = Field(None, max_length=2, description="Indian state code e.g. KL, MH")
+    gstin: Optional[str] = Field(None, max_length=15)
+
+
+class BranchRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    organisation_id: UUID
+    name: str
+    city: Optional[str] = None
+    state_code: Optional[str] = None
+    gstin: Optional[str] = None
+    is_active: bool
+    created_at: datetime

@@ -15,7 +15,9 @@ from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
 from app.utils.metrics import metrics_endpoint          # existing Prometheus handler
 from app.utils.scheduler import start_scheduler, stop_scheduler  # GST cron
+from app.utils.seed import seed_default_org             # multi-tenancy seed
 from app.routes import predict, review, health, auth, admin, hsn
+from app.routes.admin_orgs import router as admin_orgs_router
 
 configure_logging()
 log = structlog.get_logger()
@@ -48,6 +50,7 @@ async def lifespan(app: FastAPI):
     await init_db()
     await init_cache()
     await start_scheduler()          # starts AsyncIOScheduler + registers GST cron
+    await seed_default_org()         # ensure HQ org + Default Branch exist
     log.info("app.startup", env=settings.APP_ENV)
     yield
     await stop_scheduler()           # clean shutdown
@@ -96,6 +99,7 @@ app.include_router(review.router)
 app.include_router(health.router)
 app.include_router(admin.router)
 app.include_router(hsn.router)
+app.include_router(admin_orgs_router)   # multi-tenancy admin API
 
 # Prometheus metrics endpoint — exposes all registered gauges/counters/histograms
 app.add_route("/metrics", metrics_endpoint)
