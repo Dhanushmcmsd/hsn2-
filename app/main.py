@@ -5,10 +5,12 @@ from contextlib import asynccontextmanager
 from contextvars import ContextVar
 
 import structlog
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 from app import config as app_config
 from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
@@ -24,6 +26,26 @@ from app.routes import reports, analytics
 configure_logging()
 log = structlog.get_logger()
 request_id_ctx_var: ContextVar[str | None] = ContextVar("request_id", default=None)
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        request_id = str(uuid.uuid4())
+        request_id_ctx_var.set(request_id)
+        request.state.request_id = request_id
+        start = time.perf_counter()
+        response = await call_next(request)
+        elapsed = (time.perf_counter() - start) * 1000
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; object-src 'none'"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        response.headers["X-Request-ID"] = request_id
+        response.headers["X-Process-Time-Ms"] = f"{elapsed:.1f}"
+        return response
 
 
 def _validate_production_config():
@@ -76,39 +98,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.middleware("http")
-async def request_id_middleware(request: Request, call_next):
-    request_id = str(uuid.uuid4())
-    request_id_ctx_var.set(request_id)
-    request.state.request_id = request_id
-    start = time.perf_counter()
-    response = await call_next(request)
-    elapsed = (time.perf_counter() - start) * 1000
-    response.headers["X-Request-ID"] = request_id
-    response.headers["X-Process-Time-Ms"] = f"{elapsed:.1f}"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "DENY"
-    response.headers["X-XSS-Protection"] = "1; mode=block"
-    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; object-src 'none'"
-    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-    return response
+app.add_middleware(SecurityHeadersMiddleware)
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    log.warning(
-        "request_validation_error",
-        path=request.url.path,
-        errors=exc.errors(),
-        request_id=getattr(request.state, "request_id", None),
-    )
+    import logging
+    logging.getLogger(__name__).error("Validation error on %s: %s", request.url, exc.errors())
     return JSONResponse(
         status_code=422,
-        content={"detail": "Invalid request payload", "request_id": getattr(request.state, "request_id", None)},
+        content={"error": "invalid_request", "detail": "One or more fields failed validation."},
     )
 
 
