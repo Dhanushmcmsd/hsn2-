@@ -178,7 +178,7 @@ class VerifiedProduct(Base):
     )
 
 
-# ── Normalisation helpers ─────────────────────────────────────────────────────────────────
+# ── Normalisation helpers ─────────────────────────────────────────────────────────────────────────────────────
 
 _SIZE_PAT = re.compile(
     r'\b\d+(?:\.\d+)?\s*(?:G|GM|GMS|KG|KGS|ML|L|LTR|LITRE|LITER|'
@@ -212,7 +212,7 @@ def _clean_gst(raw) -> str | None:
     return m.group(1) + '%' if m else None
 
 
-# ── Data paths ─────────────────────────────────────────────────────────────────────────
+# ── Data paths ────────────────────────────────────────────────────────────────────────────────────────
 
 _DATA_PATH = Path(os.getenv("HSN_DATA_PATH", "data/hsn_codes.csv"))
 _VERIFIED_DATA_PATH = Path(os.getenv("VERIFIED_DATA_PATH", "data/correct_datas.xlsx"))
@@ -417,7 +417,7 @@ async def _ensure_schema() -> None:
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_effective_from DATE",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_effective_to DATE",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS gst_updated_at TIMESTAMPTZ DEFAULT NOW()",
-                # gst_change_log table (idempotent — CREATE TABLE IF NOT EXISTS)
+                # gst_change_log table (idempotent)
                 """
                 CREATE TABLE IF NOT EXISTS gst_change_log (
                     id          SERIAL PRIMARY KEY,
@@ -430,6 +430,20 @@ async def _ensure_schema() -> None:
                 """,
                 "CREATE INDEX IF NOT EXISTS idx_gst_change_log_hsn ON gst_change_log (hsn_code)",
                 "CREATE INDEX IF NOT EXISTS idx_gst_change_log_changed_at ON gst_change_log (changed_at DESC)",
+                # gst_rate_history table — one row per (hsn_code, effective_from) rate window
+                """
+                CREATE TABLE IF NOT EXISTS gst_rate_history (
+                    id             SERIAL PRIMARY KEY,
+                    hsn_code       VARCHAR(10)   NOT NULL,
+                    gst_rate       FLOAT         NOT NULL,
+                    effective_from DATE          NOT NULL,
+                    effective_to   DATE          NULL,
+                    source_url     VARCHAR(500)  NULL,
+                    fetched_at     TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+                )
+                """,
+                "CREATE INDEX IF NOT EXISTS idx_gst_rate_history_hsn ON gst_rate_history (hsn_code)",
+                "CREATE INDEX IF NOT EXISTS idx_gst_rate_history_effective_from ON gst_rate_history (effective_from DESC)",
             ):
                 try:
                     await conn.execute(text(ddl))

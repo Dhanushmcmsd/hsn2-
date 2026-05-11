@@ -48,8 +48,9 @@ def _is_verified_product_match(candidate) -> bool:
 async def _build_gst_fields(hsn_code: str, db: AsyncSession) -> dict:
     """
     Look up GST rate for a predicted HSN code.
-    Priority: hsn_codes.gst_rate_numeric (DB, already synced) → gst_fetcher live lookup.
+    Priority: hsn_codes.gst_rate_numeric (DB, already synced) -> gst_fetcher live lookup.
     Returns dict with keys: gst_rate, gst_note, gst_effective_from, gst_effective_to
+    All string values are ISO-8601 date strings or None (never "null" / "None").
     """
     gst_rate = None
     gst_note = None
@@ -148,7 +149,7 @@ async def get_gst_dates(hsn_code: str, db: AsyncSession) -> dict:
 
         if eff_from_str:
             gst_note = (
-                f"GST {row.gst_rate:.0f}% — effective {row.effective_from:%d-%b-%Y}"
+                f"GST {row.gst_rate:.0f}% \u2014 effective {row.effective_from:%d-%b-%Y}"
                 + (f" to {row.effective_to:%d-%b-%Y}" if row.effective_to else " (currently active)")
             )
         else:
@@ -334,15 +335,28 @@ async def predict_bulk(
     """
     Accept a JSON array of {"text": "..."} objects.
     Returns a CSV file with columns:
-      Input Text, HSN Code, Description, Confidence, Method, GST %
+      Input Text, HSN Code, Description, Confidence, Method,
+      GST %, GST Effective From, GST Effective To
+    Empty / null values export as empty strings.
     Max 200 items per request.
     """
     if len(body) > 200:
         raise HTTPException(status_code=422, detail="Maximum 200 items per bulk request")
 
+    def _safe(value) -> str:
+        """Convert None / null-ish values to empty string, never 'null' or 'None'."""
+        if value is None:
+            return ""
+        s = str(value).strip()
+        return "" if s.lower() in ("null", "none", "nan") else s
+
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Input Text", "HSN Code", "Description", "Confidence", "Method", "GST %"])
+    writer.writerow([
+        "Input Text", "HSN Code", "Description",
+        "Confidence", "Method",
+        "GST %", "GST Effective From", "GST Effective To",
+    ])
 
     for item in body:
         try:
@@ -353,6 +367,8 @@ async def predict_bulk(
                 top = cached.get("top_match", {})
                 confidence = cached.get("confidence", 0.0)
                 gst_rate = cached.get("gst_rate")
+                gst_effective_from = cached.get("gst_effective_from")
+                gst_effective_to = cached.get("gst_effective_to")
             else:
                 # Verified exact match
                 verified = None
@@ -379,26 +395,35 @@ async def predict_bulk(
                         matcher = get_matcher()
                         matches = matcher.match(item.text, top_k=1)
                     if not matches:
-                        writer.writerow([item.text, "NOT FOUND", "", "", "", "N/A"])
+                        writer.writerow([item.text, "NOT FOUND", "", "", "", "", "", ""])
                         continue
                     top = matches[0]
                     confidence, _ = score_result(top["score"])
 
                 gst_fields = await _build_gst_fields(top["hsn_code"], db)
+                # Overlay from GSTRateHistory if richer data exists
+                gst_dates = await get_gst_dates(top["hsn_code"], db)
+                if gst_dates["gst_effective_from"] is not None:
+                    gst_fields["gst_effective_from"] = gst_dates["gst_effective_from"]
+                    gst_fields["gst_effective_to"] = gst_dates["gst_effective_to"]
                 gst_rate = gst_fields["gst_rate"]
+                gst_effective_from = gst_fields["gst_effective_from"]
+                gst_effective_to = gst_fields["gst_effective_to"]
 
-            gst_str = f"{gst_rate:.2f}" if gst_rate is not None else "N/A"
+            gst_str = f"{gst_rate:.2f}" if gst_rate is not None else ""
             writer.writerow([
                 item.text,
-                top.get("hsn_code", ""),
-                top.get("description", ""),
+                _safe(top.get("hsn_code")),
+                _safe(top.get("description")),
                 f"{confidence:.4f}",
-                top.get("method", ""),
+                _safe(top.get("method")),
                 gst_str,
+                _safe(gst_effective_from),
+                _safe(gst_effective_to),
             ])
         except Exception as exc:
             log.warning("predict.bulk_item_error", text=item.text[:50], error=str(exc))
-            writer.writerow([item.text, "ERROR", str(exc)[:80], "", "", "N/A"])
+            writer.writerow([item.text, "ERROR", str(exc)[:80], "", "", "", "", ""])
 
     output.seek(0)
     return StreamingResponse(
