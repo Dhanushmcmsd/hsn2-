@@ -228,7 +228,12 @@ class Branch(Base):
 class AuditLog(Base):
     __tablename__ = "audit_log"
 
-    id = Column(Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
+    id = Column(
+        Uuid,
+        primary_key=True,
+        default=uuid.uuid4,
+        server_default=None if _is_sqlite else text("gen_random_uuid()"),
+    )
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     actor_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     actor_role = Column(String(50), nullable=True)
