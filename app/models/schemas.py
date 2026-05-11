@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import re
 from typing import List, Optional
 from uuid import UUID
@@ -226,3 +226,92 @@ class BranchUpdate(BaseModel):
 class UserRoleUpdate(BaseModel):
     role: str = Field(..., min_length=3, max_length=50)
     branch_id: Optional[UUID] = None
+
+
+# ---------------------------------------------------------------------------
+# Step 5 — Input sanitisation helpers (re-usable validators)
+# ---------------------------------------------------------------------------
+
+def _sanitise_description(v: object) -> str:
+    """Strip, length-limit and control-char check for product_description."""
+    v = str(v).strip()
+    if len(v) > 2000:
+        raise ValueError("max length is 2000 characters")
+    if re.search(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", v):
+        raise ValueError("contains invalid control characters")
+    return v
+
+
+def _validate_hsn_code(v: object) -> str:
+    """Must be 2-8 decimal digits only."""
+    if not re.match(r"^\d{2,8}$", str(v)):
+        raise ValueError("must be 2\u20138 digits only")
+    return str(v)
+
+
+def _validate_date(v: object) -> date:
+    """Cannot be in the future or more than 10 years in the past."""
+    if isinstance(v, str):
+        v = date.fromisoformat(v)
+    if v > date.today():
+        raise ValueError("cannot be in the future")
+    if v < date.today() - timedelta(days=3650):
+        raise ValueError("cannot be more than 10 years in the past")
+    return v
+
+
+# ---------------------------------------------------------------------------
+# Report / filter schemas with sanitised fields
+# ---------------------------------------------------------------------------
+
+class ProductLookupRequest(BaseModel):
+    """Generic product lookup with sanitised description and hsn_code."""
+    product_description: Optional[str] = None
+    hsn_code: Optional[str] = None
+
+    @field_validator("product_description", mode="before")
+    @classmethod
+    def sanitise_description(cls, v: object) -> str | None:
+        if v is None:
+            return None
+        return _sanitise_description(v)
+
+    @field_validator("hsn_code", mode="before")
+    @classmethod
+    def validate_hsn_code(cls, v: object) -> str | None:
+        if v is None:
+            return None
+        return _validate_hsn_code(v)
+
+
+class DateRangeFilter(BaseModel):
+    """Date range filter schema with past/future guard rails."""
+    from_date: Optional[date] = None
+    to_date: Optional[date] = None
+
+    @field_validator("from_date", "to_date", mode="before")
+    @classmethod
+    def validate_dates(cls, v: object) -> date | None:
+        if v is None:
+            return None
+        return _validate_date(v)
+
+
+class ReportRequest(DateRangeFilter):
+    """Full report request schema: date range + optional HSN filter."""
+    hsn_code: Optional[str] = None
+    product_description: Optional[str] = None
+
+    @field_validator("hsn_code", mode="before")
+    @classmethod
+    def validate_hsn_code(cls, v: object) -> str | None:
+        if v is None:
+            return None
+        return _validate_hsn_code(v)
+
+    @field_validator("product_description", mode="before")
+    @classmethod
+    def sanitise_description(cls, v: object) -> str | None:
+        if v is None:
+            return None
+        return _sanitise_description(v)
