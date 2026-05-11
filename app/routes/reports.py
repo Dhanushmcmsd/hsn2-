@@ -7,7 +7,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from sqlalchemy import and_, func, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.database import Branch, HsnCode, Prediction, User, UserRole, get_db
@@ -118,6 +118,8 @@ async def gst_rate_changes(
 @router.get("/gst/unclassified")
 async def gst_unclassified(
     branch_id: UUID,
+    from_date: date,
+    to_date: date,
     current_user: User = Depends(require_role(UserRole.AUDITOR, UserRole.BRANCH_MANAGER, UserRole.REGIONAL_ADMIN, UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
@@ -127,7 +129,7 @@ async def gst_unclassified(
         await db.execute(
             select(Prediction).where(
                 Prediction.branch_id == branch_id,
-                and_(Prediction.confidence < 0.7, Prediction.needs_review == True),  # noqa: E712
+                or_(Prediction.confidence < 0.7, Prediction.needs_review == True),  # noqa: E712
             )
         )
     ).scalars().all()
