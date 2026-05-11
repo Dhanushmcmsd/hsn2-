@@ -21,14 +21,11 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Comma-separated list of allowed CORS origins.
-    # On Render, set this env var to include all your Vercel URLs:
-    #   https://hsn2.vercel.app,https://hsn2-git-main-krithu.vercel.app,https://hsn2-krithu.vercel.app,https://hsn-app-krithu.vercel.app
     CORS_ORIGINS: str = (
         "http://localhost:3000,"
         "http://localhost:3001,"
         "https://hsn2.vercel.app,"
         "https://hsn-app.vercel.app,"
-        
     )
 
     LOG_LEVEL: str = "INFO"
@@ -43,6 +40,14 @@ class Settings(BaseSettings):
     AMBIGUITY_THRESHOLD: float = 0.10
     CACHE_TTL: int = 3600
     RATE_LIMIT_PER_MINUTE: int = 60
+
+    # ── Notification / Email ─────────────────────────────────────────────────
+    SENDGRID_API_KEY: str = ""
+    NOTIFICATION_EMAIL_FROM: str = "notifications@hsnclassifier.in"
+    SMTP_HOST: str = "localhost"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASS: str = ""
 
     @property
     def async_database_url(self) -> str:
@@ -59,12 +64,11 @@ class Settings(BaseSettings):
         query_params = dict(parse_qsl(parsed.query, keep_blank_values=True))
         query_params["statement_cache_size"] = "0"
         query_params["prepared_statement_cache_size"] = "0"
-        # Remove sslmode — asyncpg rejects it as a connect kwarg;
-        # SSL is handled via connect_args in database.py
         query_params.pop("sslmode", None)
 
         url = urlunparse(parsed._replace(query=urlencode(query_params, doseq=True)))
         return url
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]

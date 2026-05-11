@@ -11,8 +11,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
-from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
-from sqlalchemy import text, func, select                   # --- ADDED: GST ---
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text, func, select
 from jose import JWTError, jwt
 from app.utils.auth import require_admin_key
 from app.routes.auth import require_role
@@ -21,8 +21,8 @@ from app.models.schemas import (
     ImportantProduct,
     ProductAnalysisRequest,
     ProductAnalysisResponse,
-    GstChangeItem,          # --- ADDED: GST ---
-    GstChangesResponse,     # --- ADDED: GST ---
+    GstChangeItem,
+    GstChangesResponse,
     UserRoleUpdate,
 )
 from app.utils.text_utils import normalize_product_description, extract_pack_size
@@ -30,7 +30,7 @@ from app.services.matcher import get_matcher
 from app.services.confidence import score_result
 from app.config import settings
 from app.utils.scheduler import trigger_gst_sync_now
-from app.models.database import ApiKey, AuditLog, Branch, GstChangeLog, Organisation, User, UserRole, WebhookEndpoint, get_db       # --- ADDED: GST ---
+from app.models.database import ApiKey, AuditLog, Branch, GstChangeLog, Organisation, User, UserRole, WebhookEndpoint, get_db
 from app.services.audit import EventType, log_event
 from app.services.notifier import deliver_webhooks
 from app.utils.cache import get_redis
@@ -41,6 +41,11 @@ log = structlog.get_logger()
 
 class ApiKeyTierUpdate(BaseModel):
     tier: str
+
+
+class WebhookCreate(BaseModel):
+    url: str
+    events: List[str] = ["gst_rate.changed"]
 
 
 async def _require_audit_log_access(
@@ -120,7 +125,6 @@ async def dataset_integrity(admin_key: str = Depends(require_admin_key)):
 
 @router.get("/important-products", response_model=List[ImportantProduct])
 async def get_important_products_endpoint(admin_key: str = Depends(require_admin_key)):
-    """Get all important products."""
     products = get_important_products()
     return [ImportantProduct(**p) for p in products]
 
@@ -130,7 +134,6 @@ async def analyze_product(
     body: ProductAnalysisRequest,
     admin_key: str = Depends(require_admin_key)
 ) -> ProductAnalysisResponse:
-    """Analyze a single important product and potentially auto-update HSN."""
     products = get_important_products()
 
     if body.product_index < 0 or body.product_index >= len(products):
@@ -196,7 +199,6 @@ async def analyze_product(
 
 @router.post("/important-products/batch-analyze")
 async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
-    """Analyze all important products that don't have HSN codes yet."""
     products = get_important_products()
     results = []
 
@@ -207,8 +209,7 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
         pack_size = extract_pack_size(product["product_name"])
         matcher = get_matcher()
         best_query, cleaned_description, matches = _match_best_product_query(
-            matcher,
-            product["product_name"],
+            matcher, product["product_name"],
         )
 
         product["cleaned_description"] = cleaned_description
@@ -251,26 +252,14 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
     return {"results": results, "total_processed": len(results)}
 
 
-# kept for backwards compat — redirects to the canonical /gst/sync
+# kept for backwards compat
 @router.post("/gst-sync", include_in_schema=False)
 async def manual_gst_sync_legacy(admin_key: str = Depends(require_admin_key)) -> dict:
     return await manual_gst_sync(admin_key=admin_key)
 
 
-# ---------------------------------------------------------------------------
-# GST endpoints                                          # --- ADDED: GST ---
-# ---------------------------------------------------------------------------
-
-@router.post(
-    "/gst/sync",
-    summary="Manually trigger the nightly GST rate sync",
-)
+@router.post("/gst/sync", summary="Manually trigger the nightly GST rate sync")
 async def manual_gst_sync(admin_key: str = Depends(require_admin_key)) -> dict:
-    """
-    Immediately runs the same job that the nightly cron fires at 02:00 IST.
-    Protected by ADMIN_API_KEY.
-    Returns: {status, updated, unchanged, source, duration_ms}
-    """
     try:
         result = await trigger_gst_sync_now()
         log.info("admin.gst_sync_triggered", **result)
@@ -280,45 +269,27 @@ async def manual_gst_sync(admin_key: str = Depends(require_admin_key)) -> dict:
         raise HTTPException(status_code=500, detail=f"GST sync failed: {exc}")
 
 
-@router.get(
-    "/gst/changes",
-    response_model=GstChangesResponse,
-    summary="Paginated audit log of GST rate changes",
-)
+@router.get("/gst/changes", response_model=GstChangesResponse, summary="Paginated audit log of GST rate changes")
 async def gst_change_log(
-    page: int = Query(default=1, ge=1, description="Page number (1-indexed)"),
-    per_page: int = Query(default=50, ge=1, le=200, description="Items per page"),
-    hsn_code: str | None = Query(default=None, description="Filter by exact HSN code"),
+    page: int = Query(default=1, ge=1),
+    per_page: int = Query(default=50, ge=1, le=200),
+    hsn_code: str | None = Query(default=None),
     admin_key: str = Depends(require_admin_key),
     db: AsyncSession = Depends(get_db),
 ) -> GstChangesResponse:
-    """
-    Returns paginated rows from gst_change_log.
-    Each item: {id, hsn_code, old_rate, new_rate, changed_at, source, notes}
-    Ordered by changed_at DESC (most recent first).
-    """
     offset = (page - 1) * per_page
-
     try:
-        # Build base query
         base_q = select(GstChangeLog)
         count_q = select(func.count()).select_from(GstChangeLog)
-
         if hsn_code:
             base_q = base_q.where(GstChangeLog.hsn_code == hsn_code)
             count_q = count_q.where(GstChangeLog.hsn_code == hsn_code)
-
-        total_result = await db.execute(count_q)
-        total = total_result.scalar() or 0
-
-        rows_result = await db.execute(
-            base_q
-            .order_by(GstChangeLog.changed_at.desc())
-            .limit(per_page)
-            .offset(offset)
-        )
-        rows = rows_result.scalars().all()
-
+        total = (await db.execute(count_q)).scalar() or 0
+        rows = (
+            await db.execute(
+                base_q.order_by(GstChangeLog.changed_at.desc()).limit(per_page).offset(offset)
+            )
+        ).scalars().all()
         items = [
             GstChangeItem(
                 id=row.id,
@@ -327,22 +298,14 @@ async def gst_change_log(
                 new_rate=float(row.new_rate),
                 changed_at=row.changed_at,
                 source=row.source,
-                notes=None,   # reserved for future use
+                notes=None,
             )
             for row in rows
         ]
-
-        return GstChangesResponse(
-            items=items,
-            total=total,
-            page=page,
-            per_page=per_page,
-        )
-
+        return GstChangesResponse(items=items, total=total, page=page, per_page=per_page)
     except Exception as exc:
         log.error("admin.gst_changes_failed", error=str(exc))
         raise HTTPException(status_code=500, detail=f"Failed to fetch GST change log: {exc}")
-# --- ADDED: GST ---
 
 
 @router.get("/audit-log")
@@ -433,35 +396,21 @@ async def audit_log_export(
     async def _csv_rows() -> AsyncIterator[str]:
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow(
-            [
-                "id", "timestamp", "actor_user_id", "actor_role", "branch_id",
-                "event_type", "entity_type", "entity_id", "old_value", "new_value",
-                "ip_address", "metadata",
-            ]
-        )
+        writer.writerow(["id", "timestamp", "actor_user_id", "actor_role", "branch_id",
+                         "event_type", "entity_type", "entity_id", "old_value", "new_value",
+                         "ip_address", "metadata"])
         yield output.getvalue()
         output.seek(0)
         output.truncate(0)
 
         stream = await db.stream(q.order_by(AuditLog.timestamp.desc()).limit(limit).offset(offset))
         async for r in stream.scalars():
-            writer.writerow(
-                [
-                    str(r.id),
-                    r.timestamp.isoformat() if r.timestamp else "",
-                    r.actor_user_id if r.actor_user_id is not None else "",
-                    r.actor_role or "",
-                    str(r.branch_id) if r.branch_id else "",
-                    r.event_type,
-                    r.entity_type or "",
-                    r.entity_id or "",
-                    r.old_value or {},
-                    r.new_value or {},
-                    r.ip_address or "",
-                    r.metadata_json or {},
-                ]
-            )
+            writer.writerow([str(r.id), r.timestamp.isoformat() if r.timestamp else "",
+                             r.actor_user_id if r.actor_user_id is not None else "",
+                             r.actor_role or "", str(r.branch_id) if r.branch_id else "",
+                             r.event_type, r.entity_type or "", r.entity_id or "",
+                             r.old_value or {}, r.new_value or {}, r.ip_address or "",
+                             r.metadata_json or {}])
             yield output.getvalue()
             output.seek(0)
             output.truncate(0)
@@ -469,11 +418,7 @@ async def audit_log_export(
     return StreamingResponse(
         _csv_rows(),
         media_type="text/csv",
-        headers={
-            "Content-Disposition": (
-                f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"
-            )
-        },
+        headers={"Content-Disposition": f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"},
     )
 
 
@@ -485,14 +430,9 @@ async def admin_list_users(
     _ = current_user
     rows = (await db.execute(select(User).order_by(User.created_at.desc()))).scalars().all()
     return [
-        {
-            "id": row.id,
-            "email": row.email,
-            "role": row.role,
-            "branch_id": str(row.branch_id) if row.branch_id else None,
-            "last_login": None,
-            "is_active": row.is_active,
-        }
+        {"id": row.id, "email": row.email, "role": row.role,
+         "branch_id": str(row.branch_id) if row.branch_id else None,
+         "last_login": None, "is_active": row.is_active}
         for row in rows
     ]
 
@@ -511,15 +451,10 @@ async def admin_update_user_role(
     target.role = body.role
     target.branch_id = body.branch_id
     await log_event(
-        session=db,
-        event_type=EventType.USER_ROLE_CHANGED,
-        actor_user_id=current_user.id,
-        actor_role=current_user.role,
-        branch_id=current_user.branch_id,
-        entity_type="user",
-        entity_id=str(target.id),
-        old_value={"role": old_role},
-        new_value={"role": body.role},
+        session=db, event_type=EventType.USER_ROLE_CHANGED,
+        actor_user_id=current_user.id, actor_role=current_user.role,
+        branch_id=current_user.branch_id, entity_type="user", entity_id=str(target.id),
+        old_value={"role": old_role}, new_value={"role": body.role},
     )
     await db.commit()
     return {"status": "ok", "user_id": target.id, "old_role": old_role, "new_role": target.role}
@@ -557,15 +492,10 @@ async def admin_update_api_key_tier(
     old_tier = row.tier
     row.tier = normalized
     await log_event(
-        session=db,
-        event_type="api_key.tier_changed",
-        actor_user_id=current_user.id,
-        actor_role=current_user.role,
-        branch_id=current_user.branch_id,
-        entity_type="api_key",
-        entity_id=str(row.id),
-        old_value={"tier": old_tier},
-        new_value={"tier": normalized},
+        session=db, event_type="api_key.tier_changed",
+        actor_user_id=current_user.id, actor_role=current_user.role,
+        branch_id=current_user.branch_id, entity_type="api_key", entity_id=str(row.id),
+        old_value={"tier": old_tier}, new_value={"tier": normalized},
     )
     await db.commit()
     r = await get_redis()
@@ -589,23 +519,15 @@ async def rotate_api_key(
     raw_key = f"hsn_{secrets.token_urlsafe(32)}"
     new_key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
     new_key = ApiKey(
-        key_hash=new_key_hash,
-        label=f"{row.label or 'rotated'}-rotated",
-        tier=row.tier,
-        branch_id=row.branch_id,
-        role=row.role,
-        is_active=True,
+        key_hash=new_key_hash, label=f"{row.label or 'rotated'}-rotated",
+        tier=row.tier, branch_id=row.branch_id, role=row.role, is_active=True,
     )
     db.add(new_key)
     row.expires_at = datetime.now(timezone.utc) + timedelta(days=7)
     await log_event(
-        session=db,
-        event_type=EventType.API_KEY_ROTATED,
-        actor_user_id=current_user.id,
-        actor_role=current_user.role,
-        branch_id=current_user.branch_id,
-        entity_type="api_key",
-        entity_id=str(row.id),
+        session=db, event_type=EventType.API_KEY_ROTATED,
+        actor_user_id=current_user.id, actor_role=current_user.role,
+        branch_id=current_user.branch_id, entity_type="api_key", entity_id=str(row.id),
         new_value={"new_key_id": None},
     )
     await db.commit()
@@ -613,10 +535,13 @@ async def rotate_api_key(
     return {"status": "ok", "new_api_key": raw_key, "new_key_id": new_key.id, "old_key_expires_at": row.expires_at}
 
 
-@router.post("/webhooks")
+# ---------------------------------------------------------------------------
+# Webhook endpoints (HQ_ADMIN only)
+# ---------------------------------------------------------------------------
+
+@router.post("/webhooks", summary="Register a new webhook endpoint")
 async def register_webhook(
-    url: str = Query(...),
-    events: str = Query(default="gst_rate.changed"),
+    body: WebhookCreate,
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
@@ -631,23 +556,34 @@ async def register_webhook(
     if org_id is None:
         raise HTTPException(status_code=400, detail="No organisation configured")
     secret = secrets.token_hex(32)
-    row = WebhookEndpoint(org_id=org_id, url=url, secret=secret, events=[e.strip() for e in events.split(",") if e.strip()], is_active=True)
+    row = WebhookEndpoint(
+        org_id=org_id, url=body.url, secret=secret,
+        events=body.events, is_active=True,
+    )
     db.add(row)
     await db.commit()
     await db.refresh(row)
     return {"id": str(row.id), "url": row.url, "events": row.events, "secret": secret}
 
 
-@router.get("/webhooks")
+@router.get("/webhooks", summary="List webhook endpoints for current org")
 async def list_webhooks(
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
-    rows = (await db.execute(select(WebhookEndpoint))).scalars().all()
+    org_id = None
+    if current_user.branch_id:
+        branch = (await db.execute(select(Branch).where(Branch.id == current_user.branch_id))).scalars().first()
+        if branch:
+            org_id = branch.organisation_id
+    q = select(WebhookEndpoint)
+    if org_id:
+        q = q.where(WebhookEndpoint.org_id == org_id)
+    rows = (await db.execute(q)).scalars().all()
     return [{"id": str(r.id), "url": r.url, "events": r.events, "is_active": r.is_active} for r in rows]
 
 
-@router.delete("/webhooks/{webhook_id}")
+@router.delete("/webhooks/{webhook_id}", summary="Soft-delete (deactivate) a webhook")
 async def delete_webhook(
     webhook_id: str,
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
@@ -656,12 +592,12 @@ async def delete_webhook(
     row = (await db.execute(select(WebhookEndpoint).where(WebhookEndpoint.id == webhook_id))).scalars().first()
     if not row:
         raise HTTPException(status_code=404, detail="Webhook not found")
-    await db.delete(row)
+    row.is_active = False  # soft-delete per spec
     await db.commit()
-    return {"status": "deleted"}
+    return {"status": "deleted", "id": webhook_id}
 
 
-@router.post("/webhooks/{webhook_id}/test")
+@router.post("/webhooks/{webhook_id}/test", summary="Send a test payload to a webhook")
 async def test_webhook(
     webhook_id: str,
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
@@ -670,5 +606,5 @@ async def test_webhook(
     row = (await db.execute(select(WebhookEndpoint).where(WebhookEndpoint.id == webhook_id))).scalars().first()
     if not row:
         raise HTTPException(status_code=404, detail="Webhook not found")
-    await deliver_webhooks("gst_rate.changed", {"test": True, "webhook_id": webhook_id})
+    await deliver_webhooks("webhook.test", {"message": "Test ping"})
     return {"status": "sent"}
