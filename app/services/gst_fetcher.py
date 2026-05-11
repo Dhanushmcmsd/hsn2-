@@ -437,7 +437,12 @@ async def fetch_latest_gst_notifications() -> list[dict]:
         follow_redirects=True,
     ) as client:
         response = await client.get(CBIC_RATE_URL)
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise httpx.HTTPStatusError(
+                f"Failed to fetch CBIC notifications: {response.status_code}",
+                request=response.request,
+                response=response,
+            )
 
     soup = BeautifulSoup(response.text, "lxml")
 

@@ -2,11 +2,13 @@ from __future__ import annotations
 import csv
 import io
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Query  # --- ADDED: GST ---
+from datetime import date, datetime, timedelta, timezone
+from fastapi import APIRouter, Depends, HTTPException, Query, Request  # --- ADDED: GST ---
 from fastapi.responses import StreamingResponse
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
+from jose import JWTError, jwt
 from app.utils.auth import require_admin_key
 from app.routes.auth import require_role
 from app.services.important_products import get_important_products, save_important_products
@@ -28,10 +30,37 @@ from app.services.audit import EventType, log_event
 from app.services.notifier import deliver_webhooks
 import secrets
 import hashlib
-from datetime import datetime, timedelta, timezone
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
+
+
+async def _require_audit_log_access(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+    x_api_key = request.headers.get("X-API-Key")
+    if x_api_key and x_api_key == settings.ADMIN_API_KEY:
+        return None
+
+    auth = request.headers.get("Authorization", "")
+    if auth.startswith("Bearer "):
+        token = auth[7:]
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+            user_id = int(payload.get("sub"))
+            if payload.get("type") != "access":
+                raise HTTPException(status_code=401, detail="Invalid token")
+            user = (await db.execute(select(User).where(User.id == user_id, User.is_active == True))).scalars().first()
+            if not user:
+                raise HTTPException(status_code=401, detail="Invalid token")
+            if user.role not in {UserRole.HQ_ADMIN.value, UserRole.AUDITOR.value}:
+                raise HTTPException(status_code=403, detail="Insufficient role")
+            return user
+        except (JWTError, ValueError, TypeError):
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+    raise HTTPException(status_code=403, detail="HQ_ADMIN/AUDITOR role or admin API key required")
 
 
 def _match_best_product_query(matcher, original_name: str) -> tuple[str, str, list[dict]]:
@@ -311,13 +340,15 @@ async def gst_change_log(
 async def audit_log_list(
     branch_id: str | None = Query(default=None),
     event_type: str | None = Query(default=None),
+    from_date: date | None = Query(default=None),
+    to_date: date | None = Query(default=None),
     actor_user_id: int | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
+    _access: User | None = Depends(_require_audit_log_access),
     db: AsyncSession = Depends(get_db),
 ):
-    _ = current_user
+    _ = _access
     q = select(AuditLog)
     cq = select(func.count()).select_from(AuditLog)
     if branch_id:
@@ -330,11 +361,13 @@ async def audit_log_list(
         q = q.where(AuditLog.actor_user_id == actor_user_id)
         cq = cq.where(AuditLog.actor_user_id == actor_user_id)
     if from_date:
-        q = q.where(AuditLog.timestamp >= from_date)
-        cq = cq.where(AuditLog.timestamp >= from_date)
+        from_dt = datetime.combine(from_date, datetime.min.time(), tzinfo=timezone.utc)
+        q = q.where(AuditLog.timestamp >= from_dt)
+        cq = cq.where(AuditLog.timestamp >= from_dt)
     if to_date:
-        q = q.where(AuditLog.timestamp <= to_date)
-        cq = cq.where(AuditLog.timestamp <= to_date)
+        to_dt = datetime.combine(to_date, datetime.max.time(), tzinfo=timezone.utc)
+        q = q.where(AuditLog.timestamp <= to_dt)
+        cq = cq.where(AuditLog.timestamp <= to_dt)
 
     total = (await db.execute(cq)).scalar() or 0
     rows = (
@@ -367,52 +400,65 @@ async def audit_log_list(
 async def audit_log_export(
     branch_id: str | None = Query(default=None),
     event_type: str | None = Query(default=None),
-    from_date: str | None = Query(default=None),
-    to_date: str | None = Query(default=None),
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
+    from_date: date | None = Query(default=None),
+    to_date: date | None = Query(default=None),
+    actor_user_id: int | None = Query(default=None),
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    _access: User | None = Depends(_require_audit_log_access),
     db: AsyncSession = Depends(get_db),
 ):
-    _ = current_user
+    _ = _access
     q = select(AuditLog)
     if branch_id:
         q = q.where(AuditLog.branch_id == branch_id)
     if event_type:
         q = q.where(AuditLog.event_type == event_type)
+    if actor_user_id is not None:
+        q = q.where(AuditLog.actor_user_id == actor_user_id)
     if from_date:
-        q = q.where(AuditLog.timestamp >= from_date)
+        q = q.where(AuditLog.timestamp >= datetime.combine(from_date, datetime.min.time(), tzinfo=timezone.utc))
     if to_date:
-        q = q.where(AuditLog.timestamp <= to_date)
-    rows = (await db.execute(q.order_by(AuditLog.timestamp.desc()))).scalars().all()
+        q = q.where(AuditLog.timestamp <= datetime.combine(to_date, datetime.max.time(), tzinfo=timezone.utc))
 
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(
-        [
-            "id", "timestamp", "actor_user_id", "actor_role", "branch_id",
-            "event_type", "entity_type", "entity_id", "old_value", "new_value",
-            "ip_address", "metadata",
-        ]
-    )
-    for r in rows:
+    async def _csv_rows():
+        output = io.StringIO()
+        writer = csv.writer(output)
         writer.writerow(
             [
-                str(r.id),
-                r.timestamp.isoformat() if r.timestamp else "",
-                r.actor_user_id if r.actor_user_id is not None else "",
-                r.actor_role or "",
-                str(r.branch_id) if r.branch_id else "",
-                r.event_type,
-                r.entity_type or "",
-                r.entity_id or "",
-                r.old_value or {},
-                r.new_value or {},
-                r.ip_address or "",
-                r.metadata_json or {},
+                "id", "timestamp", "actor_user_id", "actor_role", "branch_id",
+                "event_type", "entity_type", "entity_id", "old_value", "new_value",
+                "ip_address", "metadata",
             ]
         )
-    output.seek(0)
+        yield output.getvalue()
+        output.seek(0)
+        output.truncate(0)
+
+        stream = await db.stream(q.order_by(AuditLog.timestamp.desc()).limit(limit).offset(offset))
+        async for r in stream.scalars():
+            writer.writerow(
+                [
+                    str(r.id),
+                    r.timestamp.isoformat() if r.timestamp else "",
+                    r.actor_user_id if r.actor_user_id is not None else "",
+                    r.actor_role or "",
+                    str(r.branch_id) if r.branch_id else "",
+                    r.event_type,
+                    r.entity_type or "",
+                    r.entity_id or "",
+                    r.old_value or {},
+                    r.new_value or {},
+                    r.ip_address or "",
+                    r.metadata_json or {},
+                ]
+            )
+            yield output.getvalue()
+            output.seek(0)
+            output.truncate(0)
+
     return StreamingResponse(
-        iter([output.getvalue()]),
+        _csv_rows(),
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"},
     )

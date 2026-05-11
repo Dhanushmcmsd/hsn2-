@@ -587,6 +587,11 @@ async def _ensure_schema() -> None:
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS region_code VARCHAR(10)",
                 "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
                 "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'branch_user'",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS tier VARCHAR(20) NOT NULL DEFAULT 'standard'",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS last_used_at TIMESTAMPTZ",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS rotation_reminder_sent BOOLEAN NOT NULL DEFAULT FALSE",
             ):
                 try:
                     await conn.execute(text(alter))
@@ -617,6 +622,16 @@ async def _ensure_runtime_alters() -> None:
             key_cols = await conn.run_sync(_sqlite_columns, "api_keys")
             if "branch_id" not in key_cols:
                 await conn.execute(text("ALTER TABLE api_keys ADD COLUMN branch_id VARCHAR(36)"))
+            if "role" not in key_cols:
+                await conn.execute(text("ALTER TABLE api_keys ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'branch_user'"))
+            if "tier" not in key_cols:
+                await conn.execute(text("ALTER TABLE api_keys ADD COLUMN tier VARCHAR(20) NOT NULL DEFAULT 'standard'"))
+            if "expires_at" not in key_cols:
+                await conn.execute(text("ALTER TABLE api_keys ADD COLUMN expires_at TIMESTAMP"))
+            if "last_used_at" not in key_cols:
+                await conn.execute(text("ALTER TABLE api_keys ADD COLUMN last_used_at TIMESTAMP"))
+            if "rotation_reminder_sent" not in key_cols:
+                await conn.execute(text("ALTER TABLE api_keys ADD COLUMN rotation_reminder_sent BOOLEAN NOT NULL DEFAULT 0"))
 
         for ddl in (
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'branch_user'",
@@ -624,6 +639,11 @@ async def _ensure_runtime_alters() -> None:
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
             "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
             "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS branch_id UUID REFERENCES branches(id)",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS role VARCHAR(50) NOT NULL DEFAULT 'branch_user'",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS tier VARCHAR(20) NOT NULL DEFAULT 'standard'",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS last_used_at TIMESTAMPTZ",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS rotation_reminder_sent BOOLEAN NOT NULL DEFAULT FALSE",
             "CREATE INDEX IF NOT EXISTS idx_predictions_branch ON predictions (branch_id)",
             "CREATE INDEX IF NOT EXISTS idx_users_branch ON users (branch_id)",
         ):

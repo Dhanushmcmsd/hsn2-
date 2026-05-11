@@ -1,0 +1,9 @@
+repos:
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.3
+    hooks:
+      - id: bandit
+        args: ["-r", "app/", "-ll", "--skip", "B101"]
+        name: bandit security scan
+        description: Runs bandit on the app/ directory, fails on HIGH severity
+        pass_filenames: false
