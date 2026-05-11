@@ -2,9 +2,10 @@ from __future__ import annotations
 import csv
 import io
 import structlog
+from datetime import date as _date
 from fastapi import APIRouter, Depends, HTTPException, Query  # --- ADDED: GST ---
 from fastapi.responses import StreamingResponse
-from typing import List
+from typing import List, AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
 from app.utils.auth import require_admin_key
@@ -307,16 +308,23 @@ async def gst_change_log(
 # --- ADDED: GST ---
 
 
+# ---------------------------------------------------------------------------
+# Audit log endpoints  (Step 5 — immutable compliance audit trail)
+# ---------------------------------------------------------------------------
+
 @router.get("/audit-log")
 async def audit_log_list(
     branch_id: str | None = Query(default=None),
     event_type: str | None = Query(default=None),
+    from_date: str | None = Query(default=None, description="ISO date, e.g. 2025-01-01"),
+    to_date: str | None = Query(default=None, description="ISO date, e.g. 2025-12-31"),
     actor_user_id: int | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
     db: AsyncSession = Depends(get_db),
 ):
+    """Paginated audit log — accessible to HQ_ADMIN and AUDITOR roles only."""
     _ = current_user
     q = select(AuditLog)
     cq = select(func.count()).select_from(AuditLog)
@@ -369,9 +377,11 @@ async def audit_log_export(
     event_type: str | None = Query(default=None),
     from_date: str | None = Query(default=None),
     to_date: str | None = Query(default=None),
+    actor_user_id: int | None = Query(default=None),
     current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
     db: AsyncSession = Depends(get_db),
 ):
+    """Stream audit log as CSV download — does not load all rows into memory."""
     _ = current_user
     q = select(AuditLog)
     if branch_id:
@@ -382,39 +392,60 @@ async def audit_log_export(
         q = q.where(AuditLog.timestamp >= from_date)
     if to_date:
         q = q.where(AuditLog.timestamp <= to_date)
-    rows = (await db.execute(q.order_by(AuditLog.timestamp.desc()))).scalars().all()
+    if actor_user_id is not None:
+        q = q.where(AuditLog.actor_user_id == actor_user_id)
+    q = q.order_by(AuditLog.timestamp.desc())
 
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(
-        [
-            "id", "timestamp", "actor_user_id", "actor_role", "branch_id",
-            "event_type", "entity_type", "entity_id", "old_value", "new_value",
-            "ip_address", "metadata",
-        ]
-    )
-    for r in rows:
+    # Stream rows — execution_options(yield_per=...) keeps memory usage flat
+    async def _csv_generator() -> AsyncGenerator[str, None]:
+        buf = io.StringIO()
+        writer = csv.writer(buf)
         writer.writerow(
             [
-                str(r.id),
-                r.timestamp.isoformat() if r.timestamp else "",
-                r.actor_user_id if r.actor_user_id is not None else "",
-                r.actor_role or "",
-                str(r.branch_id) if r.branch_id else "",
-                r.event_type,
-                r.entity_type or "",
-                r.entity_id or "",
-                r.old_value or {},
-                r.new_value or {},
-                r.ip_address or "",
-                r.metadata_json or {},
+                "id", "timestamp", "actor_user_id", "actor_role", "branch_id",
+                "event_type", "entity_type", "entity_id", "old_value", "new_value",
+                "ip_address", "metadata",
             ]
         )
-    output.seek(0)
+        yield buf.getvalue()
+
+        # Stream in batches of 200 to avoid pulling entire table into memory
+        PAGE = 200
+        offset_cur = 0
+        while True:
+            batch_result = await db.execute(q.limit(PAGE).offset(offset_cur))
+            batch = batch_result.scalars().all()
+            if not batch:
+                break
+            for r in batch:
+                buf = io.StringIO()
+                writer = csv.writer(buf)
+                writer.writerow(
+                    [
+                        str(r.id),
+                        r.timestamp.isoformat() if r.timestamp else "",
+                        r.actor_user_id if r.actor_user_id is not None else "",
+                        r.actor_role or "",
+                        str(r.branch_id) if r.branch_id else "",
+                        r.event_type,
+                        r.entity_type or "",
+                        r.entity_id or "",
+                        r.old_value or {},
+                        r.new_value or {},
+                        r.ip_address or "",
+                        r.metadata_json or {},
+                    ]
+                )
+                yield buf.getvalue()
+            if len(batch) < PAGE:
+                break
+            offset_cur += PAGE
+
+    fname = f"audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"
     return StreamingResponse(
-        iter([output.getvalue()]),
+        _csv_generator(),
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"},
+        headers={"Content-Disposition": f"attachment; filename={fname}"},
     )
 
 
@@ -596,5 +627,3 @@ async def test_webhook(
         raise HTTPException(status_code=404, detail="Webhook not found")
     await deliver_webhooks("gst_rate.changed", {"test": True, "webhook_id": webhook_id})
     return {"status": "sent"}
-    from_date: str | None = Query(default=None),
-    to_date: str | None = Query(default=None),
