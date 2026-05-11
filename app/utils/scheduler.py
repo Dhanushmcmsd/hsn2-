@@ -12,7 +12,13 @@ from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import select, text
 
 from app.models.database import async_session, HsnCode
-from app.services.gst_fetcher import fetch_all_gst_rates
+from app.services.gst_fetcher import (
+    fetch_all_gst_rates,
+    _cache_set,
+    _serialise_rates,
+    REDIS_KEY,
+    REDIS_TTL,
+)
 from app.utils.metrics import gst_sync_last_run_timestamp, gst_sync_updated_total
 # --- GST SYNC END ---
 
@@ -27,7 +33,8 @@ async def sync_gst_rates() -> dict:
       1. Fetch all GST rates via 3-layer fallback (gst_fetcher.py)
       2. For each HSN code, compare with DB and update if changed / NULL
       3. Insert a row into gst_change_log for every changed rate
-      4. Log summary and update Prometheus gauges
+      4. Bust Redis cache immediately if any rates changed
+      5. Log summary and update Prometheus gauges
     Returns a stats dict (also used by trigger_gst_sync_now).
     """
     started_at = time.monotonic()
@@ -108,6 +115,21 @@ async def sync_gst_rates() -> dict:
                     )
 
             await session.commit()
+
+            # ── Bust Redis cache immediately after DB commit ────────────────
+            if change_log_rows:
+                try:
+                    await _cache_set(REDIS_KEY, _serialise_rates(rates), REDIS_TTL)
+                    logger.info(
+                        "GST_SYNC: Redis cache refreshed with %d entries after "
+                        "rate changes", len(rates)
+                    )
+                except Exception as redis_exc:
+                    logger.warning(
+                        "GST_SYNC: Redis cache refresh failed (non-fatal): %s",
+                        redis_exc
+                    )
+            # ──────────────────────────────────────────────────────────────
 
     except Exception as exc:
         logger.error("GST_SYNC: DB update failed: %s", exc)
