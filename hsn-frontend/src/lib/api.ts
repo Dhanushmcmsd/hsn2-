@@ -56,6 +56,11 @@ export interface PredictResponse {
   request_id: string; input_text: string; top_match: HSNMatch;
   alternatives: HSNMatch[]; confidence: number; confidence_label: "high" | "medium" | "low";
   needs_review: boolean; processing_time_ms: number;
+  // GST fields returned at the top level of the prediction response
+  gst_rate?: number;
+  gst_effective_from?: string;
+  gst_effective_to?: string;
+  gst_note?: string;
 }
 export interface UserOut { id: number; email: string; full_name?: string; is_active: boolean; }
 export interface TokenResponse { access_token: string; refresh_token: string; token_type: string; }
