@@ -18,7 +18,7 @@ from app.utils.cache import init_cache
 from app.utils.metrics import metrics_endpoint          # existing Prometheus handler
 from app.utils.scheduler import start_scheduler, stop_scheduler  # GST cron
 from app.utils.seed import seed_default_org
-from app.routes import predict, review, health, auth, admin, hsn, admin_orgs
+from app.routes import predict, review, health, auth, admin, hsn, admin_orgs, admin_users
 from app.routes import reports, analytics
 
 configure_logging()
@@ -128,6 +128,7 @@ app.include_router(predict.router)
 app.include_router(review.router)
 app.include_router(health.router)
 app.include_router(admin.router)
+app.include_router(admin_users.router)
 app.include_router(admin_orgs.router)
 app.include_router(hsn.router)
 app.include_router(reports.router)

@@ -1,15 +1,69 @@
 # app/utils/auth.py
 from __future__ import annotations
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import hashlib
-from fastapi import HTTPException, Request, status
+from typing import Annotated
+from fastapi import Depends, HTTPException, Request, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy import select
 from app.config import settings
-from app.models.database import ApiKey, async_session
+from app.models.database import ApiKey, Branch, User, UserRole, async_session, get_db
+from sqlalchemy.ext.asyncio import AsyncSession
 
 ALGORITHM = "HS256"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+
+def create_access_token(user: User, org_id: str | None, expires_delta: timedelta) -> str:
+    payload = {
+        "sub": str(user.id),
+        "type": "access",
+        "role": user.role.value if isinstance(user.role, UserRole) else str(user.role),
+        "branch_id": str(user.branch_id) if user.branch_id else None,
+        "org_id": org_id,
+        "exp": datetime.utcnow() + expires_delta,
+    }
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=ALGORITHM)
+
+
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(get_db),
+) -> User:
+    credentials_exc = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        token_type = payload.get("type")
+        if user_id is None or token_type != "access":
+            raise credentials_exc
+    except JWTError:
+        raise credentials_exc
+
+    result = await db.execute(select(User).where(User.id == int(user_id)))
+    user = result.scalar_one_or_none()
+    if user is None or not user.is_active:
+        raise credentials_exc
+    user.jwt_role = payload.get("role")
+    user.jwt_branch_id = payload.get("branch_id")
+    user.jwt_org_id = payload.get("org_id")
+    return user
+
+
+def require_role(*roles: UserRole):
+    async def _inner(current_user: Annotated[User, Depends(get_current_user)]) -> User:
+        current_role = current_user.role.value if isinstance(current_user.role, UserRole) else str(current_user.role)
+        allowed = {r.value if isinstance(r, UserRole) else str(r) for r in roles}
+        if current_role not in allowed:
+            raise HTTPException(status_code=403, detail="Insufficient role")
+        return current_user
+    return _inner
 
 
 async def require_api_key(request: Request) -> str:

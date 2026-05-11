@@ -7,7 +7,6 @@ from fastapi.responses import StreamingResponse
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession             # --- ADDED: GST ---
 from sqlalchemy import text, func, select                   # --- ADDED: GST ---
-from app.utils.auth import require_admin_key
 from app.routes.auth import require_role
 from app.services.important_products import get_important_products, save_important_products
 from app.models.schemas import (
@@ -16,7 +15,6 @@ from app.models.schemas import (
     ProductAnalysisResponse,
     GstChangeItem,          # --- ADDED: GST ---
     GstChangesResponse,     # --- ADDED: GST ---
-    UserRoleUpdate,
 )
 from app.utils.text_utils import normalize_product_description, extract_pack_size
 from app.services.matcher import get_matcher
@@ -32,6 +30,11 @@ from datetime import datetime, timedelta, timezone
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
+
+# Role Access Table:
+# - /admin/circuit-breakers: REGIONAL_ADMIN, HQ_ADMIN
+# - /admin/retrain/versions: REGIONAL_ADMIN, HQ_ADMIN
+# - All other /admin/* endpoints: HQ_ADMIN only
 
 
 def _match_best_product_query(matcher, original_name: str) -> tuple[str, str, list[dict]]:
@@ -56,32 +59,32 @@ def _match_best_product_query(matcher, original_name: str) -> tuple[str, str, li
 
 
 @router.get("/circuit-breakers")
-async def circuit_breakers(admin_key: str = Depends(require_admin_key)):
+async def circuit_breakers(current_user: User = Depends(require_role(UserRole.REGIONAL_ADMIN, UserRole.HQ_ADMIN))):
     return {"circuit_breakers": [], "status": "ok"}
 
 
 @router.post("/retrain/check")
-async def retrain_check(admin_key: str = Depends(require_admin_key)):
+async def retrain_check(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))):
     return {"status": "no_retrain_needed", "message": "Model is current"}
 
 
 @router.get("/retrain/versions")
-async def retrain_versions(admin_key: str = Depends(require_admin_key)):
+async def retrain_versions(current_user: User = Depends(require_role(UserRole.REGIONAL_ADMIN, UserRole.HQ_ADMIN))):
     return {"versions": ["v1.0"], "current": "v1.0"}
 
 
 @router.post("/dataset/reload")
-async def dataset_reload(admin_key: str = Depends(require_admin_key)):
+async def dataset_reload(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))):
     return {"status": "reloaded"}
 
 
 @router.get("/dataset/integrity")
-async def dataset_integrity(admin_key: str = Depends(require_admin_key)):
+async def dataset_integrity(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))):
     return {"status": "ok", "checksum": "verified"}
 
 
 @router.get("/important-products", response_model=List[ImportantProduct])
-async def get_important_products_endpoint(admin_key: str = Depends(require_admin_key)):
+async def get_important_products_endpoint(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))):
     """Get all important products."""
     products = get_important_products()
     return [ImportantProduct(**p) for p in products]
@@ -90,7 +93,7 @@ async def get_important_products_endpoint(admin_key: str = Depends(require_admin
 @router.post("/important-products/analyze")
 async def analyze_product(
     body: ProductAnalysisRequest,
-    admin_key: str = Depends(require_admin_key)
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN))
 ) -> ProductAnalysisResponse:
     """Analyze a single important product and potentially auto-update HSN."""
     products = get_important_products()
@@ -157,7 +160,7 @@ async def analyze_product(
 
 
 @router.post("/important-products/batch-analyze")
-async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
+async def batch_analyze_products(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))):
     """Analyze all important products that don't have HSN codes yet."""
     products = get_important_products()
     results = []
@@ -215,8 +218,8 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
 
 # kept for backwards compat — redirects to the canonical /gst/sync
 @router.post("/gst-sync", include_in_schema=False)
-async def manual_gst_sync_legacy(admin_key: str = Depends(require_admin_key)) -> dict:
-    return await manual_gst_sync(admin_key=admin_key)
+async def manual_gst_sync_legacy(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))) -> dict:
+    return await manual_gst_sync(current_user=current_user)
 
 
 # ---------------------------------------------------------------------------
@@ -227,7 +230,7 @@ async def manual_gst_sync_legacy(admin_key: str = Depends(require_admin_key)) ->
     "/gst/sync",
     summary="Manually trigger the nightly GST rate sync",
 )
-async def manual_gst_sync(admin_key: str = Depends(require_admin_key)) -> dict:
+async def manual_gst_sync(current_user: User = Depends(require_role(UserRole.HQ_ADMIN))) -> dict:
     """
     Immediately runs the same job that the nightly cron fires at 02:00 IST.
     Protected by ADMIN_API_KEY.
@@ -251,7 +254,7 @@ async def gst_change_log(
     page: int = Query(default=1, ge=1, description="Page number (1-indexed)"),
     per_page: int = Query(default=50, ge=1, le=200, description="Items per page"),
     hsn_code: str | None = Query(default=None, description="Filter by exact HSN code"),
-    admin_key: str = Depends(require_admin_key),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ) -> GstChangesResponse:
     """
@@ -259,6 +262,7 @@ async def gst_change_log(
     Each item: {id, hsn_code, old_rate, new_rate, changed_at, source, notes}
     Ordered by changed_at DESC (most recent first).
     """
+    _ = current_user
     offset = (page - 1) * per_page
 
     try:
@@ -311,10 +315,12 @@ async def gst_change_log(
 async def audit_log_list(
     branch_id: str | None = Query(default=None),
     event_type: str | None = Query(default=None),
+    from_date: str | None = Query(default=None),
+    to_date: str | None = Query(default=None),
     actor_user_id: int | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
     _ = current_user
@@ -369,7 +375,7 @@ async def audit_log_export(
     event_type: str | None = Query(default=None),
     from_date: str | None = Query(default=None),
     to_date: str | None = Query(default=None),
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN, UserRole.AUDITOR)),
+    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
     db: AsyncSession = Depends(get_db),
 ):
     _ = current_user
@@ -416,69 +422,6 @@ async def audit_log_export(
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=audit_log_{from_date or 'start'}_{to_date or 'end'}.csv"},
     )
-
-
-@router.get("/users")
-async def admin_list_users(
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
-    db: AsyncSession = Depends(get_db),
-):
-    _ = current_user
-    rows = (await db.execute(select(User).order_by(User.created_at.desc()))).scalars().all()
-    return [
-        {
-            "id": row.id,
-            "email": row.email,
-            "role": row.role,
-            "branch_id": str(row.branch_id) if row.branch_id else None,
-            "last_login": None,
-            "is_active": row.is_active,
-        }
-        for row in rows
-    ]
-
-
-@router.patch("/users/{user_id}/role")
-async def admin_update_user_role(
-    user_id: int,
-    body: UserRoleUpdate,
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
-    db: AsyncSession = Depends(get_db),
-):
-    target = (await db.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
-    if target is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    old_role = target.role
-    target.role = body.role
-    target.branch_id = body.branch_id
-    await log_event(
-        session=db,
-        event_type=EventType.USER_ROLE_CHANGED,
-        actor_user_id=current_user.id,
-        actor_role=current_user.role,
-        branch_id=current_user.branch_id,
-        entity_type="user",
-        entity_id=str(target.id),
-        old_value={"role": old_role},
-        new_value={"role": body.role},
-    )
-    await db.commit()
-    return {"status": "ok", "user_id": target.id, "old_role": old_role, "new_role": target.role}
-
-
-@router.post("/users/{user_id}/deactivate")
-async def admin_deactivate_user(
-    user_id: int,
-    current_user: User = Depends(require_role(UserRole.HQ_ADMIN)),
-    db: AsyncSession = Depends(get_db),
-):
-    _ = current_user
-    target = (await db.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
-    if target is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    target.is_active = False
-    await db.commit()
-    return {"status": "ok", "user_id": target.id, "is_active": target.is_active}
 
 
 @router.patch("/api-keys/{key_id}/tier")

@@ -12,6 +12,10 @@ from app.routes.auth import require_role
 router = APIRouter(prefix="/review", tags=["review"])
 log = structlog.get_logger()
 
+# Role Access Table:
+# - GET /review/pending: BRANCH_MANAGER, REGIONAL_ADMIN, HQ_ADMIN, AUDITOR
+# - POST /review/resolve: BRANCH_MANAGER, REGIONAL_ADMIN, HQ_ADMIN
+
 
 @router.get("/pending", response_model=list[ReviewItem])
 async def get_pending(
