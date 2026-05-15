@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -13,7 +14,7 @@ from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
 from app.models.database import init_db
 from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
-from app.routes import predict, review, health, auth, admin, hsn
+from app.routes import predict, review, health, auth, admin, hsn, search
 
 configure_logging()
 log = structlog.get_logger()
@@ -45,6 +46,29 @@ async def lifespan(app: FastAPI):
     _validate_production_config()
     await init_db()
     await init_cache()
+
+    async def warm_matcher():
+        try:
+            from app.services.matcher import get_matcher
+
+            await asyncio.to_thread(get_matcher)
+            log.info("matcher.warmup_complete")
+        except Exception as exc:
+            log.error("matcher.warmup_failed", error=str(exc))
+
+    async def warm_search_layer():
+        try:
+            from app.models.database import async_session
+            from app.services import multi_layer_search
+
+            async with async_session() as session:
+                await multi_layer_search.warmup(session)
+            log.info("search.warmup_complete")
+        except Exception as exc:
+            log.warning("search.warmup_failed", error=str(exc))
+
+    asyncio.create_task(warm_matcher())
+    asyncio.create_task(warm_search_layer())
     log.info("app.startup", env=settings.APP_ENV)
     yield
     log.info("app.shutdown")
@@ -55,8 +79,9 @@ app = FastAPI(
     version="1.0.0",
     description="AI-powered HSN/GST code classifier for Indian products",
     lifespan=lifespan,
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url=None if settings.is_production else "/docs",
+    redoc_url=None if settings.is_production else "/redoc",
+    openapi_url=None if settings.is_production else "/openapi.json",
 )
 
 app.add_middleware(
@@ -86,6 +111,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
+app.include_router(search.router)
 app.include_router(auth.router)
 app.include_router(predict.router)
 app.include_router(review.router)

@@ -5,6 +5,7 @@ import time
 import uuid
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy import case, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.database import get_db, Prediction, VerifiedProduct
@@ -34,6 +35,53 @@ def _is_verified_product_match(candidate) -> bool:
     )
 
 
+async def _fetch_verified_single_pass(db: AsyncSession, body_text: str):
+    """One round-trip for exact / Kerala-expanded / no-size verified rows (priority preserved)."""
+    normalized = body_text.upper().strip()
+    no_size_val = strip_sizes(body_text)
+    try:
+        kerala_expanded = expand_kerala_query(body_text)
+    except Exception as exc:
+        log.info("predict.kerala_expand_unavailable", error=str(exc))
+        kerala_expanded = body_text
+    kerala_norm = kerala_expanded.upper().strip()
+
+    priority = case(
+        (VerifiedProduct.description_normalized == normalized, 1),
+        (VerifiedProduct.description_normalized == kerala_norm, 2),
+        (VerifiedProduct.description_no_size == no_size_val, 3),
+        else_=4,
+    )
+    stmt = (
+        select(VerifiedProduct)
+        .where(
+            or_(
+                VerifiedProduct.description_normalized == normalized,
+                VerifiedProduct.description_normalized == kerala_norm,
+                VerifiedProduct.description_no_size == no_size_val,
+            )
+        )
+        .order_by(priority)
+        .limit(1)
+    )
+    try:
+        verified_result = await db.execute(stmt)
+        return await _scalar_one_or_none(verified_result), normalized, kerala_norm, no_size_val
+    except Exception as exc:
+        log.info("predict.verified_combined_unavailable", error=str(exc))
+        return None, normalized, kerala_norm, no_size_val
+
+
+def _verified_score_method(verified, normalized: str, kerala_norm: str, no_size_val: str) -> tuple[float, str]:
+    if verified.description_normalized == normalized:
+        return 1.0, "verified_exact"
+    if verified.description_normalized == kerala_norm:
+        return 0.92, "verified_kerala_expanded"
+    if verified.description_no_size == no_size_val:
+        return 0.95, "verified_no_size"
+    return 1.0, "verified_exact"
+
+
 @router.post("/predict", response_model=PredictResponse)
 async def predict(
     body: PredictRequest,
@@ -52,93 +100,49 @@ async def predict(
 
     start = time.perf_counter()
 
-    # Pass 0: Check verified_products for exact / no-size match when available
-    from sqlalchemy import select
+    search_text = body.text
+    try:
+        from app.services import aliases as alias_svc
+
+        expanded = await alias_svc.expand_query(db, body.text)
+        if expanded.english_query and expanded.english_query.strip():
+            search_text = expanded.english_query.strip()
+    except Exception as exc:
+        log.info("predict.alias_expand_skipped", error=str(exc))
+
     verified = None
     try:
-        verified_query = select(VerifiedProduct).where(
-            VerifiedProduct.description_normalized == body.text.upper().strip()
-        )
-        verified_result = await db.execute(verified_query)
-        verified = await _scalar_one_or_none(verified_result)
+        verified, normalized, kerala_norm, no_size_val = await _fetch_verified_single_pass(db, search_text)
     except Exception as exc:
-        log.info("predict.verified_exact_unavailable", error=str(exc))
+        log.info("predict.verified_fetch_failed", error=str(exc))
+        verified, normalized, kerala_norm, no_size_val = None, body.text.upper().strip(), "", ""
 
     if _is_verified_product_match(verified):
+        score, method = _verified_score_method(verified, normalized, kerala_norm, no_size_val)
         top = {
             "hsn_code": verified.hsn_code,
             "description": verified.description,
             "gst_rate": float(verified.gst_rate or 0) if verified.gst_rate else None,
-            "score": 1.0,
-            "method": "verified_exact",
+            "score": score,
+            "method": method,
         }
         alternatives = []
-        confidence, label = score_result(1.0)
+        confidence, label = score_result(score)
         needs_review = False
         elapsed = (time.perf_counter() - start) * 1000
     else:
-        verified = None
-        try:
-            kerala_expanded = expand_kerala_query(body.text)
-            if kerala_expanded != body.text.upper().strip():
-                verified_query2 = select(VerifiedProduct).where(
-                    VerifiedProduct.description_normalized == kerala_expanded
-                )
-                verified_result2 = await db.execute(verified_query2)
-                verified2 = await _scalar_one_or_none(verified_result2)
-                if _is_verified_product_match(verified2):
-                    top = {
-                        "hsn_code": verified2.hsn_code,
-                        "description": verified2.description,
-                        "gst_rate": float(verified2.gst_rate or 0) if verified2.gst_rate else None,
-                        "score": 0.92,
-                        "method": "verified_kerala_expanded",
-                    }
-                    alternatives = []
-                    confidence, label = score_result(0.92)
-                    needs_review = False
-                    elapsed = (time.perf_counter() - start) * 1000
-                    verified = verified2
-        except Exception as exc:
-            log.info("predict.verified_kerala_expanded_unavailable", error=str(exc))
+        matches = await match_query(search_text, db, top_k=5)
+        if not matches:
+            matcher = get_matcher()
+            matches = await matcher.amatch(search_text, top_k=5)
+        if not matches:
+            raise HTTPException(status_code=422, detail="No HSN matches found for this description")
 
-    if not _is_verified_product_match(verified):
-        verified = None
-        try:
-            verified_no_size_query = select(VerifiedProduct).where(
-                VerifiedProduct.description_no_size == strip_sizes(body.text)
-            )
-            verified_no_size_result = await db.execute(verified_no_size_query)
-            verified = await _scalar_one_or_none(verified_no_size_result)
-        except Exception as exc:
-            log.info("predict.verified_no_size_unavailable", error=str(exc))
-
-        if _is_verified_product_match(verified):
-            top = {
-                "hsn_code": verified.hsn_code,
-                "description": verified.description,
-                "gst_rate": float(verified.gst_rate or 0) if verified.gst_rate else None,
-                "score": 0.95,
-                "method": "verified_no_size",
-            }
-            alternatives = []
-            confidence, label = score_result(0.95)
-            needs_review = False
-            elapsed = (time.perf_counter() - start) * 1000
-        else:
-            # Pass 1+: upgraded DB-backed matching, then local matcher fallback
-            matches = await match_query(body.text, db, top_k=5)
-            if not matches:
-                matcher = get_matcher()
-                matches = matcher.match(body.text, top_k=5)
-            if not matches:
-                raise HTTPException(status_code=422, detail="No HSN matches found for this description")
-
-            top = matches[0]
-            alternatives = matches[1:]
-            confidence, label = score_result(top["score"])
-            needs_review = top["score"] < 0.55
-            elapsed = (time.perf_counter() - start) * 1000
+        top = matches[0]
+        alternatives = matches[1:]
+        confidence, label = score_result(top["score"])
+        needs_review = top["score"] < 0.55
+        elapsed = (time.perf_counter() - start) * 1000
 
     try:
         record = Prediction(

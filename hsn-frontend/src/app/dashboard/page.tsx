@@ -2,6 +2,8 @@
 "use client";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import useSWRMutation from "swr/mutation";
+import { useDebouncedCallback } from "use-debounce";
 import Papa from "papaparse";
 import readXlsxFile from "read-excel-file/browser";
 import { authApi, authStorage, hsnApi } from "@/lib/api";
@@ -153,6 +155,24 @@ function toFailedBulkResult(query: string, error: unknown) {
     error: message,
   };
 }
+
+function fromBatchRow(row) {
+  const conf = row.confidence ?? 0;
+  return {
+    query: row.query ?? "",
+    hsn_code: row.hsn_code ?? "",
+    description: row.description ?? "",
+    gst_rate: row.gst_rate ?? null,
+    confidence: conf,
+    confidence_label: row.confidence_label ?? "low",
+    match_method: row.match_method ?? "",
+    alternatives: row.alternatives ?? [],
+    needs_review: conf < 0.55 || Boolean(row.error),
+    error: row.error ?? "",
+  };
+}
+
+const BULK_CHUNK_SIZE = 200;
 
 function escapeCsvValue(value: unknown) {
   const text = value == null ? "" : String(value);
@@ -314,7 +334,6 @@ export default function PremiumDashboard() {
   const [mode, setMode] = useState("single");
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
-  const [singleLoading, setSingleLoading] = useState(false);
   const [singleError, setSingleError] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState("");
@@ -699,24 +718,41 @@ export default function PremiumDashboard() {
     };
   }, [router]);
 
+  const { trigger: predictTrigger, isMutating: singleLoading } = useSWRMutation(
+    "hsn-predict",
+    async (_, { arg }) => hsnApi.predict(arg)
+  );
+
+  const [submitPulse, setSubmitPulse] = useState(false);
+
+  const runPredict = useDebouncedCallback(
+    async (text) => {
+      const q = String(text || "").trim();
+      if (!q) return;
+      setSubmitPulse(false);
+      setSingleError("");
+      setResult(null);
+      try {
+        const prediction = await predictTrigger(q);
+        setResult(prediction);
+      } catch (error) {
+        setSingleError(error instanceof Error ? error.message : "Prediction failed");
+      }
+    },
+    300
+  );
+
   function handleLogout() {
     authStorage.clearTokens();
     router.replace("/login");
   }
 
-  // ── Single predict ────────────────────────────────────────────────────────
-  async function handlePredict(e) {
+  // ── Single predict (debounced 300ms + SWR mutation dedupe) ─────────────────
+  function handlePredict(e) {
     e?.preventDefault();
     if (!query.trim()) return;
-    setSingleError(""); setSingleLoading(true); setResult(null);
-    try {
-      const prediction = await hsnApi.predict(query.trim());
-      setResult(prediction);
-    } catch (error) {
-      setSingleError(error instanceof Error ? error.message : "Prediction failed");
-    } finally {
-      setSingleLoading(false);
-    }
+    setSubmitPulse(true);
+    runPredict(query.trim());
   }
 
   // ── File processing ───────────────────────────────────────────────────────
@@ -796,34 +832,39 @@ export default function PremiumDashboard() {
     const total = rawRows.length;
     setProgress({ done: 0, total });
     const results = new Array(total);
-    let cursor = 0;
-    let completed = 0;
-    const concurrency = Math.min(4, total);
 
     try {
-      await Promise.all(
-        Array.from({ length: concurrency }, async () => {
-          while (true) {
-            const currentIndex = cursor++;
-            if (currentIndex >= total) break;
+      for (let start = 0; start < total; start += BULK_CHUNK_SIZE) {
+        const end = Math.min(start + BULK_CHUNK_SIZE, total);
+        const chunkQueries = [];
+        const chunkIndices = [];
 
-            const queryText = String(rawRows[currentIndex]?.[selectedCol] ?? "").trim();
-            if (!queryText) {
-              results[currentIndex] = toFailedBulkResult(`Row ${currentIndex + 1}`, "The selected column is empty for this row.");
-            } else {
-              try {
-                results[currentIndex] = toBulkResult(queryText, await hsnApi.predict(queryText));
-              } catch (error) {
-                results[currentIndex] = toFailedBulkResult(queryText, error);
-              }
-            }
-
-            completed += 1;
-            setProgress({ done: completed, total });
-            setBulkResults(results.filter((row) => row != null));
+        for (let i = start; i < end; i++) {
+          const queryText = String(rawRows[i]?.[selectedCol] ?? "").trim();
+          if (!queryText) {
+            results[i] = toFailedBulkResult(
+              `Row ${i + 1}`,
+              "The selected column is empty for this row."
+            );
+          } else {
+            chunkIndices.push(i);
+            chunkQueries.push(queryText);
           }
-        })
-      );
+        }
+
+        if (chunkQueries.length > 0) {
+          const batchResp = await hsnApi.batch(chunkQueries);
+          chunkIndices.forEach((rowIndex, j) => {
+            const row = batchResp.results[j];
+            results[rowIndex] = row
+              ? fromBatchRow(row)
+              : toFailedBulkResult(chunkQueries[j], "No result returned for this row.");
+          });
+        }
+
+        setProgress({ done: end, total });
+        setBulkResults(results.filter((row) => row != null));
+      }
 
       steps[2] = true; setProcessSteps([...steps]);
       const finishedResults = results.filter((row) => row != null);
@@ -1031,7 +1072,7 @@ export default function PremiumDashboard() {
             </form>
 
             {/* Example chips */}
-            {!result && !singleLoading && (
+            {!result && !singleLoading && !submitPulse && (
               <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "2rem" }}>
                 {["Colgate Toothpaste 200g", "Horlicks Womens 400g", "VKC Chappal 7", "Basmati Rice 5kg"].map(ex => (
                   <button key={ex} onClick={() => { setQuery(ex); }} style={{
@@ -1062,6 +1103,57 @@ export default function PremiumDashboard() {
                 padding: "0.75rem 1rem", borderRadius: 12, marginBottom: "1rem",
               }}>
                 ⚠ {singleError}
+              </div>
+            )}
+
+            {(submitPulse || singleLoading) && !result && (
+              <div
+                className="glass-card"
+                style={{
+                  padding: "2rem",
+                  marginBottom: "1rem",
+                  animation: "fadeUp 0.35s ease both",
+                }}
+              >
+                <div
+                  style={{
+                    height: 14,
+                    width: "40%",
+                    background: "rgba(148,163,184,0.15)",
+                    borderRadius: 6,
+                    marginBottom: 16,
+                    animation: "shimmer 1.2s ease-in-out infinite",
+                  }}
+                />
+                <div
+                  style={{
+                    height: 52,
+                    width: "55%",
+                    background: "rgba(96,165,250,0.12)",
+                    borderRadius: 8,
+                    marginBottom: 20,
+                    animation: "shimmer 1.2s ease-in-out 0.15s infinite",
+                  }}
+                />
+                <div
+                  style={{
+                    height: 12,
+                    width: "90%",
+                    background: "rgba(148,163,184,0.12)",
+                    borderRadius: 4,
+                    marginBottom: 10,
+                    animation: "shimmer 1.2s ease-in-out 0.08s infinite",
+                  }}
+                />
+                <div
+                  style={{
+                    height: 12,
+                    width: "70%",
+                    background: "rgba(148,163,184,0.1)",
+                    borderRadius: 4,
+                    animation: "shimmer 1.2s ease-in-out 0.22s infinite",
+                  }}
+                />
               </div>
             )}
 
@@ -1156,7 +1248,7 @@ export default function PremiumDashboard() {
               </div>
             )}
 
-            {!result && !singleLoading && (
+            {!result && !singleLoading && !submitPulse && (
               <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
                 <div style={{ display: "inline-flex", flexDirection: "column", gap: "0.75rem", marginBottom: "2rem" }}>
                   {[

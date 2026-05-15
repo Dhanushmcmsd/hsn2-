@@ -89,5 +89,20 @@ services:
       - key: CACHE_TTL
         value: "3600"
 
+      - key: SEARCH_CACHE_TTL
+        value: "3600"
+
+      - key: NEG_CACHE_TTL
+        value: "300"
+
+      - key: BULK_CONCURRENCY
+        value: "8"
+
+      - key: BULK_PER_QUERY_TIMEOUT_S
+        value: "12"
+
+      - key: BULK_RESULT_CACHE_TTL_S
+        value: "21600"
+
       - key: RATE_LIMIT_PER_MINUTE
         value: "60"

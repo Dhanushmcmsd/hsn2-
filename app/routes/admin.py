@@ -14,7 +14,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 log = structlog.get_logger()
 
 
-def _match_best_product_query(matcher, original_name: str) -> tuple[str, str, list[dict]]:
+async def _match_best_product_query_async(matcher, original_name: str) -> tuple[str, str, list[dict]]:
     cleaned_description = normalize_product_description(original_name)
     query_options = [original_name.strip()]
     if cleaned_description and cleaned_description.strip():
@@ -25,7 +25,7 @@ def _match_best_product_query(matcher, original_name: str) -> tuple[str, str, li
     best_query = query_options[0] if query_options else ""
     best_matches: list[dict] = []
     for query_text in query_options:
-        matches = matcher.match(query_text, top_k=5)
+        matches = await matcher.amatch(query_text, top_k=5)
         if not matches:
             continue
         if not best_matches or matches[0].get("score", 0.0) > best_matches[0].get("score", 0.0):
@@ -83,7 +83,7 @@ async def analyze_product(
     
     pack_size = extract_pack_size(original_name)
     matcher = get_matcher()
-    best_query, cleaned_description, matches = _match_best_product_query(matcher, original_name)
+    best_query, cleaned_description, matches = await _match_best_product_query_async(matcher, original_name)
     
     # Update product with cleaned data
     product["cleaned_description"] = cleaned_description
@@ -152,7 +152,7 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
         # Normalize and analyze
         pack_size = extract_pack_size(product["product_name"])
         matcher = get_matcher()
-        best_query, cleaned_description, matches = _match_best_product_query(
+        best_query, cleaned_description, matches = await _match_best_product_query_async(
             matcher,
             product["product_name"],
         )

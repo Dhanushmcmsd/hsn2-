@@ -80,3 +80,148 @@ class ProductAnalysisResponse(BaseModel):
     hsn_analysis: dict
     auto_updated: bool
     message: str
+
+
+# ── Product search layer (/search/*) ─────────────────────────────────────────
+
+
+class SearchFilters(BaseModel):
+    min_confidence: Optional[float] = Field(None, ge=0.0, le=1.0)
+    categories: Optional[list[str]] = None
+    gst_rate: Optional[float] = None
+
+
+class SearchRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500, description="Free-text product description or HSN prefix")
+    top_k: int = Field(10, ge=1, le=50)
+    filters: Optional[SearchFilters] = None
+
+
+class SearchResult(BaseModel):
+    hsn_code: str
+    description: str
+    score: float
+    match_type: str
+    gst_rate: Optional[float] = None
+    category: Optional[str] = None
+    highlighted: Optional[str] = None
+
+
+class SearchMetadata(BaseModel):
+    total_candidates: int
+    search_time_ms: float
+    cache_hit: bool
+    methods_used: list[str]
+
+
+class SearchResponse(BaseModel):
+    query: str
+    results: list[SearchResult]
+    search_metadata: SearchMetadata
+
+
+class PartialCodeMatch(BaseModel):
+    code: str
+    description: str
+    gst_rate: Optional[float] = None
+    category: Optional[str] = None
+
+
+class PartialCodeSearchResponse(BaseModel):
+    prefix: str
+    matches: list[PartialCodeMatch]
+
+
+class SearchSuggestionsResponse(BaseModel):
+    q: str
+    suggestions: list[str]
+
+
+# ── Multi-layer search (/search/multi) ───────────────────────────────────────
+
+
+class MultiSearchFilters(BaseModel):
+    min_confidence: Optional[float] = Field(None, ge=0.0, le=1.0)
+    categories: Optional[list[str]] = None
+    gst_rate: Optional[float] = None
+    chapter: Optional[str] = None
+
+
+class MultiSearchRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500)
+    top_k: int = Field(10, ge=1, le=50)
+    filters: Optional[MultiSearchFilters] = None
+    bypass_cache: bool = False
+    explain: bool = False
+
+
+class MultiSearchHit(BaseModel):
+    hsn_code: str
+    description: str
+    score: float
+    method: str
+    gst_rate: Optional[float] = None
+    category: Optional[str] = None
+    chapter: Optional[str] = None
+    brand: Optional[str] = None
+
+
+class MultiSearchLayerTrace(BaseModel):
+    name: str
+    ms: float
+    candidate_count: int
+    used: bool = True
+    error: Optional[str] = None
+
+
+class MultiSearchAliasHint(BaseModel):
+    hsn_code: str
+    source_term: str
+    language: str
+    weight: float
+
+
+class MultiSearchResponse(BaseModel):
+    query: str
+    detected_language: str
+    english_query: str
+    expansions: list[str]
+    results: list[MultiSearchHit]
+    cache_hit: bool
+    total_time_ms: float
+    methods_used: list[str]
+    layers: list[MultiSearchLayerTrace] = []
+    direct_hsn_hints: list[MultiSearchAliasHint] = []
+
+
+class CategoryItem(BaseModel):
+    category_code: str
+    category_name: str
+    section_code: str
+    chapter_range_start: int
+    chapter_range_end: int
+    display_order: int
+    official_source: Optional[str] = None
+    description: Optional[str] = None
+    code_count: int = 0
+
+
+class CategoriesResponse(BaseModel):
+    categories: list[CategoryItem]
+
+
+class LanguageHit(BaseModel):
+    hsn_code: str
+    description: str
+    gst_rate: Optional[float] = None
+    category: Optional[str] = None
+    chapter: Optional[str] = None
+    matched_term: str
+    english_term: Optional[str] = None
+    weight: float
+
+
+class LanguageSearchResponse(BaseModel):
+    q: str
+    language: str
+    results: list[LanguageHit]

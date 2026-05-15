@@ -48,6 +48,23 @@ export interface PredictResponse {
   alternatives: HSNMatch[]; confidence: number; confidence_label: "high" | "medium" | "low";
   needs_review: boolean; processing_time_ms: number;
 }
+export interface BatchResultRow {
+  query: string;
+  hsn_code?: string | null;
+  description?: string | null;
+  gst_rate?: number | null;
+  confidence: number;
+  confidence_label: string;
+  match_method: string;
+  alternatives: HSNMatch[];
+  error?: string | null;
+}
+export interface BatchResponse {
+  results: BatchResultRow[];
+  total: number;
+  matched: number;
+  unmatched: number;
+}
 export interface UserOut { id: number; email: string; full_name?: string; is_active: boolean; }
 export interface TokenResponse { access_token: string; refresh_token: string; token_type: string; }
 export interface AuthTokenResponse extends TokenResponse { expires_in?: number; }
@@ -142,6 +159,8 @@ export const authApi = {
 
 export const hsnApi = {
   predict: (text: string) => request<PredictResponse>("/predict", { method: "POST", body: JSON.stringify({ text }) }),
+  batch: (queries: string[]) =>
+    request<BatchResponse>("/hsn/batch", { method: "POST", body: JSON.stringify({ queries }) }),
   getByCode: (code: string) => request<HSNCodeRow>(`/hsn/${encodeURIComponent(code)}`),
   expandAbbreviations: (text: string) => request<{ original: string; expanded: string; changed: boolean }>("/expand-abbreviations", { method: "POST", body: JSON.stringify({ text }) }),
   health: () => request<{ status: string }>("/health"),

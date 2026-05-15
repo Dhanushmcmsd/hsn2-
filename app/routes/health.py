@@ -17,8 +17,8 @@ async def health():
     try:
         async with async_session() as db:
             await db.execute(text("SELECT 1"))
-    except Exception as e:
-        status["db"] = f"error: {e}"
+    except Exception:
+        status["db"] = "error"
         status["status"] = "degraded"
     try:
         r = await get_redis()
@@ -26,8 +26,8 @@ async def health():
             await r.ping()
         else:
             status["cache"] = "unavailable"
-    except Exception as e:
-        status["cache"] = f"error: {e}"
+    except Exception:
+        status["cache"] = "error"
         status["status"] = "degraded"
     return status
 

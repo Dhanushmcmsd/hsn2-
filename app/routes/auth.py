@@ -95,7 +95,11 @@ async def get_current_user(
 async def register(body: UserRegister, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == body.email))
     if result.scalar_one_or_none():
-        raise HTTPException(status_code=409, detail="Email already registered")
+        log.warning("user.register_duplicate_attempt", email=body.email)
+        raise HTTPException(
+            status_code=409,
+            detail="Registration could not be completed. Please check your details and try again.",
+        )
     user = User(
         email=body.email,
         hashed_password=hash_password(body.password),
@@ -118,7 +122,7 @@ async def login(
     if not user or not verify_password(form.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account disabled")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     access_token = create_token(
         {"sub": str(user.id), "type": "access"},
         timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
@@ -144,7 +148,7 @@ async def refresh(body: RefreshRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user or not user.is_active:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
 
     access_token = create_token({"sub": str(user.id), "type": "access"}, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     new_refresh = create_token({"sub": str(user.id), "type": "refresh"}, timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS))

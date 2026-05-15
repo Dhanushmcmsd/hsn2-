@@ -9,7 +9,10 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from typing import Optional
+import asyncio
 import os, json, re, uuid, math
+import hashlib
+import secrets
 
 import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
@@ -29,6 +32,14 @@ ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "change-me")
 JWT_SECRET    = os.environ.get("JWT_SECRET", os.environ.get("SECRET_KEY", "change-me"))
 ALGORITHM     = "HS256"
 REDIS_URL     = os.environ.get("REDIS_URL", os.environ.get("UPSTASH_REDIS_URL", ""))
+APP_ENV       = os.environ.get("APP_ENV", "development")
+API_KEY_ENV   = os.environ.get("API_KEY", "dev-api-key")
+
+if APP_ENV == "production":
+    if not JWT_SECRET or JWT_SECRET == "change-me" or len(JWT_SECRET) < 32:
+        raise RuntimeError("Production requires JWT_SECRET / SECRET_KEY of at least 32 characters")
+    if not ADMIN_API_KEY or ADMIN_API_KEY == "change-me" or len(ADMIN_API_KEY) < 32:
+        raise RuntimeError("Production requires ADMIN_API_KEY of at least 32 characters")
 
 if not DATABASE_URL:
     import sys
@@ -128,6 +139,16 @@ def make_token(sub: str, minutes: int) -> str:
     exp = datetime.utcnow() + timedelta(minutes=minutes)
     return jwt.encode({"sub": sub, "exp": exp}, JWT_SECRET, algorithm=ALGORITHM)
 
+
+def _const_api_key_eq(a: str, b: str) -> bool:
+    if not a or not b:
+        return False
+    return secrets.compare_digest(
+        hashlib.sha256(a.encode("utf-8")).digest(),
+        hashlib.sha256(b.encode("utf-8")).digest(),
+    )
+
+
 def decode_token(token: str) -> str:
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
@@ -220,18 +241,23 @@ class BatchResponse(BaseModel):
     unmatched: int
 
 # ── App ───────────────────────────────────────────────────────────────────────
-app = FastAPI(title="HSN Classifier API", version="2.3.0")
+_docs_enabled = APP_ENV != "production"
+app = FastAPI(
+    title="HSN Classifier API",
+    version="2.3.0",
+    docs_url="/docs" if _docs_enabled else None,
+    redoc_url="/redoc" if _docs_enabled else None,
+    openapi_url="/openapi.json" if _docs_enabled else None,
+)
 
-ALLOWED_ORIGINS = [
-    "https://hsn2.vercel.app",
-    "https://hsn2-git-main-d3d.vercel.app",
-    "https://hsn2-485zotyhz-d3d.vercel.app",
-    "https://hsn2-git-main-krithu.vercel.app",
-    "https://hsn2-krithu.vercel.app",
-    "https://hsn-app-krithu.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:3001",
-]
+_default_cors = (
+    "http://localhost:3000,http://localhost:3001,"
+    "https://hsn2.vercel.app,https://hsn2-git-main-d3d.vercel.app,"
+    "https://hsn2-485zotyhz-d3d.vercel.app,https://hsn2-git-main-krithu.vercel.app,"
+    "https://hsn2-krithu.vercel.app,https://hsn-app-krithu.vercel.app"
+)
+_cors_raw = os.environ.get("CORS_ORIGINS", _default_cors)
+ALLOWED_ORIGINS = [o.strip() for o in _cors_raw.split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
@@ -241,39 +267,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ── Multi-layer search router (additive, isolated under /search/*) ───────────
+try:
+    from app.routes.search import router as _search_router  # noqa: E402
+
+    app.include_router(_search_router)
+    log.info("search.router_mounted prefix=/search")
+except Exception as _exc:  # pragma: no cover
+    log.warning(f"search.router_mount_failed: {_exc}")
+
 # ── Health ────────────────────────────────────────────────────────────────────
 @app.get("/health")
 async def health(db: AsyncSession = Depends(get_db)):
     try:
-        result = await db.execute(text("SELECT COUNT(*) FROM hsn_codes WHERE is_active = TRUE"))
-        hsn_count = result.scalar()
+        await db.execute(text("SELECT 1"))
+        return {"status": "healthy"}
     except Exception:
-        hsn_count = 0
-    try:
-        search_result = await db.execute(text("SELECT COUNT(*) FROM hsn_search"))
-        search_count = search_result.scalar()
-    except Exception:
-        search_count = 0
-    try:
-        vp_result = await db.execute(text("SELECT COUNT(*) FROM verified_products"))
-        vp_count = vp_result.scalar()
-    except Exception:
-        vp_count = 0
-    return {
-        "status": "ok",
-        "redis": "connected" if redis_client else "disabled",
-        "hsn_records": hsn_count,
-        "hsn_search_records": search_count,
-        "verified_products": vp_count,
-        "version": "2.3.0",
-    }
+        return {"status": "degraded"}
 
 # ── Auth routes ───────────────────────────────────────────────────────────────
 @app.post("/auth/register", response_model=UserOut, status_code=201)
 async def register(body: RegisterIn, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == body.email))
     if result.scalar_one_or_none():
-        raise HTTPException(409, "Email already registered")
+        log.warning("auth.register_duplicate_attempt", email=body.email)
+        raise HTTPException(
+            409,
+            "Registration could not be completed. Please check your details and try again.",
+        )
     user = User(
         email=body.email,
         full_name=body.full_name,
@@ -290,27 +311,45 @@ async def login(form: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = 
     user = result.scalar_one_or_none()
     if not user or not pwd_ctx.verify(form.password, user.hashed_password):
         raise HTTPException(401, "Invalid credentials")
+    if not user.is_active:
+        raise HTTPException(401, "Invalid credentials")
+    uid = str(user.id)
     return TokenResponse(
-        access_token=make_token(user.email, 60),
-        refresh_token=make_token(user.email, 60 * 24 * 7),
+        access_token=make_token(uid, 60),
+        refresh_token=make_token(uid, 60 * 24 * 7),
     )
 
 @app.post("/auth/refresh", response_model=TokenResponse)
-async def refresh_token(body: RefreshIn):
-    email = decode_token(body.refresh_token)
+async def refresh_token(body: RefreshIn, db: AsyncSession = Depends(get_db)):
+    try:
+        sub = decode_token(body.refresh_token)
+        user_id = int(sub)
+    except HTTPException:
+        raise
+    except (ValueError, TypeError):
+        raise HTTPException(401, "Invalid refresh token")
+    res = await db.execute(select(User).where(User.id == user_id))
+    user = res.scalar_one_or_none()
+    if not user or not user.is_active:
+        raise HTTPException(401, "Invalid refresh token")
+    uid = str(user.id)
     return TokenResponse(
-        access_token=make_token(email, 60),
-        refresh_token=make_token(email, 60 * 24 * 7),
+        access_token=make_token(uid, 60),
+        refresh_token=make_token(uid, 60 * 24 * 7),
     )
 
 @app.get("/auth/me", response_model=UserOut)
 async def me(authorization: str = Header(...), db: AsyncSession = Depends(get_db)):
     token = authorization.removeprefix("Bearer ")
-    email = decode_token(token)
-    result = await db.execute(select(User).where(User.email == email))
+    try:
+        sub = decode_token(token)
+        user_id = int(sub)
+    except (HTTPException, ValueError, TypeError):
+        raise HTTPException(401, "Invalid or expired token")
+    result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(404, "User not found")
+    if not user or not user.is_active:
+        raise HTTPException(401, "Invalid or expired token")
     return user
 
 # ── HSN lookup routes ─────────────────────────────────────────────────────────
@@ -393,11 +432,13 @@ async def predict_single(
         token = authorization[7:]
         try:
             decode_token(token)
-        except Exception:
+        except HTTPException:
             raise HTTPException(401, "Invalid token")
     elif x_api_key:
-        valid_keys = {ADMIN_API_KEY, os.environ.get("API_KEY", "dev-api-key")}
-        if x_api_key not in valid_keys:
+        if not (
+            _const_api_key_eq(x_api_key, ADMIN_API_KEY)
+            or _const_api_key_eq(x_api_key, API_KEY_ENV)
+        ):
             raise HTTPException(401, "Invalid API key")
     else:
         raise HTTPException(422, "Provide Authorization: Bearer <token> or X-API-Key header")
@@ -432,6 +473,42 @@ async def predict_single(
     }
 
 # ── Batch endpoint ─────────────────────────────────────────────────────────────
+# Tunables (env-overridable). Bulk batches were previously serial: N queries
+# meant N \xd7 ~10 SQL round-trips against Neon. We now:
+#   1. Deduplicate identical queries within the batch (typical retail uploads
+#      have 30\u201360% duplicates).
+#   2. Look up a per-query Redis cache (sha1(normalized_query) \u2192 result).
+#   3. Fan out cache misses with bounded concurrency, each task using its own
+#      AsyncSession (concurrent SQLAlchemy sessions are safe; sharing one is not).
+#
+# Result-cache TTL is shared with single-predict so re-running the same product
+# either via UI or CSV always hits the warm cache.
+
+BULK_CONCURRENCY  = int(os.environ.get("BULK_CONCURRENCY", "8"))
+BULK_PER_QUERY_TIMEOUT_S = float(os.environ.get("BULK_PER_QUERY_TIMEOUT_S", "12"))
+BULK_RESULT_CACHE_TTL_S  = int(os.environ.get("BULK_RESULT_CACHE_TTL_S", "21600"))  # 6h
+
+_BULK_NORMALIZE_RE = re.compile(r"\s+")
+
+def _bulk_normalize_query(q: str) -> str:
+    return _BULK_NORMALIZE_RE.sub(" ", (q or "").strip()).upper()
+
+
+def _bulk_cache_key(query: str) -> str:
+    norm = _bulk_normalize_query(query)
+    return "bulk:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
+
+
+def _result_to_cacheable(row: HSNBatchResult) -> dict:
+    return row.model_dump()
+
+
+def _cacheable_to_result(query: str, payload: dict) -> HSNBatchResult:
+    payload = dict(payload)
+    payload["query"] = query  # preserve the raw input as the user typed it
+    return HSNBatchResult(**payload)
+
+
 @app.post("/hsn/batch", response_model=BatchResponse)
 async def batch_predict(
     body: BatchQuery,
@@ -441,35 +518,112 @@ async def batch_predict(
 ):
     if authorization.startswith("Bearer "):
         token = authorization[7:]
-        email = decode_token(token)
-        res = await db.execute(select(User).where(User.email == email))
+        try:
+            sub = decode_token(token)
+            user_id = int(sub)
+        except (HTTPException, ValueError, TypeError):
+            raise HTTPException(401, "Authentication required")
+        res = await db.execute(select(User).where(User.id == user_id))
         user = res.scalar_one_or_none()
         if not user or not user.is_active:
-            raise HTTPException(401, "User not found or inactive")
+            raise HTTPException(401, "Authentication required")
     elif x_api_key:
-        valid_keys = {ADMIN_API_KEY, os.environ.get("API_KEY", "dev-api-key")}
-        if x_api_key not in valid_keys:
+        if not (
+            _const_api_key_eq(x_api_key, ADMIN_API_KEY)
+            or _const_api_key_eq(x_api_key, API_KEY_ENV)
+        ):
             raise HTTPException(401, "Invalid API key")
     else:
         raise HTTPException(401, "Authentication required")
 
-    queries = [q.strip() for q in body.queries if q.strip()]
-    results: list[HSNBatchResult] = []
+    raw_queries = [q.strip() for q in body.queries if q.strip()]
+    if not raw_queries:
+        return BatchResponse(results=[], total=0, matched=0, unmatched=0)
 
-    for query in queries:
-        try:
-            row = await _match_one(query, db)
-            if row.hsn_code:
-                row.hsn_code = normalize_hsn(row.hsn_code)
-            for alt in row.alternatives:
-                if alt.get("hsn_code"):
-                    alt["hsn_code"] = normalize_hsn(alt["hsn_code"])
-            results.append(row)
-        except Exception as e:
-            log.error("batch.match_failed query=%s error=%s", query[:60], str(e))
-            results.append(HSNBatchResult(query=query, error=str(e)))
+    # ── Step 1: deduplicate by normalised key, preserving original positions ──
+    # `groups[normalised] = [original_query_at_position_0, original_at_pos_3, ...]`
+    groups: dict[str, list[int]] = {}
+    keys_in_order: list[str] = []
+    for idx, query in enumerate(raw_queries):
+        norm = _bulk_normalize_query(query)
+        if norm not in groups:
+            groups[norm] = []
+            keys_in_order.append(norm)
+        groups[norm].append(idx)
 
-    matched = sum(1 for r in results if r.hsn_code)
+    unique_queries = [(norm, raw_queries[groups[norm][0]]) for norm in keys_in_order]
+
+    # ── Step 2: parallel Redis cache lookup ──────────────────────────────────
+    cache_keys = [_bulk_cache_key(orig) for _norm, orig in unique_queries]
+    cached_payloads = await asyncio.gather(*(cache_get(k) for k in cache_keys), return_exceptions=True)
+
+    by_norm: dict[str, HSNBatchResult] = {}
+    misses: list[tuple[int, str, str, str]] = []  # (idx_in_unique, norm, orig_query, cache_key)
+    for i, ((norm, orig), payload) in enumerate(zip(unique_queries, cached_payloads)):
+        if isinstance(payload, dict) and payload.get("hsn_code"):
+            by_norm[norm] = _cacheable_to_result(orig, payload)
+        else:
+            misses.append((i, norm, orig, cache_keys[i]))
+
+    # ── Step 3: bounded concurrent fan-out for misses ────────────────────────
+    if misses:
+        sem = asyncio.Semaphore(max(1, BULK_CONCURRENCY))
+
+        async def _resolve(orig_query: str, cache_key: str) -> HSNBatchResult:
+            async with sem:
+                async with AsyncSessionLocal() as session:
+                    try:
+                        row = await asyncio.wait_for(
+                            _match_one(orig_query, session),
+                            timeout=BULK_PER_QUERY_TIMEOUT_S,
+                        )
+                    except asyncio.TimeoutError:
+                        log.warning("batch.timeout query=%s", orig_query[:60])
+                        return HSNBatchResult(
+                            query=orig_query,
+                            error="Classification timed out for this item.",
+                        )
+                    except Exception as exc:  # noqa: BLE001
+                        log.error("batch.match_failed query=%s error=%s", orig_query[:60], str(exc))
+                        return HSNBatchResult(
+                            query=orig_query,
+                            error="Classification failed. Please try again or contact support.",
+                        )
+
+                    if row.hsn_code:
+                        row.hsn_code = normalize_hsn(row.hsn_code)
+                    for alt in row.alternatives:
+                        if alt.get("hsn_code"):
+                            alt["hsn_code"] = normalize_hsn(alt["hsn_code"])
+
+                    if row.hsn_code:
+                        try:
+                            await cache_set(cache_key, _result_to_cacheable(row), ttl=BULK_RESULT_CACHE_TTL_S)
+                        except Exception:
+                            pass
+                    return row
+
+        resolved = await asyncio.gather(
+            *(_resolve(orig, key) for _i, _norm, orig, key in misses),
+            return_exceptions=False,
+        )
+        for (_i, norm, _orig, _key), row in zip(misses, resolved):
+            by_norm[norm] = row
+
+    # ── Step 4: re-emit results in original input order, cloning per duplicate
+    results: list[HSNBatchResult] = [None] * len(raw_queries)  # type: ignore
+    for norm, positions in groups.items():
+        base = by_norm.get(norm) or HSNBatchResult(
+            query=raw_queries[positions[0]],
+            error="Classification failed. Please try again or contact support.",
+        )
+        base_dump = base.model_dump()
+        for pos in positions:
+            cloned = dict(base_dump)
+            cloned["query"] = raw_queries[pos]  # restore each user-typed string
+            results[pos] = HSNBatchResult(**cloned)
+
+    matched = sum(1 for r in results if r and r.hsn_code)
     return BatchResponse(
         results=results,
         total=len(results),
@@ -1280,8 +1434,19 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
     q_stripped = query.strip()
     q_upper = q_stripped.upper()
 
+    # ── Layer 0: Romanized Hindi/Malayalam → English (paani, panneer, pappad, …) ─
+    q_alias = q_stripped
+    try:
+        from app.services import aliases as alias_svc
+
+        _expanded = await alias_svc.expand_query(db, q_stripped)
+        if _expanded.english_query and _expanded.english_query.strip():
+            q_alias = _expanded.english_query.strip()
+    except Exception as exc:
+        log.debug("match.alias_expand_skipped error=%s", str(exc)[:120])
+
     # ── Layer 1: Expand abbreviations early (used in ALL passes) ──────────────
-    q_expanded = expand_fmcg_abbreviations(q_stripped)
+    q_expanded = expand_fmcg_abbreviations(q_alias)
     q_expanded_upper = q_expanded.upper()
 
     q_ns          = _strip_sizes(q_stripped)   # size-stripped UPPERCASE (original)
@@ -2119,3 +2284,15 @@ async def startup():
             """))
         except Exception:
             pass
+
+    async def _warm_services():
+        try:
+            async with AsyncSessionLocal() as session:
+                from app.services import aliases as alias_svc
+
+                await alias_svc.refresh(session, force=True)
+            log.info("startup.alias_index_warmed")
+        except Exception as exc:
+            log.warning("startup.alias_warmup_failed error=%s", str(exc)[:120])
+
+    asyncio.create_task(_warm_services())

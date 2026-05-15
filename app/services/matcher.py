@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 import re
 import numpy as np
 import structlog
@@ -526,6 +527,10 @@ class HybridMatcher:
 
         return self._rank_grouped_matches(scored, top_k)
 
+    def _faiss_ip_search(self, query: np.ndarray, top_k: int):
+        """Inner-product FAISS search (run via ``amatch`` / ``asyncio.to_thread`` from async routes)."""
+        return self._index.search(query, top_k)
+
     def _keyword_match(self, text: str, top_k: int) -> list[dict]:
         return self._phrase_match(text, top_k)
 
@@ -539,7 +544,7 @@ class HybridMatcher:
             tokens = tokenize(text)
             query_text = " ".join(expand_tokens(tokens)) if tokens else text.lower()
             query = self._model.encode([query_text], normalize_embeddings=True).astype(np.float32)
-            scores, indices = self._index.search(query, top_k)
+            scores, indices = self._faiss_ip_search(query, top_k)
             results = []
             for score, idx in zip(scores[0], indices[0]):
                 if idx < 0:
@@ -639,6 +644,10 @@ class HybridMatcher:
             return self._tag_retry_matches(retry_results, core_product)
 
         return primary_results
+
+    async def amatch(self, text: str, top_k: int = 5) -> list[dict]:
+        """Run :meth:`match` in a worker thread so FAISS / embedding work does not block the event loop."""
+        return await asyncio.to_thread(self.match, text, top_k)
 
 
 def get_matcher() -> HybridMatcher:
