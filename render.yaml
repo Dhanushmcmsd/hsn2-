@@ -50,6 +50,12 @@ services:
       - key: ADMIN_API_KEY
         sync: false          # must differ from API_KEY
 
+      # ── AI Classification — Anthropic Claude (Tier 5) ────────────────────
+      # Get from: https://console.anthropic.com/settings/keys
+      # If not set, Tier 5 AI classification is silently skipped (Tier 6 handles fallback)
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
       # ── Database — Supabase free PostgreSQL ───────────────────────────────
       # Format: postgresql+asyncpg://<user>:<password>@<host>:5432/<db>
       # Get from: Supabase dashboard → Settings → Database → Connection string
@@ -64,8 +70,9 @@ services:
         sync: false
 
       # ── CORS ──────────────────────────────────────────────────────────────
+      # Add every Vercel preview URL your frontend uses, comma-separated
       - key: CORS_ORIGINS
-        value: https://hsn2.vercel.app   # add comma-separated origins if needed
+        value: "https://hsn2.vercel.app,https://hsn2-git-main-dhanushmcmsd.vercel.app,https://hsn-app.vercel.app"
 
       # ── Model tuning (optional — these match .env.example defaults) ───────
       - key: EMBEDDING_MODEL

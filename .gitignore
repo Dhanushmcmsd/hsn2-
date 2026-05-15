@@ -24,8 +24,6 @@ hsn_dev.db
 data/hsn_codes.csv
 data/hsn_codes_full.csv
 
-# Docker
-.dockerignore
 
 # Node / Frontend
 hsn-frontend/node_modules/
