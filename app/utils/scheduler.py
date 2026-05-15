@@ -32,8 +32,15 @@ async def seed_synonym_fuzzy_cache_job():
             stmt = (
                 select(Prediction)
                 .where(
-                    Prediction.source == "synonym_fuzzy_match",
-                    Prediction.confidence >= 0.70,
+                    Prediction.source.in_([
+                        "product_trigram",
+                        "product_ilike",
+                        "product_rapidfuzz",
+                        "synonym_fuzzy_match",
+                        "faiss_token",
+                        "trigram_high",
+                    ]),
+                    Prediction.confidence >= 65,
                 )
                 .order_by(desc(Prediction.id))
                 .limit(5000)

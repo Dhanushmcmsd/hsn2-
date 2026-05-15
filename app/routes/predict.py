@@ -36,6 +36,28 @@ _HYBRID_OVERRUN_DB_THRESHOLD = 0.35
 WARMING_UP_DETAIL = "Service warming up, retry in 2s"
 
 
+def _normalize_confidence(score: float, source: str) -> int:
+    """
+    Normalizes raw layer scores to a consistent 0–100 integer for UI display.
+    """
+    ranges = {
+        "exact":              (1.0, 1.0),
+        "verified_exact":     (0.92, 1.0),
+        "inverted_index":     (0.0, 1.0),
+        "trigram":            (0.0, 1.0),
+        "faiss":              (0.0, 1.0),
+        "synonym_fuzzy":      (0.0, 1.0),
+        "product_trigram":    (0.0, 1.0),
+        "product_ilike":      (0.0, 1.0),
+        "product_rapidfuzz":  (0.0, 1.0),
+    }
+    low, high = ranges.get(source, (0.0, 1.0))
+    if high == low:
+        return 100
+    normalized = (score - low) / (high - low)
+    return min(100, max(0, round(normalized * 100)))
+
+
 def _normalize_query_for_cache(q: str) -> str:
     """Normalize query for cache key generation - matches main.py format."""
     return _QUERY_NORMALIZE_RE.sub(" ", (q or "").strip()).upper()
@@ -165,6 +187,7 @@ async def predict(
             "gst_rate": float(verified.gst_rate or 0) if verified.gst_rate else None,
             "score": score,
             "method": method,
+            "source": method,
         }
         alternatives = []
         confidence, label = score_result(score)
@@ -172,25 +195,38 @@ async def predict(
         prediction_source = method
         elapsed = (time.perf_counter() - start) * 1000
     else:
+        matches = []
+        matcher = None
         inv_matches = await inverted_index.search(db, search_text, limit=5)
         if inv_matches and inv_matches[0].get("score", 0) >= 0.50:
             top = inv_matches[0]
+            top.setdefault("source", "inverted_index")
             alternatives = inv_matches[1:]
             confidence, label = score_result(top["score"])
             needs_review = top["score"] < 0.55
             prediction_source = "inverted_index"
             elapsed = (time.perf_counter() - start) * 1000
         else:
-            matches = await match_query(search_text, db, top_k=5)
-            matcher = get_matcher()
-        if matcher.ready:
+            trgm_matches = await inverted_index.fuzzy_trgm(db, search_text, limit=5)
+            if trgm_matches and trgm_matches[0].get("score", 0) >= 0.40:
+                top = trgm_matches[0]
+                top.setdefault("source", "trigram")
+                alternatives = trgm_matches[1:]
+                confidence, label = score_result(top["score"])
+                needs_review = top["score"] < 0.55
+                prediction_source = "trigram"
+                elapsed = (time.perf_counter() - start) * 1000
+            else:
+                matches = await match_query(search_text, db, top_k=5)
+                matcher = get_matcher()
+        if matcher and matcher.ready:
             if not matches or matches[0].get("score", 0) < _HYBRID_OVERRUN_DB_THRESHOLD:
                 hybrid = await matcher.amatch(search_text, top_k=5)
                 if hybrid and (
                     not matches or hybrid[0].get("score", 0) > matches[0].get("score", 0)
                 ):
                     matches = hybrid
-        elif not matches:
+        elif matcher and not matches:
             matches = await matcher.amatch(search_text, top_k=5)
 
         if not matches:
@@ -198,8 +234,10 @@ async def predict(
 
         top = matches[0]
         alternatives = matches[1:]
+        top.setdefault("source", prediction_source or "hsn_codes")
         confidence, label = score_result(top["score"])
         needs_review = top["score"] < 0.55
+        prediction_source = top.get("source") or top.get("method")
         elapsed = (time.perf_counter() - start) * 1000
 
         if (
@@ -241,12 +279,13 @@ async def predict(
 
             # Fix D: cache immediately so second (and all future) requests
             # skip every search layer entirely and return in < 5ms
+            norm_conf = _normalize_confidence(result["score"], result["source"])
             cache_payload = {
                 "hsn_code":    result["hsn_code"],
                 "description": result["description"],
                 "gst_rate":    result["gst_rate"],
                 "source":      result["source"],
-                "confidence":  round(result["score"] * 100)
+                "confidence":  norm_conf
             }
             await set_cache(
                 key=cache_key,
@@ -256,18 +295,32 @@ async def predict(
 
             # Also insert into predictions table for review/scheduler
             from sqlalchemy import text
-            await db.execute(text("""
-                INSERT INTO predictions (request_id, input_text, predicted_hsn, confidence, source, created_at)
-                VALUES (:req, :input, :hsn, :conf, :src, NOW())
-                ON CONFLICT DO NOTHING
-            """), {
-                "req": request_id,
-                "input": body.text,
-                "hsn":   result["hsn_code"],
-                "conf":  round(result["score"] * 100),
-                "src":   result["source"]
-            })
-            await db.commit()
+            try:
+                await db.execute(text("""
+                    INSERT INTO predictions (request_id, input_text, predicted_hsn, confidence, source, created_at)
+                    VALUES (:req, :input, :hsn, :conf, :src, NOW())
+                    ON CONFLICT DO NOTHING
+                """), {
+                    "req": request_id,
+                    "input": body.text,
+                    "hsn":   result["hsn_code"],
+                    "conf":  norm_conf,
+                    "src":   result["source"]
+                })
+                await db.commit()
+            except Exception as exc:
+                log.warning("predict.product_insert_failed", error=str(exc))
+                try:
+                    await db.rollback()
+                except Exception:
+                    pass
+
+    # Normalize confidence across all layers
+    result_source = prediction_source or result.get("source") or result.get("method") or "unknown"
+    result["source"] = result_source
+    confidence = _normalize_confidence(result["score"], result_source)
+    label = score_result(result["score"])[1]
+    prediction_source = result_source
 
     try:
         record = Prediction(
@@ -282,7 +335,7 @@ async def predict(
         db.add(record)
         await db.commit()
     except Exception as exc:
-        log.info("predict.persistence_unavailable", error=str(exc))
+        log.warning("predict.persistence_unavailable", error=str(exc))
         try:
             await db.rollback()
         except Exception:

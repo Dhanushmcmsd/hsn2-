@@ -287,6 +287,45 @@ async def match_query(query: str, db: AsyncSession, *, top_k: int = 5) -> list[d
     if prefix_rows:
         return prefix_rows[:top_k]
 
+    # Union search across verified_products (product names) and hsn_codes descriptions
+    union_rows: list[dict] = []
+    try:
+        union_result = await db.execute(
+            text("""
+                SELECT hsn_code, description AS description, COALESCE(gst_rate, 0) AS gst_rate,
+                       similarity(description, :query) AS score,
+                       'verified_products' AS source
+                FROM verified_products
+                WHERE similarity(description, :query) > 0.20
+                UNION ALL
+                SELECT hsn_code, description, COALESCE(gst_rate, 0) AS gst_rate,
+                       similarity(description, :query) AS score,
+                       'hsn_codes' AS source
+                FROM hsn_codes
+                WHERE similarity(description, :query) > 0.20
+                ORDER BY score DESC
+                LIMIT 5
+            """),
+            {"query": expanded},
+        )
+        rows_union = union_result.fetchall()
+        for row in rows_union:
+            union_rows.append(
+                {
+                    "hsn_code": _normalize_hsn(row.hsn_code),
+                    "description": row.description,
+                    "gst_rate": float(row.gst_rate or 0),
+                    "score": float(row.score or 0),
+                    "method": "union_similarity",
+                    "source": row.source,
+                }
+            )
+    except Exception as exc:
+        log.info("db_matcher.union_unavailable", error=str(exc))
+
+    if union_rows:
+        return _rerank_matches(query, union_rows, top_k=top_k)
+
     rows = await _pass2_fts(expanded, tokens, db, operator="&", chapter_hints=chapter_hints)
     if not rows and len(tokens) > 1:
         rows = await _pass2_fts(expanded, tokens, db, operator="|", chapter_hints=chapter_hints)

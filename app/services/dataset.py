@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import csv
 import hashlib
 import json
@@ -184,20 +185,14 @@ def _load_product_batch_rows() -> list[dict]:
     return rows
 
 
-def _load_db_verified_rows() -> list[dict]:
-    from sqlalchemy import create_engine, text
-    from app.config import settings
-    sync_url = settings.DATABASE_URL
-    if sync_url.startswith("postgresql+asyncpg://"):
-        sync_url = sync_url.replace("postgresql+asyncpg://", "postgresql://")
-    elif sync_url.startswith("sqlite+aiosqlite://"):
-        sync_url = sync_url.replace("sqlite+aiosqlite://", "sqlite://")
-    
-    out = []
+async def _load_db_verified_rows_async() -> list[dict]:
+    from sqlalchemy import text
+    from app.models.database import async_session
+
+    out: list[dict] = []
     try:
-        engine = create_engine(sync_url)
-        with engine.connect() as conn:
-            res = conn.execute(text("SELECT hsn_code, description, gst_rate, category FROM verified_products"))
+        async with async_session() as session:
+            res = await session.execute(text("SELECT hsn_code, description, gst_rate, category FROM verified_products"))
             for r in res.fetchall():
                 record = _build_record(
                     hsn_code=r[0],
@@ -206,10 +201,29 @@ def _load_db_verified_rows() -> list[dict]:
                     gst_rate=str(r[2]) if r[2] is not None else "",
                     category=r[3] if len(r) > 3 and r[3] else ""
                 )
-                if record: out.append(record)
+                if record:
+                    out.append(record)
     except Exception as exc:
         log.warning("dataset.db_load_failed", error=str(exc))
     return out
+
+
+def _load_db_verified_rows() -> list[dict]:
+    """
+    Wrapper to ensure DB load does not block the event loop; uses async session under the hood.
+    """
+    try:
+        return asyncio.run(_load_db_verified_rows_async())
+    except RuntimeError:
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                future = asyncio.run_coroutine_threadsafe(_load_db_verified_rows_async(), loop)
+                return future.result()
+            return loop.run_until_complete(_load_db_verified_rows_async())
+        except Exception as exc:
+            log.warning("dataset.db_load_failed", error=str(exc))
+            return []
 
 
 def _dedupe_rows(rows: list[dict]) -> list[dict]:

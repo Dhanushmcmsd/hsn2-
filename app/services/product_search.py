@@ -6,6 +6,7 @@ at whichever position the audit shows is the right gap.
 Uses three sub-strategies in sequence, returns on first hit.
 """
 
+import structlog
 from rapidfuzz import process, fuzz
 from sqlalchemy import text
 
@@ -15,6 +16,8 @@ NAME_COL = "description"
 HSN_COL = "hsn_code"
 GST_COL = "gst_rate"
 DESC_COL = "description"
+
+log = structlog.get_logger()
 
 def _tokenize(query: str) -> list[str]:
     """
@@ -40,14 +43,18 @@ async def search_by_product_name(db, query: str) -> dict | None:
     candidates = []
 
     for term in [query.lower()] + tokens:
-        rows = await db.execute(text(f"""
-            SELECT {NAME_COL}, {HSN_COL}, {GST_COL}, {DESC_COL},
-                   similarity({NAME_COL}, :term) AS score
-            FROM {PRODUCT_TABLE}
-            WHERE similarity({NAME_COL}, :term) > 0.20
-            ORDER BY score DESC LIMIT 3
-        """), {"term": term})
-        candidates.extend(rows.fetchall())
+        try:
+            rows = await db.execute(text(f"""
+                SELECT {NAME_COL}, {HSN_COL}, {GST_COL}, {DESC_COL},
+                       similarity({NAME_COL}, :term) AS score
+                FROM {PRODUCT_TABLE}
+                WHERE similarity({NAME_COL}, :term) > 0.20
+                ORDER BY score DESC LIMIT 3
+            """), {"term": term})
+            candidates.extend(rows.fetchall())
+        except Exception as exc:
+            log.warning("product_search.search_by_product_name_failed", error=str(exc), query=query[:60])
+            return None
 
     if not candidates:
         return None
@@ -71,12 +78,16 @@ async def search_by_token_ilike(db, query: str) -> dict | None:
     all_hits = {}   # hsn_code → {row, matched_tokens}
 
     for token in tokens:
-        rows = await db.execute(text(f"""
-            SELECT {NAME_COL}, {HSN_COL}, {GST_COL}, {DESC_COL}
-            FROM {PRODUCT_TABLE}
-            WHERE LOWER({NAME_COL}) LIKE '%' || :token || '%'
-            LIMIT 5
-        """), {"token": token})
+        try:
+            rows = await db.execute(text(f"""
+                SELECT {NAME_COL}, {HSN_COL}, {GST_COL}, {DESC_COL}
+                FROM {PRODUCT_TABLE}
+                WHERE LOWER({NAME_COL}) LIKE '%' || :token || '%'
+                LIMIT 5
+            """), {"token": token})
+        except Exception as exc:
+            log.warning("product_search.search_by_token_ilike_failed", error=str(exc), query=query[:60])
+            return None
         for row in rows.fetchall():
             key = getattr(row, HSN_COL)
             if key not in all_hits:
