@@ -69,7 +69,10 @@ export interface UserOut { id: number; email: string; full_name?: string; is_act
 export interface TokenResponse { access_token: string; refresh_token: string; token_type: string; }
 export interface AuthTokenResponse extends TokenResponse { expires_in?: number; }
 
-type Opts = RequestInit & { skipAuth?: boolean };
+type Opts = RequestInit & { skipAuth?: boolean; timeout?: number };
+
+// Default timeout for API requests (30 seconds to handle Vercel cold starts)
+const DEFAULT_TIMEOUT = 30000;
 
 export const authStorage = {
   getAccessToken: () => getToken(ACCESS_TOKEN_KEY),
@@ -114,26 +117,43 @@ export const authStorage = {
   },
 };
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeout: number): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("Request timed out. The server may be starting up - please try again.");
+    }
+    throw error;
+  }
+}
+
 async function request<T>(path: string, opts: Opts = {}): Promise<T> {
-  const { skipAuth, ...init } = opts;
+  const { skipAuth, timeout = DEFAULT_TIMEOUT, ...init } = opts;
   const headers: Record<string, string> = { "Content-Type": "application/json", ...(init.headers as Record<string, string>) };
   if (!skipAuth && typeof window !== "undefined") {
     const token = authStorage.getAccessToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
   }
-  let res = await fetch(`${BASE_URL}${path}`, { ...init, headers });
+  let res = await fetchWithTimeout(`${BASE_URL}${path}`, { ...init, headers }, timeout);
   if (res.status === 401 && !skipAuth && typeof window !== "undefined") {
     const refresh = authStorage.getRefreshToken();
     if (refresh) {
-      const rr = await fetch(`${BASE_URL}/auth/refresh`, {
+      const rr = await fetchWithTimeout(`${BASE_URL}/auth/refresh`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh_token: refresh }),
-      });
+      }, timeout);
       if (rr.ok) {
         const data = await rr.json();
         authStorage.updateTokens(data.access_token, data.refresh_token);
         headers["Authorization"] = `Bearer ${data.access_token}`;
-        res = await fetch(`${BASE_URL}${path}`, { ...init, headers });
+        res = await fetchWithTimeout(`${BASE_URL}${path}`, { ...init, headers }, timeout);
       } else { authStorage.clearTokens(); window.location.href = "/login"; }
     }
   }

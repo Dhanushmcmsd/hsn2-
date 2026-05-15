@@ -443,8 +443,48 @@ async def predict_single(
     else:
         raise HTTPException(422, "Provide Authorization: Bearer <token> or X-API-Key header")
 
+    # ── Unified cache lookup (same key as /hsn/batch) ──────────────────────
+    cache_key = _match_cache_key(body.text)
+    cached = await cache_get(cache_key)
+    if cached and isinstance(cached, dict) and cached.get("hsn_code"):
+        log.info("predict.cache_hit query=%s", body.text[:50])
+        cached_result = HSNBatchResult(**{**cached, "query": body.text})
+        top_hsn = normalize_hsn(cached_result.hsn_code) if cached_result.hsn_code else "99999999"
+        return {
+            "request_id": str(uuid.uuid4()),
+            "input_text": body.text,
+            "top_match": {
+                "hsn_code": top_hsn,
+                "description": cached_result.description or "Not classified",
+                "gst_rate": cached_result.gst_rate,
+                "score": cached_result.confidence,
+                "method": cached_result.match_method,
+            },
+            "alternatives": [
+                {
+                    "hsn_code": normalize_hsn(a.get("hsn_code", "")),
+                    "description": a.get("description", ""),
+                    "gst_rate": a.get("gst_rate"),
+                    "score": a.get("confidence", 0),
+                    "method": "search",
+                }
+                for a in cached_result.alternatives[:4]
+            ],
+            "confidence": cached_result.confidence,
+            "confidence_label": cached_result.confidence_label,
+            "needs_review": cached_result.confidence < 0.55,
+            "processing_time_ms": 0,
+        }
+
     result = await _match_one(body.text, db)
     top_hsn = normalize_hsn(result.hsn_code) if result.hsn_code else "99999999"
+
+    # ── Cache the result (same format as /hsn/batch) ───────────────────────
+    if result.hsn_code:
+        try:
+            await cache_set(cache_key, _result_to_cacheable(result), ttl=BULK_RESULT_CACHE_TTL_S)
+        except Exception:
+            pass
 
     return {
         "request_id": str(uuid.uuid4()),
@@ -488,15 +528,21 @@ BULK_CONCURRENCY  = int(os.environ.get("BULK_CONCURRENCY", "8"))
 BULK_PER_QUERY_TIMEOUT_S = float(os.environ.get("BULK_PER_QUERY_TIMEOUT_S", "12"))
 BULK_RESULT_CACHE_TTL_S  = int(os.environ.get("BULK_RESULT_CACHE_TTL_S", "21600"))  # 6h
 
-_BULK_NORMALIZE_RE = re.compile(r"\s+")
+_QUERY_NORMALIZE_RE = re.compile(r"\s+")
 
-def _bulk_normalize_query(q: str) -> str:
-    return _BULK_NORMALIZE_RE.sub(" ", (q or "").strip()).upper()
+def _normalize_query_for_cache(q: str) -> str:
+    """Normalize query for cache key generation - used by both /predict and /hsn/batch."""
+    return _QUERY_NORMALIZE_RE.sub(" ", (q or "").strip()).upper()
 
 
-def _bulk_cache_key(query: str) -> str:
-    norm = _bulk_normalize_query(query)
-    return "bulk:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
+def _match_cache_key(query: str) -> str:
+    """
+    Unified cache key format for HSN matching results.
+    Used by both single /predict and batch /hsn/batch endpoints.
+    Format: match:v1:<sha1 of normalized query>
+    """
+    norm = _normalize_query_for_cache(query)
+    return "match:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
 
 
 def _result_to_cacheable(row: HSNBatchResult) -> dict:
@@ -554,7 +600,7 @@ async def batch_predict(
     unique_queries = [(norm, raw_queries[groups[norm][0]]) for norm in keys_in_order]
 
     # ── Step 2: parallel Redis cache lookup ──────────────────────────────────
-    cache_keys = [_bulk_cache_key(orig) for _norm, orig in unique_queries]
+    cache_keys = [_match_cache_key(orig) for _norm, orig in unique_queries]
     cached_payloads = await asyncio.gather(*(cache_get(k) for k in cache_keys), return_exceptions=True)
 
     by_norm: dict[str, HSNBatchResult] = {}

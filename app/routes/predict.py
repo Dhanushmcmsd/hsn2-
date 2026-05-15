@@ -1,6 +1,7 @@
 from __future__ import annotations
 import hashlib
 import inspect
+import re
 import time
 import uuid
 import structlog
@@ -20,6 +21,24 @@ from app.utils.rate_limit import check_rate_limit
 
 router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
+
+# ── Unified cache key format (same as main.py) ─────────────────────────────────
+_QUERY_NORMALIZE_RE = re.compile(r"\s+")
+
+
+def _normalize_query_for_cache(q: str) -> str:
+    """Normalize query for cache key generation - matches main.py format."""
+    return _QUERY_NORMALIZE_RE.sub(" ", (q or "").strip()).upper()
+
+
+def _match_cache_key(query: str) -> str:
+    """
+    Unified cache key format for HSN matching results.
+    Format: match:v1:<sha1 of normalized query>
+    Matches main.py /predict and /hsn/batch endpoints.
+    """
+    norm = _normalize_query_for_cache(query)
+    return "match:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
 
 
 async def _scalar_one_or_none(result):
@@ -92,7 +111,8 @@ async def predict(
     await check_rate_limit(api_key)
     request_id = str(uuid.uuid4())
 
-    cache_key = f"predict:{body.text.strip().lower()}"
+    # Use unified cache key format (same as main.py /predict and /hsn/batch)
+    cache_key = _match_cache_key(body.text)
     cached = await get_cache(cache_key)
     if cached:
         log.info("predict.cache_hit", text=body.text[:50])

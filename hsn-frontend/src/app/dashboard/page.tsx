@@ -699,16 +699,42 @@ export default function PremiumDashboard() {
       }
 
       try {
-        const user = await authApi.me();
+        // Add timeout to prevent stuck loading on Vercel cold starts
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+        const userPromise = authApi.me();
+        const user = await Promise.race([
+          userPromise,
+          new Promise<never>((_, reject) => {
+            controller.signal.addEventListener("abort", () => {
+              reject(new Error("Request timed out"));
+            });
+          }),
+        ]);
+
+        clearTimeout(timeoutId);
+
         if (cancelled) return;
         const source = (user.full_name || user.email || "U").trim();
         setUserInitial(source.charAt(0).toUpperCase() || "U");
         setAuthReady(true);
-      } catch {
-        authStorage.clearTokens();
-        if (!cancelled) {
-          router.replace("/login");
+      } catch (err) {
+        if (cancelled) return;
+
+        // Check if it's a timeout vs auth error
+        const isTimeout = err instanceof Error && err.message === "Request timed out";
+        if (isTimeout) {
+          // On timeout, still try to proceed if we have a valid token
+          // This handles Vercel cold start delays
+          console.warn("Auth check timed out, proceeding with cached session");
+          setAuthReady(true);
+          return;
         }
+
+        // Auth failed - clear tokens and redirect
+        authStorage.clearTokens();
+        router.replace("/login");
       }
     }
 
@@ -884,8 +910,21 @@ export default function PremiumDashboard() {
 
   if (!authReady) {
     return (
-      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif" }}>
-        Loading dashboard…
+      <div style={{ minHeight: "100vh", background: "#020617", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#cbd5e1", fontFamily: "'Instrument Sans', sans-serif", gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{
+            width: 40, height: 40,
+            border: "3px solid rgba(96,165,250,0.2)",
+            borderTopColor: "#60a5fa",
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite",
+          }} />
+          <span style={{ fontSize: "0.9rem" }}>Connecting to HSNiq…</span>
+        </div>
+        <p style={{ fontSize: "0.75rem", color: "#475569", maxWidth: 280, textAlign: "center", margin: 0 }}>
+          First load may take a moment while the server warms up
+        </p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
