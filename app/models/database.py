@@ -67,6 +67,7 @@ class Prediction(Base):
     input_text = Column(Text, nullable=False)
     predicted_hsn = Column(String(20), nullable=False)
     confidence = Column(Float, nullable=False)
+    source = Column(String(50), nullable=True)
     needs_review = Column(Boolean, default=False)
     resolved = Column(Boolean, default=False)
     corrected_hsn = Column(String(20), nullable=True)
@@ -388,6 +389,13 @@ async def _ensure_schema() -> None:
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS schedule VARCHAR(150)",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE",
+            ):
+                try:
+                    await conn.execute(text(ddl))
+                except Exception:
+                    pass
+            for ddl in (
+                "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS source VARCHAR(50)",
             ):
                 try:
                     await conn.execute(text(ddl))

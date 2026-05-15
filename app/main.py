@@ -14,6 +14,7 @@ from app.config import settings, DEV_SECRET, DEV_API_KEY, DEV_ADMIN_KEY
 from app.models.database import init_db
 from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
+from app.utils.scheduler import start_scheduler, stop_scheduler
 from app.routes import predict, review, health, auth, admin, hsn, search
 
 configure_logging()
@@ -43,18 +44,28 @@ def _validate_production_config():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    app.state.ready = False
     _validate_production_config()
     await init_db()
     await init_cache()
 
-    async def warm_matcher():
+    async def warm_matcher_blocking():
         try:
             from app.services.matcher import get_matcher
 
-            await asyncio.to_thread(get_matcher)
-            log.info("matcher.warmup_complete")
+            def _load():
+                matcher = get_matcher()
+                return matcher
+
+            matcher = await asyncio.to_thread(_load)
+            if matcher.ready:
+                log.info("matcher.warmup_complete", faiss_ready=True)
+            else:
+                log.warning("matcher.warmup_complete", faiss_ready=False, note="semantic_search_disabled_until_faiss_loads")
+            return matcher.ready
         except Exception as exc:
             log.error("matcher.warmup_failed", error=str(exc))
+            return False
 
     async def warm_search_layer():
         try:
@@ -67,10 +78,17 @@ async def lifespan(app: FastAPI):
         except Exception as exc:
             log.warning("search.warmup_failed", error=str(exc))
 
-    asyncio.create_task(warm_matcher())
+    faiss_ok = await warm_matcher_blocking()
+    app.state.matcher_semantic_ready = faiss_ok
+    app.state.ready = True
+
+    await start_scheduler()
+
     asyncio.create_task(warm_search_layer())
-    log.info("app.startup", env=settings.APP_ENV)
+    log.info("app.startup", env=settings.APP_ENV, accepts_requests=app.state.ready)
     yield
+
+    await stop_scheduler()
     log.info("app.shutdown")
 
 

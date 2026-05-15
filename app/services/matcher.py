@@ -1,6 +1,7 @@
 from __future__ import annotations
 import asyncio
 import re
+import threading
 import numpy as np
 import structlog
 from collections import defaultdict
@@ -14,6 +15,7 @@ from app.services.kerala_aliases import (
 
 log = structlog.get_logger()
 _matcher_instance = None
+_matcher_lock = threading.Lock()
 
 STOPWORDS = {
     'the', 'a', 'an', 'and', 'or', 'of', 'in', 'is', 'for', 'to', 'with', 'on', 'at',
@@ -330,17 +332,24 @@ class HybridMatcher:
         self._embeddings = None
         self._model = None
         self._ready = False
+        self._index = None
         self._exact_map: dict[str, list[dict]] = {}
         self._no_size_map: dict[str, list[dict]] = {}
         self._load()
 
+    @property
+    def ready(self) -> bool:
+        return bool(self._ready)
+
     def _load(self):
         from app.services.dataset import get_dataset
         from app.config import settings
+        log.info("matcher.load_start", phase="dataset")
         self._dataset = get_dataset()
         if not self._dataset:
             log.warning("matcher.empty_dataset")
             return
+        log.info("matcher.load_progress", phase="indices", row_count=len(self._dataset))
         self._exact_map = defaultdict(list)
         self._no_size_map = defaultdict(list)
         for row in self._dataset:
@@ -356,14 +365,16 @@ class HybridMatcher:
         try:
             from sentence_transformers import SentenceTransformer
             import faiss
+            log.info("matcher.load_progress", phase="embedding_model", model=settings.EMBEDDING_MODEL)
             self._model = SentenceTransformer(settings.EMBEDDING_MODEL)
             texts = [d["description"] for d in self._dataset]
+            log.info("matcher.load_progress", phase="encode", texts=len(texts))
             self._embeddings = self._model.encode(texts, normalize_embeddings=True)
             dim = self._embeddings.shape[1]
             self._index = faiss.IndexFlatIP(dim)
             self._index.add(self._embeddings.astype(np.float32))
             self._ready = True
-            log.info("matcher.ready", count=len(self._dataset))
+            log.info("matcher.ready", count=len(self._dataset), faiss_dim=dim)
         except Exception as e:
             log.warning("matcher.load_error", error=str(e))
 
@@ -529,6 +540,8 @@ class HybridMatcher:
 
     def _faiss_ip_search(self, query: np.ndarray, top_k: int):
         """Inner-product FAISS search (run via ``amatch`` / ``asyncio.to_thread`` from async routes)."""
+        if self._index is None:
+            raise RuntimeError("FAISS index is not initialized")
         return self._index.search(query, top_k)
 
     def _keyword_match(self, text: str, top_k: int) -> list[dict]:
@@ -653,5 +666,7 @@ class HybridMatcher:
 def get_matcher() -> HybridMatcher:
     global _matcher_instance
     if _matcher_instance is None:
-        _matcher_instance = HybridMatcher()
+        with _matcher_lock:
+            if _matcher_instance is None:
+                _matcher_instance = HybridMatcher()
     return _matcher_instance
