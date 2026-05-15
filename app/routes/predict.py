@@ -17,6 +17,8 @@ from app.services.kerala_search import expand_kerala_query
 from app.services.db_matcher import match_query
 from app.services.confidence import score_result
 from app.services.normalizer import normalize_product_name
+from app.services.product_search import search_by_product_name, search_by_token_ilike, search_in_memory
+from app.services import inverted_index
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
 from app.utils.rate_limit import check_rate_limit
@@ -167,10 +169,20 @@ async def predict(
         alternatives = []
         confidence, label = score_result(score)
         needs_review = False
+        prediction_source = method
         elapsed = (time.perf_counter() - start) * 1000
     else:
-        matches = await match_query(search_text, db, top_k=5)
-        matcher = get_matcher()
+        inv_matches = await inverted_index.search(db, search_text, limit=5)
+        if inv_matches and inv_matches[0].get("score", 0) >= 0.50:
+            top = inv_matches[0]
+            alternatives = inv_matches[1:]
+            confidence, label = score_result(top["score"])
+            needs_review = top["score"] < 0.55
+            prediction_source = "inverted_index"
+            elapsed = (time.perf_counter() - start) * 1000
+        else:
+            matches = await match_query(search_text, db, top_k=5)
+            matcher = get_matcher()
         if matcher.ready:
             if not matches or matches[0].get("score", 0) < _HYBRID_OVERRUN_DB_THRESHOLD:
                 hybrid = await matcher.amatch(search_text, top_k=5)
@@ -207,6 +219,55 @@ async def predict(
                 prediction_source = "synonym_fuzzy_match"
                 elapsed = (time.perf_counter() - start) * 1000
                 log.info("predict.synonym_fuzzy_rescue_used", text=body.text[:60])
+
+    result = top
+
+    # ── NEW: Product Name Search Layer ────────────
+    if not result or result.get("score", 0) < 0.30:
+        product_result = await search_by_product_name(db, body.text)
+        if not product_result:
+            product_result = await search_by_token_ilike(db, body.text)
+        if not product_result:
+            product_result = search_in_memory(body.text, getattr(request.app.state, "product_name_cache", []))
+
+        if product_result:
+            result = product_result
+            top = product_result
+            alternatives = []
+            confidence, label = score_result(result["score"])
+            needs_review = result["score"] < 0.55
+            prediction_source = result["source"]
+            elapsed = (time.perf_counter() - start) * 1000
+
+            # Fix D: cache immediately so second (and all future) requests
+            # skip every search layer entirely and return in < 5ms
+            cache_payload = {
+                "hsn_code":    result["hsn_code"],
+                "description": result["description"],
+                "gst_rate":    result["gst_rate"],
+                "source":      result["source"],
+                "confidence":  round(result["score"] * 100)
+            }
+            await set_cache(
+                key=cache_key,
+                value=cache_payload,
+                ttl=86400
+            )
+
+            # Also insert into predictions table for review/scheduler
+            from sqlalchemy import text
+            await db.execute(text("""
+                INSERT INTO predictions (request_id, input_text, predicted_hsn, confidence, source, created_at)
+                VALUES (:req, :input, :hsn, :conf, :src, NOW())
+                ON CONFLICT DO NOTHING
+            """), {
+                "req": request_id,
+                "input": body.text,
+                "hsn":   result["hsn_code"],
+                "conf":  round(result["score"] * 100),
+                "src":   result["source"]
+            })
+            await db.commit()
 
     try:
         record = Prediction(

@@ -184,6 +184,34 @@ def _load_product_batch_rows() -> list[dict]:
     return rows
 
 
+def _load_db_verified_rows() -> list[dict]:
+    from sqlalchemy import create_engine, text
+    from app.config import settings
+    sync_url = settings.DATABASE_URL
+    if sync_url.startswith("postgresql+asyncpg://"):
+        sync_url = sync_url.replace("postgresql+asyncpg://", "postgresql://")
+    elif sync_url.startswith("sqlite+aiosqlite://"):
+        sync_url = sync_url.replace("sqlite+aiosqlite://", "sqlite://")
+    
+    out = []
+    try:
+        engine = create_engine(sync_url)
+        with engine.connect() as conn:
+            res = conn.execute(text("SELECT hsn_code, description, gst_rate, category FROM verified_products"))
+            for r in res.fetchall():
+                record = _build_record(
+                    hsn_code=r[0],
+                    description=r[1],
+                    source="db_verified_products",
+                    gst_rate=str(r[2]) if r[2] is not None else "",
+                    category=r[3] if len(r) > 3 and r[3] else ""
+                )
+                if record: out.append(record)
+    except Exception as exc:
+        log.warning("dataset.db_load_failed", error=str(exc))
+    return out
+
+
 def _dedupe_rows(rows: list[dict]) -> list[dict]:
     grouped: dict[tuple[str, str], dict] = {}
     source_rank = {"correct_datas": 3, "product_batch": 2, "hsn_codes": 1}
@@ -236,6 +264,7 @@ def load_dataset() -> list[dict]:
     rows = []
     rows.extend(_load_hsn_codes())
     rows.extend(_load_verified_rows())
+    rows.extend(_load_db_verified_rows())
     rows.extend(_load_product_batch_rows())
 
     deduped = _attach_aliases(_dedupe_rows(rows))

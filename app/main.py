@@ -82,6 +82,22 @@ async def lifespan(app: FastAPI):
     app.state.matcher_semantic_ready = faiss_ok
     app.state.ready = True
 
+    try:
+        from app.models.database import async_session
+        from sqlalchemy import text
+        async with async_session() as session:
+            rows = await session.execute(text("""
+                SELECT description, hsn_code, gst_rate, description 
+                FROM verified_products
+            """))
+            app.state.product_name_cache = [
+                (r[0], r[1], str(r[2]) if r[2] is not None else "", r[3]) for r in rows.fetchall()
+            ]
+        log.info(f"Product name cache loaded: {len(app.state.product_name_cache)} entries")
+    except Exception as exc:
+        log.warning("product_name_cache.load_failed", error=str(exc))
+        app.state.product_name_cache = []
+
     await start_scheduler()
 
     asyncio.create_task(warm_search_layer())
