@@ -94,16 +94,27 @@ Set up a free cron job at <https://cron-job.org>:
 
 ---
 
-## Step 4 — Vercel (Frontend — no changes needed)
+## Step 4 — Vercel (Frontend)
 
-Your frontend is already on Vercel. Just update the backend URL:
+The browser must know how to reach your Render API. Use one of these patterns:
 
-1. Go to your Vercel project → **Settings → Environment Variables**.
-2. Update `NEXT_PUBLIC_API_URL` to your new Render URL:
+### Option A — Same-origin proxy (recommended)
+
+1. Vercel → **Settings → Environment Variables** → add **`BACKEND_URL`** (Production, Preview, Development as needed):
+   ```
+   BACKEND_URL=https://<your-service>.onrender.com
+   ```
+2. Do **not** leave production without some backend pointer: the Next app uses same-origin **`/api`** in production and rewrites it to `BACKEND_URL` (or falls back to `NEXT_PUBLIC_API_URL` for the rewrite target).
+3. Redeploy (**Deployments → Redeploy**).
+
+### Option B — Direct API URL (browser calls Render)
+
+1. Set **`NEXT_PUBLIC_API_URL`** to your Render URL (no trailing slash):
    ```
    NEXT_PUBLIC_API_URL=https://<your-service>.onrender.com
    ```
-3. Redeploy (Vercel → **Deployments → Redeploy**).
+2. Ensure **`CORS_ORIGINS`** on Render lists every Vercel origin you use (production and preview URLs).
+3. Redeploy Vercel.
 
 > The current frontend does **not** use NextAuth. `NEXTAUTH_URL`,
 > `NEXTAUTH_SECRET`, and `JWT_SECRET` are not required by this app.
@@ -125,9 +136,10 @@ The table below shows which platform supplies each one in production:
 | `API_KEY` | Render dashboard | Client auth key |
 | `ADMIN_API_KEY` | Render dashboard | Must differ from API_KEY |
 | `APP_ENV` | render.yaml | `production` |
-| `CORS_ORIGINS` | render.yaml | `https://hsn2.vercel.app` |
+| `CORS_ORIGINS` | render.yaml / Render env | All Vercel origins you use (prod + previews) |
 | `LOG_LEVEL` | render.yaml | `INFO` |
-| `NEXT_PUBLIC_API_URL` | Vercel dashboard | Your Render service URL |
+| `BACKEND_URL` | Vercel dashboard | Render service URL — used by Next rewrites (`/api` → backend) |
+| `NEXT_PUBLIC_API_URL` | Vercel dashboard | Optional — direct browser→API mode; must match CORS on Render |
 
 ---
 

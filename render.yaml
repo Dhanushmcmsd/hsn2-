@@ -70,9 +70,9 @@ services:
         sync: false
 
       # ── CORS ──────────────────────────────────────────────────────────────
-      # Add every Vercel preview URL your frontend uses, comma-separated
+      # Add every Vercel preview/production URL your frontend uses, comma-separated
       - key: CORS_ORIGINS
-        value: "https://hsn2.vercel.app,https://hsn2-git-main-dhanushmcmsd.vercel.app,https://hsn-app.vercel.app"
+        value: "https://hsn2.vercel.app,https://hsn-app.vercel.app,https://hsn2-git-main-dhanushmcmsd.vercel.app,https://hsn2-git-main-krithu.vercel.app,https://hsn2-krithu.vercel.app,https://hsn-app-krithu.vercel.app"
 
       # ── Model tuning (optional — these match .env.example defaults) ───────
       - key: EMBEDDING_MODEL

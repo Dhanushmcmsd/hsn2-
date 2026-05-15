@@ -1,4 +1,13 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+/** Backend origin for API calls. See README_DEPLOYMENT.md (Vercel + Render). */
+function getApiBaseUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/$/, "");
+  if (explicit) return explicit;
+  if (process.env.NODE_ENV === "development") return "http://localhost:8000";
+  // Production: same-origin proxy via next.config rewrites (/api → BACKEND_URL)
+  return "/api";
+}
+
+const BASE_URL = getApiBaseUrl();
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 const REMEMBER_ME_KEY = "remember_me";

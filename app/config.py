@@ -28,7 +28,10 @@ class Settings(BaseSettings):
         "http://localhost:3001,"
         "https://hsn2.vercel.app,"
         "https://hsn-app.vercel.app,"
-        
+        "https://hsn2-git-main-krithu.vercel.app,"
+        "https://hsn2-krithu.vercel.app,"
+        "https://hsn-app-krithu.vercel.app,"
+        "https://hsn2-git-main-dhanushmcmsd.vercel.app,"
     )
 
     LOG_LEVEL: str = "INFO"
