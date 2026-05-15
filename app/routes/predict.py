@@ -19,6 +19,7 @@ from app.services.confidence import score_result
 from app.services.normalizer import normalize_product_name
 from app.services.product_search import search_by_product_name, search_by_token_ilike, search_in_memory
 from app.services import inverted_index
+from app.services.brand_search import brand_lookup, is_unclassified_hsn
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
 from app.utils.rate_limit import check_rate_limit
@@ -170,6 +171,66 @@ async def predict(
     except Exception as exc:
         log.info("predict.alias_expand_skipped", error=str(exc))
 
+    # ── Tier-0: Brand alias / brand-column lookup (fastest, most precise) ────
+    # Runs BEFORE the verified_products exact match to catch brand-name-only
+    # queries like "BOOST", "HORLICKS", "COLGATE" that would otherwise fall
+    # through to low-confidence FAISS / synonym rescue paths.
+    brand_result: dict | None = None
+    try:
+        brand_result = await brand_lookup(db, search_text, min_score=0.50)
+    except Exception as exc:
+        log.info("predict.brand_lookup_failed", error=str(exc))
+
+    if brand_result and not is_unclassified_hsn(brand_result.get("hsn_code")):
+        top = brand_result
+        alternatives = []
+        confidence, label = score_result(top["score"])
+        needs_review = False
+        prediction_source = top.get("method", "brand_lookup")
+        elapsed = (time.perf_counter() - start) * 1000
+        result = top
+
+        # Persist and cache so subsequent identical queries are instant
+        norm_conf = _normalize_confidence(top["score"], prediction_source)
+        cache_payload = {
+            "hsn_code":    top["hsn_code"],
+            "description": top["description"],
+            "gst_rate":    top["gst_rate"],
+            "source":      prediction_source,
+            "confidence":  norm_conf,
+        }
+        await set_cache(cache_key, cache_payload, ttl=86400)
+        log.info("predict.brand_hit", query=body.text[:60], hsn=top["hsn_code"], method=prediction_source)
+
+        record = Prediction(
+            request_id=request_id,
+            input_text=body.text,
+            predicted_hsn=top["hsn_code"],
+            confidence=norm_conf,
+            needs_review=False,
+            api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
+            source=prediction_source,
+        )
+        try:
+            db.add(record)
+            await db.commit()
+        except Exception:
+            try:
+                await db.rollback()
+            except Exception:
+                pass
+
+        return PredictResponse(
+            request_id=request_id,
+            input_text=body.text,
+            top_match=top,
+            alternatives=[],
+            confidence=norm_conf,
+            confidence_label=label,
+            needs_review=False,
+            processing_time_ms=round(elapsed, 1),
+        )
+
     verified = None
     try:
         verified, normalized, kerala_norm, no_size_val = await _fetch_verified_single_pass(db, search_text)
@@ -259,6 +320,23 @@ async def predict(
                 log.info("predict.synonym_fuzzy_rescue_used", text=body.text[:60])
 
     result = top
+
+    # ── Error boundary: reject 99999999 for known brands ──────────────────────
+    # If all search tiers returned 99999999 / unclassified but we have a brand
+    # alias hit, use the alias result rather than returning the catch-all code.
+    if is_unclassified_hsn(result.get("hsn_code")) and brand_result:
+        result = brand_result
+        top = brand_result
+        alternatives = []
+        confidence, label = score_result(brand_result["score"])
+        needs_review = True
+        prediction_source = brand_result.get("method", "brand_lookup_fallback")
+        elapsed = (time.perf_counter() - start) * 1000
+        log.warning(
+            "predict.unclassified_rescued_by_brand",
+            query=body.text[:60],
+            hsn=brand_result["hsn_code"],
+        )
 
     # ── NEW: Product Name Search Layer ────────────
     if not result or result.get("score", 0) < 0.30:

@@ -35,6 +35,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.services import aliases as aliases_service
 from app.services import inverted_index
+from app.services.brand_search import brand_lookup, is_unclassified_hsn
 from app.services.matcher import get_matcher
 from app.utils.cache import get_cache, set_cache
 
@@ -385,6 +386,41 @@ async def multi_search(
                 direct_hsn_hints=expanded.direct_hsn_hints,
             )
 
+    # ── L0b: Brand alias lookup (runs before fan-out, returns early if confident) ─
+    # Catches brand-name-only queries: "BOOST", "HORLICKS", "COLGATE", etc.
+    try:
+        brand_hit = await brand_lookup(db, expanded.english_query or raw_q, min_score=0.80)
+    except Exception:
+        brand_hit = None
+
+    if brand_hit and not is_unclassified_hsn(brand_hit.get("hsn_code")):
+        result_list = [brand_hit]
+        result_list[0]["layer"] = "L0b_brand_alias"
+        payload_brand = {
+            "results": result_list,
+            "methods_used": [brand_hit.get("method", "brand_lookup")],
+            "english_query": expanded.english_query,
+            "detected_language": expanded.detected_language,
+            "expansions": expanded.expansions,
+        }
+        if not bypass_cache:
+            try:
+                await set_cache(cache_key, payload_brand, ttl=DEFAULT_RESULT_TTL)
+            except Exception:
+                pass
+        return MultiSearchResult(
+            query=raw_q,
+            detected_language=expanded.detected_language,
+            english_query=expanded.english_query,
+            expansions=expanded.expansions,
+            results=result_list[:top_k],
+            cache_hit=False,
+            total_time_ms=round((time.perf_counter() - started) * 1000, 2),
+            layers=layers,
+            methods_used=[brand_hit.get("method", "brand_lookup")],
+            direct_hsn_hints=expanded.direct_hsn_hints,
+        )
+
     # ── L2..L6 fan-out (each independent, each bounded) ──────────────────────
     variants = expanded.all_text_variants()
     eng_q = expanded.english_query or raw_q
@@ -404,6 +440,15 @@ async def multi_search(
 
     merged = _merge(verified_rows, prefix_rows, inv_rows, faiss_rows, fuzzy_rows, boost_codes=boost_codes)
     merged = _apply_filters(merged, filters)
+
+    # Error boundary: drop any 99999999 entries if better results exist
+    non_unclassified = [r for r in merged if not is_unclassified_hsn(r.get("hsn_code"))]
+    if non_unclassified:
+        merged = non_unclassified
+    elif brand_hit:
+        # Fall back to brand result when all tiers returned unclassified
+        merged = [brand_hit]
+
     final = merged[:top_k]
     methods_used: list[str] = []
     for row in final:
