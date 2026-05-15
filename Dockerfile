@@ -27,6 +27,20 @@ RUN python -c "from sentence_transformers import SentenceTransformer; \
 # Copy the rest of the app
 COPY . .
 
+# Fail the build if the Alembic graph is broken or any expected revision is missing
+# (catches stale Docker cache / incomplete checkouts before deploy).
+RUN python - <<'PY'
+from alembic.config import Config
+from alembic.script import ScriptDirectory
+
+cfg = Config("alembic.ini")
+sd = ScriptDirectory.from_config(cfg)
+heads = sd.get_heads()
+assert len(heads) == 1, f"expected 1 alembic head, got {heads!r}"
+assert sd.get_revision("f1a2b3c4d5e6") is not None, "missing revision f1a2b3c4d5e6"
+print("alembic ok: head =", heads[0])
+PY
+
 # Make entrypoint executable
 RUN chmod +x entrypoint.sh
 

@@ -45,6 +45,8 @@ def _validate_production_config():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.ready = False
+    app.state.matcher_semantic_ready = False
+    app.state.product_name_cache = []
     _validate_production_config()
     await init_db()
     await init_cache()
@@ -78,30 +80,35 @@ async def lifespan(app: FastAPI):
         except Exception as exc:
             log.warning("search.warmup_failed", error=str(exc))
 
-    faiss_ok = await warm_matcher_blocking()
-    app.state.matcher_semantic_ready = faiss_ok
-    app.state.ready = True
+    async def deferred_heavy_startup():
+        """Don't block HTTP readiness: Render health checks must get 200 quickly."""
+        faiss_ok = await warm_matcher_blocking()
+        app.state.matcher_semantic_ready = faiss_ok
 
-    try:
-        from app.models.database import async_session
-        from sqlalchemy import text
-        async with async_session() as session:
-            rows = await session.execute(text("""
-                SELECT description, hsn_code, gst_rate, description 
-                FROM verified_products
-            """))
-            app.state.product_name_cache = [
-                (r[0], r[1], str(r[2]) if r[2] is not None else "", r[3]) for r in rows.fetchall()
-            ]
-        log.info(f"Product name cache loaded: {len(app.state.product_name_cache)} entries")
-    except Exception as exc:
-        log.warning("product_name_cache.load_failed", error=str(exc))
-        app.state.product_name_cache = []
+        try:
+            from app.models.database import async_session
+            from sqlalchemy import text
 
-    await start_scheduler()
+            async with async_session() as session:
+                rows = await session.execute(text("""
+                    SELECT description, hsn_code, gst_rate, description
+                    FROM verified_products
+                """))
+                app.state.product_name_cache = [
+                    (r[0], r[1], str(r[2]) if r[2] is not None else "", r[3]) for r in rows.fetchall()
+                ]
+            log.info("product_name_cache.loaded", n=len(app.state.product_name_cache))
+        except Exception as exc:
+            log.warning("product_name_cache.load_failed", error=str(exc))
+            app.state.product_name_cache = []
 
-    asyncio.create_task(warm_search_layer())
-    log.info("app.startup", env=settings.APP_ENV, accepts_requests=app.state.ready)
+        await start_scheduler()
+        asyncio.create_task(warm_search_layer())
+        app.state.ready = True
+        log.info("app.startup", env=settings.APP_ENV, accepts_requests=True)
+
+    asyncio.create_task(deferred_heavy_startup())
+    log.info("app.listening", note="heavy_init_in_background")
     yield
 
     await stop_scheduler()

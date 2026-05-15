@@ -1,0 +1,30 @@
+name: Check Alembic migrations
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  alembic-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install minimal tooling
+        run: pip install "alembic==1.13.1" "sqlalchemy==2.0.30"
+      - name: Verify single head and expected revisions
+        run: |
+          python - <<'PY'
+          from alembic.config import Config
+          from alembic.script import ScriptDirectory
+
+          cfg = Config("alembic.ini")
+          sd = ScriptDirectory.from_config(cfg)
+          heads = sd.get_heads()
+          assert len(heads) == 1, f"expected single head, got {heads!r}"
+          assert sd.get_revision("f1a2b3c4d5e6") is not None, "missing head revision f1a2b3c4d5e6"
+          print("alembic ok, head =", heads[0])
+          PY
