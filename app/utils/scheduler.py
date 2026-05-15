@@ -1,4 +1,5 @@
 import hashlib
+import re
 import uuid
 
 import structlog
@@ -10,7 +11,7 @@ log = structlog.get_logger()
 _scheduler: AsyncIOScheduler | None = None
 
 _QUERY_NORMALIZE_RE = re.compile(r"\s+")
-_CLAUDE_CACHE_TTL_S = 86400
+_SYNONYM_FUZZY_CACHE_TTL_S = 86400
 
 
 def _match_cache_key(query: str) -> str:
@@ -18,9 +19,10 @@ def _match_cache_key(query: str) -> str:
     return "match:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
 
 
-async def seed_claude_fallback_cache_job():
+async def seed_synonym_fuzzy_cache_job():
     from app.models.database import HsnCode, Prediction, async_session
     from app.services.hsn_master import canonicalize_hsn
+    from app.services.normalizer import normalize_product_name
     from app.utils.cache import set_cache
 
     seen: set[str] = set()
@@ -30,7 +32,7 @@ async def seed_claude_fallback_cache_job():
             stmt = (
                 select(Prediction)
                 .where(
-                    Prediction.source == "claude_fallback",
+                    Prediction.source == "synonym_fuzzy_match",
                     Prediction.confidence >= 0.70,
                 )
                 .order_by(desc(Prediction.id))
@@ -71,7 +73,7 @@ async def seed_claude_fallback_cache_job():
                         "description": desc_text,
                         "full_description": None,
                         "score": score,
-                        "method": "claude_fallback",
+                        "method": "synonym_fuzzy_match",
                         "gst_rate": gst,
                         "chapter": ch,
                         "heading": None,
@@ -82,11 +84,16 @@ async def seed_claude_fallback_cache_job():
                     "needs_review": score < 0.55,
                     "processing_time_ms": 0.0,
                 }
-                cache_key = _match_cache_key(row.input_text)
-                await set_cache(cache_key, payload, ttl=_CLAUDE_CACHE_TTL_S)
+                nq = normalize_product_name(row.input_text)
+                if not nq:
+                    nq = (row.input_text or "").strip()
+                if not nq:
+                    continue
+                cache_key = _match_cache_key(nq)
+                await set_cache(cache_key, payload, ttl=_SYNONYM_FUZZY_CACHE_TTL_S)
                 warmed += 1
 
-        log.info("scheduler.claude_cache_seed_done", distinct_queries=len(seen), entries_warmed=warmed)
+        log.info("scheduler.synonym_fuzzy_cache_seed_done", distinct_queries=len(seen), entries_warmed=warmed)
     except Exception as exc:
         log.warning("scheduler.cache_seed_failed", error=str(exc))
 
@@ -97,9 +104,9 @@ async def start_scheduler():
         return
     _scheduler = AsyncIOScheduler()
     _scheduler.add_job(
-        seed_claude_fallback_cache_job,
+        seed_synonym_fuzzy_cache_job,
         CronTrigger(day_of_week="sun", hour=3, minute=0),
-        id="seed_claude_fallback_cache",
+        id="seed_synonym_fuzzy_cache",
         replace_existing=True,
         misfire_grace_time=3600,
     )

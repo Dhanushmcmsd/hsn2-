@@ -1,23 +1,22 @@
 from __future__ import annotations
 import hashlib
 import inspect
-import json
 import re
 import time
 import uuid
 import structlog
-import httpx
+import asyncio
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import case, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
 from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import get_matcher, strip_sizes
 from app.services.kerala_search import expand_kerala_query
 from app.services.db_matcher import match_query
 from app.services.confidence import score_result
+from app.services.normalizer import normalize_product_name
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
 from app.utils.rate_limit import check_rate_limit
@@ -28,8 +27,8 @@ log = structlog.get_logger()
 # ── Unified cache key format (same as main.py) ─────────────────────────────────
 _QUERY_NORMALIZE_RE = re.compile(r"\s+")
 
-_CLAUDE_CACHE_TTL_S = 86400
-_LOW_SCORE_CLAUDE_THRESHOLD = 0.30
+_SYNONYM_FUZZY_CACHE_TTL_S = 86400
+_LOW_SCORE_SYNONYM_RESCUE_THRESHOLD = 0.30
 _HYBRID_OVERRUN_DB_THRESHOLD = 0.35
 
 WARMING_UP_DETAIL = "Service warming up, retry in 2s"
@@ -48,102 +47,6 @@ def _match_cache_key(query: str) -> str:
     """
     norm = _normalize_query_for_cache(query)
     return "match:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
-
-
-def _extract_json_object(raw: str) -> dict | None:
-    start = raw.find("{")
-    end = raw.rfind("}")
-    if start == -1 or end == -1 or end <= start:
-        return None
-    try:
-        return json.loads(raw[start : end + 1])
-    except json.JSONDecodeError:
-        return None
-
-
-async def _claude_hsn_fallback(product_name: str) -> dict | None:
-    key = (settings.ANTHROPIC_API_KEY or "").strip()
-    if not key:
-        return None
-    prompt = (
-        f"You are an Indian GST HSN code expert. Given the product name: '{product_name}', "
-        "return ONLY a JSON object with keys: "
-        "hsn_code (8-digit string), description (string), gst_rate (number, e.g. 18), "
-        "chapter (2-digit string), confidence (number 0-100). "
-        "Base your answer strictly on official Indian GST HSN classification rules. "
-        "Return nothing else — no markdown, no explanation."
-    )
-    try:
-        async with httpx.AsyncClient(timeout=90.0) as client:
-            r = await client.post(
-                "https://api.anthropic.com/v1/messages",
-                headers={
-                    "x-api-key": key,
-                    "anthropic-version": "2023-06-01",
-                    "content-type": "application/json",
-                },
-                json={
-                    "model": settings.ANTHROPIC_MODEL,
-                    "max_tokens": 512,
-                    "messages": [{"role": "user", "content": prompt}],
-                },
-            )
-            r.raise_for_status()
-            payload = r.json()
-            text = payload["content"][0]["text"].strip()
-    except Exception as exc:
-        log.warning("predict.claude_request_failed", error=str(exc))
-        return None
-
-    if text.startswith("```"):
-        text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
-        text = re.sub(r"\s*```\s*$", "", text)
-
-    data = None
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError:
-        data = _extract_json_object(text)
-
-    if not isinstance(data, dict):
-        log.warning("predict.claude_parse_failed", reason="not_object")
-        return None
-
-    hsn = re.sub(r"[^0-9]", "", str(data.get("hsn_code", "")))
-    if len(hsn) < 4:
-        log.warning("predict.claude_parse_failed", reason="bad_hsn")
-        return None
-    hsn = hsn.zfill(8)[:8]
-
-    desc = str(data.get("description") or "").strip()
-    if not desc:
-        desc = product_name.strip()
-
-    try:
-        gst_rate = float(data.get("gst_rate"))
-    except (TypeError, ValueError):
-        gst_rate = 0.0
-
-    chapter_raw = str(data.get("chapter") or "").strip()
-    chapter = re.sub(r"[^0-9]", "", chapter_raw)[:2]
-    if len(chapter) < 2 and len(hsn) >= 2:
-        chapter = hsn[:2]
-
-    try:
-        conf_pct = float(data.get("confidence", 0))
-    except (TypeError, ValueError):
-        conf_pct = 0.0
-    conf_pct = max(0.0, min(100.0, conf_pct))
-    score = round(conf_pct / 100.0, 4)
-
-    return {
-        "hsn_code": hsn,
-        "description": desc,
-        "gst_rate": gst_rate,
-        "score": score,
-        "method": "claude_fallback",
-        "chapter": chapter if len(chapter) == 2 else None,
-    }
 
 
 async def _scalar_one_or_none(result):
@@ -219,8 +122,13 @@ async def predict(
 
     request_id = str(uuid.uuid4())
 
-    # Use unified cache key format (same as main.py /predict and /hsn/batch)
-    cache_key = _match_cache_key(body.text)
+    normalized_query = normalize_product_name(body.text)
+    if not normalized_query:
+        normalized_query = (body.text or "").strip()
+    if not normalized_query:
+        raise HTTPException(status_code=422, detail="Product description is empty")
+
+    cache_key = _match_cache_key(normalized_query)
     cached = await get_cache(cache_key)
     if cached:
         log.info("predict.cache_hit", text=body.text[:50])
@@ -228,11 +136,11 @@ async def predict(
 
     start = time.perf_counter()
 
-    search_text = body.text
+    search_text = normalized_query
     try:
         from app.services import aliases as alias_svc
 
-        expanded = await alias_svc.expand_query(db, body.text)
+        expanded = await alias_svc.expand_query(db, normalized_query)
         if expanded.english_query and expanded.english_query.strip():
             search_text = expanded.english_query.strip()
     except Exception as exc:
@@ -243,7 +151,7 @@ async def predict(
         verified, normalized, kerala_norm, no_size_val = await _fetch_verified_single_pass(db, search_text)
     except Exception as exc:
         log.info("predict.verified_fetch_failed", error=str(exc))
-        verified, normalized, kerala_norm, no_size_val = None, body.text.upper().strip(), "", ""
+        verified, normalized, kerala_norm, no_size_val = None, search_text.upper().strip(), "", ""
 
     prediction_source: str | None = None
 
@@ -283,18 +191,22 @@ async def predict(
         elapsed = (time.perf_counter() - start) * 1000
 
         if (
-            top["score"] < _LOW_SCORE_CLAUDE_THRESHOLD
+            top["score"] < _LOW_SCORE_SYNONYM_RESCUE_THRESHOLD
             and getattr(request.app.state, "ready", True)
         ):
-            claude_top = await _claude_hsn_fallback(search_text)
-            if claude_top:
-                top = claude_top
+            rescue = await asyncio.to_thread(
+                matcher.synonym_fuzzy_rescue,
+                search_text,
+                float(top["score"]),
+            )
+            if rescue:
+                top = rescue
                 alternatives = []
                 confidence, label = score_result(top["score"])
                 needs_review = top["score"] < 0.55
-                prediction_source = "claude_fallback"
+                prediction_source = "synonym_fuzzy_match"
                 elapsed = (time.perf_counter() - start) * 1000
-                log.info("predict.claude_fallback_used", text=body.text[:60])
+                log.info("predict.synonym_fuzzy_rescue_used", text=body.text[:60])
 
     try:
         record = Prediction(
@@ -325,6 +237,8 @@ async def predict(
         needs_review=needs_review,
         processing_time_ms=round(elapsed, 1),
     )
-    cache_ttl = _CLAUDE_CACHE_TTL_S if prediction_source == "claude_fallback" else None
+    cache_ttl = None
+    if prediction_source == "synonym_fuzzy_match" and confidence >= 0.55:
+        cache_ttl = _SYNONYM_FUZZY_CACHE_TTL_S
     await set_cache(cache_key, result.model_dump(), ttl=cache_ttl)
     return result

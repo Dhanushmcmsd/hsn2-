@@ -335,6 +335,7 @@ class HybridMatcher:
         self._index = None
         self._exact_map: dict[str, list[dict]] = {}
         self._no_size_map: dict[str, list[dict]] = {}
+        self._fuzz_descriptions: list[str] = []
         self._load()
 
     @property
@@ -352,6 +353,7 @@ class HybridMatcher:
         log.info("matcher.load_progress", phase="indices", row_count=len(self._dataset))
         self._exact_map = defaultdict(list)
         self._no_size_map = defaultdict(list)
+        self._fuzz_descriptions = [d["description"] for d in self._dataset]
         for row in self._dataset:
             self._exact_map[row["description_normalized"]].append(row)
             expanded_norm = _normalize_for_match(row["description"])
@@ -546,6 +548,86 @@ class HybridMatcher:
 
     def _keyword_match(self, text: str, top_k: int) -> list[dict]:
         return self._phrase_match(text, top_k)
+
+    def synonym_fuzzy_rescue(self, query: str, faiss_score: float) -> dict | None:
+        """
+        When hybrid FAISS/keyword confidence is low, expand query with WordNet + trade synonyms,
+        re-query keywords and RapidFuzz token_set_ratio against dataset descriptions.
+        """
+        if not self._dataset or not self._fuzz_descriptions:
+            return None
+
+        from app.services.synonyms import expand_query
+        from rapidfuzz import fuzz, process
+
+        syns = expand_query(query)
+        faiss_part = max(0.0, min(1.0, float(faiss_score)))
+
+        def _gst_float(row: dict) -> float | None:
+            g = row.get("gst_rate")
+            if g is None or g == "":
+                return None
+            try:
+                return float(re.sub(r"[^0-9.]", "", str(g)) or 0)
+            except ValueError:
+                return None
+
+        agg: dict[str, dict] = {}
+
+        for syn in syns:
+            for hit in self._keyword_match(syn, top_k=3):
+                hsn = hit["hsn_code"]
+                sc = float(hit.get("score", 0.0))
+                cur = agg.get(hsn)
+                if not cur:
+                    agg[hsn] = {"row": dict(hit), "best_kw": sc, "best_fz": 0.0}
+                else:
+                    cur["best_kw"] = max(cur["best_kw"], sc)
+
+            for match in process.extract(
+                syn,
+                self._fuzz_descriptions,
+                scorer=fuzz.token_set_ratio,
+                limit=3,
+            ):
+                _, ratio, idx = match
+                item = self._dataset[idx]
+                hsn = item["hsn_code"]
+                fz = float(ratio) / 100.0
+                cur = agg.get(hsn)
+                if not cur:
+                    base = {**item}
+                    base.pop("score", None)
+                    base.pop("method", None)
+                    agg[hsn] = {"row": base, "best_kw": 0.0, "best_fz": fz}
+                else:
+                    cur["best_fz"] = max(cur["best_fz"], fz)
+
+        best_combined = -1.0
+        best_pack: dict | None = None
+
+        for _hsn, pack in agg.items():
+            second = max(pack["best_kw"], pack["best_fz"])
+            combined = 0.5 * faiss_part + 0.5 * second
+            if combined > best_combined:
+                best_combined = combined
+                best_pack = pack
+
+        if best_pack is None or best_combined < 0.40:
+            return None
+
+        row = dict(best_pack["row"])
+        hsn_code = row.get("hsn_code", "")
+        desc = row.get("description", "")
+        chapter = hsn_code[:2] if hsn_code and len(str(hsn_code)) >= 2 else None
+        return {
+            "hsn_code": hsn_code,
+            "description": desc,
+            "gst_rate": _gst_float(row),
+            "score": round(best_combined, 4),
+            "method": "synonym_fuzzy_match",
+            "chapter": chapter,
+        }
 
     def _semantic_match(self, text: str, top_k: int) -> list[dict]:
         if not self._ready:

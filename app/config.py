@@ -51,9 +51,6 @@ class Settings(BaseSettings):
     MULTI_SEARCH_TIMEOUT_PREFIX_MS: int = 300
     RATE_LIMIT_PER_MINUTE: int = 60
 
-    ANTHROPIC_API_KEY: str = ""
-    ANTHROPIC_MODEL: str = "claude-3-5-haiku-20241022"
-
     @property
     def async_database_url(self) -> str:
         url = self.DATABASE_URL
