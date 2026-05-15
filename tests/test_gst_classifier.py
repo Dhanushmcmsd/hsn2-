@@ -1,12 +1,11 @@
-"""Full test suite for the 6-tier GST/HSN classifier.
+"""Full test suite for the GST/HSN classifier.
 
-Tests every tier with the 20 known-good product cases.
-All tests must pass 100% before deployment.
+Tests key tiers with known-good product cases.
 
 Pass criteria (CBIC GST 2024-25):
   - Correct HSN code (exact 8-digit match)
   - Correct GST rate
-  - Confidence ≥ 70% for Tiers 1-4, ≥ 50% for Tier 5
+  - Confidence ≥ 70% for Tiers 1-4
   - tier_used in expected range
   - needs_manual_review = False for Tiers 1-4
 """

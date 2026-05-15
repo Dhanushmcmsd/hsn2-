@@ -51,6 +51,10 @@ async def lifespan(app: FastAPI):
     await init_db()
     await init_cache()
 
+    # Must be synchronous: background task scheduling is not guaranteed to run before first HTTP request.
+    app.state.ready = True
+    log.info("app.accepting_predictions", env=settings.APP_ENV)
+
     async def warm_matcher_blocking():
         try:
             from app.services.matcher import get_matcher
@@ -81,7 +85,9 @@ async def lifespan(app: FastAPI):
             log.warning("search.warmup_failed", error=str(exc))
 
     async def deferred_heavy_startup():
-        """Don't block HTTP readiness: Render health checks must get 200 quickly."""
+        """Warm FAISS/matcher + product cache in background."""
+        await start_scheduler()
+
         faiss_ok = await warm_matcher_blocking()
         app.state.matcher_semantic_ready = faiss_ok
 
@@ -102,10 +108,8 @@ async def lifespan(app: FastAPI):
             log.warning("product_name_cache.load_failed", error=str(exc))
             app.state.product_name_cache = []
 
-        await start_scheduler()
         asyncio.create_task(warm_search_layer())
-        app.state.ready = True
-        log.info("app.startup", env=settings.APP_ENV, accepts_requests=True)
+        log.info("app.startup_heavy_complete", faiss_semantic_ready=faiss_ok)
 
     asyncio.create_task(deferred_heavy_startup())
     log.info("app.listening", note="heavy_init_in_background")

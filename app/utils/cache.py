@@ -12,7 +12,14 @@ async def init_cache():
     global _redis
     try:
         import redis.asyncio as aioredis
-        _redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+        _redis = aioredis.from_url(
+            settings.REDIS_URL,
+            decode_responses=True,
+            socket_connect_timeout=10.0,
+            socket_timeout=10.0,
+            health_check_interval=30,
+            retry_on_timeout=True,
+        )
         await _redis.ping()
         log.info("cache.connected")
     except Exception as e:

@@ -1,4 +1,4 @@
-"""6-Tier GST/HSN classification pipeline for Government of India submission.
+"""5-Tier GST/HSN classification pipeline for Government of India submission.
 
 Pipeline (each tier logs which tier returned the result):
 
@@ -7,7 +7,6 @@ Pipeline (each tier logs which tier returned the result):
   TIER 2  — Exact Product Match(< 10ms)  verified_products exact match
   TIER 3  — Fuzzy Match        (< 50ms)  pg_trgm similarity on brand+product
   TIER 4  — Keyword/Category   (< 30ms)  keyword_category_map lookup
-  TIER 5  — AI Classification  (< 3000ms) Claude API structured prompt
   TIER 6  — Manual Review Flag           logs to pending_review, returns best guess
 
 Standard response shape:
@@ -25,8 +24,6 @@ Standard response shape:
 """
 from __future__ import annotations
 
-import json
-import os
 import re
 import time
 from datetime import datetime, timezone
@@ -49,7 +46,6 @@ _UNCLASSIFIED_HSN = "99999999"
 
 # Cache TTL in seconds
 _CACHE_TTL_EXACT = 30 * 24 * 3600   # 30 days for exact/brand matches
-_CACHE_TTL_AI = 7 * 24 * 3600       # 7 days for AI-classified matches
 
 
 # ---------------------------------------------------------------------------
@@ -381,89 +377,6 @@ async def _tier4_keyword(db: AsyncSession, query_raw: str) -> dict | None:
     }
 
 
-# ---------------------------------------------------------------------------
-# TIER 5 — AI Classification (Claude API)
-# ---------------------------------------------------------------------------
-
-_CLAUDE_SYSTEM = (
-    "You are a GST/HSN classification expert for India. "
-    "Classify the given Indian product using CBIC HSN Master 2024-25 and "
-    "GST Council notifications up to March 2025. "
-    "Return ONLY a JSON object with these exact keys: "
-    "hsn_code (8-digit string), gst_rate (numeric), "
-    "description (string), confidence (0-100 integer), chapter (2-digit string). "
-    "Use official Indian GST rates: 0, 0.1, 0.25, 1.5, 3, 5, 12, 18, or 28 only."
-)
-
-
-async def _tier5_ai_classify(query: str) -> dict | None:
-    """Call Claude API for classification. Returns None if API unavailable."""
-    api_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY")
-    if not api_key:
-        log.debug("gst_classifier.tier5_no_api_key")
-        return None
-
-    try:
-        import httpx  # type: ignore
-    except ImportError:
-        log.debug("gst_classifier.tier5_httpx_missing")
-        return None
-
-    prompt = (
-        f"Classify this Indian product for GST/HSN:\n"
-        f"Product: {query}\n"
-        f"Return JSON: {{hsn_code, gst_rate, description, confidence, chapter}}\n"
-        f"Use CBIC HSN 2024-25. Return 8-digit HSN only."
-    )
-
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.post(
-                "https://api.anthropic.com/v1/messages",
-                headers={
-                    "x-api-key": api_key,
-                    "anthropic-version": "2023-06-01",
-                    "content-type": "application/json",
-                },
-                json={
-                    "model": "claude-3-haiku-20240307",
-                    "max_tokens": 256,
-                    "system": _CLAUDE_SYSTEM,
-                    "messages": [{"role": "user", "content": prompt}],
-                },
-            )
-        data = resp.json()
-        raw = data["content"][0]["text"].strip()
-        # Extract JSON from response
-        m = re.search(r"\{.*\}", raw, re.DOTALL)
-        if not m:
-            return None
-        result = json.loads(m.group(0))
-        hsn = str(result.get("hsn_code", "")).strip()
-        gst = float(result.get("gst_rate", 0))
-        confidence = int(result.get("confidence", 50))
-        desc = str(result.get("description", query))
-
-        if not _is_valid_hsn(hsn):
-            return None
-        if not _is_valid_gst(gst):
-            gst = None
-
-        log.info("gst_classifier.tier5_ai_hit", q=query[:50], hsn=hsn, conf=confidence)
-        return {
-            "hsn_code": hsn,
-            "description": desc,
-            "gst_rate": gst,
-            "cess_applicable": _cess_for_hsn(hsn),
-            "confidence": confidence,
-            "tier_used": 5,
-            "source": "claude_ai_classification",
-            "verified": False,
-        }
-    except Exception as exc:
-        log.warning("gst_classifier.tier5_ai_failed", error=str(exc)[:120])
-        return None
-
 
 # ---------------------------------------------------------------------------
 # TIER 6 — Manual Review Flag
@@ -529,13 +442,8 @@ async def classify(
     query: str,
     *,
     bypass_cache: bool = False,
-    enable_ai: bool = True,
 ) -> dict[str, Any]:
-    """Classify a product query through the 6-tier GST/HSN pipeline.
-
-    Never returns HSN 99999999 for a known product. Returns a standardised
-    response dict regardless of which tier served the result.
-    """
+    """Classify a product query through the GST/HSN pipeline (DB + manual review)."""
     started = time.perf_counter()
     raw_q = (query or "").strip()
     if not raw_q:
@@ -564,7 +472,6 @@ async def classify(
             )
 
     result: dict | None = None
-    cache_ttl = _CACHE_TTL_EXACT
 
     # ── TIER 1: Exact Brand Match ─────────────────────────────────────────────
     result = await _tier1_exact_brand(db, query_norm)
@@ -614,23 +521,8 @@ async def classify(
         await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
         return final
 
-    # ── TIER 5: AI Classification ─────────────────────────────────────────────
-    best_guess = None
-    if enable_ai:
-        result = await _tier5_ai_classify(raw_q)
-        if result and result.get("confidence", 0) >= 50:
-            # Store AI result in verified_products for future cache hits
-            await _cache_store(db, query_norm, result, _CACHE_TTL_AI)
-            elapsed = (time.perf_counter() - started) * 1000
-            return _make_result(
-                result["hsn_code"], result["description"], result["gst_rate"],
-                result["cess_applicable"], result["confidence"], 5,
-                result["source"], False, elapsed,
-            )
-        best_guess = result
-
-    # ── TIER 6: Manual Review Flag ────────────────────────────────────────────
-    pending = await _tier6_pending_review(db, raw_q, query_norm, best_guess)
+    # ── TIER 6: Manual Review Flag (no external AI layer) ─────────────────────
+    pending = await _tier6_pending_review(db, raw_q, query_norm, None)
     elapsed = (time.perf_counter() - started) * 1000
     return _make_result(
         pending.get("hsn_code") or "UNCLASSIFIED",

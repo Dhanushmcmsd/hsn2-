@@ -34,9 +34,6 @@ _SYNONYM_FUZZY_CACHE_TTL_S = 86400
 _LOW_SCORE_SYNONYM_RESCUE_THRESHOLD = 0.30
 _HYBRID_OVERRUN_DB_THRESHOLD = 0.35
 
-WARMING_UP_DETAIL = "Service warming up, retry in 2s"
-
-
 def _normalize_confidence(score: float, source: str) -> int:
     """
     Normalizes raw layer scores to a consistent 0–100 integer for UI display.
@@ -142,8 +139,6 @@ async def predict(
     db: AsyncSession = Depends(get_db),
 ):
     await check_rate_limit(api_key)
-    if not getattr(request.app.state, "ready", True):
-        raise HTTPException(status_code=503, detail=WARMING_UP_DETAIL)
 
     request_id = str(uuid.uuid4())
 

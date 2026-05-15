@@ -1,4 +1,4 @@
-"""GST Classification API — 6-tier fallback pipeline.
+"""GST Classification API — multi-tier fallback pipeline (no external AI).
 
 Endpoints added by this module (additive, do NOT overlap with existing routes):
   POST /api/v1/classify          — classify a single product query
@@ -33,7 +33,10 @@ router = APIRouter(prefix="/api/v1/classify", tags=["GST Classification"])
 class ClassifyRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=500, description="Product name or description")
     bypass_cache: bool = Field(False, description="Skip cache and re-classify")
-    enable_ai: bool = Field(True, description="Allow AI (Claude) fallback if DB tiers miss")
+    enable_ai: bool = Field(
+        False,
+        description="Deprecated. Ignored (external AI classifier was removed).",
+    )
 
 
 class ClassifyResult(BaseModel):
@@ -53,7 +56,7 @@ class ClassifyResult(BaseModel):
 class BatchClassifyRequest(BaseModel):
     queries: list[str] = Field(..., min_items=1, max_items=50, description="Up to 50 product queries")
     bypass_cache: bool = False
-    enable_ai: bool = True
+    enable_ai: bool = Field(False, description="Deprecated. Ignored.")
 
 
 class BatchClassifyResponse(BaseModel):
@@ -94,21 +97,19 @@ async def classify_product(
     _key: str = Depends(require_api_key),
 ) -> ClassifyResult:
     """
-    Classify a product description through the 6-tier GST/HSN pipeline.
+    Classify a product description through cache, DB matchers, then manual review if needed.
 
     **Tier 0** — DB cache (instant)
     **Tier 1** — Exact brand match (brand_aliases, CBIC verified)
     **Tier 2** — Exact product match (verified_products)
     **Tier 3** — Fuzzy match (pg_trgm)
     **Tier 4** — Keyword/category match
-    **Tier 5** — AI classification (Claude)
     **Tier 6** — Manual review queue
     """
     result = await classify(
         db,
         body.query,
         bypass_cache=body.bypass_cache,
-        enable_ai=body.enable_ai,
     )
     return ClassifyResult(**result)
 
@@ -124,7 +125,7 @@ async def classify_batch(
     started = time.perf_counter()
 
     tasks = [
-        classify(db, q, bypass_cache=body.bypass_cache, enable_ai=body.enable_ai)
+        classify(db, q, bypass_cache=body.bypass_cache)
         for q in body.queries
     ]
     raw_results = await asyncio.gather(*tasks, return_exceptions=True)
