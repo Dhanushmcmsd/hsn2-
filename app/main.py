@@ -1,9 +1,11 @@
 from __future__ import annotations
 import asyncio
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
 
+import httpx
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,36 +44,32 @@ def _validate_production_config():
         raise RuntimeError("Production startup validation failed:\n" + "\n".join(f"  - {e}" for e in errors))
 
 
+async def keep_alive():
+    """Ping the backend's own health endpoint every 14 minutes to prevent Render sleep."""
+    self_url = os.getenv("RENDER_EXTERNAL_URL", "").rstrip("/")
+    if not self_url:
+        return
+    await asyncio.sleep(60)
+    while True:
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                await client.get(f"{self_url}/health")
+        except Exception:
+            pass
+        await asyncio.sleep(14 * 60)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.ready = False
-    app.state.matcher_semantic_ready = False
     app.state.product_name_cache = []
     _validate_production_config()
     await init_db()
-    await init_cache()
-
-    # Must be synchronous: background task scheduling is not guaranteed to run before first HTTP request.
     app.state.ready = True
+
+    await init_cache()
+    asyncio.create_task(keep_alive())
     log.info("app.accepting_predictions", env=settings.APP_ENV)
-
-    async def warm_matcher_blocking():
-        try:
-            from app.services.matcher import get_matcher
-
-            def _load():
-                matcher = get_matcher()
-                return matcher
-
-            matcher = await asyncio.to_thread(_load)
-            if matcher.ready:
-                log.info("matcher.warmup_complete", faiss_ready=True)
-            else:
-                log.warning("matcher.warmup_complete", faiss_ready=False, note="semantic_search_disabled_until_faiss_loads")
-            return matcher.ready
-        except Exception as exc:
-            log.error("matcher.warmup_failed", error=str(exc))
-            return False
 
     async def warm_search_layer():
         try:
@@ -85,11 +83,7 @@ async def lifespan(app: FastAPI):
             log.warning("search.warmup_failed", error=str(exc))
 
     async def deferred_heavy_startup():
-        """Warm FAISS/matcher + product cache in background."""
         await start_scheduler()
-
-        faiss_ok = await warm_matcher_blocking()
-        app.state.matcher_semantic_ready = faiss_ok
 
         try:
             from app.models.database import async_session
@@ -109,7 +103,7 @@ async def lifespan(app: FastAPI):
             app.state.product_name_cache = []
 
         asyncio.create_task(warm_search_layer())
-        log.info("app.startup_heavy_complete", faiss_semantic_ready=faiss_ok)
+        log.info("app.startup_heavy_complete")
 
     asyncio.create_task(deferred_heavy_startup())
     log.info("app.listening", note="heavy_init_in_background")

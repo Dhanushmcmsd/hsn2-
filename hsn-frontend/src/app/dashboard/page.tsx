@@ -351,8 +351,13 @@ export default function PremiumDashboard() {
   const [showFileSuccess, setShowFileSuccess] = useState(false);
   const [userInitial, setUserInitial] = useState("U");
   const [authReady, setAuthReady] = useState(false);
-  const [classifierWarming, setClassifierWarming] = useState(false);
+  const [submitPulse, setSubmitPulse] = useState(false);
 
+  const { trigger: predictTrigger, isMutating: singleLoading } = useSWRMutation(
+    "hsn-predict",
+    async (_, { arg }) =>
+      hsnApi.predict(arg)
+  );
   const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap');
 
@@ -745,14 +750,6 @@ export default function PremiumDashboard() {
     };
   }, [router]);
 
-  const { trigger: predictTrigger, isMutating: singleLoading } = useSWRMutation(
-    "hsn-predict",
-    async (_, { arg }) =>
-      hsnApi.predict(arg, { onWarming: () => setClassifierWarming(true) })
-  );
-
-  const [submitPulse, setSubmitPulse] = useState(false);
-
   const runPredict = useDebouncedCallback(
     async (text) => {
       const q = String(text || "").trim();
@@ -760,14 +757,11 @@ export default function PremiumDashboard() {
       setSubmitPulse(false);
       setSingleError("");
       setResult(null);
-      setClassifierWarming(false);
       try {
         const prediction = await predictTrigger(q);
         setResult(prediction);
       } catch (error) {
         setSingleError(error instanceof Error ? error.message : "Prediction failed");
-      } finally {
-        setClassifierWarming(false);
       }
     },
     300
@@ -1114,30 +1108,6 @@ export default function PremiumDashboard() {
                 )}
               </button>
             </form>
-
-            {classifierWarming && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  background: "rgba(59,130,246,0.1)",
-                  border: "1px solid rgba(59,130,246,0.25)",
-                  color: "#93c5fd",
-                  fontSize: "0.8rem",
-                  padding: "0.65rem 1rem",
-                  borderRadius: 12,
-                  marginBottom: "1rem",
-                }}
-              >
-                <span className="loading-dots" style={{ display: "inline-flex" }}>
-                  <span />
-                  <span />
-                  <span />
-                </span>
-                Warming up classifier… retrying automatically
-              </div>
-            )}
 
             {/* Example chips */}
             {!result && !singleLoading && !submitPulse && (

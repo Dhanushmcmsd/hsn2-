@@ -2,7 +2,6 @@ from __future__ import annotations
 import asyncio
 import re
 import threading
-import numpy as np
 import structlog
 from collections import defaultdict
 from functools import lru_cache
@@ -329,10 +328,6 @@ def expand_tokens(tokens: list[str]) -> list[str]:
 class HybridMatcher:
     def __init__(self):
         self._dataset: list[dict] = []
-        self._embeddings = None
-        self._model = None
-        self._ready = False
-        self._index = None
         self._exact_map: dict[str, list[dict]] = {}
         self._no_size_map: dict[str, list[dict]] = {}
         self._fuzz_descriptions: list[str] = []
@@ -340,11 +335,10 @@ class HybridMatcher:
 
     @property
     def ready(self) -> bool:
-        return bool(self._ready)
+        return True
 
     def _load(self):
         from app.services.dataset import get_dataset
-        from app.config import settings
         log.info("matcher.load_start", phase="dataset")
         self._dataset = get_dataset()
         if not self._dataset:
@@ -364,21 +358,6 @@ class HybridMatcher:
             expanded_no_size = strip_sizes(expand_fmcg_abbreviations(row["description"]))
             if expanded_no_size and expanded_no_size != row.get("description_no_size"):
                 self._no_size_map[expanded_no_size].append(row)
-        try:
-            from sentence_transformers import SentenceTransformer
-            import faiss
-            log.info("matcher.load_progress", phase="embedding_model", model=settings.EMBEDDING_MODEL)
-            self._model = SentenceTransformer(settings.EMBEDDING_MODEL)
-            texts = [d["description"] for d in self._dataset]
-            log.info("matcher.load_progress", phase="encode", texts=len(texts))
-            self._embeddings = self._model.encode(texts, normalize_embeddings=True)
-            dim = self._embeddings.shape[1]
-            self._index = faiss.IndexFlatIP(dim)
-            self._index.add(self._embeddings.astype(np.float32))
-            self._ready = True
-            log.info("matcher.ready", count=len(self._dataset), faiss_dim=dim)
-        except Exception as e:
-            log.warning("matcher.load_error", error=str(e))
 
     def _exact_code_match(self, text: str) -> list[dict]:
         text_lower = text.lower()
@@ -540,116 +519,11 @@ class HybridMatcher:
 
         return self._rank_grouped_matches(scored, top_k)
 
-    def _faiss_ip_search(self, query: np.ndarray, top_k: int):
-        """Inner-product FAISS search (run via ``amatch`` / ``asyncio.to_thread`` from async routes)."""
-        if self._index is None:
-            raise RuntimeError("FAISS index is not initialized")
-        return self._index.search(query, top_k)
-
     def _keyword_match(self, text: str, top_k: int) -> list[dict]:
         return self._phrase_match(text, top_k)
 
-    def synonym_fuzzy_rescue(self, query: str, faiss_score: float) -> dict | None:
-        """
-        When hybrid FAISS/keyword confidence is low, expand query with WordNet + trade synonyms,
-        re-query keywords and RapidFuzz token_set_ratio against dataset descriptions.
-        """
-        if not self._dataset or not self._fuzz_descriptions:
-            return None
-
-        from app.services.synonyms import expand_query
-        from rapidfuzz import fuzz, process
-
-        syns = expand_query(query)
-        faiss_part = max(0.0, min(1.0, float(faiss_score)))
-
-        def _gst_float(row: dict) -> float | None:
-            g = row.get("gst_rate")
-            if g is None or g == "":
-                return None
-            try:
-                return float(re.sub(r"[^0-9.]", "", str(g)) or 0)
-            except ValueError:
-                return None
-
-        agg: dict[str, dict] = {}
-
-        for syn in syns:
-            for hit in self._keyword_match(syn, top_k=3):
-                hsn = hit["hsn_code"]
-                sc = float(hit.get("score", 0.0))
-                cur = agg.get(hsn)
-                if not cur:
-                    agg[hsn] = {"row": dict(hit), "best_kw": sc, "best_fz": 0.0}
-                else:
-                    cur["best_kw"] = max(cur["best_kw"], sc)
-
-            for match in process.extract(
-                syn,
-                self._fuzz_descriptions,
-                scorer=fuzz.token_set_ratio,
-                limit=3,
-            ):
-                _, ratio, idx = match
-                item = self._dataset[idx]
-                hsn = item["hsn_code"]
-                fz = float(ratio) / 100.0
-                cur = agg.get(hsn)
-                if not cur:
-                    base = {**item}
-                    base.pop("score", None)
-                    base.pop("method", None)
-                    agg[hsn] = {"row": base, "best_kw": 0.0, "best_fz": fz}
-                else:
-                    cur["best_fz"] = max(cur["best_fz"], fz)
-
-        best_combined = -1.0
-        best_pack: dict | None = None
-
-        for _hsn, pack in agg.items():
-            second = max(pack["best_kw"], pack["best_fz"])
-            combined = 0.5 * faiss_part + 0.5 * second
-            if combined > best_combined:
-                best_combined = combined
-                best_pack = pack
-
-        if best_pack is None or best_combined < 0.40:
-            return None
-
-        row = dict(best_pack["row"])
-        hsn_code = row.get("hsn_code", "")
-        desc = row.get("description", "")
-        chapter = hsn_code[:2] if hsn_code and len(str(hsn_code)) >= 2 else None
-        return {
-            "hsn_code": hsn_code,
-            "description": desc,
-            "gst_rate": _gst_float(row),
-            "score": round(best_combined, 4),
-            "method": "synonym_fuzzy_match",
-            "chapter": chapter,
-        }
-
     def _semantic_match(self, text: str, top_k: int) -> list[dict]:
-        if not self._ready:
-            return []
-        try:
-            import faiss  # noqa: F401
-            # Expand abbreviations before encoding
-            text = expand_fmcg_abbreviations(text)
-            tokens = tokenize(text)
-            query_text = " ".join(expand_tokens(tokens)) if tokens else text.lower()
-            query = self._model.encode([query_text], normalize_embeddings=True).astype(np.float32)
-            scores, indices = self._faiss_ip_search(query, top_k)
-            results = []
-            for score, idx in zip(scores[0], indices[0]):
-                if idx < 0:
-                    continue
-                item = self._dataset[idx]
-                results.append({**item, "score": round(float(score), 4), "method": "semantic"})
-            return results
-        except Exception as e:
-            log.warning("matcher.semantic_error", error=str(e))
-            return []
+        return []
 
     def _match_once(self, text: str, top_k: int = 5) -> list[dict]:
         exact_code = self._exact_code_match(text)

@@ -130,7 +130,7 @@ def test_expand_fmcg_abbreviations(monkeypatch):
     main = _load_main_with_stubs()
 
     assert main.expand_fmcg_abbreviations("BTRM CLNR") == "bathroom cleaner"
-    assert main.expand_fmcg_abbreviations("COOKIS") == "cookie"
+    assert main.expand_fmcg_abbreviations("COOKIS") == "cookies"
     assert main.expand_fmcg_abbreviations("CASHW") == "cashew"
     assert main.expand_fmcg_abbreviations("JASMNE") == "jasmine"
     assert main.expand_fmcg_abbreviations("CHOC BAR") == "chocolate bar"

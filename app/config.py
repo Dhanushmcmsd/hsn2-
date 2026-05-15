@@ -32,6 +32,9 @@ class Settings(BaseSettings):
         "https://hsn2-krithu.vercel.app,"
         "https://hsn-app-krithu.vercel.app,"
         "https://hsn2-git-main-dhanushmcmsd.vercel.app,"
+        "https://hsn2-dhanushmcmsd.vercel.app,"
+        "https://hsn-app-dhanushmcmsd.vercel.app,"
+        "https://hsniq.vercel.app"
     )
 
     LOG_LEVEL: str = "INFO"

@@ -27,6 +27,49 @@ KERALA_FOOD_MAP = {
     "RASAM PODI": {"search": "rasam powder spice", "hsn": "09109100"},
     "PUJA OIL": {"search": "lamp oil sesame puja pooja", "hsn": "15180040"},
     "NADAN": {"search": "traditional local country style", "hsn": None},
+    "CHAKKA": {"search": "jackfruit fresh tropical", "hsn": "08109040"},
+    "VAZHAKKA": {"search": "raw banana plantain cooking", "hsn": "08030090"},
+    "ETHAKKA": {"search": "nendran banana plantain cooking", "hsn": "08030090"},
+    "CHENA": {"search": "yam elephant foot vegetable", "hsn": "07149020"},
+    "CHEMBU": {"search": "taro colocasia root vegetable", "hsn": "07149090"},
+    "CHEMMEEN": {"search": "prawn shrimp frozen seafood", "hsn": "03061700"},
+    "NJANDU": {"search": "crab crustacean seafood frozen", "hsn": "03061400"},
+    "KARIMEEN": {"search": "pearl spot fish fresh water", "hsn": "03019990"},
+    "AYALA": {"search": "mackerel fish indian fresh", "hsn": "03024200"},
+    "MATHI": {"search": "sardine fish fresh indian", "hsn": "03025200"},
+    "NELLIKKA": {"search": "amla gooseberry fruit fresh", "hsn": "08109060"},
+    "MURINGAKKA": {"search": "drumstick moringa pods fresh", "hsn": "07099300"},
+    "PAVAKKA": {"search": "bitter gourd karela vegetable", "hsn": "07099910"},
+    "CHEERA": {"search": "amaranth spinach red leaves", "hsn": "07099990"},
+    "THEAN": {"search": "honey bee natural product", "hsn": "04090000"},
+    "COIR": {"search": "coir coconut fibre rope mat", "hsn": "53050090"},
+    "UNNIYAPPAM": {"search": "rice sweet appam ball fried", "hsn": "19041090"},
+    "ADA": {"search": "rice ada payasam ingredient", "hsn": "19042090"},
+    "PALPAYASAM": {"search": "milk rice payasam kheer", "hsn": "21069099"},
+    "KUDAMPULI": {"search": "gamboge kokum fruit garcinia", "hsn": "08109090"},
+    "PAROTTA": {"search": "layered flatbread maida kerala", "hsn": "19059090"},
+    "PATHIRI": {"search": "rice bread flat roti rice", "hsn": "19052090"},
+    "CHERUPAYAR": {"search": "green gram moong dal split", "hsn": "07133190"},
+    "VANPAYAR": {"search": "cowpea red lobiya beans", "hsn": "07133390"},
+    "UZHUNNU": {"search": "urad dal black gram", "hsn": "07133190"},
+    "KADALA": {"search": "black chana chickpea whole", "hsn": "07132090"},
+    "KANJI": {"search": "rice gruel porridge rice water", "hsn": "19040090"},
+    "VCO": {"search": "virgin coconut oil cold pressed", "hsn": "15131190"},
+    "CPRA": {"search": "copra dried coconut kernel", "hsn": "12030000"},
+    "MANGA": {"search": "raw mango fresh green", "hsn": "08045020"},
+    "KERI": {"search": "raw mango pickle brine", "hsn": "20019000"},
+    "UPPUMANGA": {"search": "salted raw mango brine pickle", "hsn": "20019000"},
+    "NARANGA": {"search": "lime lemon citrus fresh", "hsn": "08055000"},
+    "INCHI": {"search": "ginger fresh dry root spice", "hsn": "09101110"},
+    "VELUTHULLULI": {"search": "garlic whole fresh clove", "hsn": "07032000"},
+    "ULLI": {"search": "onion shallot small red", "hsn": "07031010"},
+    "MULAKU": {"search": "dry chilli pepper red", "hsn": "09042210"},
+    "KURUMULAKU": {"search": "black pepper whole peppercorn", "hsn": "09041110"},
+    "JEERAKAM": {"search": "cumin seeds whole jeera", "hsn": "09093100"},
+    "MANJAL": {"search": "turmeric powder haldi", "hsn": "09103010"},
+    "BEEDI": {"search": "beedi bidi tobacco rolled leaf", "hsn": "24031910"},
+    "GUTKA": {"search": "gutkha chewing tobacco preparation", "hsn": "24039910"},
+    "ZARDA": {"search": "zarda chewing tobacco scented", "hsn": "24039910"},
 }
 
 VKC_PATTERN = re.compile(
@@ -88,14 +131,145 @@ def _alias_to_match(alias: dict, query: str, *, method: str) -> dict:
     }
 
 
+_MALAYALAM_TRANSLITERATIONS: dict[str, str] = {
+    "payar": "cowpea beans legume",
+    "cheera": "spinach amaranth leafy",
+    "chena": "yam elephant foot",
+    "chembu": "taro colocasia",
+    "muringakka": "drumstick moringa pods",
+    "pavakka": "bitter gourd karela",
+    "kumbalanga": "ash gourd white pumpkin",
+    "mathanga": "pumpkin orange",
+    "vazhuthananga": "brinjal eggplant",
+    "tomato": "tomato fresh vegetable",
+    "beetroot": "beetroot red vegetable",
+    "chakka": "jackfruit tropical",
+    "vazhakka": "plantain banana raw",
+    "ethakka": "nendran banana cooking",
+    "manga": "mango raw green",
+    "naranga": "lime lemon citrus",
+    "nellikka": "amla gooseberry",
+    "kudampuli": "gamboge kokum",
+    "mathi": "sardine fish",
+    "ayala": "mackerel fish",
+    "karimeen": "pearl spot fish",
+    "vaval": "pomfret fish",
+    "chemmeen": "prawn shrimp",
+    "njandu": "crab crustacean",
+    "kozhuva": "anchovy fish",
+    "kalava": "grouper reef fish",
+    "konchu": "lobster prawn seafood",
+    "cherupayar": "green gram moong",
+    "vanpayar": "cowpea red beans",
+    "uzhunnu": "urad black gram",
+    "kadala": "chana chickpea black",
+    "kanji": "rice gruel porridge",
+    "ulli": "onion shallot",
+    "savola": "onion shallot",
+    "inchi": "ginger fresh",
+    "veluthulluli": "garlic cloves",
+    "kurumulaku": "black pepper whole",
+    "mulaku": "chilli pepper dry red",
+    "jeerakam": "cumin jeera seeds",
+    "dhania": "coriander seeds",
+    "manjal": "turmeric haldi",
+    "patta": "cinnamon stick bark",
+    "grambu": "cloves whole spice",
+    "jathikka": "nutmeg seed spice",
+    "thean": "honey natural bee",
+    "nallenna": "sesame gingelly oil",
+    "thenganna": "coconut oil edible",
+    "unniyappam": "rice sweet fried appam",
+    "aluva": "sweet halwa alwa",
+    "ada": "rice payasam ingredient",
+    "palpayasam": "milk rice kheer payasam",
+    "kalathappam": "rice cake steamed",
+    "unnakai": "banana sweet fritter",
+    "achappam": "rose cookie fried sweet",
+    "murukku": "rice lentil snack fried",
+    "avalose": "roasted rice powder mix",
+    "coir": "coconut fibre rope mat",
+    "cpra": "copra dried coconut",
+    "beedi": "bidi tobacco leaf rolled",
+    "parotta": "layered flatbread maida",
+    "pathiri": "rice flatbread roti",
+}
+
+
 def expand_kerala_query(query: str) -> str:
+    """
+    Expand a Kerala trade query:
+    1. Uppercase + normalize whitespace
+    2. Apply KERALA_ABBREVIATIONS (longest match first)
+    3. Apply FMCG abbreviations from matcher
+    4. Apply Malayalam transliterations (word-boundary aware)
+    5. Strip trailing size tokens
+    Returns expanded uppercase string.
+    """
     normalized = _normalize_ws(query)
     expanded = normalized
-    for raw, replacement in sorted(KERALA_ABBREVIATIONS.items(), key=lambda item: len(item[0]), reverse=True):
-        pattern = re.compile(rf"(?<![A-Z0-9]){re.escape(raw.upper())}(?![A-Z0-9])")
+
+    for raw, replacement in sorted(
+        KERALA_ABBREVIATIONS.items(), key=lambda x: len(x[0]), reverse=True
+    ):
+        pattern = re.compile(
+            rf"(?<![A-Z0-9]){re.escape(raw.upper())}(?![A-Z0-9])"
+        )
         expanded = pattern.sub(replacement.upper(), expanded)
+
     expanded = expand_fmcg_abbreviations(expanded).upper()
+
+    lower_expanded = expanded.lower()
+    for mal_word, english_equiv in sorted(
+        _MALAYALAM_TRANSLITERATIONS.items(), key=lambda x: len(x[0]), reverse=True
+    ):
+        pattern = re.compile(
+            rf"\b{re.escape(mal_word.lower())}\b"
+        )
+        if pattern.search(lower_expanded):
+            lower_expanded = pattern.sub(english_equiv.lower(), lower_expanded)
+
+    expanded = lower_expanded.upper()
     return _normalize_ws(expanded)
+
+
+async def vkc_model_code_lookup(query: str, db: AsyncSession) -> list[dict] | None:
+    """
+    For queries like 'VKC DB19106M GREEN BOYS 05', extract the model code
+    and do a LIKE search on verified_products before the full VKC parse.
+    """
+    q_upper = _normalize_ws(query)
+    if not q_upper.startswith("VKC"):
+        return None
+
+    tokens = q_upper.split()
+    model_tokens = [t for t in tokens[1:] if re.match(r"^[A-Z0-9.]{4,}$", t)]
+    if not model_tokens:
+        return None
+
+    model_code = model_tokens[0]
+    try:
+        rows = (await db.execute(text("""
+            SELECT description, hsn_code, gst_rate
+            FROM verified_products
+            WHERE description_normalized LIKE :pattern
+            ORDER BY LENGTH(description_normalized) ASC
+            LIMIT 5
+        """), {"pattern": f"%{model_code}%"})).fetchall()
+    except Exception:
+        return None
+
+    if not rows:
+        return None
+
+    return _rerank_verified_rows(
+        query,
+        [{"description": r.description, "hsn_code": r.hsn_code,
+          "gst_rate": _clean_gst(r.gst_rate)} for r in rows],
+        method="kerala_vkc_model_lookup",
+        base_score=0.85,
+        chapter_hint="64",
+    )
 
 
 def parse_vkc_code(query: str) -> dict | None:
@@ -274,6 +448,10 @@ async def kerala_fallback_search(
     food_rows = await _kerala_food_search(query, db)
     if food_rows:
         return food_rows[:top_k]
+
+    vkc_early = await vkc_model_code_lookup(query, db)
+    if vkc_early:
+        return vkc_early[:top_k]
 
     vkc_match = parse_vkc_code(query)
     if vkc_match:

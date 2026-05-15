@@ -63,6 +63,11 @@ npm run dev   # → http://localhost:3000
 
 ## Deployment
 
+### Vercel frontend + Render backend
+
+1. **Vercel —** set `NEXT_PUBLIC_API_URL` in Project Settings → Environment Variables to your production API origin (for example your `https://…onrender.com` URL, no trailing slash).
+2. **Render —** set `CORS_ORIGINS` in the service Environment to include every Vercel deployment origin you use (preview and production URLs).
+
 ### Backend → Railway
 ```bash
 npm install -g @railway/cli

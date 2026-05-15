@@ -23,8 +23,6 @@ redis==5.0.4
 hiredis==2.3.2
 
 # ── ML / embeddings ───────────────────────────────────────────────────────────
-sentence-transformers==3.0.1
-faiss-cpu==1.8.0
 scikit-learn==1.5.0
 numpy==1.26.4
 pandas==2.2.2

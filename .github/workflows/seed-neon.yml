@@ -1,0 +1,37 @@
+name: Seed Neon DB
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'Data source to seed (all / csv / batch / xlsx)'
+        required: true
+        default: 'all'
+      truncate:
+        description: 'Truncate tables before seeding (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install sqlalchemy psycopg2-binary pandas openpyxl
+
+      - name: Run seed script
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: |
+          ARGS="--source ${{ github.event.inputs.source }}"
+          if [ "${{ github.event.inputs.truncate }}" = "true" ]; then
+            ARGS="$ARGS --truncate"
+          fi
+          python data/seed.py $ARGS

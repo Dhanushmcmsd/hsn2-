@@ -5,20 +5,25 @@ import re
 import time
 import uuid
 import structlog
-import asyncio
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import case, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
-from app.services.matcher import get_matcher, strip_sizes
-from app.services.kerala_search import expand_kerala_query
+from app.services.matcher import strip_sizes
+from app.services.kerala_search import expand_kerala_query, kerala_fallback_search
 from app.services.db_matcher import match_query
 from app.services.confidence import score_result
 from app.services.normalizer import normalize_product_name
-from app.services.product_search import search_by_product_name, search_by_token_ilike, search_in_memory
+from app.services.product_search import (
+    search_by_product_name,
+    search_by_brand_and_type,
+    search_by_token_ilike,
+    search_in_memory,
+)
 from app.services import inverted_index
+from app.services.pg_search import search as pg_search
 from app.services.brand_search import brand_lookup, is_unclassified_hsn
 from app.utils.auth import require_api_key
 from app.utils.cache import get_cache, set_cache
@@ -29,10 +34,6 @@ log = structlog.get_logger()
 
 # ── Unified cache key format (same as main.py) ─────────────────────────────────
 _QUERY_NORMALIZE_RE = re.compile(r"\s+")
-
-_SYNONYM_FUZZY_CACHE_TTL_S = 86400
-_LOW_SCORE_SYNONYM_RESCUE_THRESHOLD = 0.30
-_HYBRID_OVERRUN_DB_THRESHOLD = 0.35
 
 def _normalize_confidence(score: float, source: str) -> int:
     """
@@ -48,6 +49,11 @@ def _normalize_confidence(score: float, source: str) -> int:
         "product_trigram":    (0.0, 1.0),
         "product_ilike":      (0.0, 1.0),
         "product_rapidfuzz":  (0.0, 1.0),
+        "product_brand_type": (0.0, 1.0),
+        "pg_exact":             (0.0, 1.0),
+        "pg_trgm_verified":     (0.0, 1.0),
+        "pg_fts_hsn":           (0.0, 1.0),
+        "pg_trgm_hsn":          (0.0, 1.0),
     }
     low, high = ranges.get(source, (0.0, 1.0))
     if high == low:
@@ -251,8 +257,6 @@ async def predict(
         prediction_source = method
         elapsed = (time.perf_counter() - start) * 1000
     else:
-        matches = []
-        matcher = None
         inv_matches = await inverted_index.search(db, search_text, limit=5)
         if inv_matches and inv_matches[0].get("score", 0) >= 0.50:
             top = inv_matches[0]
@@ -273,46 +277,34 @@ async def predict(
                 prediction_source = "trigram"
                 elapsed = (time.perf_counter() - start) * 1000
             else:
-                matches = await match_query(search_text, db, top_k=5)
-                matcher = get_matcher()
-        if matcher and matcher.ready:
-            if not matches or matches[0].get("score", 0) < _HYBRID_OVERRUN_DB_THRESHOLD:
-                hybrid = await matcher.amatch(search_text, top_k=5)
-                if hybrid and (
-                    not matches or hybrid[0].get("score", 0) > matches[0].get("score", 0)
-                ):
-                    matches = hybrid
-        elif matcher and not matches:
-            matches = await matcher.amatch(search_text, top_k=5)
+                matches: list[dict] = []
+                prod_result = await search_by_product_name(db, search_text)
+                if not prod_result:
+                    prod_result = await search_by_brand_and_type(db, search_text)
+                if prod_result and prod_result.get("score", 0) >= 0.35:
+                    matches = [prod_result]
+                else:
+                    pg_results = await pg_search(db, search_text, top_k=5)
+                    if pg_results and pg_results[0].get("score", 0) >= 0.25:
+                        matches = pg_results
+                    else:
+                        kerala_results = await kerala_fallback_search(search_text, db, top_k=5)
+                        if kerala_results:
+                            matches = kerala_results
+                        else:
+                            matches = await match_query(search_text, db, top_k=5) or []
 
-        if not matches:
-            raise HTTPException(status_code=422, detail="No HSN matches found for this description")
+                if not matches:
+                    raise HTTPException(status_code=422, detail="No HSN matches found for this description")
 
-        top = matches[0]
-        alternatives = matches[1:]
-        top.setdefault("source", prediction_source or "hsn_codes")
-        confidence, label = score_result(top["score"])
-        needs_review = top["score"] < 0.55
-        prediction_source = top.get("source") or top.get("method")
-        elapsed = (time.perf_counter() - start) * 1000
-
-        if (
-            top["score"] < _LOW_SCORE_SYNONYM_RESCUE_THRESHOLD
-            and getattr(request.app.state, "ready", True)
-        ):
-            rescue = await asyncio.to_thread(
-                matcher.synonym_fuzzy_rescue,
-                search_text,
-                float(top["score"]),
-            )
-            if rescue:
-                top = rescue
-                alternatives = []
+                top = matches[0]
+                alternatives = matches[1:]
+                if not top.get("source"):
+                    top["source"] = top.get("method") or "hsn_codes"
                 confidence, label = score_result(top["score"])
                 needs_review = top["score"] < 0.55
-                prediction_source = "synonym_fuzzy_match"
+                prediction_source = top.get("method") or top.get("source") or "unknown"
                 elapsed = (time.perf_counter() - start) * 1000
-                log.info("predict.synonym_fuzzy_rescue_used", text=body.text[:60])
 
     result = top
 
@@ -333,11 +325,9 @@ async def predict(
             hsn=brand_result["hsn_code"],
         )
 
-    # ── NEW: Product Name Search Layer ────────────
+    # ── Product Name Search Layer (token ILIKE + in-memory; tier 3.5 covers trigram) ─
     if not result or result.get("score", 0) < 0.30:
-        product_result = await search_by_product_name(db, body.text)
-        if not product_result:
-            product_result = await search_by_token_ilike(db, body.text)
+        product_result = await search_by_token_ilike(db, body.text)
         if not product_result:
             product_result = search_in_memory(body.text, getattr(request.app.state, "product_name_cache", []))
 
@@ -424,8 +414,5 @@ async def predict(
         needs_review=needs_review,
         processing_time_ms=round(elapsed, 1),
     )
-    cache_ttl = None
-    if prediction_source == "synonym_fuzzy_match" and confidence >= 0.55:
-        cache_ttl = _SYNONYM_FUZZY_CACHE_TTL_S
-    await set_cache(cache_key, result.model_dump(), ttl=cache_ttl)
+    await set_cache(cache_key, result.model_dump(), ttl=None)
     return result

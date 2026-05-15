@@ -48,7 +48,7 @@ async def search_by_product_name(db, query: str) -> dict | None:
                 SELECT {NAME_COL}, {HSN_COL}, {GST_COL}, {DESC_COL},
                        similarity({NAME_COL}, :term) AS score
                 FROM {PRODUCT_TABLE}
-                WHERE similarity({NAME_COL}, :term) > 0.20
+                WHERE similarity({NAME_COL}, :term) > 0.28
                 ORDER BY score DESC LIMIT 3
             """), {"term": term})
             candidates.extend(rows.fetchall())
@@ -60,9 +60,13 @@ async def search_by_product_name(db, query: str) -> dict | None:
         return None
 
     best = max(candidates, key=lambda r: r.score)
-    if best.score >= 0.25:
-        return _to_dict(best, source="product_trigram")
-    return None
+    if best.score < 0.28:
+        return None
+    q_tokens = set(_tokenize(query))
+    desc_text = getattr(best, DESC_COL) or ""
+    if not q_tokens & set(_tokenize(desc_text)):
+        return None
+    return _to_dict(best, source="product_trigram")
 
 async def search_by_token_ilike(db, query: str) -> dict | None:
     """
@@ -104,6 +108,61 @@ async def search_by_token_ilike(db, query: str) -> dict | None:
 
     return _to_dict(best["row"], source="product_ilike", score=coverage)
 
+async def search_by_brand_and_type(db, query: str) -> dict | None:
+    """
+    Split query into brand token (first) + product type tokens (rest).
+    E.g. "BOOST HEALTH DRINK": brand="BOOST", type_tokens=["HEALTH","DRINK"].
+    Handles Indian FMCG naming where the brand leads the description.
+    Threshold: 0.35 combined score.
+    """
+    tokens = _tokenize(query)
+    if len(tokens) < 2:
+        return None
+
+    brand = tokens[0]
+    type_tokens = tokens[1:]
+
+    try:
+        rows = await db.execute(text(f"""
+            SELECT {NAME_COL}, {HSN_COL}, {GST_COL}, {DESC_COL}
+            FROM {PRODUCT_TABLE}
+            WHERE LOWER({NAME_COL}) LIKE :brand_prefix
+            LIMIT 20
+        """), {"brand_prefix": f"{brand.lower()}%"})
+        candidates = rows.fetchall()
+    except Exception:
+        return None
+
+    if not candidates:
+        return None
+
+    from rapidfuzz import fuzz
+
+    scored = []
+    for row in candidates:
+        desc_lower = (getattr(row, DESC_COL) or "").lower()
+        type_score = sum(1 for t in type_tokens if t.lower() in desc_lower)
+        fuzz_score = fuzz.token_set_ratio(query.lower(), desc_lower) / 100.0
+        combined = (type_score / max(len(type_tokens), 1)) * 0.6 + fuzz_score * 0.4
+        scored.append((combined, row))
+
+    if not scored:
+        return None
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    best_score, best_row = scored[0]
+
+    if best_score >= 0.35:
+        return {
+            "hsn_code":    getattr(best_row, HSN_COL, ""),
+            "description": getattr(best_row, DESC_COL, ""),
+            "gst_rate":    getattr(best_row, GST_COL, None),
+            "score":       round(best_score, 3),
+            "method":      "product_brand_type",
+            "source":      "verified_products",
+        }
+    return None
+
 def search_in_memory(query: str, product_name_cache: list[tuple]) -> dict | None:
     """
     Sub-strategy 3: RapidFuzz in-memory search.
@@ -136,16 +195,18 @@ def search_in_memory(query: str, product_name_cache: list[tuple]) -> dict | None
         return {
             "hsn_code": row[1], "gst_rate": row[2],
             "description": row[3], "matched_name": row[0],
-            "score": best_score / 100, "source": "product_rapidfuzz"
+            "score": best_score / 100, "method": "product_rapidfuzz", "source": "product_rapidfuzz"
         }
     return None
 
 def _to_dict(row, source: str, score: float = None) -> dict:
+    sc = score if score is not None else getattr(row, "score", 0)
     return {
         "hsn_code": getattr(row, HSN_COL),
         "gst_rate": getattr(row, GST_COL),
         "description": getattr(row, DESC_COL),
         "matched_name": getattr(row, NAME_COL),
-        "score": score if score is not None else getattr(row, "score", 0),
-        "source": source
+        "score": sc,
+        "method": source,
+        "source": source,
     }

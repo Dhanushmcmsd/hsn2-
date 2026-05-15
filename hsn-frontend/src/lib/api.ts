@@ -82,18 +82,6 @@ type Opts = RequestInit & { skipAuth?: boolean; timeout?: number };
 
 // Default timeout for API requests (30 seconds to handle Vercel cold starts)
 const DEFAULT_TIMEOUT = 30000;
-const WARMING_RETRY_DELAY_MS = 1500;
-const MAX_WARMING_RETRIES = 3;
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function isUnclassifiedPlaceholder(data: PredictResponse): boolean {
-  const raw = (data.top_match?.hsn_code ?? "").replace(/\D/g, "");
-  const padded = raw.padStart(8, "0");
-  return padded === "99999999" && data.confidence === 0;
-}
 
 export const authStorage = {
   getAccessToken: () => getToken(ACCESS_TOKEN_KEY),
@@ -199,89 +187,56 @@ export const authApi = {
 };
 
 export const hsnApi = {
-  predict: async (
-    text: string,
-    opts?: { onWarming?: () => void; timeout?: number }
-  ): Promise<PredictResponse> => {
+  predict: async (text: string, opts?: { timeout?: number }): Promise<PredictResponse> => {
     const timeout = opts?.timeout ?? DEFAULT_TIMEOUT;
-    const onWarming = opts?.onWarming;
-    const attempts = MAX_WARMING_RETRIES + 1;
-
-    const runOnce = async (): Promise<Response> => {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (typeof window !== "undefined") {
-        const token = authStorage.getAccessToken();
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-      }
-      return fetchWithTimeout(
-        `${BASE_URL}/predict`,
-        { method: "POST", headers, body: JSON.stringify({ text }) },
-        timeout
-      );
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
     };
-
-    for (let attempt = 0; attempt < attempts; attempt++) {
-      let res = await runOnce();
-
-      if (res.status === 401 && typeof window !== "undefined") {
-        const refresh = authStorage.getRefreshToken();
-        if (refresh) {
-          const rr = await fetchWithTimeout(
-            `${BASE_URL}/auth/refresh`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ refresh_token: refresh }),
-            },
+    if (typeof window !== "undefined") {
+      const token = authStorage.getAccessToken();
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+    let res = await fetchWithTimeout(
+      `${BASE_URL}/predict`,
+      { method: "POST", headers, body: JSON.stringify({ text }) },
+      timeout
+    );
+    if (res.status === 401 && typeof window !== "undefined") {
+      const refresh = authStorage.getRefreshToken();
+      if (refresh) {
+        const rr = await fetchWithTimeout(
+          `${BASE_URL}/auth/refresh`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: refresh }),
+          },
+          timeout
+        );
+        if (rr.ok) {
+          const data = (await rr.json()) as TokenResponse;
+          authStorage.updateTokens(data.access_token, data.refresh_token);
+          headers["Authorization"] = `Bearer ${data.access_token}`;
+          res = await fetchWithTimeout(
+            `${BASE_URL}/predict`,
+            { method: "POST", headers, body: JSON.stringify({ text }) },
             timeout
           );
-          if (rr.ok) {
-            const data = (await rr.json()) as TokenResponse;
-            authStorage.updateTokens(data.access_token, data.refresh_token);
-            res = await runOnce();
-          } else {
-            authStorage.clearTokens();
-            window.location.href = "/login";
-            throw new Error("Authentication required");
-          }
+        } else {
+          authStorage.clearTokens();
+          window.location.href = "/login";
+          throw new Error("Authentication required");
         }
       }
-
-      if (res.status === 503) {
-        onWarming?.();
-        if (attempt < attempts - 1) {
-          await sleep(WARMING_RETRY_DELAY_MS);
-          continue;
-        }
-        const err = await res.json().catch(() => ({ detail: "Service warming up" }));
-        const detail = (err as { detail?: unknown }).detail;
-        throw new Error(
-          typeof detail === "string" ? detail : "Service warming up, retry in 2s"
-        );
-      }
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ detail: "Unknown error" }));
-        const detail = (err as { detail?: unknown }).detail;
-        throw new Error(
-          typeof detail === "string" ? detail : `HTTP ${res.status}`
-        );
-      }
-
-      const data = (await res.json()) as PredictResponse;
-      if (isUnclassifiedPlaceholder(data)) {
-        onWarming?.();
-        if (attempt < attempts - 1) {
-          await sleep(WARMING_RETRY_DELAY_MS);
-          continue;
-        }
-      }
-      return data;
     }
-
-    throw new Error("Classification failed after retries");
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+      const detail = (err as { detail?: unknown }).detail;
+      throw new Error(
+        typeof detail === "string" ? detail : `HTTP ${res.status}`
+      );
+    }
+    return (await res.json()) as PredictResponse;
   },
   batch: (queries: string[]) =>
     request<BatchResponse>("/hsn/batch", { method: "POST", body: JSON.stringify({ queries }) }),
