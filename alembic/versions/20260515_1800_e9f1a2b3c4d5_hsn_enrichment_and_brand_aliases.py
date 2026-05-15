@@ -170,6 +170,13 @@ _BRAND_ALIASES = [
 def upgrade() -> None:
     conn = op.get_bind()
 
+    # Safety assertion: abort migration if verified_products is empty
+    vp_count = conn.execute(sa.text("SELECT COUNT(*) FROM verified_products")).scalar()
+    assert vp_count and int(vp_count) > 0, (
+        "SAFETY ABORT: verified_products is empty before migration. "
+        "Refusing to run to protect data integrity."
+    )
+
     # ── Step 1: Add metadata columns to verified_products ─────────────────────
     # Only add if not present (idempotent)
     conn.execute(sa.text(
@@ -204,9 +211,9 @@ def upgrade() -> None:
     wrong_hsn_fix = conn.execute(sa.text("""
         SELECT id, description, brand, hsn_code, gst_rate
         FROM verified_products
-        WHERE brand IN :brands
+        WHERE brand = ANY(:brands)
           AND hsn_code = :wrong_hsn
-    """), {"brands": tuple(_MALT_BRANDS), "wrong_hsn": _WRONG_MALT_HSN})
+    """), {"brands": list(_MALT_BRANDS), "wrong_hsn": _WRONG_MALT_HSN})
     wrong_rows = wrong_hsn_fix.fetchall()
 
     if wrong_rows:
@@ -249,9 +256,9 @@ def upgrade() -> None:
     gst_rows = conn.execute(sa.text("""
         SELECT id, description, brand, hsn_code, gst_rate
         FROM verified_products
-        WHERE brand IN :brands
+        WHERE brand = ANY(:brands)
           AND (gst_rate IS NULL OR gst_rate NOT IN ('GST 18%', '18%', '18'))
-    """), {"brands": tuple(_MALT_BRANDS)}).fetchall()
+    """), {"brands": list(_MALT_BRANDS)}).fetchall()
 
     if gst_rows:
         gst_ids = [r[0] for r in gst_rows]
@@ -338,8 +345,8 @@ def downgrade() -> None:
         SET gst_rate    = 'GST 5%',
             last_updated = NOW(),
             data_source  = 'rollback'
-        WHERE brand IN :brands
-    """), {"brands": tuple(_MALT_BRANDS)})
+        WHERE brand = ANY(:brands)
+    """), {"brands": list(_MALT_BRANDS)})
 
     # Reverse the HSN fix (restore 21069099 where the log recorded old_hsn=21069099)
     conn.execute(sa.text("""
