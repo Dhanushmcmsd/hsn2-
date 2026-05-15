@@ -15,7 +15,7 @@ from app.models.database import init_db
 from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
 from app.utils.scheduler import start_scheduler, stop_scheduler
-from app.routes import predict, review, health, auth, admin, hsn, search
+from app.routes import predict, review, health, auth, admin, hsn, search, classify, compliance
 
 configure_logging()
 log = structlog.get_logger()
@@ -152,3 +152,5 @@ app.include_router(review.router)
 app.include_router(health.router)
 app.include_router(admin.router)
 app.include_router(hsn.router)
+app.include_router(classify.router)
+app.include_router(compliance.router)

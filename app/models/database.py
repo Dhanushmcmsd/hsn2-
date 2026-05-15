@@ -149,6 +149,79 @@ class VerifiedProduct(Base):
     )
 
 
+class BrandAlias(Base):
+    """FMCG brand → HSN/GST mapping — populated from CBIC HSN Master 2024-25."""
+    __tablename__ = "brand_aliases"
+
+    id = Column(Integer, primary_key=True, index=True)
+    brand_name = Column(String(200), nullable=False)
+    brand_name_upper = Column(String(200), nullable=False, index=True)
+    category = Column(String(100), nullable=False)
+    hsn_code = Column(String(10), nullable=False, index=True)
+    gst_rate = Column(Float, nullable=False)
+    cess_applicable = Column(Boolean, nullable=False, default=False)
+    verified_source = Column(String(100), nullable=False, default="CBIC HSN 2024-25")
+    is_active = Column(Boolean, nullable=False, default=True)
+    last_updated = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class HsnMaster(Base):
+    """Complete Indian HSN code master — CBIC HSN 2024-25."""
+    __tablename__ = "hsn_master"
+
+    id = Column(Integer, primary_key=True, index=True)
+    hsn_code = Column(String(10), unique=True, nullable=False, index=True)
+    description = Column(Text, nullable=False)
+    gst_rate = Column(Float, nullable=True)
+    chapter = Column(Integer, nullable=True)
+    category = Column(String(100), nullable=True)
+    notes = Column(Text, nullable=True)
+    cess_applicable = Column(Boolean, nullable=False, default=False)
+    verified_source = Column(String(100), nullable=True, default="CBIC HSN 2024-25")
+    last_updated = Column(DateTime(timezone=True), server_default=func.now())
+    is_active = Column(Boolean, nullable=False, default=True)
+
+
+class SearchCache(Base):
+    """Cross-tier classification result cache."""
+    __tablename__ = "search_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query_normalized = Column(Text, nullable=False, unique=True, index=True)
+    hsn_code = Column(String(10), nullable=False)
+    description = Column(Text, nullable=True)
+    gst_rate = Column(Float, nullable=True)
+    cess_applicable = Column(Boolean, nullable=True, default=False)
+    confidence = Column(Float, nullable=True)
+    tier_used = Column(Integer, nullable=True)
+    source = Column(String(100), nullable=True)
+    hit_count = Column(Integer, nullable=False, default=1)
+    expires_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class PendingReview(Base):
+    """Queries that require manual GST/HSN review by admin."""
+    __tablename__ = "pending_review"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query = Column(Text, nullable=False)
+    query_normalized = Column(Text, nullable=False)
+    best_guess_hsn = Column(String(10), nullable=True)
+    best_guess_gst = Column(Float, nullable=True)
+    confidence = Column(Float, nullable=True)
+    tier_used = Column(Integer, nullable=True)
+    source = Column(String(100), nullable=True)
+    status = Column(String(20), nullable=False, default="pending")
+    admin_notes = Column(Text, nullable=True)
+    resolved_hsn = Column(String(10), nullable=True)
+    resolved_by = Column(String(100), nullable=True)
+    resolved_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 # ── Normalisation helpers ──────────────────────────────────────────────────────
 
 _SIZE_PAT = re.compile(
