@@ -41,6 +41,70 @@ def canonicalize_hsn(code: object) -> str:
     return digits.zfill(8)
 
 
+
+# ── Chapter-level GST rate fallback (CBIC schedule, 2024) ────────────────────
+# Used when no product-specific rate is found in xlsx/batch data.
+# Keys are 2-digit chapter codes (strings). Values are GST % (float).
+_CHAPTER_GST_RATES: dict[str, float] = {
+    # Section I — Live animals, animal products
+    "01": 0.0, "02": 0.0, "03": 5.0, "04": 5.0, "05": 0.0,
+    # Section II — Vegetable products
+    "06": 5.0, "07": 0.0, "08": 0.0, "09": 0.0, "10": 0.0,
+    "11": 0.0, "12": 0.0, "13": 5.0, "14": 0.0,
+    # Section III — Animal/veg fats and oils
+    "15": 5.0,
+    # Section IV — Prepared foodstuffs
+    "16": 12.0, "17": 5.0, "18": 18.0, "19": 18.0, "20": 12.0,
+    "21": 18.0, "22": 18.0, "23": 0.0, "24": 28.0,
+    # Section V — Mineral products
+    "25": 5.0, "26": 5.0, "27": 5.0,
+    # Section VI — Chemical/allied industries
+    "28": 18.0, "29": 18.0, "30": 12.0, "31": 5.0, "32": 18.0,
+    "33": 18.0, "34": 18.0, "35": 18.0, "36": 18.0, "37": 18.0,
+    "38": 18.0,
+    # Section VII — Plastics and rubber
+    "39": 18.0, "40": 12.0,
+    # Section VIII — Hides, skins, leather
+    "41": 5.0, "42": 12.0, "43": 12.0,
+    # Section IX — Wood and articles
+    "44": 12.0, "45": 12.0, "46": 12.0,
+    # Section X — Pulp, paper
+    "47": 12.0, "48": 12.0, "49": 12.0,
+    # Section XI — Textiles
+    "50": 5.0, "51": 5.0, "52": 5.0, "53": 5.0, "54": 5.0,
+    "55": 5.0, "56": 5.0, "57": 5.0, "58": 5.0, "59": 12.0,
+    "60": 5.0, "61": 5.0, "62": 5.0, "63": 5.0,
+    # Section XII — Footwear, headgear
+    "64": 12.0, "65": 12.0, "66": 12.0, "67": 12.0,
+    # Section XIII — Stone, plaster, cement, glass
+    "68": 12.0, "69": 12.0, "70": 18.0,
+    # Section XIV — Precious metals
+    "71": 3.0,
+    # Section XV — Base metals
+    "72": 18.0, "73": 18.0, "74": 18.0, "75": 18.0, "76": 18.0,
+    "77": 18.0, "78": 18.0, "79": 18.0, "80": 18.0, "81": 18.0,
+    "82": 18.0, "83": 18.0,
+    # Section XVI — Machinery/electrical
+    "84": 18.0, "85": 18.0,
+    # Section XVII — Vehicles, aircraft, vessels
+    "86": 12.0, "87": 28.0, "88": 18.0, "89": 5.0,
+    # Section XVIII — Optical, watches, medical
+    "90": 12.0, "91": 18.0, "92": 18.0,
+    # Section XIX — Arms and ammo
+    "93": 12.0,
+    # Section XX — Miscellaneous manufactured articles
+    "94": 18.0, "95": 18.0, "96": 18.0,
+    # Section XXI — Works of art
+    "97": 12.0, "98": 5.0, "99": 0.0,
+}
+
+
+def _chapter_gst_fallback(hsn_code: str) -> float | None:
+    """Return chapter-level GST rate for codes where no product-specific rate exists."""
+    chapter = hsn_code[:2] if len(hsn_code) >= 2 else ""
+    return _CHAPTER_GST_RATES.get(chapter)
+
+
 def _clean_gst(raw: object) -> float | None:
     match = re.search(r"(\d+(?:\.\d+)?)", str(raw or ""))
     return float(match.group(1)) if match else None
@@ -253,7 +317,8 @@ def build_hsn_master_records(
     records: list[dict[str, Any]] = []
     for code in sorted(all_codes):
         significance = significance_by_code.get(code, 8)
-        gst_rate = _majority_gst_rate(gst_votes[code]) if gst_votes.get(code) else None
+        _voted_gst = _majority_gst_rate(gst_votes[code]) if gst_votes.get(code) else None
+        gst_rate = _voted_gst if _voted_gst is not None else _chapter_gst_fallback(code)
 
         official_candidates: list[tuple[int, str]] = []
         for length in (8, 6, 4, 2):
