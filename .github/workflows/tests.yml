@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Validate CBIC HSN master data
+        run: python scripts/validate_cbic.py
+
       - name: Run test suite
         env:
           APP_ENV: development
