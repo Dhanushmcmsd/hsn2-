@@ -1,4 +1,4 @@
-# Deploy trigger: 2026-05-16 — Tier5 multi-layer + hsn_search post-seed backfill
+# Deploy trigger: 2026-05-16T21:00 — CSV +114 codes, alias dict, TIER A, gst_rate parsing
 # render.yaml — HSN Classifier backend deployment on Render (free tier)
 #
 # Usage:
