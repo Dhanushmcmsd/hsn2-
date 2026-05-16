@@ -1,8 +1,8 @@
 """GST Classification API — multi-tier fallback pipeline (no external AI).
 
 Endpoints added by this module (additive, do NOT overlap with existing routes):
-  POST /api/v1/classify          — classify a single product query
-  POST /api/v1/classify/batch    — classify up to 50 products at once
+  POST /api/v1/classify          — classify a single product query (6-tier + multi-layer fallback)
+  POST /api/v1/classify/batch    — classify up to 50 products at once (same 6-tier pipeline)
   GET  /api/v1/classify/cache    — look up a cached result without triggering re-classification
   GET  /api/v1/classify/pending  — list pending manual review items (admin only)
 
@@ -108,7 +108,8 @@ async def classify_product(
     **Tier 2** — Exact product match (verified_products)
     **Tier 3** — Fuzzy match (pg_trgm)
     **Tier 4** — Keyword/category match
-    **Tier 6** — Manual review queue
+    **Tier 5** — Multi-layer fallback (inverted-index → pg_trgm → FAISS semantic)
+    **Tier 6** — Manual review queue (only when all layers miss)
     """
     result = await classify(
         db,
