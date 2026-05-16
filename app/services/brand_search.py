@@ -41,6 +41,30 @@ _CATEGORY_TRGM_MIN_SIM = 0.25
 # HSN code that must never be returned for a confirmed brand match
 _UNCLASSIFIED_HSN = "99999999"
 
+# Generic product/commodity words that are NOT brand names.
+# brand_lookup must NOT intercept these — they must fall through to the
+# full HSN search pipeline (pg_search, inverted_index, match_query, etc.)
+# so that the most accurate HSN chapter is returned.
+_NON_BRAND_TERMS: set[str] = {
+    # Daily commodities
+    "MILK", "WATER", "SALT", "SUGAR", "RICE", "WHEAT", "FLOUR", "DAL",
+    "OIL", "BUTTER", "GHEE", "HONEY", "EGG", "EGGS", "BREAD",
+    # Household
+    "BROOM", "MOP", "BUCKET", "BRUSH", "SOAP", "CLOTH", "ROPE",
+    "BAG", "BOX", "CAN", "CUP", "PLATE", "PAN", "POT",
+    # Personal care
+    "TOOTHBRUSH", "COMB", "RAZOR", "BLADE", "MIRROR",
+    # Stationery
+    "PEN", "PENCIL", "PAPER", "BOOK", "NOTEBOOK", "ERASER", "SCALE",
+    # Fruits & vegetables
+    "APPLE", "BANANA", "MANGO", "ONION", "POTATO", "TOMATO",
+    "CARROT", "CABBAGE", "SPINACH", "LEMON", "ORANGE",
+    # Grains / pulses
+    "MAIZE", "CORN", "BARLEY", "SOYA", "GRAM", "LENTIL", "BEANS",
+    # Misc
+    "MEDICINE", "TABLET", "CAPSULE",
+}
+
 # Category keywords → HSN chapter hints
 _CATEGORY_KEYWORDS: list[tuple[str, str, str]] = [
     # (keyword, description_hint, hsn_chapter)
@@ -50,6 +74,7 @@ _CATEGORY_KEYWORDS: list[tuple[str, str, str]] = [
     ("instant noodles",   "pasta noodles cooked",           "19"),
     ("biscuit",           "biscuit wafer pastry",           "19"),
     ("toothpaste",        "preparations for oral hygiene",  "33"),
+    ("toothbrush",        "brushes for oral hygiene",       "96"),
     ("shampoo",           "preparations for hair",          "33"),
     ("soap",              "soap personal care",             "34"),
     ("detergent",         "washing preparation detergent",  "34"),
@@ -212,7 +237,22 @@ _CATEGORY_KEYWORD_SQL = text("""
 
 
 async def _tier3_category_keyword(db: AsyncSession, query: str) -> dict | None:
-    """Keyword match on description — chapter-level category detection."""
+    """Keyword match on description — chapter-level category detection.
+    
+    Only runs for multi-word queries or queries that are NOT in the
+    _NON_BRAND_TERMS list. Generic single-word product names like
+    'toothbrush', 'milk', 'broom' must fall through to the full HSN
+    search pipeline for accurate chapter-level classification.
+    """
+    q_upper = query.upper().strip()
+    q_words = q_upper.split()
+    
+    # Skip Tier-3 entirely for generic single-word commodity terms.
+    # These must be classified by pg_search/inverted_index, not by a
+    # keyword match that may return an unrelated verified_product row.
+    if len(q_words) == 1 and q_words[0] in _NON_BRAND_TERMS:
+        return None
+
     q_lower = query.lower()
     for keyword, _hint, _chapter in _CATEGORY_KEYWORDS:
         if keyword in q_lower:
@@ -255,6 +295,8 @@ async def brand_lookup(
       - Never returns HSN 99999999 for any brand present in language_aliases
         or in the verified_products.brand column.
       - Confidence score is always > min_score (default 0.30) for a returned hit.
+      - Never intercepts generic commodity words (milk, broom, toothbrush…)
+        so they route correctly through the full HSN search pipeline.
 
     Args:
         db: Async DB session.
@@ -271,6 +313,13 @@ async def brand_lookup(
     # Extract primary brand token (first word before size/variant suffixes)
     brand_token = _extract_brand_token(q)
 
+    # ── Early exit: skip brand pipeline for known non-brand commodity terms ──
+    # This prevents Tier-3 category keyword matching from stealing generic
+    # product names that should be classified by the HSN code search layers.
+    if brand_token.upper() in _NON_BRAND_TERMS and " " not in q.strip():
+        log.debug("brand_search.non_brand_passthrough", term=brand_token)
+        return None
+
     # Tier 0: language alias exact match (fastest — index lookup)
     result = await _tier0_alias_lookup(db, brand_token)
     if result and result["score"] >= min_score:
@@ -279,7 +328,8 @@ async def brand_lookup(
 
     # Also try full query as alias (e.g. "GOOD DAY" as 2-word brand)
     if " " in q:
-        result = await _tier0_alias_lookup(db, q.split()[:2].__str__().replace("['", "").replace("']", "").replace("', '", " "))
+        two_word = " ".join(q.upper().split()[:2])
+        result = await _tier0_alias_lookup(db, two_word)
         if result and result["score"] >= min_score:
             return result
 
@@ -289,7 +339,7 @@ async def brand_lookup(
         log.info("brand_search.tier1_hit", brand=brand_token, hsn=result["hsn_code"])
         return result
 
-    # Tier 2: fuzzy brand match (only for queries ≥ 4 chars to avoid false positives)
+    # Tier 2: fuzzy brand match (only for queries >= 4 chars to avoid false positives)
     if len(brand_token) >= 4:
         result = await _tier2_fuzzy_brand(db, brand_token)
         if result and result["score"] >= min_score:

@@ -32,7 +32,7 @@ from app.utils.rate_limit import check_rate_limit
 router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
 
-# ── Unified cache key format (same as main.py) ─────────────────────────────────
+# ── Unified cache key format (same as main.py) ─────────────────────────────────────────────────────
 _QUERY_NORMALIZE_RE = re.compile(r"\s+")
 
 def _normalize_confidence(score: float, source: str) -> int:
@@ -176,6 +176,8 @@ async def predict(
     # Runs BEFORE the verified_products exact match to catch brand-name-only
     # queries like "BOOST", "HORLICKS", "COLGATE" that would otherwise fall
     # through to low-confidence FAISS / synonym rescue paths.
+    # NOTE: brand_lookup now guards against generic commodity words (milk,
+    # broom, toothbrush, etc.) and returns None for them immediately.
     brand_result: dict | None = None
     try:
         brand_result = await brand_lookup(db, search_text, min_score=0.50)
@@ -292,6 +294,10 @@ async def predict(
                         if kerala_results:
                             matches = kerala_results
                         else:
+                            # ── FIXED: Always call match_query as final fallback;
+                            # do NOT raise 422 here. match_query covers FAISS,
+                            # synonym expansion, and the broad HSN chapter table.
+                            # Only raise 422 when match_query also returns nothing.
                             matches = await match_query(search_text, db, top_k=5) or []
 
                 if not matches:
@@ -325,7 +331,7 @@ async def predict(
             hsn=brand_result["hsn_code"],
         )
 
-    # ── Product Name Search Layer (token ILIKE + in-memory; tier 3.5 covers trigram) ─
+    # ── Product Name Search Layer (token ILIKE + in-memory; tier 3.5 covers trigram) ──
     if not result or result.get("score", 0) < 0.30:
         product_result = await search_by_token_ilike(db, body.text)
         if not product_result:
@@ -340,8 +346,6 @@ async def predict(
             prediction_source = result["source"]
             elapsed = (time.perf_counter() - start) * 1000
 
-            # Fix D: cache immediately so second (and all future) requests
-            # skip every search layer entirely and return in < 5ms
             norm_conf = _normalize_confidence(result["score"], result["source"])
             cache_payload = {
                 "hsn_code":    result["hsn_code"],
@@ -356,7 +360,6 @@ async def predict(
                 ttl=86400
             )
 
-            # Also insert into predictions table for review/scheduler
             from sqlalchemy import text
             try:
                 await db.execute(text("""
