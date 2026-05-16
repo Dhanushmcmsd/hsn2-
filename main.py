@@ -27,13 +27,27 @@ from app.services.kerala_aliases import (
 )
 
 # ── Config ────────────────────────────────────────────────────────────────────
-DATABASE_URL  = os.environ.get("DATABASE_URL", "").replace("postgres://", "postgresql+asyncpg://", 1)
+APP_ENV       = os.environ.get("APP_ENV", "development")
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "change-me")
 JWT_SECRET    = os.environ.get("JWT_SECRET", os.environ.get("SECRET_KEY", "change-me"))
 ALGORITHM     = "HS256"
 REDIS_URL     = os.environ.get("REDIS_URL", os.environ.get("UPSTASH_REDIS_URL", ""))
-APP_ENV       = os.environ.get("APP_ENV", "development")
 API_KEY_ENV   = os.environ.get("API_KEY", "dev-api-key")
+
+
+def _resolve_database_url() -> str:
+    """Resolve DB URL; production requires explicit DATABASE_URL."""
+    raw = os.environ.get("DATABASE_URL", "").strip()
+    if raw:
+        url = raw.replace("postgres://", "postgresql+asyncpg://", 1)
+        if url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
+    if APP_ENV == "production":
+        import sys
+        sys.exit("FATAL: DATABASE_URL env var is not set.")
+    # Import-safe default for local pytest / tooling (live DB tests still require Postgres env).
+    return "sqlite+aiosqlite:///:memory:"
 
 if APP_ENV == "production":
     if not JWT_SECRET or JWT_SECRET == "change-me" or len(JWT_SECRET) < 32:
@@ -41,22 +55,23 @@ if APP_ENV == "production":
     if not ADMIN_API_KEY or ADMIN_API_KEY == "change-me" or len(ADMIN_API_KEY) < 32:
         raise RuntimeError("Production requires ADMIN_API_KEY of at least 32 characters")
 
-if not DATABASE_URL:
-    import sys
-    sys.exit("FATAL: DATABASE_URL env var is not set.")
-
-if DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+DATABASE_URL = _resolve_database_url()
 
 # ── DB setup ──────────────────────────────────────────────────────────────────
-engine = create_async_engine(
-    DATABASE_URL,
-    echo=False,
-    connect_args={
+_engine_connect_args: dict = {}
+if "asyncpg" in DATABASE_URL:
+    _engine_connect_args = {
         "statement_cache_size": 0,
         "prepared_statement_cache_size": 0,
         "ssl": "require",
-    } if "asyncpg" in DATABASE_URL else {},
+    }
+elif "sqlite" in DATABASE_URL:
+    _engine_connect_args = {"check_same_thread": False}
+
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=False,
+    connect_args=_engine_connect_args,
 )
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 

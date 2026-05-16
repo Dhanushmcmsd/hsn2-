@@ -23,11 +23,12 @@ import re
 from typing import Any
 
 import pytest
-import pytest_asyncio
+
+from tests.legacy_main import has_live_postgres_url, normalize_asyncpg_url
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("DATABASE_URL"),
-    reason="DATABASE_URL env var required for live DB tests",
+    not has_live_postgres_url(),
+    reason="Postgres DATABASE_URL required for live DB tests",
 )
 
 
@@ -61,12 +62,12 @@ def _make_async_engine(raw_url: str):
     )
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def db_session():
     """Create a fresh async DB session per test function (avoids asyncpg concurrency issues)."""
     from sqlalchemy.ext.asyncio import async_sessionmaker
 
-    engine = _make_async_engine(os.environ["DATABASE_URL"])
+    engine = _make_async_engine(normalize_asyncpg_url(os.environ["DATABASE_URL"]))
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
 
     async with session_factory() as session:

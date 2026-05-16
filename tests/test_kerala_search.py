@@ -8,6 +8,7 @@ from app.services.kerala_search import (
     kerala_fallback_search,
     parse_vkc_code,
 )
+from tests.legacy_main import get_match_one, has_live_postgres_url, normalize_asyncpg_url
 
 
 KERALA_SEARCH_CASES = [
@@ -54,18 +55,16 @@ async def test_kerala_alias_exact_without_db_round_trip():
 
 
 @pytest.mark.skipif(
-    not os.environ.get("DATABASE_URL"),
-    reason="DATABASE_URL required for live Kerala matcher verification",
+    not has_live_postgres_url(),
+    reason="Postgres DATABASE_URL required for live Kerala matcher verification",
 )
 @pytest.mark.asyncio
 async def test_kerala_search_cases_resolve_to_expected_chapters():
-    database_url = os.environ["DATABASE_URL"]
-    if not database_url.startswith("postgresql+asyncpg"):
-        database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    database_url = normalize_asyncpg_url(os.environ["DATABASE_URL"])
 
     from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-    from main import _match_one
 
+    _match_one = get_match_one()
     engine = create_async_engine(
         database_url,
         connect_args={
