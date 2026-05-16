@@ -21,16 +21,21 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Comma-separated list of allowed CORS origins.
-    # On Render, set this env var to include all your Vercel URLs:
-    #   https://hsn2.vercel.app,https://hsn2-git-main-krithu.vercel.app,https://hsn2-krithu.vercel.app,https://hsn-app-krithu.vercel.app
+    # On Render, set CORS_ORIGINS env var to override these defaults.
     CORS_ORIGINS: str = (
         "http://localhost:3000,"
         "http://localhost:3001,"
+        # hsn2 project — all Vercel team variants
         "https://hsn2.vercel.app,"
         "https://hsn-app.vercel.app,"
+        # d3d team (current active deployment)
+        "https://hsn2-git-main-d3d.vercel.app,"
+        "https://hsn2-d3d.vercel.app,"
+        # krithu team variants (legacy)
         "https://hsn2-git-main-krithu.vercel.app,"
         "https://hsn2-krithu.vercel.app,"
         "https://hsn-app-krithu.vercel.app,"
+        # dhanushmcmsd team variants (legacy)
         "https://hsn2-git-main-dhanushmcmsd.vercel.app,"
         "https://hsn2-dhanushmcmsd.vercel.app,"
         "https://hsn-app-dhanushmcmsd.vercel.app,"
@@ -78,6 +83,7 @@ class Settings(BaseSettings):
 
         url = urlunparse(parsed._replace(query=urlencode(query_params, doseq=True)))
         return url
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
