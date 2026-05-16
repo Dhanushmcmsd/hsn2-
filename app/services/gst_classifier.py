@@ -540,6 +540,26 @@ async def classify(
 
     query_norm = _normalize_query(raw_q)
 
+    # ── TIER A: Verified Product Alias (instant lookup, no DB) ──────────────
+    from app.services.hsn_master import get_alias_hsn
+    alias_code = get_alias_hsn(raw_q)
+    if alias_code is None:
+        alias_code = get_alias_hsn(query_norm)
+    if alias_code:
+        elapsed = (time.perf_counter() - started) * 1000
+        return _make_result(
+            alias_code,
+            raw_q,
+            None,
+            True,      # is_verified
+            98,        # confidence
+            elapsed,
+            "L0_alias_dict",
+            False,     # needs_manual_review
+            0.0,
+            needs_manual_review=False,
+        )
+
     # ── TIER 0: DB Cache ──────────────────────────────────────────────────────
     if not bypass_cache:
         cached = await _tier0_cache(db, query_norm)
