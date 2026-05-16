@@ -52,6 +52,33 @@ _CACHE_TTL_EXACT = 30 * 24 * 3600   # 30 days for exact/brand matches
 # Helpers
 # ---------------------------------------------------------------------------
 
+
+# ── Chapter-level GST rate lookup (CBIC 2024 schedule) ────────────────────────
+# Mirrors the same table in hsn_master.py.  Used as a last-resort gst_rate fill.
+_CHAPTER_GST_RATES: dict[str, float] = {
+    "01": 0.0,  "02": 0.0,  "03": 5.0,  "04": 5.0,  "05": 0.0,
+    "06": 5.0,  "07": 0.0,  "08": 0.0,  "09": 0.0,  "10": 0.0,
+    "11": 0.0,  "12": 0.0,  "13": 5.0,  "14": 0.0,  "15": 5.0,
+    "16": 12.0, "17": 5.0,  "18": 18.0, "19": 18.0, "20": 12.0,
+    "21": 18.0, "22": 18.0, "23": 0.0,  "24": 28.0, "25": 5.0,
+    "26": 5.0,  "27": 5.0,  "28": 18.0, "29": 18.0, "30": 12.0,
+    "31": 5.0,  "32": 18.0, "33": 18.0, "34": 18.0, "35": 18.0,
+    "36": 18.0, "37": 18.0, "38": 18.0, "39": 18.0, "40": 12.0,
+    "41": 5.0,  "42": 12.0, "43": 12.0, "44": 12.0, "45": 12.0,
+    "46": 12.0, "47": 12.0, "48": 12.0, "49": 12.0, "50": 5.0,
+    "51": 5.0,  "52": 5.0,  "53": 5.0,  "54": 5.0,  "55": 5.0,
+    "56": 5.0,  "57": 5.0,  "58": 5.0,  "59": 12.0, "60": 5.0,
+    "61": 5.0,  "62": 5.0,  "63": 5.0,  "64": 12.0, "65": 12.0,
+    "66": 12.0, "67": 12.0, "68": 12.0, "69": 12.0, "70": 18.0,
+    "71": 3.0,  "72": 18.0, "73": 18.0, "74": 18.0, "75": 18.0,
+    "76": 18.0, "77": 18.0, "78": 18.0, "79": 18.0, "80": 18.0,
+    "81": 18.0, "82": 18.0, "83": 18.0, "84": 18.0, "85": 18.0,
+    "86": 12.0, "87": 28.0, "88": 18.0, "89": 5.0,  "90": 12.0,
+    "91": 18.0, "92": 18.0, "93": 12.0, "94": 18.0, "95": 18.0,
+    "96": 18.0, "97": 12.0, "98": 5.0,  "99": 0.0,
+}
+
+
 def _normalize_query(q: str) -> str:
     return re.sub(r"\s+", " ", q.upper().strip())
 
@@ -378,6 +405,65 @@ async def _tier4_keyword(db: AsyncSession, query_raw: str) -> dict | None:
 
 
 
+
+
+# ---------------------------------------------------------------------------
+# TIER 5 — Multi-layer search fallback (inverted-index → pg_trgm → FAISS)
+# ---------------------------------------------------------------------------
+
+async def _tier5_multi_layer(db: AsyncSession, query: str) -> dict | None:
+    """Fallback to the full multi-layer search pipeline (L2 → L3 → L4 → L5).
+
+    Used when tiers 1-4 produce no result. This bridges the classify pipeline
+    with the same inverted_index / pg_trgm / FAISS layers used by /predict.
+    """
+    try:
+        from app.services.multi_layer_search import multi_search, EARLY_EXIT_SCORE
+    except Exception:
+        return None
+
+    try:
+        result = await multi_search(db, query, top_k=1, bypass_cache=True)
+    except Exception as exc:
+        log.warning("gst_classifier.tier5_multi_layer_failed", error=str(exc)[:120])
+        return None
+
+    if not result.results:
+        return None
+
+    best = result.results[0]
+    hsn_code = (best.get("hsn_code") or "").strip()
+    if not hsn_code or not _is_valid_hsn(hsn_code):
+        return None
+
+    # Never surface the unclassified sentinel code
+    if hsn_code == _UNCLASSIFIED_HSN:
+        return None
+
+    score = float(best.get("score") or 0.0)
+    gst_val = best.get("gst_rate")
+    if gst_val is None:
+        # Chapter-level fallback
+        chapter = hsn_code[:2] if len(hsn_code) >= 2 else ""
+        gst_val = _CHAPTER_GST_RATES.get(chapter)
+
+    confidence = min(90, max(40, int(score * 100)))
+    log.info(
+        "gst_classifier.tier5_hit",
+        q=query[:50], hsn=hsn_code, score=score,
+        method=best.get("method", "multi_layer"),
+    )
+    return {
+        "hsn_code": hsn_code,
+        "description": best.get("description") or "",
+        "gst_rate": gst_val,
+        "cess_applicable": _cess_for_hsn(hsn_code),
+        "confidence": confidence,
+        "tier_used": 5,
+        "source": best.get("method") or "multi_layer_search",
+        "verified": score >= EARLY_EXIT_SCORE,
+    }
+
 # ---------------------------------------------------------------------------
 # TIER 6 — Manual Review Flag
 # ---------------------------------------------------------------------------
@@ -521,8 +607,20 @@ async def classify(
         await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
         return final
 
+    # ── TIER 5: Multi-layer search fallback (inverted-index → pg_trgm → FAISS) ─
+    result = await _tier5_multi_layer(db, raw_q)
+    if result:
+        elapsed = (time.perf_counter() - started) * 1000
+        final = _make_result(
+            result["hsn_code"], result["description"], result["gst_rate"],
+            result["cess_applicable"], result["confidence"], 5,
+            result["source"], result.get("verified", False), elapsed,
+        )
+        await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
+        return final
+
     # ── TIER 6: Manual Review Flag (no external AI layer) ─────────────────────
-    pending = await _tier6_pending_review(db, raw_q, query_norm, None)
+    pending = await _tier6_pending_review(db, raw_q, query_norm, result)
     elapsed = (time.perf_counter() - started) * 1000
     return _make_result(
         pending.get("hsn_code") or "UNCLASSIFIED",
