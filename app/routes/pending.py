@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import select, func, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -138,12 +138,14 @@ async def resolve_pending_product(
     return PendingProductItem.model_validate(refreshed)
 
 
-@router.delete("/products/{product_id}", status_code=204)
+# FIX: status_code=204 must not have a response body.
+# Use Response directly and return it — FastAPI will send an empty 204 body.
+@router.delete("/products/{product_id}", status_code=204, response_class=Response)
 async def delete_pending_product(
     product_id: int,
     db: AsyncSession = Depends(get_db),
     _: str = Depends(require_admin_key),
-) -> None:
+) -> Response:
     """Hard-delete a pending product (e.g., duplicate or junk entry)."""
     row = (await db.execute(
         select(PendingProduct).where(PendingProduct.id == product_id)
@@ -152,3 +154,4 @@ async def delete_pending_product(
         raise HTTPException(status_code=404, detail=f"Pending product {product_id} not found")
     await db.delete(row)
     await db.commit()
+    return Response(status_code=204)
