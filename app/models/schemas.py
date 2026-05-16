@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
 
@@ -30,6 +30,8 @@ class PredictResponse(BaseModel):
 
 
 class HSNRow(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     hsn_code: str
     description: str
     full_description: str
@@ -39,9 +41,6 @@ class HSNRow(BaseModel):
     heading: Optional[str] = None
     section: Optional[str] = None
 
-    class Config:
-        from_attributes = True
-
 
 class ResolveRequest(BaseModel):
     request_id: str
@@ -49,13 +48,12 @@ class ResolveRequest(BaseModel):
 
 
 class ReviewItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     request_id: str
     input_text: str
     predicted_hsn: str
     confidence: float
-
-    class Config:
-        from_attributes = True
 
 
 class ImportantProduct(BaseModel):
@@ -86,15 +84,14 @@ class ProductAnalysisResponse(BaseModel):
 
 
 class PendingProductItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     product_name: str
     source_name: Optional[str] = None
     pack_or_size: Optional[str] = None
     hsn_code: Optional[str] = None
     status: str
-
-    class Config:
-        from_attributes = True
 
 
 class PendingProductsResponse(BaseModel):
