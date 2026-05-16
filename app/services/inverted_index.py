@@ -69,7 +69,6 @@ async def search(db: AsyncSession, query: str, *, limit: int = 20) -> list[dict[
     out: list[dict[str, Any]] = []
     for r in rows:
         rank = float(r["rank"] or 0.0)
-        # Squash ts_rank_cd (typically 0..2+) into a 0..1 confidence-friendly band.
         score = max(0.0, min(1.0, rank / (rank + 1.0)))
         out.append(
             {
@@ -85,6 +84,7 @@ async def search(db: AsyncSession, query: str, *, limit: int = 20) -> list[dict[
     return out
 
 
+# Fixed: use h.description (from hsn_codes) for trigram match — hsn_search has no normalized_description column
 _TRGM_SQL = text(
     """
     SELECT
@@ -93,10 +93,10 @@ _TRGM_SQL = text(
         h.gst_rate,
         h.section_code,
         h.hsn_chapter,
-        similarity(s.normalized_description, :q) AS sim
-    FROM hsn_search s
-    JOIN hsn_codes  h ON h.hsn_code = s.hsn_code
-    WHERE s.normalized_description %% :q
+        similarity(h.description, :q) AS sim
+    FROM hsn_codes h
+    WHERE similarity(h.description, :q) > :min_sim
+      AND COALESCE(h.is_active, TRUE) = TRUE
     ORDER BY sim DESC
     LIMIT :limit
     """
@@ -104,17 +104,14 @@ _TRGM_SQL = text(
 
 
 async def fuzzy_trgm(db: AsyncSession, query: str, *, limit: int = 20, min_sim: float = 0.18) -> list[dict[str, Any]]:
-    """Postgres pg_trgm fuzzy fallback against ``hsn_search.normalized_description``.
-
-    Uses ``%`` operator (which honours ``set_limit`` / ``pg_trgm.similarity_threshold``).
-    """
+    """Postgres pg_trgm fuzzy fallback against ``hsn_codes.description``."""
     q = (query or "").strip()
     if len(q) < 2:
         return []
     try:
         await db.execute(text("SELECT set_limit(:s)"), {"s": float(min_sim)})
         rows = (
-            await db.execute(_TRGM_SQL, {"q": q, "limit": int(limit)})
+            await db.execute(_TRGM_SQL, {"q": q, "min_sim": float(min_sim), "limit": int(limit)})
         ).mappings().all()
     except Exception as exc:
         log.warning("inverted_index.fuzzy_failed", error=str(exc), q=q[:60])
