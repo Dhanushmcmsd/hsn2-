@@ -135,7 +135,8 @@ app.add_middleware(
 
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
-    request_id = str(uuid.uuid4())
+    incoming = request.headers.get("X-Request-ID", "").strip()
+    request_id = incoming if incoming else str(uuid.uuid4())
     request.state.request_id = request_id
     start = time.perf_counter()
     response = await call_next(request)

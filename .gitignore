@@ -37,6 +37,7 @@ hsn-frontend/.env.local
 *.swp
 
 # Logs & OS
+logs/
 *.log
 .DS_Store
 Thumbs.db

@@ -12,15 +12,17 @@ from __future__ import annotations
 
 import asyncio
 import re
+import time
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
 from app.models.database import async_session, get_db
 from app.services import gst_classifier
+from app.services.audit_logger import log_classify_event
 from app.utils.auth import require_api_key, require_admin_key
 
 router = APIRouter(prefix="/api/v1/classify", tags=["GST Classification"])
@@ -109,8 +111,9 @@ class PendingReviewItem(BaseModel):
 @router.post("", response_model=ClassifyResult, summary="Classify a product for GST/HSN")
 async def classify_product(
     body: ClassifyRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db),
-    _key: str = Depends(require_api_key),
+    api_key: str = Depends(require_api_key),
 ) -> ClassifyResult:
     """
     Classify a product description through cache, DB matchers, then manual review if needed.
@@ -125,12 +128,27 @@ async def classify_product(
 
     SAC services resolve via ``service_master`` (never padded to 8-digit HSN).
     """
+    started = time.perf_counter()
     result = await gst_classifier.classify(
         db,
         body.query,
         bypass_cache=body.bypass_cache,
     )
-    return ClassifyResult(**result)
+    response = ClassifyResult(**result)
+    request_id = getattr(request.state, "request_id", "")
+    client_ip = request.client.host if request.client else ""
+    await log_classify_event(
+        request_id=request_id,
+        api_key=api_key,
+        client_ip=client_ip,
+        product_name=body.query,
+        hsn_code=response.hsn_code,
+        gst_rate=response.gst_rate,
+        confidence_score=response.confidence_score or response.confidence,
+        layer_matched=response.matched_layer or response.source,
+        response_time_ms=(time.perf_counter() - started) * 1000,
+    )
+    return response
 
 
 @router.post("/batch", response_model=BatchClassifyResponse, summary="Batch classify up to 50 products")
