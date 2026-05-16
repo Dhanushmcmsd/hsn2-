@@ -17,29 +17,17 @@ class Settings(BaseSettings):
     API_KEY: str = DEV_API_KEY
     ADMIN_API_KEY: str = DEV_ADMIN_KEY
 
-    DATABASE_URL: str = "sqlite+aiosqlite:///./hsn_dev.db"  # raw field, keep as-is
+    DATABASE_URL: str = "sqlite+aiosqlite:///./hsn_dev.db"
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Comma-separated list of allowed CORS origins.
-    # On Render, set CORS_ORIGINS env var to override these defaults.
+    # Override on Render via the CORS_ORIGINS environment variable.
     CORS_ORIGINS: str = (
         "http://localhost:3000,"
         "http://localhost:3001,"
-        # hsn2 project — all Vercel team variants
         "https://hsn2.vercel.app,"
-        "https://hsn-app.vercel.app,"
-        # d3d team (current active deployment)
         "https://hsn2-git-main-d3d.vercel.app,"
-        "https://hsn2-d3d.vercel.app,"
-        # krithu team variants (legacy)
-        "https://hsn2-git-main-krithu.vercel.app,"
-        "https://hsn2-krithu.vercel.app,"
-        "https://hsn-app-krithu.vercel.app,"
-        # dhanushmcmsd team variants (legacy)
-        "https://hsn2-git-main-dhanushmcmsd.vercel.app,"
-        "https://hsn2-dhanushmcmsd.vercel.app,"
-        "https://hsn-app-dhanushmcmsd.vercel.app,"
-        "https://hsniq.vercel.app"
+        "https://hsn2-7qvtr9ca4-d3d.vercel.app"
     )
 
     LOG_LEVEL: str = "INFO"
@@ -77,8 +65,6 @@ class Settings(BaseSettings):
         query_params = dict(parse_qsl(parsed.query, keep_blank_values=True))
         query_params["statement_cache_size"] = "0"
         query_params["prepared_statement_cache_size"] = "0"
-        # Remove sslmode — asyncpg rejects it as a connect kwarg;
-        # SSL is handled via connect_args in database.py
         query_params.pop("sslmode", None)
 
         url = urlunparse(parsed._replace(query=urlencode(query_params, doseq=True)))
