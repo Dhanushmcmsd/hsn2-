@@ -6,10 +6,13 @@ import pytest
 from tests.legacy_main import get_match_one, has_live_postgres_url, normalize_asyncpg_url
 
 
-pytestmark = pytest.mark.skipif(
-    not has_live_postgres_url(),
-    reason="Postgres DATABASE_URL required for live matcher verification",
-)
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not has_live_postgres_url(),
+        reason="Postgres DATABASE_URL required for live matcher verification",
+    ),
+]
 
 
 KNOWN_BAD_CASES = [

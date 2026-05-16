@@ -1,4 +1,4 @@
-name: Tests
+name: Integration Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  pytest:
+  integration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +20,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run test suite
+      - name: Run live Postgres integration tests
         env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           APP_ENV: development
-        run: pytest -m "not integration" -q
+        run: pytest -m integration -v

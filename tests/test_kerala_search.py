@@ -54,6 +54,7 @@ async def test_kerala_alias_exact_without_db_round_trip():
     assert results[0]["method"] == "kerala_alias_exact"
 
 
+@pytest.mark.integration
 @pytest.mark.skipif(
     not has_live_postgres_url(),
     reason="Postgres DATABASE_URL required for live Kerala matcher verification",

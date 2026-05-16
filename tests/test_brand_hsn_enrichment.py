@@ -26,10 +26,13 @@ import pytest
 
 from tests.legacy_main import has_live_postgres_url, normalize_asyncpg_url
 
-pytestmark = pytest.mark.skipif(
-    not has_live_postgres_url(),
-    reason="Postgres DATABASE_URL required for live DB tests",
-)
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not has_live_postgres_url(),
+        reason="Postgres DATABASE_URL required for live DB tests",
+    ),
+]
 
 
 # ── Test fixtures ──────────────────────────────────────────────────────────────

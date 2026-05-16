@@ -46,10 +46,13 @@ CHAPTER_ACCURACY_CASES = [
 ]
 
 
-pytestmark = pytest.mark.skipif(
-    not has_live_postgres_url(),
-    reason="Postgres DATABASE_URL required for live chapter-accuracy verification",
-)
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not has_live_postgres_url(),
+        reason="Postgres DATABASE_URL required for live chapter-accuracy verification",
+    ),
+]
 
 
 def _chapter_ok(actual: str, expected: str) -> bool:
