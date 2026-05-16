@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import re
-from typing import Optional
+from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -53,8 +53,12 @@ class ClassifyResult(BaseModel):
     needs_manual_review: bool = False
 
 
+# FIX: Pydantic v2 dropped min_items/max_items on Field for lists.
+# Use Annotated with list constraints instead.
 class BatchClassifyRequest(BaseModel):
-    queries: list[str] = Field(..., min_items=1, max_items=50, description="Up to 50 product queries")
+    queries: Annotated[list[str], Field(min_length=1, max_length=50)] = Field(
+        ..., description="Up to 50 product queries"
+    )
     bypass_cache: bool = False
     enable_ai: bool = Field(False, description="Deprecated. Ignored.")
 
