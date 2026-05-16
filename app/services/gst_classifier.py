@@ -1,26 +1,15 @@
-"""5-Tier GST/HSN classification pipeline for Government of India submission.
+"""Layered GST/HSN classification pipeline (backward-compatible tiers).
 
-Pipeline (each tier logs which tier returned the result):
+  TIER 0  — search_cache
+  TIER 1  — L1 exact brand_aliases (+ service_master for SAC)
+  TIER 2  — L2 exact verified_products
+  TIER 3  — L3 curated hsn_master (8-digit goods)
+  TIER 4  — keyword_category_map
+  TIER 5  — L4 tariff (hsn_codes/history) → L5 fuzzy → multi_layer fallback
+  TIER 6  — pending_review when confidence is below threshold
 
-  TIER 0  — DB Search Cache    (< 5ms)   cache hit → return instantly
-  TIER 1  — Exact Brand Match  (< 10ms)  brand_aliases exact UPPER lookup
-  TIER 2  — Exact Product Match(< 10ms)  verified_products exact match
-  TIER 3  — Fuzzy Match        (< 50ms)  pg_trgm similarity on brand+product
-  TIER 4  — Keyword/Category   (< 30ms)  keyword_category_map lookup
-  TIER 6  — Manual Review Flag           logs to pending_review, returns best guess
-
-Standard response shape:
-    {
-      "hsn_code": "19011000",
-      "description": "Malt extract, health drinks",
-      "gst_rate": 18,
-      "cess_applicable": false,
-      "confidence": 99,
-      "tier_used": 1,
-      "source": "brand_alias_exact",
-      "verified": true,
-      "last_updated": "2024-03-15"
-    }
+Additive response fields: matched_layer, matched_source_table, code_type,
+tax_semantics, cess_rate, effective_total_tax, review_required, alternates.
 """
 from __future__ import annotations
 
@@ -46,6 +35,9 @@ _UNCLASSIFIED_HSN = "99999999"
 
 # Cache TTL in seconds
 _CACHE_TTL_EXACT = 30 * 24 * 3600   # 30 days for exact/brand matches
+
+# Minimum confidence to return without manual-review flag (tiers 5+)
+_MIN_AUTHORITATIVE_CONFIDENCE = 70
 
 
 # ---------------------------------------------------------------------------
@@ -112,20 +104,110 @@ def _make_result(
     verified: bool,
     elapsed_ms: float,
     needs_manual_review: bool = False,
+    *,
+    matched_layer: str | None = None,
+    matched_source_table: str | None = None,
+    code_type: str = "HSN",
+    tax_semantics: str = "unknown",
+    cess_rate: float | None = None,
+    effective_total_tax: float | None = None,
+    review_required: bool | None = None,
+    rate_conflict: bool = False,
+    trust_level: str | None = None,
+    alternates: list[dict[str, Any]] | None = None,
+    confidence_score: int | None = None,
 ) -> dict[str, Any]:
+    review = review_required if review_required is not None else needs_manual_review
+    conf = confidence_score if confidence_score is not None else confidence
     return {
         "hsn_code": hsn_code,
         "description": description,
         "gst_rate": gst_rate,
         "cess_applicable": cess_applicable,
-        "confidence": confidence,
+        "cess_rate": cess_rate,
+        "effective_total_tax": effective_total_tax,
+        "confidence": conf,
+        "confidence_score": conf,
         "tier_used": tier_used,
         "source": source,
         "verified": verified,
         "last_updated": datetime.now(timezone.utc).date().isoformat(),
         "elapsed_ms": round(elapsed_ms, 2),
-        "needs_manual_review": needs_manual_review,
+        "needs_manual_review": needs_manual_review or review,
+        "review_required": review,
+        "matched_layer": matched_layer or _layer_name_for_tier(tier_used, source),
+        "matched_source_table": matched_source_table,
+        "code_type": code_type,
+        "tax_semantics": tax_semantics,
+        "rate_conflict": rate_conflict,
+        "trust_level": trust_level,
+        "alternates": alternates or [],
     }
+
+
+def _layer_name_for_tier(tier_used: int, source: str) -> str:
+    mapping = {
+        0: "L0_cache",
+        1: "L1_brand_alias",
+        2: "L2_verified_product",
+        3: "L3_curated_master",
+        4: "L4_keyword_category",
+        5: "L4_tariff_fallback" if "tariff" in source or "inverted" in source else "L5_fuzzy",
+        6: "L6_pending_review",
+    }
+    return mapping.get(tier_used, f"tier_{tier_used}")
+
+
+async def _finalize_layer_result(
+    db: AsyncSession,
+    partial: dict[str, Any],
+    elapsed_ms: float,
+    *,
+    cache_query_norm: str | None = None,
+    cache_ttl: int | None = None,
+) -> dict[str, Any]:
+    """Enrich tax metadata and build the outward API dict."""
+    from app.services.classifier_layers import enrich_tax_metadata, is_sac_code, normalize_display_code
+
+    code = partial.get("hsn_code") or ""
+    enriched = await enrich_tax_metadata(db, code, partial=partial)
+    review = bool(
+        enriched.get("review_required")
+        or enriched.get("confidence", 0) < _MIN_AUTHORITATIVE_CONFIDENCE
+        and enriched.get("tier_used", 0) >= 5
+    )
+    display = normalize_display_code(
+        enriched.get("hsn_code") or code,
+        code_type=enriched.get("code_type", "HSN"),
+    )
+    if is_sac_code(display):
+        enriched["code_type"] = "SAC"
+
+    final = _make_result(
+        display,
+        enriched.get("description") or "",
+        enriched.get("gst_rate"),
+        bool(enriched.get("cess_applicable")),
+        int(enriched.get("confidence", 0)),
+        int(enriched.get("tier_used", 0)),
+        enriched.get("source", "unknown"),
+        bool(enriched.get("verified")),
+        elapsed_ms,
+        needs_manual_review=review or bool(enriched.get("rate_conflict")),
+        matched_layer=enriched.get("matched_layer"),
+        matched_source_table=enriched.get("matched_source_table"),
+        code_type=enriched.get("code_type", "HSN"),
+        tax_semantics=enriched.get("tax_semantics", "unknown"),
+        cess_rate=enriched.get("cess_rate"),
+        effective_total_tax=enriched.get("effective_total_tax"),
+        review_required=review,
+        rate_conflict=bool(enriched.get("rate_conflict")),
+        trust_level=enriched.get("trust_level"),
+        alternates=enriched.get("alternates"),
+    )
+    if cache_query_norm and cache_ttl and not final.get("needs_manual_review"):
+        await _cache_store(db, cache_query_norm, final, cache_ttl)
+    return final
 
 
 # ---------------------------------------------------------------------------
@@ -204,9 +286,21 @@ async def _cache_store(
 _BRAND_EXACT_SQL = text("""
     SELECT ba.hsn_code, ba.category, ba.gst_rate, ba.cess_applicable,
            ba.verified_source, ba.brand_name,
-           hm.description
+           COALESCE(ba.code_kind,
+             CASE WHEN length(ba.hsn_code) = 4 THEN 'SAC' ELSE 'HSN' END
+           ) AS code_kind,
+           hm.description AS hm_description,
+           sm.description AS sm_description,
+           sm.gst_rate AS sm_gst_rate
     FROM brand_aliases ba
-    LEFT JOIN hsn_master hm ON hm.hsn_code = ba.hsn_code
+    LEFT JOIN hsn_master hm
+      ON hm.hsn_code = ba.hsn_code
+     AND COALESCE(ba.code_kind, 'HSN') = 'HSN'
+    LEFT JOIN service_master sm
+      ON sm.sac_code = ba.hsn_code
+     AND COALESCE(ba.code_kind,
+           CASE WHEN length(ba.hsn_code) = 4 THEN 'SAC' ELSE 'HSN' END
+         ) = 'SAC'
     WHERE ba.brand_name_upper = :q
       AND ba.is_active = TRUE
     ORDER BY ba.gst_rate DESC
@@ -222,16 +316,25 @@ async def _tier1_exact_brand(db: AsyncSession, query_norm: str) -> dict | None:
         return None
     if not row:
         return None
-    log.info("gst_classifier.tier1_hit", q=query_norm[:50], hsn=row["hsn_code"])
+    code_kind = row.get("code_kind") or "HSN"
+    desc = row.get("sm_description") or row.get("hm_description") or row["category"]
+    gst = row["gst_rate"]
+    if code_kind == "SAC" and row.get("sm_gst_rate") is not None:
+        gst = row["sm_gst_rate"]
+    log.info("gst_classifier.tier1_hit", q=query_norm[:50], hsn=row["hsn_code"], code_kind=code_kind)
     return {
         "hsn_code": row["hsn_code"],
-        "description": row["description"] or row["category"],
-        "gst_rate": float(row["gst_rate"]) if row["gst_rate"] is not None else None,
-        "cess_applicable": bool(row["cess_applicable"]),
+        "description": desc,
+        "gst_rate": float(gst) if gst is not None else None,
+        "cess_applicable": bool(row["cess_applicable"]) if code_kind == "HSN" else False,
         "confidence": 99,
         "tier_used": 1,
         "source": "brand_alias_exact",
         "verified": True,
+        "matched_layer": "L1_brand_alias",
+        "matched_source_table": "service_master" if code_kind == "SAC" else "brand_aliases",
+        "code_kind": code_kind,
+        "trust_level": "curated",
     }
 
 
@@ -242,9 +345,14 @@ async def _tier1_exact_brand(db: AsyncSession, query_norm: str) -> dict | None:
 _PRODUCT_EXACT_SQL = text("""
     SELECT vp.hsn_code, vp.description, vp.gst_rate,
            hm.description AS hsn_description,
-           hm.gst_rate AS hsn_gst_rate
+           hm.gst_rate AS hsn_gst_rate,
+           hm.cess_applicable AS hm_cess,
+           hm.cess_rate AS hm_cess_rate,
+           hm.rate_semantics
     FROM verified_products vp
-    LEFT JOIN hsn_master hm ON hm.hsn_code = vp.hsn_code
+    LEFT JOIN hsn_master hm
+      ON hm.hsn_code = vp.hsn_code
+     AND COALESCE(hm.code_kind, 'HSN') = 'HSN'
     WHERE vp.description_normalized = :q
        OR vp.description_no_size = :q
     ORDER BY
@@ -269,16 +377,25 @@ async def _tier2_exact_product(db: AsyncSession, query_norm: str) -> dict | None
         gst_val = float(raw_gst) if raw_gst is not None else row.get("hsn_gst_rate")
     if gst_val is not None:
         gst_val = float(gst_val)
+    cess = row.get("hm_cess")
+    if cess is None:
+        cess = _cess_for_hsn(row["hsn_code"])
     log.info("gst_classifier.tier2_hit", q=query_norm[:50], hsn=row["hsn_code"])
     return {
         "hsn_code": row["hsn_code"],
         "description": row["hsn_description"] or row["description"],
         "gst_rate": gst_val,
-        "cess_applicable": _cess_for_hsn(row["hsn_code"]),
+        "cess_applicable": bool(cess),
+        "cess_rate": float(row["hm_cess_rate"]) if row.get("hm_cess_rate") is not None else None,
         "confidence": 99,
         "tier_used": 2,
         "source": "verified_product_exact",
         "verified": True,
+        "matched_layer": "L2_verified_product",
+        "matched_source_table": "verified_products",
+        "code_kind": "HSN",
+        "trust_level": "verified",
+        "tax_semantics": row.get("rate_semantics") or "unknown",
     }
 
 
@@ -288,10 +405,22 @@ async def _tier2_exact_product(db: AsyncSession, query_norm: str) -> dict | None
 
 _BRAND_FUZZY_SQL = text("""
     SELECT ba.hsn_code, ba.category, ba.gst_rate, ba.cess_applicable,
-           ba.brand_name, hm.description,
+           ba.brand_name,
+           COALESCE(ba.code_kind,
+             CASE WHEN length(ba.hsn_code) = 4 THEN 'SAC' ELSE 'HSN' END
+           ) AS code_kind,
+           hm.description AS hm_description,
+           sm.description AS sm_description,
            similarity(ba.brand_name_upper, :q) AS sim
     FROM brand_aliases ba
-    LEFT JOIN hsn_master hm ON hm.hsn_code = ba.hsn_code
+    LEFT JOIN hsn_master hm
+      ON hm.hsn_code = ba.hsn_code
+     AND COALESCE(ba.code_kind, 'HSN') = 'HSN'
+    LEFT JOIN service_master sm
+      ON sm.sac_code = ba.hsn_code
+     AND COALESCE(ba.code_kind,
+           CASE WHEN length(ba.hsn_code) = 4 THEN 'SAC' ELSE 'HSN' END
+         ) = 'SAC'
     WHERE ba.is_active = TRUE
       AND similarity(ba.brand_name_upper, :q) > 0.4
     ORDER BY sim DESC
@@ -323,15 +452,21 @@ async def _tier3_fuzzy(db: AsyncSession, query_norm: str) -> dict | None:
         sim = float(row["sim"] or 0.0)
         confidence = 85 if sim > 0.6 else 70
         log.info("gst_classifier.tier3_brand_fuzzy_hit", q=query_norm[:50], sim=sim)
+        code_kind = row.get("code_kind") or "HSN"
         return {
             "hsn_code": row["hsn_code"],
-            "description": row["description"] or row["category"],
+            "description": row.get("sm_description") or row.get("hm_description") or row["category"],
             "gst_rate": float(row["gst_rate"]) if row["gst_rate"] is not None else None,
-            "cess_applicable": bool(row["cess_applicable"]),
+            "cess_applicable": bool(row["cess_applicable"]) if code_kind == "HSN" else False,
             "confidence": confidence,
-            "tier_used": 3,
+            "tier_used": 5,
             "source": "brand_alias_fuzzy",
-            "verified": True,
+            "verified": confidence >= _MIN_AUTHORITATIVE_CONFIDENCE,
+            "matched_layer": "L5_fuzzy",
+            "matched_source_table": "brand_aliases",
+            "code_kind": code_kind,
+            "trust_level": "fuzzy",
+            "review_required": confidence < _MIN_AUTHORITATIVE_CONFIDENCE,
         }
 
     # Try product fuzzy
@@ -361,9 +496,14 @@ async def _tier3_fuzzy(db: AsyncSession, query_norm: str) -> dict | None:
         "gst_rate": gst_val,
         "cess_applicable": _cess_for_hsn(row["hsn_code"]),
         "confidence": confidence,
-        "tier_used": 3,
+        "tier_used": 5,
         "source": "product_fuzzy",
-        "verified": True,
+        "verified": confidence >= _MIN_AUTHORITATIVE_CONFIDENCE,
+        "matched_layer": "L5_fuzzy",
+        "matched_source_table": "verified_products",
+        "code_kind": "HSN",
+        "trust_level": "fuzzy",
+        "review_required": confidence < _MIN_AUTHORITATIVE_CONFIDENCE,
     }
 
 
@@ -401,6 +541,10 @@ async def _tier4_keyword(db: AsyncSession, query_raw: str) -> dict | None:
         "tier_used": 4,
         "source": "keyword_category_map",
         "verified": True,
+        "matched_layer": "L4_keyword_category",
+        "matched_source_table": "keyword_category_map",
+        "code_kind": "HSN",
+        "trust_level": "curated",
     }
 
 
@@ -462,6 +606,11 @@ async def _tier5_multi_layer(db: AsyncSession, query: str) -> dict | None:
         "tier_used": 5,
         "source": best.get("method") or "multi_layer_search",
         "verified": score >= EARLY_EXIT_SCORE,
+        "matched_layer": "L5_fuzzy",
+        "matched_source_table": "hsn_codes",
+        "code_kind": "HSN",
+        "trust_level": "fuzzy",
+        "review_required": confidence < _MIN_AUTHORITATIVE_CONFIDENCE,
     }
 
 # ---------------------------------------------------------------------------
@@ -523,134 +672,149 @@ async def _tier6_pending_review(
 # ---------------------------------------------------------------------------
 
 
+async def _tier5_broad_resolution(
+    db: AsyncSession,
+    raw_q: str,
+    query_norm: str,
+) -> dict[str, Any] | None:
+    """L4 tariff → L5 fuzzy → multi_layer; returns best candidate (may be low confidence)."""
+    from app.services.classifier_layers import layer_tariff_fallback
+
+    result = await layer_tariff_fallback(db, raw_q)
+    if result and int(result.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
+        return result
+
+    fuzzy = await _tier3_fuzzy(db, query_norm)
+    if fuzzy and int(fuzzy.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
+        return fuzzy
+
+    multi = await _tier5_multi_layer(db, raw_q)
+    if multi and int(multi.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
+        return multi
+
+    for candidate in (fuzzy, result, multi):
+        if candidate:
+            return candidate
+    return None
+
+
 async def classify(
     db: AsyncSession,
     query: str,
     *,
     bypass_cache: bool = False,
 ) -> dict[str, Any]:
-    """Classify a product query through the GST/HSN pipeline (DB + manual review)."""
+    """Classify a product query through the layered GST/HSN pipeline."""
     started = time.perf_counter()
     raw_q = (query or "").strip()
     if not raw_q:
         return _make_result(
             "UNKNOWN", "Empty query", None, False, 0, 0, "empty_query", False,
-            0.0, needs_manual_review=True,
+            0.0, needs_manual_review=True, review_required=True,
+            matched_layer="L6_pending_review",
         )
 
     query_norm = _normalize_query(raw_q)
 
-    # ── TIER A: Verified Product Alias (instant lookup, no DB) ──────────────
+    # ── L0 in-memory alias (no DB) ───────────────────────────────────────────
     from app.services.hsn_master import get_alias_hsn
-    alias_code = get_alias_hsn(raw_q)
-    if alias_code is None:
-        alias_code = get_alias_hsn(query_norm)
-    if alias_code:
-        elapsed = (time.perf_counter() - started) * 1000
-        return _make_result(
-            alias_code,
-            raw_q,
-            None,
-            True,      # is_verified
-            98,        # confidence
-            elapsed,
-            "L0_alias_dict",
-            False,     # needs_manual_review
-            0.0,
-            needs_manual_review=False,
-        )
+    from app.services.classifier_layers import is_sac_code, normalize_display_code
 
-    # ── TIER 0: DB Cache ──────────────────────────────────────────────────────
+    alias_code = get_alias_hsn(raw_q) or get_alias_hsn(query_norm)
+    if alias_code:
+        display = normalize_display_code(
+            alias_code,
+            code_type="SAC" if is_sac_code(alias_code) else "HSN",
+        )
+        elapsed = (time.perf_counter() - started) * 1000
+        partial = {
+            "hsn_code": display,
+            "description": raw_q,
+            "gst_rate": None,
+            "cess_applicable": False,
+            "confidence": 98,
+            "tier_used": 1,
+            "source": "L0_alias_dict",
+            "verified": True,
+            "matched_layer": "L1_brand_alias",
+            "matched_source_table": "in_memory_alias",
+            "trust_level": "curated",
+        }
+        return await _finalize_layer_result(db, partial, elapsed)
+
+    # ── TIER 0: DB Cache ─────────────────────────────────────────────────────
     if not bypass_cache:
         cached = await _tier0_cache(db, query_norm)
         if cached:
             elapsed = (time.perf_counter() - started) * 1000
-            return _make_result(
-                cached["hsn_code"],
-                cached.get("description", ""),
-                float(cached["gst_rate"]) if cached.get("gst_rate") is not None else None,
-                bool(cached.get("cess_applicable", False)),
-                100,  # verified cache = 100% confidence
-                0,
-                "search_cache",
-                True,
-                elapsed,
-            )
+            partial = {
+                "hsn_code": cached["hsn_code"],
+                "description": cached.get("description", ""),
+                "gst_rate": float(cached["gst_rate"]) if cached.get("gst_rate") is not None else None,
+                "cess_applicable": bool(cached.get("cess_applicable", False)),
+                "confidence": 100,
+                "tier_used": 0,
+                "source": "search_cache",
+                "verified": True,
+                "matched_layer": "L0_cache",
+                "matched_source_table": "search_cache",
+            }
+            return await _finalize_layer_result(db, partial, elapsed)
 
-    result: dict | None = None
-
-    # ── TIER 1: Exact Brand Match ─────────────────────────────────────────────
-    result = await _tier1_exact_brand(db, query_norm)
-    if result:
+    async def _try_layer(partial: dict[str, Any] | None) -> dict[str, Any] | None:
+        if not partial:
+            return None
+        if partial.get("review_required") and int(partial.get("confidence", 0)) < _MIN_AUTHORITATIVE_CONFIDENCE:
+            return None
         elapsed = (time.perf_counter() - started) * 1000
-        final = _make_result(
-            result["hsn_code"], result["description"], result["gst_rate"],
-            result["cess_applicable"], result["confidence"], 1,
-            result["source"], True, elapsed,
+        return await _finalize_layer_result(
+            db, partial, elapsed,
+            cache_query_norm=query_norm,
+            cache_ttl=_CACHE_TTL_EXACT,
         )
-        await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
+
+    # ── L1: Exact Brand ───────────────────────────────────────────────────────
+    final = await _try_layer(await _tier1_exact_brand(db, query_norm))
+    if final:
         return final
 
-    # ── TIER 2: Exact Product Match ───────────────────────────────────────────
-    result = await _tier2_exact_product(db, query_norm)
-    if result:
-        elapsed = (time.perf_counter() - started) * 1000
-        final = _make_result(
-            result["hsn_code"], result["description"], result["gst_rate"],
-            result["cess_applicable"], result["confidence"], 2,
-            result["source"], True, elapsed,
-        )
-        await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
+    # ── L2: Exact Verified Product ────────────────────────────────────────────
+    final = await _try_layer(await _tier2_exact_product(db, query_norm))
+    if final:
         return final
 
-    # ── TIER 3: Fuzzy Match ───────────────────────────────────────────────────
-    result = await _tier3_fuzzy(db, query_norm)
-    if result:
-        elapsed = (time.perf_counter() - started) * 1000
-        final = _make_result(
-            result["hsn_code"], result["description"], result["gst_rate"],
-            result["cess_applicable"], result["confidence"], 3,
-            result["source"], True, elapsed,
-        )
-        await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
+    # ── L3: Curated Master ──────────────────────────────────────────────────────
+    from app.services.classifier_layers import layer_curated_master
+
+    final = await _try_layer(await layer_curated_master(db, query_norm, raw_q))
+    if final:
         return final
 
-    # ── TIER 4: Keyword/Category ──────────────────────────────────────────────
-    result = await _tier4_keyword(db, raw_q)
-    if result:
-        elapsed = (time.perf_counter() - started) * 1000
-        final = _make_result(
-            result["hsn_code"], result["description"], result["gst_rate"],
-            result["cess_applicable"], result["confidence"], 4,
-            result["source"], True, elapsed,
-        )
-        await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
+    # ── L4 keyword map (preserved) ──────────────────────────────────────────────
+    final = await _try_layer(await _tier4_keyword(db, raw_q))
+    if final:
         return final
 
-    # ── TIER 5: Multi-layer search fallback (inverted-index → pg_trgm → FAISS) ─
-    result = await _tier5_multi_layer(db, raw_q)
-    if result:
+    # ── L4 tariff + L5 fuzzy + multi_layer ──────────────────────────────────────
+    broad = await _tier5_broad_resolution(db, raw_q, query_norm)
+    if broad and not broad.get("review_required") and int(broad.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
         elapsed = (time.perf_counter() - started) * 1000
-        final = _make_result(
-            result["hsn_code"], result["description"], result["gst_rate"],
-            result["cess_applicable"], result["confidence"], 5,
-            result["source"], result.get("verified", False), elapsed,
+        return await _finalize_layer_result(
+            db, broad, elapsed,
+            cache_query_norm=query_norm,
+            cache_ttl=_CACHE_TTL_EXACT,
         )
-        await _cache_store(db, query_norm, final, _CACHE_TTL_EXACT)
-        return final
 
-    # ── TIER 6: Manual Review Flag (no external AI layer) ─────────────────────
-    pending = await _tier6_pending_review(db, raw_q, query_norm, result)
+    # ── L6: Manual review (low confidence or no match) ──────────────────────────
+    pending = await _tier6_pending_review(db, raw_q, query_norm, broad)
     elapsed = (time.perf_counter() - started) * 1000
-    return _make_result(
-        pending.get("hsn_code") or "UNCLASSIFIED",
-        pending["description"],
-        pending.get("gst_rate"),
-        pending.get("cess_applicable", False),
-        pending["confidence"],
-        6,
-        pending["source"],
-        False,
-        elapsed,
-        needs_manual_review=True,
-    )
+    code = pending.get("hsn_code") or "UNCLASSIFIED"
+    partial = {
+        **pending,
+        "hsn_code": code,
+        "tier_used": 6,
+        "matched_layer": "L6_pending_review",
+        "review_required": True,
+        "alternates": (broad or {}).get("alternates", []),
+    }
+    return await _finalize_layer_result(db, partial, elapsed)

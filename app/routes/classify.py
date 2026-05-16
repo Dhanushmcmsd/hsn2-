@@ -19,8 +19,8 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
-from app.models.database import get_db
-from app.services.gst_classifier import classify
+from app.models.database import async_session, get_db
+from app.services import gst_classifier
 from app.utils.auth import require_api_key, require_admin_key
 
 router = APIRouter(prefix="/api/v1/classify", tags=["GST Classification"])
@@ -51,6 +51,18 @@ class ClassifyResult(BaseModel):
     last_updated: Optional[str]
     elapsed_ms: float
     needs_manual_review: bool = False
+    # Additive layer metadata (backward-compatible)
+    confidence_score: Optional[int] = None
+    matched_layer: Optional[str] = None
+    matched_source_table: Optional[str] = None
+    code_type: Optional[str] = None
+    tax_semantics: Optional[str] = None
+    cess_rate: Optional[float] = None
+    effective_total_tax: Optional[float] = None
+    review_required: Optional[bool] = None
+    rate_conflict: bool = False
+    trust_level: Optional[str] = None
+    alternates: list[dict] = Field(default_factory=list)
 
 
 # FIX: Pydantic v2 dropped min_items/max_items on Field for lists.
@@ -106,12 +118,14 @@ async def classify_product(
     **Tier 0** — DB cache (instant)
     **Tier 1** — Exact brand match (brand_aliases, CBIC verified)
     **Tier 2** — Exact product match (verified_products)
-    **Tier 3** — Fuzzy match (pg_trgm)
-    **Tier 4** — Keyword/category match
-    **Tier 5** — Multi-layer fallback (inverted-index → pg_trgm → FAISS semantic)
-    **Tier 6** — Manual review queue (only when all layers miss)
+    **Tier 3** — Curated ``hsn_master`` (promoted goods codes)
+    **Tier 4** — Keyword/category map
+    **Tier 5** — Tariff fallback → fuzzy → multi-layer search
+    **Tier 6** — Manual review queue (low confidence or no match)
+
+    SAC services resolve via ``service_master`` (never padded to 8-digit HSN).
     """
-    result = await classify(
+    result = await gst_classifier.classify(
         db,
         body.query,
         bypass_cache=body.bypass_cache,
@@ -129,11 +143,16 @@ async def classify_batch(
     import time
     started = time.perf_counter()
 
-    tasks = [
-        classify(db, q, bypass_cache=body.bypass_cache)
-        for q in body.queries
-    ]
-    raw_results = await asyncio.gather(*tasks, return_exceptions=True)
+    async def _classify_one(q: str):
+        async with async_session() as session:
+            return await gst_classifier.classify(
+                session, q, bypass_cache=body.bypass_cache,
+            )
+
+    raw_results = await asyncio.gather(
+        *[_classify_one(q) for q in body.queries],
+        return_exceptions=True,
+    )
 
     results: dict[str, ClassifyResult] = {}
     for query, raw in zip(body.queries, raw_results):

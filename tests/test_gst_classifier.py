@@ -326,7 +326,7 @@ async def test_classify_empty_query_rejected(client, api_key):
 @pytest.mark.asyncio
 async def test_classify_batch_endpoint(client, api_key):
     """POST /api/v1/classify/batch should handle multiple queries."""
-    with patch("app.services.gst_classifier.classify") as mock_classify:
+    with patch("app.services.gst_classifier.classify", new_callable=AsyncMock) as mock_classify:
         mock_classify.return_value = {
             "hsn_code": "19019090",
             "description": "Malted milk food preparations",
