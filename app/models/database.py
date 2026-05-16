@@ -345,6 +345,26 @@ async def _seed_hsn_codes(session: AsyncSession) -> None:
         removed=removed,
     )
 
+    # ── Post-seed: backfill hsn_search so search vectors reflect fresh rows ──
+    # This runs AFTER hsn_codes is populated, fixing the race where _ensure_schema
+    # ran the INSERT before seed data existed.
+    try:
+        await session.execute(text("""
+            INSERT INTO hsn_search (hsn_code, search_vector)
+            SELECT hsn_code,
+                   to_tsvector('simple',
+                       coalesce(description,'') || ' ' || coalesce(cbic_description,''))
+            FROM   hsn_codes
+            WHERE  COALESCE(is_active, TRUE) = TRUE
+            ON CONFLICT (hsn_code) DO UPDATE
+                SET search_vector = EXCLUDED.search_vector
+        """))
+        await session.commit()
+        log.info("seed.hsn_search_backfill_done")
+    except Exception as exc:
+        log.warning("seed.hsn_search_backfill_failed", error=str(exc)[:120])
+        await session.rollback()
+
 
 async def _seed_verified_products(session: AsyncSession) -> None:
     """
