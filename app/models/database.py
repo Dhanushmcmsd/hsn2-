@@ -533,6 +533,50 @@ async def _ensure_schema() -> None:
                 except Exception:
                     pass
 
+
+            # ── hsn_search table + pg_trgm (required by inverted_index.py and pg_search.py) ──
+            for ddl in (
+                "CREATE EXTENSION IF NOT EXISTS pg_trgm",
+                "CREATE EXTENSION IF NOT EXISTS unaccent",
+                """
+                CREATE TABLE IF NOT EXISTS hsn_search (
+                    hsn_code      VARCHAR(20) PRIMARY KEY REFERENCES hsn_codes(hsn_code) ON DELETE CASCADE,
+                    search_vector TSVECTOR
+                )
+                """,
+                """
+                CREATE INDEX IF NOT EXISTS idx_hsn_search_vector
+                    ON hsn_search USING GIN(search_vector)
+                """,
+                # pg_trgm indexes on hsn_codes for pg_search.py Layer 4
+                """
+                CREATE INDEX IF NOT EXISTS idx_hsn_codes_desc_trgm
+                    ON hsn_codes USING GIN(description gin_trgm_ops)
+                """,
+                # pg_trgm indexes on verified_products for pg_search.py Layer 2
+                """
+                CREATE INDEX IF NOT EXISTS idx_vp_desc_norm_trgm
+                    ON verified_products USING GIN(description_normalized gin_trgm_ops)
+                """,
+                """
+                CREATE INDEX IF NOT EXISTS idx_vp_desc_no_size_trgm
+                    ON verified_products USING GIN(description_no_size gin_trgm_ops)
+                """,
+                # Backfill hsn_search from hsn_codes (run once; ON CONFLICT = safe re-run)
+                """
+                INSERT INTO hsn_search (hsn_code, search_vector)
+                SELECT hsn_code,
+                       to_tsvector('simple', coalesce(description,'') || ' ' || coalesce(cbic_description,''))
+                FROM   hsn_codes
+                ON CONFLICT (hsn_code) DO UPDATE
+                    SET search_vector = EXCLUDED.search_vector
+                """,
+            ):
+                try:
+                    await conn.execute(text(ddl))
+                except Exception as e:
+                    pass  # extension may already exist or DDL already applied
+
         _SCHEMA_DONE = True
 
 
