@@ -50,22 +50,34 @@ def _clean_gst(raw) -> str | None:
     return m.group(1) + '%' if m else None
 
 
+def _sp_exec(conn, sql, params=None):
+    """Execute SQL wrapped in a SAVEPOINT so a failure never aborts the outer
+    transaction.  Returns True on success, False on error."""
+    conn.execute(text("SAVEPOINT _mig_sp"))
+    try:
+        if params is not None:
+            conn.execute(sql, params)
+        else:
+            conn.execute(sql)
+        conn.execute(text("RELEASE SAVEPOINT _mig_sp"))
+        return True
+    except Exception as exc:  # noqa: BLE001
+        conn.execute(text("ROLLBACK TO SAVEPOINT _mig_sp"))
+        print(f"  [savepoint rollback] {exc}")
+        return False
+
+
 def upgrade() -> None:
     conn = op.get_bind()
 
-    # ── 1. Ensure verified_products has brand/category columns ────────────────
+    # ── 1. Ensure brand/category columns exist (idempotent) ───────────────────
     for col_sql in [
-        "ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS brand    VARCHAR(100)",
+        "ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS brand    VARCHAR(200)",
         "ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
     ]:
-        try:
-            conn.execute(text(col_sql))
-        except Exception:
-            pass
+        _sp_exec(conn, text(col_sql))
 
     # ── 2. Seed all product_batches JSON files ────────────────────────────────
-    # Path: repo root / data / product_batches / *.json
-    # Works both locally and on Render (files are baked into Docker image)
     repo_root = os.path.abspath(
         os.path.join(os.path.dirname(__file__), '..', '..')
     )
@@ -94,15 +106,15 @@ def upgrade() -> None:
     """)
 
     total_inserted = 0
-    total_skipped = 0
+    total_skipped  = 0
 
     for filepath in files:
         brand_name = os.path.splitext(os.path.basename(filepath))[0].upper()
         try:
             with open(filepath, encoding='utf-8') as fh:
                 data = json.load(fh)
-        except Exception as exc:
-            print(f"  [skip] {filepath}: {exc}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"  [skip file] {filepath}: {exc}")
             continue
 
         if not isinstance(data, list):
@@ -110,17 +122,14 @@ def upgrade() -> None:
 
         batch_rows = []
         for item in data:
-            desc = str(item.get('Description', '') or '').strip()
+            desc    = str(item.get('Description', '') or '').strip()
             raw_hsn = _clean_hsn(item.get('HSN_Ref', ''))
             raw_gst = _clean_gst(item.get('GST_Ref', ''))
             if not desc or not raw_hsn:
                 continue
-
-            norm = desc.upper().strip()
-            no_size = _strip_sizes(desc)
-            # Derive category from item or fall back to filename brand
+            norm     = desc.upper().strip()
+            no_size  = _strip_sizes(desc)
             category = str(item.get('Category', '') or '').strip() or None
-
             batch_rows.append({
                 'description': desc,
                 'norm':        norm,
@@ -134,70 +143,70 @@ def upgrade() -> None:
         if not batch_rows:
             continue
 
-        try:
-            result = conn.execute(upsert_sql, batch_rows)
+        ok = _sp_exec(conn, upsert_sql, batch_rows)
+        if ok:
             total_inserted += len(batch_rows)
-        except Exception as exc:
-            print(f"  [error] {brand_name}: {exc}")
-            total_skipped += len(batch_rows)
+        else:
+            # Row-by-row fallback so one bad row doesn't lose the whole file
+            for row in batch_rows:
+                if _sp_exec(conn, upsert_sql, [row]):
+                    total_inserted += 1
+                else:
+                    total_skipped  += 1
 
     print(f"[migration b2c3] Products: {total_inserted} upserted, {total_skipped} skipped.")
 
-    # ── 3. Re-activate any inactive language_aliases (weight >= 1) ────────────
-    try:
-        result = conn.execute(text("""
-            UPDATE language_aliases
-            SET is_active = TRUE
-            WHERE is_active = FALSE AND weight >= 1.0
-        """))
-        print(f"[migration b2c3] Reactivated {result.rowcount} language_aliases rows.")
-    except Exception as exc:
-        print(f"[migration b2c3] language_aliases reactivate skip: {exc}")
+    # ── 3. Re-activate inactive language_aliases ──────────────────────────────
+    ok = _sp_exec(conn, text("""
+        UPDATE language_aliases
+        SET is_active = TRUE
+        WHERE is_active = FALSE AND weight >= 1.0
+    """))
+    if ok:
+        print("[migration b2c3] language_aliases reactivated.")
 
-    # ── 4. Insert Malayalam staple aliases ────────────────────────────────────
+    # ── 4. Malayalam staple aliases ───────────────────────────────────────────
     malayalam_aliases = [
-        # (term, term_normalized, hsn_code, language, weight)
-        ('\u0d06\u0d1f\u0d4d\u0d1f',         '\u0d06\u0d1f\u0d4d\u0d1f',         '11010000', 'ml', 2.0),  # ആട്ട - wheat flour
-        ('\u0d05\u0d30\u0d3f',               '\u0d05\u0d30\u0d3f',               '10063000', 'ml', 2.0),  # അരി  - rice
-        ('\u0d2a\u0d1e\u0d4d\u0d1a\u0d38\u0d3e\u0d30', '\u0d2a\u0d1e\u0d4d\u0d1a\u0d38\u0d3e\u0d30', '17011200', 'ml', 2.0),  # പഞ്ചസാര - sugar
-        ('\u0d0e\u0d23\u0d4d\u0d23',         '\u0d0e\u0d23\u0d4d\u0d23',         '15079000', 'ml', 2.0),  # എണ്ണ  - oil
-        ('\u0d09\u0d2a\u0d4d\u0d2a\u0d4d',  '\u0d09\u0d2a\u0d4d\u0d2a\u0d4d',  '25010010', 'ml', 2.0),  # ഉപ്പ്  - salt
-        ('\u0d1a\u0d3e\u0d2f',               '\u0d1a\u0d3e\u0d2f',               '09024090', 'ml', 2.0),  # ചായ  - tea
-        ('\u0d15\u0d3e\u0d2a\u0d4d\u0d2a\u0d3f', '\u0d15\u0d3e\u0d2a\u0d4d\u0d2a\u0d3f', '09011100', 'ml', 2.0),  # കാപ്പി - coffee
-        ('\u0d2a\u0d3e\u0d32\u0d4d',         '\u0d2a\u0d3e\u0d32\u0d4d',         '04011000', 'ml', 2.0),  # പാൽ  - milk
-        ('\u0d2e\u0d41\u0d1f\u0d4d\u0d1f',  '\u0d2e\u0d41\u0d1f\u0d4d\u0d1f',  '04070090', 'ml', 2.0),  # മുട്ട  - egg
-        ('\u0d12\u0d31\u0d4d\u0d31\u0d3f\u0d1a\u0d4d\u0d1a\u0d15\u0d4d\u0d15\u0d31\u0d3f', '\u0d12\u0d31\u0d4d\u0d31\u0d3f\u0d1a\u0d4d\u0d1a\u0d15\u0d4d\u0d15\u0d31\u0d3f', '27101190', 'ml', 1.5),  # ഒറ്റിച്ചക്കറി - kerosene
-        # Romanized Malayalam (already in DB but ensure active)
-        ('CHAKKA',    'CHAKKA',    '08109020', 'ml-roman', 2.0),  # jackfruit
-        ('CHERUPAYAR','CHERUPAYAR','07134000', 'ml-roman', 2.0),  # green gram
-        ('CHERUMANI', 'CHERUMANI', '07133200', 'ml-roman', 2.0),  # lentils
-        ('PAYAR',     'PAYAR',     '07134000', 'ml-roman', 2.0),  # beans
-        ('VAZHAKKA',  'VAZHAKKA',  '08030010', 'ml-roman', 2.0),  # banana/plantain
-        ('THENGA',    'THENGA',    '18010000', 'ml-roman', 2.0),  # coconut
-        ('MEEN',      'MEEN',      '03020000', 'ml-roman', 2.0),  # fish
-        ('KOORI',     'KOORI',     '02071200', 'ml-roman', 2.0),  # chicken
-        ('NAADAN',    'NAADAN',    '04011000', 'ml-roman', 1.5),  # local/country
+        ('\u0d06\u0d1f\u0d4d\u0d1f',         '\u0d06\u0d1f\u0d4d\u0d1f',         '11010000', 'ml', 2.0),
+        ('\u0d05\u0d30\u0d3f',               '\u0d05\u0d30\u0d3f',               '10063000', 'ml', 2.0),
+        ('\u0d2a\u0d1e\u0d4d\u0d1a\u0d38\u0d3e\u0d30', '\u0d2a\u0d1e\u0d4d\u0d1a\u0d38\u0d3e\u0d30', '17011200', 'ml', 2.0),
+        ('\u0d0e\u0d23\u0d4d\u0d23',         '\u0d0e\u0d23\u0d4d\u0d23',         '15079000', 'ml', 2.0),
+        ('\u0d09\u0d2a\u0d4d\u0d2a\u0d4d',  '\u0d09\u0d2a\u0d4d\u0d2a\u0d4d',  '25010010', 'ml', 2.0),
+        ('\u0d1a\u0d3e\u0d2f',               '\u0d1a\u0d3e\u0d2f',               '09024090', 'ml', 2.0),
+        ('\u0d15\u0d3e\u0d2a\u0d4d\u0d2a\u0d3f', '\u0d15\u0d3e\u0d2a\u0d4d\u0d2a\u0d3f', '09011100', 'ml', 2.0),
+        ('\u0d2a\u0d3e\u0d32\u0d4d',         '\u0d2a\u0d3e\u0d32\u0d4d',         '04011000', 'ml', 2.0),
+        ('\u0d2e\u0d41\u0d1f\u0d4d\u0d1f',  '\u0d2e\u0d41\u0d1f\u0d4d\u0d1f',  '04070090', 'ml', 2.0),
+        ('\u0d12\u0d31\u0d4d\u0d31\u0d3f\u0d1a\u0d4d\u0d1a\u0d15\u0d4d\u0d15\u0d31\u0d3f', '\u0d12\u0d31\u0d4d\u0d31\u0d3f\u0d1a\u0d4d\u0d1a\u0d15\u0d4d\u0d15\u0d31\u0d3f', '27101190', 'ml', 1.5),
+        ('CHAKKA',    'CHAKKA',    '08109020', 'ml-roman', 2.0),
+        ('CHERUPAYAR','CHERUPAYAR','07134000', 'ml-roman', 2.0),
+        ('CHERUMANI', 'CHERUMANI', '07133200', 'ml-roman', 2.0),
+        ('PAYAR',     'PAYAR',     '07134000', 'ml-roman', 2.0),
+        ('VAZHAKKA',  'VAZHAKKA',  '08030010', 'ml-roman', 2.0),
+        ('THENGA',    'THENGA',    '18010000', 'ml-roman', 2.0),
+        ('MEEN',      'MEEN',      '03020000', 'ml-roman', 2.0),
+        ('KOORI',     'KOORI',     '02071200', 'ml-roman', 2.0),
+        ('NAADAN',    'NAADAN',    '04011000', 'ml-roman', 1.5),
     ]
 
-    try:
-        for (term, term_norm, hsn, lang, weight) in malayalam_aliases:
-            conn.execute(text("""
-                INSERT INTO language_aliases
-                    (term, term_normalized, hsn_code, language, weight, is_active)
-                VALUES
-                    (:term, :norm, :hsn, :lang, :weight, TRUE)
-                ON CONFLICT (term_normalized) DO UPDATE SET
-                    is_active = TRUE,
-                    weight    = GREATEST(language_aliases.weight, EXCLUDED.weight)
-            """), {'term': term, 'norm': term_norm, 'hsn': hsn,
-                   'lang': lang, 'weight': weight})
-        print(f"[migration b2c3] {len(malayalam_aliases)} Malayalam aliases upserted.")
-    except Exception as exc:
-        print(f"[migration b2c3] language_aliases insert skip: {exc}")
+    alias_sql = text("""
+        INSERT INTO language_aliases
+            (term, term_normalized, hsn_code, language, weight, is_active)
+        VALUES
+            (:term, :norm, :hsn, :lang, :weight, TRUE)
+        ON CONFLICT (term_normalized) DO UPDATE SET
+            is_active = TRUE,
+            weight    = GREATEST(language_aliases.weight, EXCLUDED.weight)
+    """)
+    inserted_aliases = 0
+    for row in malayalam_aliases:
+        params = {'term': row[0], 'norm': row[1], 'hsn': row[2],
+                  'lang': row[3], 'weight': row[4]}
+        if _sp_exec(conn, alias_sql, params):
+            inserted_aliases += 1
+    print(f"[migration b2c3] {inserted_aliases}/{len(malayalam_aliases)} Malayalam aliases upserted.")
 
-    # ── 5. Insert missing Kerala/store brand aliases ───────────────────────────
+    # ── 5. Kerala/store brand aliases ─────────────────────────────────────────
     store_brands = [
-        # (brand_name, hsn_code, gst_rate, category)
         ('VKC',        '64021200', 5.0,  'footwear'),
         ('PARAGON',    '64021200', 5.0,  'footwear'),
         ('NIRAPARA',   '11010000', 0.0,  'flour'),
@@ -221,26 +230,23 @@ def upgrade() -> None:
         ('MILTON',     '39241090', 18.0, 'plasticware'),
     ]
 
-    try:
-        for (brand, hsn, gst, cat) in store_brands:
-            conn.execute(text("""
-                INSERT INTO brand_aliases
-                    (brand_name, hsn_code, gst_rate, category)
-                VALUES
-                    (:brand, :hsn, :gst, :cat)
-                ON CONFLICT (brand_name) DO UPDATE SET
-                    hsn_code = EXCLUDED.hsn_code,
-                    gst_rate = EXCLUDED.gst_rate,
-                    category = EXCLUDED.category
-            """), {'brand': brand, 'hsn': hsn, 'gst': gst, 'cat': cat})
-        print(f"[migration b2c3] {len(store_brands)} store/Kerala brand_aliases upserted.")
-    except Exception as exc:
-        print(f"[migration b2c3] brand_aliases insert skip: {exc}")
-
+    brand_sql = text("""
+        INSERT INTO brand_aliases
+            (brand_name, hsn_code, gst_rate, category)
+        VALUES
+            (:brand, :hsn, :gst, :cat)
+        ON CONFLICT (brand_name) DO UPDATE SET
+            hsn_code = EXCLUDED.hsn_code,
+            gst_rate = EXCLUDED.gst_rate,
+            category = EXCLUDED.category
+    """)
+    inserted_brands = 0
+    for (brand, hsn, gst, cat) in store_brands:
+        if _sp_exec(conn, brand_sql, {'brand': brand, 'hsn': hsn, 'gst': gst, 'cat': cat}):
+            inserted_brands += 1
+    print(f"[migration b2c3] {inserted_brands}/{len(store_brands)} store/Kerala brand_aliases upserted.")
     print("[migration b2c3] Complete.")
 
 
 def downgrade() -> None:
-    # This migration only adds/updates data — downgrade is a no-op
-    # to avoid accidentally deleting product data.
     pass
