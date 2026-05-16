@@ -121,7 +121,8 @@ class HsnCode(Base):
 
 class VerifiedProduct(Base):
     """
-    Pre-verified products from correct_datas.xlsx for exact/fast lookup.
+    Pre-verified products from correct_datas.xlsx and product_batches/*.json
+    for exact/fast lookup.
 
     Two normalised forms are stored for two-pass matching:
       • description_normalized  – exact UPPERCASE of original (unique per row)
@@ -141,12 +142,35 @@ class VerifiedProduct(Base):
 
     hsn_code = Column(String(10), nullable=False, index=True)
     gst_rate = Column(String(20), nullable=True)
+
+    # Brand and category — populated from product_batches/*.json
+    brand    = Column(String(200), nullable=True, index=True)
+    category = Column(String(100), nullable=True, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
         Index("idx_verified_desc", "description_normalized"),
         Index("idx_verified_no_size", "description_no_size"),
+        Index("idx_verified_brand", "brand"),
     )
+
+
+class PendingProduct(Base):
+    """
+    Products whose HSN code is unknown and awaiting classification.
+    Seeded from data/csv.json by the c3d4 migration.
+    """
+    __tablename__ = "pending_products"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    product_name = Column(Text, nullable=False, unique=True)
+    source_name  = Column(String(500), nullable=True)
+    pack_or_size = Column(String(200), nullable=True)
+    hsn_code     = Column(String(20), nullable=True)
+    status       = Column(String(50), nullable=False, default="pending", index=True)
+    created_at   = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at   = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class BrandAlias(Base):
@@ -358,8 +382,6 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         return
 
     # ── Resolve column positions robustly ────────────────────────────────────
-    # The file has 3 columns regardless of exact header text.
-    # We use positional fallback so renamed headers don't break seeding.
     cols = df.columns.tolist()
 
     def _find_col(candidates: list[str], position: int) -> str:
@@ -397,9 +419,8 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         desc=desc_col, hsn=hsn_col, gst=gst_col, total_rows=len(df),
     )
 
-    # ── Build rows ────────────────────────────────────────────────────────────
     rows: list[VerifiedProduct] = []
-    seen_exact: set[str] = set()        # guard against duplicate normalised keys
+    seen_exact: set[str] = set()
 
     for _, row in df.iterrows():
         raw_desc = row.get(desc_col)
@@ -417,7 +438,7 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         desc_no_size = _strip_sizes(desc)
 
         if desc_norm in seen_exact:
-            continue          # keep first occurrence (most representative)
+            continue
         seen_exact.add(desc_norm)
 
         rows.append(VerifiedProduct(
@@ -432,7 +453,6 @@ async def _seed_verified_products(session: AsyncSession) -> None:
         log.warning("seed.verified_no_valid_rows")
         return
 
-    # Batch insert
     BATCH = 500
     for i in range(0, len(rows), BATCH):
         session.add_all(rows[i : i + BATCH])
@@ -452,6 +472,8 @@ async def _ensure_schema() -> None:
 
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+
+            # hsn_codes column additions
             for ddl in (
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS hsn_chapter VARCHAR(2)",
                 "ALTER TABLE hsn_codes ADD COLUMN IF NOT EXISTS hsn_heading VARCHAR(4)",
@@ -467,6 +489,8 @@ async def _ensure_schema() -> None:
                     await conn.execute(text(ddl))
                 except Exception:
                     pass
+
+            # predictions column additions
             for ddl in (
                 "ALTER TABLE predictions ADD COLUMN IF NOT EXISTS source VARCHAR(50)",
             ):
@@ -474,6 +498,41 @@ async def _ensure_schema() -> None:
                     await conn.execute(text(ddl))
                 except Exception:
                     pass
+
+            # verified_products — add brand and category columns (Gap 1 fix)
+            for ddl in (
+                "ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS brand VARCHAR(200)",
+                "ALTER TABLE verified_products ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
+                "CREATE INDEX IF NOT EXISTS idx_verified_brand ON verified_products (brand)",
+                "CREATE INDEX IF NOT EXISTS idx_verified_category ON verified_products (category)",
+            ):
+                try:
+                    await conn.execute(text(ddl))
+                except Exception:
+                    pass
+
+            # pending_products table — ensure it exists (Gap 2 fix)
+            for ddl in (
+                """
+                CREATE TABLE IF NOT EXISTS pending_products (
+                    id              SERIAL PRIMARY KEY,
+                    product_name    TEXT NOT NULL,
+                    source_name     VARCHAR(500),
+                    pack_or_size    VARCHAR(200),
+                    hsn_code        VARCHAR(20),
+                    status          VARCHAR(50) NOT NULL DEFAULT 'pending',
+                    created_at      TIMESTAMPTZ DEFAULT NOW(),
+                    updated_at      TIMESTAMPTZ,
+                    CONSTRAINT uq_pending_product_name UNIQUE (product_name)
+                )
+                """,
+                "CREATE INDEX IF NOT EXISTS idx_pending_status ON pending_products (status)",
+            ):
+                try:
+                    await conn.execute(text(ddl))
+                except Exception:
+                    pass
+
         _SCHEMA_DONE = True
 
 

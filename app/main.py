@@ -17,7 +17,7 @@ from app.models.database import init_db
 from app.utils.logging import configure_logging
 from app.utils.cache import init_cache
 from app.utils.scheduler import start_scheduler, stop_scheduler
-from app.routes import predict, review, health, auth, admin, hsn, search, classify, compliance
+from app.routes import predict, review, health, auth, admin, hsn, search, classify, compliance, pending
 
 configure_logging()
 log = structlog.get_logger()
@@ -90,8 +90,9 @@ async def lifespan(app: FastAPI):
             from sqlalchemy import text
 
             async with async_session() as session:
+                # Fix Gap 4: select brand (was duplicate description column)
                 rows = await session.execute(text("""
-                    SELECT description, hsn_code, gst_rate, description
+                    SELECT description, hsn_code, gst_rate, brand
                     FROM verified_products
                 """))
                 app.state.product_name_cache = [
@@ -159,3 +160,4 @@ app.include_router(admin.router)
 app.include_router(hsn.router)
 app.include_router(classify.router)
 app.include_router(compliance.router)
+app.include_router(pending.router)  # Gap 3 fix: pending products queue

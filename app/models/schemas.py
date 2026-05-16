@@ -82,6 +82,31 @@ class ProductAnalysisResponse(BaseModel):
     message: str
 
 
+# ── Pending products (/pending/*) ─────────────────────────────────────────────
+
+
+class PendingProductItem(BaseModel):
+    id: int
+    product_name: str
+    source_name: Optional[str] = None
+    pack_or_size: Optional[str] = None
+    hsn_code: Optional[str] = None
+    status: str
+
+    class Config:
+        from_attributes = True
+
+
+class PendingProductsResponse(BaseModel):
+    items: list[PendingProductItem]
+    total: int
+
+
+class PendingProductResolve(BaseModel):
+    hsn_code: str = Field(..., min_length=4, max_length=20, description="Confirmed HSN code")
+    status: str = Field("resolved", description="New status: resolved, rejected, pending")
+
+
 # ── Product search layer (/search/*) ─────────────────────────────────────────
 
 
