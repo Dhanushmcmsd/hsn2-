@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 os.chdir(ROOT)
 
-_DEFAULT_EXCEL = Path(r"c:\Users\Admin\Pictures\sample.xlsx")
+_DEFAULT_EXCEL = ROOT / "data" / "kerala_invoice_benchmark.xlsx"
 if not _DEFAULT_EXCEL.exists():
     _DEFAULT_EXCEL = ROOT / "data" / "client_sample.xlsx"
 
@@ -230,11 +230,13 @@ async def _run_classify(
     else:
         try:
             from app.services.faiss_service import get_faiss_service
+            from app.services.matcher_service import get_matcher_service
 
             get_faiss_service().start_warmup()
-            print("FAISS warm-up scheduled (background singleton)")
+            get_matcher_service().start_warmup()
+            print("FAISS + matcher warm-up scheduled (background singletons)")
         except Exception as exc:
-            print(f"Matcher warm-up skipped: {exc}")
+            print(f"ML warm-up skipped: {exc}")
 
     from app.models.database import async_session, init_db
     from app.services.gst_classifier import classify

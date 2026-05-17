@@ -21,23 +21,26 @@ _CORPUS = Path(__file__).resolve().parents[1] / "data" / "kerala_retail_aliases.
 _ROMANIZED_EXPANSIONS = [
     ("manjal podi", "TURMERIC"),
     ("mulaku podi", "CHILLI"),
-    ("velichenna 1l", "COCONUT"),
-    ("kaayam", "ASAFOETIDA"),
-    ("puzhukkalari", "PARBOILED"),
     ("thuvara parippu", "TOOR"),
     ("kadala mavu", "BESAN"),
     ("nendran chips", "BANANA"),
     ("idiyappam podi", "IDIYAPPAM"),
     ("gothambu podi", "WHEAT"),
-    ("mallipodi", "CORIANDER"),
     ("puli inji", "PICKLE"),
+]
+
+_AUTHORITATIVE_ALIAS_TOKENS = [
+    ("velichenna 1l", "VELICHENNA"),
+    ("kaayam", "KAAYAM"),
+    ("puzhukkalari", "PUZHUKKALARI"),
+    ("mallipodi", "MALLI PODI"),
 ]
 
 _JOINED_FORMS = [
     ("manjalpodi 100g", "TURMERIC"),
     ("chaayapodi", "TEA"),
     ("puttupodi", "PUTTU"),
-    ("vellachenna", "COCONUT"),
+    ("vellachenna", "VELICHENNA"),
 ]
 
 _MALAYALAM_SCRIPT = [
@@ -65,6 +68,11 @@ class TestKeralaCorpus:
 class TestRetailPreprocess:
     @pytest.mark.parametrize("query,needle", _ROMANIZED_EXPANSIONS)
     def test_romanized_expansion(self, query: str, needle: str):
+        prep = preprocess_retail_query(query, for_classify=True)
+        assert needle in prep.malayalam_expanded
+
+    @pytest.mark.parametrize("query,needle", _AUTHORITATIVE_ALIAS_TOKENS)
+    def test_authoritative_alias_token_preserved(self, query: str, needle: str):
         prep = preprocess_retail_query(query, for_classify=True)
         assert needle in prep.malayalam_expanded
 

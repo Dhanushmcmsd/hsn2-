@@ -49,9 +49,10 @@ class TestMalayalamScriptCanonical:
         assert "TURMERIC" not in prep.malayalam_expanded
         assert not prep.kerala_applied
 
-    def test_roman_still_expands(self):
-        prep = preprocess_retail_query("velichenna 1l", for_classify=True)
-        assert "COCONUT" in prep.malayalam_expanded
+    def test_authoritative_alias_token_kept_for_lookup(self):
+        prep = preprocess_retail_query("VELICHENNA 1L", for_classify=True)
+        assert "VELICHENNA" in prep.malayalam_expanded
+        assert "COCONUT OIL EDIBLE" not in prep.malayalam_expanded
 
     def test_apply_kerala_expansion_not_used_for_script_in_preprocess(self):
         script = "തുവര പരിപ്പ്"

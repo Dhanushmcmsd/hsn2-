@@ -72,10 +72,12 @@ async def lifespan(app: FastAPI):
 
     try:
         from app.services.faiss_service import get_faiss_service
+        from app.services.matcher_service import get_matcher_service
 
         get_faiss_service().start_warmup()
+        get_matcher_service().start_warmup()
     except Exception as exc:
-        log.warning("faiss.warmup_schedule_failed", error=str(exc)[:120])
+        log.warning("ml.warmup_schedule_failed", error=str(exc)[:120])
 
     log.info("app.accepting_predictions", env=settings.APP_ENV)
 

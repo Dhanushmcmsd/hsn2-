@@ -50,6 +50,8 @@ _MANUAL_JOINED_FORMS: tuple[tuple[str, str], ...] = (
     ("chemmeenachar", "chemmeen achar"),
     ("unakkamulaku", "unakka mulaku"),
     ("idiyappampodi", "idiyappam podi"),
+    ("idlyappampodi", "idly appam podi"),
+    ("idlyappam", "idly appam"),
     ("gothambupodi", "gothambu podi"),
     ("sambarpodi", "sambar podi"),
     ("rasampodi", "rasam podi"),
@@ -184,17 +186,17 @@ def corpus_joined_forms_tuple() -> tuple[tuple[str, str], ...]:
         if not spaced or not is_ocr:
             continue
         pairs.append((orig, spaced))
+    manual_keys = {pair[0] for pair in _MANUAL_JOINED_FORMS}
     seen: set[str] = set()
     unique: list[tuple[str, str]] = []
     for joined, spaced in sorted(pairs, key=lambda x: len(x[0]), reverse=True):
-        if joined in seen:
+        if joined in seen or joined in manual_keys:
             continue
         seen.add(joined)
         unique.append((joined, spaced))
     for pair in _MANUAL_JOINED_FORMS:
-        if pair[0] not in seen:
-            unique.append(pair)
-            seen.add(pair[0])
+        unique.append(pair)
+        seen.add(pair[0])
     return tuple(sorted(unique, key=lambda x: len(x[0]), reverse=True))
 
 

@@ -179,12 +179,19 @@ async def _finalize_layer_result(
 
     code = partial.get("hsn_code") or ""
     enriched = await enrich_tax_metadata(db, code, partial=partial)
+    tier = int(enriched.get("tier_used", 0))
+    conf = int(enriched.get("confidence", 0))
+    trust = str(enriched.get("trust_level") or "")
+    authoritative = (
+        conf >= _MIN_AUTHORITATIVE_CONFIDENCE
+        and tier <= 4
+        and trust in ("curated", "verified", "fuzzy")
+    )
+    soft_rate_conflict = bool(enriched.get("rate_conflict")) and not authoritative
     review = bool(
         enriched.get("review_required")
-        or (
-            enriched.get("confidence", 0) < _MIN_AUTHORITATIVE_CONFIDENCE
-            and enriched.get("tier_used", 0) >= 5
-        )
+        or soft_rate_conflict
+        or (conf < _MIN_AUTHORITATIVE_CONFIDENCE and tier >= 5)
     )
     display = normalize_display_code(
         enriched.get("hsn_code") or code,
@@ -203,7 +210,7 @@ async def _finalize_layer_result(
         enriched.get("source", "unknown"),
         bool(enriched.get("verified")),
         elapsed_ms,
-        needs_manual_review=review or bool(enriched.get("rate_conflict")),
+        needs_manual_review=review,
         matched_layer=enriched.get("matched_layer"),
         matched_source_table=enriched.get("matched_source_table"),
         code_type=enriched.get("code_type", "HSN"),
@@ -739,7 +746,9 @@ async def _tier_kerala_retail(db: AsyncSession, raw_q: str) -> dict[str, Any] | 
         return None
 
     try:
-        results = await kerala_fallback_search(raw_q, db, top_k=1)
+        results = await kerala_fallback_search(
+            raw_q, db, top_k=1, original_query=raw_q,
+        )
     except Exception as exc:
         log.debug("gst_classifier.kerala_failed", error=str(exc)[:120])
         return None
@@ -936,7 +945,7 @@ async def classify(
     log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_kerala_retail")
     from app.services.retail_preprocess import retail_kerala_query
 
-    kerala_hit = await _tier_kerala_retail(db, retail_kerala_query(prep, fallback=raw_q))
+    kerala_hit = await _tier_kerala_retail(db, raw_q)
     log.debug(
         "gst_classifier.tier_result",
         query=raw_q[:60],

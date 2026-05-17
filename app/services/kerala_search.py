@@ -348,20 +348,37 @@ async def kerala_brand_prefix_search(query: str, db: AsyncSession, *, top_k: int
     return []
 
 
-def _alias_lookup_candidates(query: str) -> list[str]:
-    """Order: full query, brand-stripped product, expanded form."""
+def _alias_lookup_candidates(query: str, *, original_query: str | None = None) -> list[str]:
+    """Order: invoice-original forms first, then expanded (DB fuzzy only)."""
+    seen: set[str] = set()
+    candidates: list[str] = []
+
+    def _add(value: str) -> None:
+        v = _normalize_ws(value)
+        if v and v not in seen:
+            seen.add(v)
+            candidates.append(v)
+
+    orig = (original_query or query).strip()
+    if orig:
+        _add(orig)
+        _add(_strip_sizes(orig))
+        product_orig = strip_kerala_brand_prefix(orig)
+        if product_orig:
+            _add(product_orig)
+            _add(_strip_sizes(product_orig))
+
     q_upper = _normalize_ws(query)
-    candidates = [q_upper]
+    _add(q_upper)
+    _add(_strip_sizes(q_upper))
     product_only = strip_kerala_brand_prefix(query)
-    if product_only and product_only not in candidates:
-        candidates.append(product_only)
-    expanded = _normalize_ws(expand_kerala_query(query))
-    if expanded not in candidates:
-        candidates.append(expanded)
     if product_only:
-        exp_prod = _normalize_ws(expand_kerala_query(product_only))
-        if exp_prod not in candidates:
-            candidates.append(exp_prod)
+        _add(product_only)
+        _add(_strip_sizes(product_only))
+    expanded = _normalize_ws(expand_kerala_query(query))
+    _add(expanded)
+    if product_only:
+        _add(_normalize_ws(expand_kerala_query(product_only)))
     return candidates
 
 
@@ -370,6 +387,7 @@ async def kerala_fallback_search(
     db: AsyncSession,
     *,
     top_k: int = 5,
+    original_query: str | None = None,
 ) -> list[dict]:
     """
     Kerala-specific secondary search layer.
@@ -379,7 +397,7 @@ async def kerala_fallback_search(
     q_upper = _normalize_ws(query)
     q_no_size = _strip_sizes(q_upper)
 
-    for candidate in _alias_lookup_candidates(query):
+    for candidate in _alias_lookup_candidates(query, original_query=original_query or query):
         if should_block_standalone_exact_alias(candidate):
             continue
         if candidate in KERALA_ALIAS_MAP:

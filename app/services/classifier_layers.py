@@ -177,15 +177,26 @@ async def enrich_tax_metadata(
                     tax_semantics=semantics, history_gst=hist,
                 )
                 if hist is not None and out.get("gst_rate") is not None:
-                    if abs(hist - float(out["gst_rate"])) > 0.01:
-                        if out.get("cess_rate") and abs(hist - (float(out["gst_rate"]) + float(out["cess_rate"]))) < 0.02:
+                    master_gst = float(out["gst_rate"])
+                    if abs(hist - master_gst) > 0.01:
+                        if out.get("cess_rate") and abs(
+                            hist - (master_gst + float(out["cess_rate"]))
+                        ) < 0.02:
                             pass
-                        elif abs(hist - float(out["gst_rate"])) > 0.01:
+                        elif master_gst == 0.0 and hist in (5.0, 5):
+                            # Nil-rated CBIC master vs legacy 5% invoice history — log only.
+                            log.debug(
+                                "classifier.nil_rated_history_skew",
+                                code=d,
+                                master=master_gst,
+                                history=hist,
+                            )
+                        elif abs(hist - master_gst) > 0.01:
                             out["rate_conflict"] = True
                             log.warning(
                                 "classifier.rate_conflict",
                                 code=d,
-                                master=out["gst_rate"],
+                                master=master_gst,
                                 history=hist,
                             )
                 out["description"] = out.get("description") or row.get("description")

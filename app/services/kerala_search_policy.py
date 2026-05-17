@@ -39,18 +39,31 @@ def is_hint_only_standalone_token(token: str) -> bool:
     return (token or "").strip().lower() in hint_only_standalone_tokens()
 
 
+def _authoritative_kerala_alias_keys() -> frozenset[str]:
+    """Curated + corpus alias keys that must not be replaced by English translit in preprocess."""
+    from app.services.kerala_aliases import KERALA_ALIAS_MAP
+
+    return frozenset(KERALA_ALIAS_MAP.keys())
+
+
 def should_skip_standalone_translit_expansion(token: str, *, multi_word: bool) -> bool:
-    """Block corpus roman transliteration for ambiguous single-token queries."""
+    """Block corpus roman transliteration for ambiguous or authoritative alias tokens."""
+    t = (token or "").strip().lower()
+    if t.upper() in _authoritative_kerala_alias_keys():
+        return True
     if multi_word:
-        return False
-    return is_hint_only_standalone_token(token)
+        return is_hint_only_standalone_token(t)
+    return is_hint_only_standalone_token(t)
 
 
 def should_skip_hint_only_abbrev_expansion(raw_abbrev_key: str, *, multi_word: bool) -> bool:
-    """Block KERALA_ABBREVIATIONS replacement for hint-only tokens when standalone."""
+    """Block KERALA_ABBREVIATIONS replacement for hint-only or authoritative alias tokens."""
     if multi_word:
         return False
-    return is_hint_only_standalone_token(raw_abbrev_key)
+    key = (raw_abbrev_key or "").strip().upper()
+    if is_hint_only_standalone_token(raw_abbrev_key):
+        return True
+    return key in _authoritative_kerala_alias_keys()
 
 
 def should_block_standalone_exact_alias(query_upper: str) -> bool:

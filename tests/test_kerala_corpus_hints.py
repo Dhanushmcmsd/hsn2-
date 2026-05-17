@@ -25,8 +25,10 @@ def test_joined_forms_include_manjalpodi():
 def test_corpus_transliteration_used_in_preprocess():
     hints = corpus_transliterations()
     assert "velichenna" in hints
-    prep = preprocess_retail_query("velichenna 500ml")
-    assert "COCONUT" in prep.malayalam_expanded
+    prep = preprocess_retail_query("velichenna 500ml", for_classify=True)
+    assert "VELICHENNA" in prep.malayalam_expanded
+    prep_generic = preprocess_retail_query("thuvara parippu 500g", for_classify=True)
+    assert "TOOR" in prep_generic.malayalam_expanded
 
 
 def test_romanized_detection_negative_for_generic_english():

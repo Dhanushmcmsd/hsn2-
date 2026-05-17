@@ -629,9 +629,17 @@ class HybridMatcher:
 
 
 def get_matcher() -> HybridMatcher:
+    """Return warm matcher or load synchronously as last resort (admin/legacy paths)."""
+    from app.services.matcher_service import get_matcher_service
+
+    svc = get_matcher_service()
+    warm = svc.get()
+    if warm is not None:
+        return warm
     global _matcher_instance
     if _matcher_instance is None:
         with _matcher_lock:
             if _matcher_instance is None:
+                log.warning("matcher.sync_fallback_load")
                 _matcher_instance = HybridMatcher()
     return _matcher_instance

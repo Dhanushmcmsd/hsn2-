@@ -54,6 +54,18 @@ async def test_kerala_alias_exact_without_db_round_trip():
     assert results[0]["method"] == "kerala_alias_exact"
 
 
+@pytest.mark.asyncio
+async def test_invoice_original_text_resolves_curated_alias():
+    results = await kerala_fallback_search(
+        "COCONUT OIL EDIBLE",
+        None,  # type: ignore[arg-type]
+        original_query="VELICHENNA 1L",
+    )
+    assert results
+    assert results[0]["hsn_code"] == "15131190"
+    assert results[0]["method"] in ("kerala_alias_exact", "kerala_alias_prefix")
+
+
 @pytest.mark.integration
 @pytest.mark.skipif(
     not has_live_postgres_url(),

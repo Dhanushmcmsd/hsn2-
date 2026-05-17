@@ -785,6 +785,38 @@ CURATED_KERALA_ALIAS_MAP: dict[str, dict] = {
         "confidence": 0.89,
         "category": "kerala_food",
     },
+    "NADAN ARI": {
+        "search_terms": ["nadan rice traditional local", "nadan ari"],
+        "hsn_code": "10063090",
+        "gst_rate": 5,
+        "description": "Nadan traditional rice",
+        "confidence": 0.9,
+        "category": "kerala_food",
+    },
+    "INJI PULI": {
+        "search_terms": ["ginger tamarind pickle inji puli"],
+        "hsn_code": "20019000",
+        "gst_rate": 12,
+        "description": "Inji puli ginger tamarind pickle",
+        "confidence": 0.91,
+        "category": "kerala_food",
+    },
+    "IDLY APPAM PODI": {
+        "search_terms": ["idly appam podi rice flour", "idiappam flour"],
+        "hsn_code": "11029090",
+        "gst_rate": 5,
+        "description": "Idly appam podi",
+        "confidence": 0.9,
+        "category": "kerala_food",
+    },
+    "KADALA": {
+        "search_terms": ["black chana chickpea kadala"],
+        "hsn_code": "07132090",
+        "gst_rate": 5,
+        "description": "Kadala black chickpea",
+        "confidence": 0.88,
+        "category": "kerala_food",
+    },
 }
 
 # Corpus supplies vocabulary; curated map wins on same-key conflict (compliance policy).

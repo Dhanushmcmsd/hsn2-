@@ -35,6 +35,15 @@ def _faiss_health() -> dict:
         }
 
 
+def _matcher_health() -> dict:
+    try:
+        from app.services.matcher_service import get_matcher_service
+
+        return get_matcher_service().status_dict()
+    except Exception:
+        return {"ready": False, "loading": False, "failed": True, "load_time_ms": None}
+
+
 def _basic_health_payload(request: Request) -> dict:
     ready = getattr(request.app.state, "ready", False)
     cache_size = len(getattr(request.app.state, "product_name_cache", []))
@@ -44,6 +53,7 @@ def _basic_health_payload(request: Request) -> dict:
         "product_name_cache_size": cache_size,
         "lru_cache": lru_stats(),
         "faiss": _faiss_health(),
+        "matcher": _matcher_health(),
     }
 
 
