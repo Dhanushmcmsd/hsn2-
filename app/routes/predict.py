@@ -106,6 +106,41 @@ def _match_cache_key(query: str) -> str:
     return "match:v1:" + hashlib.sha1(norm.encode("utf-8")).hexdigest()
 
 
+def _predict_from_cached(
+    cached: dict,
+    *,
+    request_id: str,
+    input_text: str,
+) -> PredictResponse | None:
+    """Accept PredictResponse cache entries or bulk row_dict payloads."""
+    if not isinstance(cached, dict):
+        return None
+    if cached.get("top_match") and cached.get("request_id"):
+        try:
+            return PredictResponse(**cached)
+        except Exception:
+            pass
+    if cached.get("hsn_code"):
+        conf = float(cached.get("confidence") or 0)
+        if conf > 1:
+            conf = conf / 100.0
+        return to_predict_response(
+            request_id,
+            input_text,
+            {
+                "hsn_code": cached.get("hsn_code"),
+                "description": cached.get("description") or "",
+                "gst_rate": cached.get("gst_rate"),
+                "confidence": int(conf * 100) if conf <= 1 else int(conf),
+                "matched_layer": cached.get("match_method") or cached.get("source"),
+                "review_required": bool(cached.get("error")),
+                "alternates": cached.get("alternatives") or [],
+            },
+            processing_time_ms=0.0,
+        )
+    return None
+
+
 async def _scalar_one_or_none(result):
     value = result.scalar_one_or_none()
     if inspect.isawaitable(value):
@@ -180,11 +215,14 @@ async def predict(
     if not normalized_query:
         raise HTTPException(status_code=422, detail="Product description is empty")
 
-    cache_key = _match_cache_key(prep.canonical or normalized_query)
+    # Same cache key as /hsn/batch (raw invoice text) so single and bulk stay in sync.
+    cache_key = _match_cache_key(body.text.strip())
     cached = await get_cache(cache_key)
     if cached:
-        log.info("predict.cache_hit", text=body.text[:50])
-        return PredictResponse(**cached)
+        hit = _predict_from_cached(cached, request_id=request_id, input_text=body.text)
+        if hit:
+            log.info("predict.cache_hit", text=body.text[:50])
+            return hit
 
     start = time.perf_counter()
 

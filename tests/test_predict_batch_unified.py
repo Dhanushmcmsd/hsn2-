@@ -42,6 +42,26 @@ class TestClassifyAdapter:
         assert row["match_method"] == "L0_verified_product"
 
 
+def test_predict_from_bulk_cached_row():
+    from app.routes.predict import _predict_from_cached
+
+    hit = _predict_from_cached(
+        {
+            "query": "PACHARI REGULAR 2KG",
+            "hsn_code": "07139000",
+            "description": "Pachari rice",
+            "gst_rate": 5.0,
+            "confidence": 0.99,
+            "match_method": "L0_verified_product",
+            "alternatives": [],
+        },
+        request_id="req-1",
+        input_text="PACHARI REGULAR 2KG",
+    )
+    assert hit is not None
+    assert hit.top_match.hsn_code == "07139000"
+
+
 @pytest.mark.asyncio
 async def test_batch_endpoint_uses_classify():
     from app.routes.predict import batch_predict
