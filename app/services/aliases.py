@@ -125,13 +125,21 @@ _FUZZY_SQL = text(
 )
 
 
-def detect_language(text_value: str) -> str:
+def detect_language(text_value: str, *, typo_fixed: str | None = None) -> str:
     if not text_value:
         return "en"
     if DEVANAGARI_RE.search(text_value):
         return "hi"
     if MALAYALAM_RE.search(text_value):
         return "ml"
+    try:
+        from app.services.kerala_corpus_hints import is_romanized_malayalam_retail
+
+        probe = " ".join(filter(None, [text_value, typo_fixed]))
+        if is_romanized_malayalam_retail(probe):
+            return "ml-roman"
+    except Exception:
+        pass
     return "en"
 
 

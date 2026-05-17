@@ -1,7 +1,14 @@
 """Single source of truth for Kerala/Malayalam retail query preprocessing.
 
-Used by classify(), predict(), and client Excel smoke tests. Expansion and
-normalization only — does not perform fuzzy HSN matching.
+Used by classify(), predict(), multi_search, and client Excel smoke tests.
+Vocabulary for transliteration/joined forms comes from data/kerala_retail_aliases.json
+via kerala_corpus_maps; invoice abbreviations remain in kerala_aliases (logic-driven).
+
+Policy (do not weaken for recall — see docs/KERALA_SEARCH_POLICY.md):
+  - Malayalam script (U+0D00–U+0D7F) is canonical: no roman expansion in preprocess.
+  - Roman/ml-roman expansion uses corpus + invoice hints; ambiguous standalone tokens
+    skip strong translit/abbrev unless the query is multi-word (phrase-first).
+  - Authoritative English/HSN for script queries comes from language_aliases (DB seed).
 """
 from __future__ import annotations
 
@@ -10,155 +17,34 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from app.services.kerala_aliases import KERALA_ABBREVIATIONS
+from app.services.kerala_corpus_hints import corpus_joined_forms
+from app.services.kerala_corpus_maps import (
+    corpus_transliterations_map,
+    malayalam_transliterations,
+)
+from app.services.kerala_search_policy import (
+    is_canonical_malayalam_script_input,
+    is_hint_only_standalone_token,
+    should_skip_hint_only_abbrev_expansion,
+    should_skip_standalone_translit_expansion,
+)
 from app.services.matcher import expand_fmcg_abbreviations, strip_sizes, tokenize
 from app.services.normalizer import fix_retail_typos, normalize_product_name
 
-# Romanized Malayalam → English search terms (longest match first at runtime)
-MALAYALAM_TRANSLITERATIONS: dict[str, str] = {
-    "payar": "cowpea beans legume",
-    "cheera": "spinach amaranth leafy",
-    "chena": "yam elephant foot",
-    "chembu": "taro colocasia",
-    "muringakka": "drumstick moringa pods",
-    "pavakka": "bitter gourd karela",
-    "kumbalanga": "ash gourd white pumpkin",
-    "mathanga": "pumpkin orange",
-    "vazhuthananga": "brinjal eggplant",
-    "tomato": "tomato fresh vegetable",
-    "beetroot": "beetroot red vegetable",
-    "chakka": "jackfruit tropical",
-    "vazhakka": "plantain banana raw",
-    "ethakka": "nendran banana cooking",
-    "manga": "mango raw green",
-    "naranga": "lime lemon citrus",
-    "nellikka": "amla gooseberry",
-    "kudampuli": "gamboge kokum",
-    "mathi": "sardine fish",
-    "ayala": "mackerel fish",
-    "karimeen": "pearl spot fish",
-    "vaval": "pomfret fish",
-    "chemmeen": "prawn shrimp",
-    "njandu": "crab crustacean",
-    "kozhuva": "anchovy fish",
-    "kalava": "grouper reef fish",
-    "konchu": "lobster prawn seafood",
-    "cherupayar": "green gram moong",
-    "vanpayar": "cowpea red beans",
-    "uzhunnu": "urad black gram",
-    "kadala": "chana chickpea black",
-    "kanji": "rice gruel porridge",
-    "ulli": "onion shallot",
-    "savola": "onion shallot",
-    "inchi": "ginger fresh",
-    "veluthulluli": "garlic cloves",
-    "kurumulaku": "black pepper whole",
-    "mulaku": "chilli pepper dry red",
-    "jeerakam": "cumin jeera seeds",
-    "dhania": "coriander seeds",
-    "manjal": "turmeric haldi",
-    "patta": "cinnamon stick bark",
-    "grambu": "cloves whole spice",
-    "jathikka": "nutmeg seed spice",
-    "thean": "honey natural bee",
-    "nallenna": "sesame gingelly oil",
-    "thenganna": "coconut oil edible",
-    "unniyappam": "rice sweet fried appam",
-    "aluva": "sweet halwa alwa",
-    "ada": "rice payasam ingredient",
-    "palpayasam": "milk rice kheer payasam",
-    "kalathappam": "rice cake steamed",
-    "unnakai": "banana sweet fritter",
-    "achappam": "rose cookie fried sweet",
-    "murukku": "rice lentil snack fried",
-    "avalose": "roasted rice powder mix",
-    "coir": "coconut fibre rope mat",
-    "cpra": "copra dried coconut",
-    "beedi": "bidi tobacco leaf rolled",
-    "parotta": "layered flatbread maida",
-    "pathiri": "rice flatbread roti",
-    "manjal podi": "turmeric powder haldi",
-    "chaaya": "tea black leaf",
-    "chaya": "tea black leaf",
-    "chaaya podi": "tea powder black",
-    "chaya podi": "tea powder black",
-    "vellam": "jaggery gur",
-    "sharkara": "jaggery sugar",
-    "appam podi": "appam idiyappam rice flour batter",
-    "achar": "pickle preserved",
-    "puttu": "puttu rice flour steamed",
-    "aval": "beaten rice poha",
-    "matta": "matta rice rosematta",
-    "kappa": "tapioca cassava",
-    "sambar podi": "sambar masala powder",
-    "rasam podi": "rasam powder spice",
-    "puja oil": "lamp oil sesame puja",
-    "pooja oil": "lamp oil sesame puja",
-    "pathimukham": "sarsaparilla herbal",
-    "nadan": "traditional local country",
-    "mulaku podi": "red chilli powder spice",
-    "kaapi podi": "coffee powder roasted instant",
-    "kaayam": "asafoetida hing powder",
-    "sarkara": "jaggery sugar gur",
-    "velichenna": "coconut oil edible",
-    "vellachenna": "coconut oil edible",
-    "thenga": "coconut fresh kernel",
-    "kaduku": "mustard seeds rai",
-    "uluva": "fenugreek methi seeds",
-    "perumjeerakam": "fennel seeds saunf",
-    "puzhukkalari": "parboiled rice kerala",
-    "matta ari": "matta rice rosematta red",
-    "pacha ari": "raw rice paddy grain",
-    "nadan ari": "traditional local country rice",
-    "puttu podi": "puttu rice flour steamed",
-    "ragi podi": "ragi finger millet flour",
-    "chemmeen achar": "prawn pickle seafood preserved",
-    "nendran chips": "banana chips plantain fried",
-    "ethakka chips": "banana chips ethakka plantain",
-    "sharkkara upperi": "jaggery banana chips sweet snack",
-    "thuvara parippu": "pigeon pea toor dal split",
-    "kadala mavu": "chickpea flour besan gram",
-    "vellari": "cucumber fresh vegetable",
-    "thakkali": "tomato fresh vegetable",
-    "vendakka": "okra ladyfinger vegetable",
-    "cheriyulli": "shallot small onion",
-    "ellu": "sesame seeds til",
-    "kodampuli": "gamboge kodampuli garcinia",
-    "unakka mulaku": "dry red chilli whole dried",
-    "puli": "tamarind pulp sour",
-    "uzhunu": "urad black gram dal",
-    "thuvara": "pigeon pea toor dal",
-    "unakka": "dried preserved",
-}
+MALAYALAM_RE = re.compile(r"[\u0D00-\u0D7F]")  # prefer is_canonical_malayalam_script_input()
 
-# Bill/OCR joined spellings → spaced retail forms (longest first at runtime)
-_KERALA_JOINED_FORMS: tuple[tuple[str, str], ...] = (
-    ("manjalpodi", "manjal podi"),
-    ("chaayapodi", "chaya podi"),
-    ("chayapodi", "chaya podi"),
-    ("mulakupodi", "mulaku podi"),
-    ("kaapipodi", "kaapi podi"),
-    ("puttupodi", "puttu podi"),
-    ("appampodi", "appam podi"),
-    ("ragipodi", "ragi podi"),
-    ("vellachenna", "velichenna"),
-    ("nendranchips", "nendran chips"),
-    ("ethakkachips", "ethakka chips"),
-    ("sharkkaraupperi", "sharkkara upperi"),
-    ("kadalamavu", "kadala mavu"),
-    ("thuvaraparippu", "thuvara parippu"),
-    ("mattaari", "matta ari"),
-    ("pachari", "pacha ari"),
-    ("nadanari", "nadan ari"),
-    ("puzhukkalari", "puzhukkalari"),
-    ("chemmeenachar", "chemmeen achar"),
-    ("unakkamulaku", "unakka mulaku"),
-)
+# Backward-compatible export (corpus-derived at load time).
+MALAYALAM_TRANSLITERATIONS: dict[str, str] = malayalam_transliterations()
+
+
+def _all_joined_forms() -> tuple[tuple[str, str], ...]:
+    return corpus_joined_forms()
 
 
 def _split_joined_kerala_compounds(text_value: str) -> str:
     """Insert spaces into common joined Kerala retail spellings before expansion."""
     lower = text_value.lower()
-    for joined, spaced in sorted(_KERALA_JOINED_FORMS, key=lambda x: len(x[0]), reverse=True):
+    for joined, spaced in _all_joined_forms():
         if joined in lower:
             pattern = re.compile(re.escape(joined), re.IGNORECASE)
             lower = pattern.sub(spaced, lower)
@@ -169,24 +55,52 @@ def _normalize_ws(text_value: str) -> str:
     return re.sub(r"\s+", " ", text_value.strip().upper())
 
 
+def _token_count_alpha(text_value: str) -> int:
+    return len(re.findall(r"[A-Za-z]+", text_value.lower()))
+
+
 def apply_kerala_expansion(query: str) -> str:
-    """Kerala invoice + romanized Malayalam expansion (in-memory, no DB)."""
+    """Kerala invoice + romanized Malayalam expansion (in-memory, no DB).
+
+    Does not transliterate Malayalam script — callers must use preprocess_retail_query.
+    """
     query = _split_joined_kerala_compounds(query)
     normalized = _normalize_ws(query)
     expanded = normalized
 
+    lower_expanded = expanded.lower()
+    translit = corpus_transliterations_map()
+    multi_word = _token_count_alpha(lower_expanded) > 1
+    hint_only_single = not multi_word and is_hint_only_standalone_token(lower_expanded.strip())
+
+    # Phrase-level corpus expansions before invoice abbreviations (e.g. nadan ari before nadan).
+    for mal_word, english_equiv in sorted(translit.items(), key=lambda x: len(x[0]), reverse=True):
+        if " " not in mal_word:
+            continue
+        pattern = re.compile(rf"\b{re.escape(mal_word.lower())}\b")
+        if pattern.search(lower_expanded):
+            lower_expanded = pattern.sub(english_equiv.lower(), lower_expanded)
+
+    expanded = lower_expanded.upper()
     for raw, replacement in sorted(
         KERALA_ABBREVIATIONS.items(), key=lambda x: len(x[0]), reverse=True
     ):
+        if should_skip_hint_only_abbrev_expansion(raw, multi_word=multi_word):
+            continue
         pattern = re.compile(rf"(?<![A-Z0-9]){re.escape(raw.upper())}(?![A-Z0-9])")
         expanded = pattern.sub(replacement.upper(), expanded)
 
-    expanded = expand_fmcg_abbreviations(expanded).upper()
-
+    # FMCG dict includes KERALA_ABBREVIATIONS — skip for hint-only standalone singles.
+    if not hint_only_single:
+        expanded = expand_fmcg_abbreviations(expanded).upper()
     lower_expanded = expanded.lower()
-    for mal_word, english_equiv in sorted(
-        MALAYALAM_TRANSLITERATIONS.items(), key=lambda x: len(x[0]), reverse=True
-    ):
+    multi_word = _token_count_alpha(lower_expanded) > 1
+
+    for mal_word, english_equiv in sorted(translit.items(), key=lambda x: len(x[0]), reverse=True):
+        if " " in mal_word:
+            continue
+        if should_skip_standalone_translit_expansion(mal_word, multi_word=multi_word):
+            continue
         pattern = re.compile(rf"\b{re.escape(mal_word.lower())}\b")
         if pattern.search(lower_expanded):
             lower_expanded = pattern.sub(english_equiv.lower(), lower_expanded)
@@ -226,6 +140,16 @@ class RetailPreprocessResult:
         }
 
 
+def retail_alias_query(prep: RetailPreprocessResult, *, fallback: str = "") -> str:
+    """Query string for language_aliases / multi_search L0 (Kerala-expanded when available)."""
+    return (prep.malayalam_expanded or prep.canonical or prep.normalized or fallback).strip()
+
+
+def retail_kerala_query(prep: RetailPreprocessResult, *, fallback: str = "") -> str:
+    """Query string for kerala_fallback_search — same expansion priority as alias path."""
+    return retail_alias_query(prep, fallback=fallback or prep.original)
+
+
 def preprocess_retail_query(query: str, *, for_classify: bool = False) -> RetailPreprocessResult:
     """Normalize, fix OCR typos, and apply Kerala/Malayalam expansion."""
     original = (query or "").strip()
@@ -239,16 +163,21 @@ def preprocess_retail_query(query: str, *, for_classify: bool = False) -> Retail
             for_classify=for_classify,
         )
 
+    typo_fixed = fix_retail_typos(_split_joined_kerala_compounds(original))
     from app.services.aliases import detect_language
 
-    detected = detect_language(original)
-    typo_fixed = fix_retail_typos(_split_joined_kerala_compounds(original))
+    detected = detect_language(original, typo_fixed=typo_fixed)
     normalized_name = normalize_product_name(typo_fixed)
     normalized = _normalize_ws(normalized_name if normalized_name else typo_fixed)
 
     before_kerala = normalized
-    malayalam_expanded = apply_kerala_expansion(typo_fixed)
-    kerala_applied = malayalam_expanded != before_kerala
+    # Malayalam script is canonical — no hacky script→roman loop; DB language_aliases resolve.
+    if is_canonical_malayalam_script_input(typo_fixed):
+        malayalam_expanded = _normalize_ws(normalize_product_name(typo_fixed) or typo_fixed)
+        kerala_applied = False
+    else:
+        malayalam_expanded = apply_kerala_expansion(typo_fixed)
+        kerala_applied = malayalam_expanded != before_kerala
 
     canonical = malayalam_expanded
     retail_tokens = tokenize(canonical)

@@ -355,10 +355,15 @@ async def multi_search(
             results=[], cache_hit=False, total_time_ms=0.0, layers=[], methods_used=[],
         )
 
-    # -- L0 alias expansion --------------------------------------------------
+    # -- L0 alias expansion (Kerala-preprocessed query for exact alias hits) --
+    from app.services.retail_preprocess import preprocess_retail_query, retail_alias_query
+
+    prep = preprocess_retail_query(raw_q, for_classify=for_classify)
+    alias_query = retail_alias_query(prep, fallback=raw_q)
+
     t0 = time.perf_counter()
     try:
-        expanded = await aliases_service.expand_query(db, raw_q, for_classify=for_classify)
+        expanded = await aliases_service.expand_query(db, alias_query, for_classify=for_classify)
         layers.append(LayerTrace(name="L0_alias", ms=(time.perf_counter() - t0) * 1000,
                                  candidate_count=len(expanded.expansions)))
     except Exception as exc:

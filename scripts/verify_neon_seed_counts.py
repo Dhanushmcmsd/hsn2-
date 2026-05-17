@@ -16,9 +16,12 @@ async def run() -> None:
     from sqlalchemy import text
 
     from app.models.database import async_session, init_db
+    from app.services.benchmark_preflight import expected_kerala_corpus_rows
 
     if not os.environ.get("DATABASE_URL", "").startswith("postgresql"):
         sys.exit("ERROR: DATABASE_URL must be a PostgreSQL URL")
+
+    expected_json = expected_kerala_corpus_rows()
 
     await init_db()
     async with async_session() as db:
@@ -78,6 +81,14 @@ async def run() -> None:
     for row in by_lang:
         print(f"  {row[0]}: {row[1]}")
     print(f"Kerala corpus (KERALA_RETAIL_CORPUS): {kerala_n} active rows")
+    print(f"Expected from data/kerala_retail_aliases.json: ~{expected_json}")
+    if expected_json and kerala_n < int(expected_json * 0.9):
+        print(
+            f"WARNING: under-seeded (have {kerala_n}, expected ~{expected_json}). "
+            "Run: python scripts/seed_kerala_language_aliases.py"
+        )
+    elif expected_json and kerala_n >= expected_json - 5:
+        print("OK: Kerala corpus count matches JSON within tolerance.")
     if samples:
         print("Sample Kerala rows:")
         for s in samples:

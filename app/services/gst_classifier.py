@@ -929,7 +929,9 @@ async def classify(
 
     # ── L0 Kerala retail: Malayalam transliteration + invoice shorthand ─────────
     log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_kerala_retail")
-    kerala_hit = await _tier_kerala_retail(db, raw_q)
+    from app.services.retail_preprocess import retail_kerala_query
+
+    kerala_hit = await _tier_kerala_retail(db, retail_kerala_query(prep, fallback=raw_q))
     log.debug(
         "gst_classifier.tier_result",
         query=raw_q[:60],

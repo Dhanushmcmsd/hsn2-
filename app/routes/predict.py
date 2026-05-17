@@ -13,7 +13,11 @@ from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import strip_sizes
 from app.services.kerala_search import kerala_fallback_search
-from app.services.retail_preprocess import preprocess_retail_query
+from app.services.retail_preprocess import (
+    preprocess_retail_query,
+    retail_alias_query,
+    retail_kerala_query,
+)
 from app.services.search_thresholds import (
     PREDICT_BRAND_SIM_THRESHOLD,
     PREDICT_INVERTED_SIM_THRESHOLD,
@@ -170,7 +174,8 @@ async def predict(
     try:
         from app.services import aliases as alias_svc
 
-        expanded = await alias_svc.expand_query(db, normalized_query, for_classify=False)
+        alias_input = retail_alias_query(prep, fallback=normalized_query)
+        expanded = await alias_svc.expand_query(db, alias_input, for_classify=False)
         if expanded.english_query and expanded.english_query.strip():
             search_text = expanded.english_query.strip()
     except Exception as exc:
@@ -299,7 +304,11 @@ async def predict(
                     if pg_results and pg_results[0].get("score", 0) >= 0.25:
                         matches = pg_results
                     else:
-                        kerala_results = await kerala_fallback_search(search_text, db, top_k=5)
+                        kerala_results = await kerala_fallback_search(
+                            retail_kerala_query(prep, fallback=search_text),
+                            db,
+                            top_k=5,
+                        )
                         if kerala_results:
                             matches = kerala_results
                         else:

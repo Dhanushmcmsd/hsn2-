@@ -13,13 +13,16 @@ from app.services.kerala_aliases import (
     KERALA_BRANDS,
 )
 from app.services.matcher import expand_fmcg_abbreviations, strip_sizes, tokenize
+from app.services.kerala_corpus_maps import corpus_derived_food_map
+from app.services.kerala_search_policy import should_block_standalone_exact_alias
 from app.services.retail_preprocess import (
     MALAYALAM_TRANSLITERATIONS,
     apply_kerala_expansion,
     expand_kerala_query,
 )
 
-KERALA_FOOD_MAP = {
+# Curated substring food hints; corpus-derived keys merged at load (curated wins).
+_CURATED_KERALA_FOOD_MAP: dict[str, dict[str, str | None]] = {
     "PUTTU": {"search": "puttupodi rice flour", "hsn": "11023000"},
     "AVAL": {"search": "beaten rice poha flattened", "hsn": "19041020"},
     "MATTA": {"search": "matta rice rosematta red rice", "hsn": "10063090"},
@@ -89,6 +92,11 @@ KERALA_FOOD_MAP = {
     "ZARDA": {"search": "zarda chewing tobacco scented", "hsn": "24039910"},
 }
 
+KERALA_FOOD_MAP: dict[str, dict[str, str | None]] = {
+    **_CURATED_KERALA_FOOD_MAP,
+    **{k: v for k, v in corpus_derived_food_map().items() if k not in _CURATED_KERALA_FOOD_MAP},
+}
+
 VKC_PATTERN = re.compile(
     r"^VKC\s+"
     r"(?P<collection>[A-Z]+)?\s*"
@@ -149,6 +157,17 @@ def _alias_to_match(alias: dict, query: str, *, method: str) -> dict:
 
 
 _MALAYALAM_TRANSLITERATIONS = MALAYALAM_TRANSLITERATIONS  # backward compat
+
+
+def strip_kerala_brand_prefix(query: str) -> str | None:
+    """Return product-only query when a known Kerala brand prefix is present."""
+    q_upper = _normalize_ws(query)
+    for brand in sorted(KERALA_BRANDS, key=len, reverse=True):
+        if q_upper.startswith(f"{brand} "):
+            remainder = q_upper[len(brand) :].strip()
+            if remainder:
+                return remainder
+    return None
 
 
 async def vkc_model_code_lookup(query: str, db: AsyncSession) -> list[dict] | None:
@@ -329,6 +348,23 @@ async def kerala_brand_prefix_search(query: str, db: AsyncSession, *, top_k: int
     return []
 
 
+def _alias_lookup_candidates(query: str) -> list[str]:
+    """Order: full query, brand-stripped product, expanded form."""
+    q_upper = _normalize_ws(query)
+    candidates = [q_upper]
+    product_only = strip_kerala_brand_prefix(query)
+    if product_only and product_only not in candidates:
+        candidates.append(product_only)
+    expanded = _normalize_ws(expand_kerala_query(query))
+    if expanded not in candidates:
+        candidates.append(expanded)
+    if product_only:
+        exp_prod = _normalize_ws(expand_kerala_query(product_only))
+        if exp_prod not in candidates:
+            candidates.append(exp_prod)
+    return candidates
+
+
 async def kerala_fallback_search(
     query: str,
     db: AsyncSession,
@@ -343,13 +379,24 @@ async def kerala_fallback_search(
     q_upper = _normalize_ws(query)
     q_no_size = _strip_sizes(q_upper)
 
-    if q_upper in KERALA_ALIAS_MAP:
-        alias = KERALA_ALIAS_MAP[q_upper]
-        return [_alias_to_match(alias, query, method="kerala_alias_exact")]
+    for candidate in _alias_lookup_candidates(query):
+        if should_block_standalone_exact_alias(candidate):
+            continue
+        if candidate in KERALA_ALIAS_MAP:
+            alias = KERALA_ALIAS_MAP[candidate]
+            method = "kerala_alias_exact" if candidate == q_upper else "kerala_alias_brand_product"
+            return [_alias_to_match(alias, query, method=method)]
 
-    for key, alias in sorted(KERALA_ALIAS_MAP.items(), key=lambda item: len(item[0]), reverse=True):
-        if q_upper.startswith(key) or q_no_size.startswith(key) or (len(key) >= 10 and q_upper.startswith(key[:8])):
-            return [_alias_to_match(alias, query, method="kerala_alias_prefix")]
+        cand_no_size = _strip_sizes(candidate)
+        for key, alias in sorted(KERALA_ALIAS_MAP.items(), key=lambda item: len(item[0]), reverse=True):
+            if should_block_standalone_exact_alias(key):
+                continue
+            if (
+                candidate.startswith(key)
+                or cand_no_size.startswith(key)
+                or (len(key) >= 10 and candidate.startswith(key[:8]))
+            ):
+                return [_alias_to_match(alias, query, method="kerala_alias_prefix")]
 
     expanded = expand_kerala_query(query)
     if db is None:

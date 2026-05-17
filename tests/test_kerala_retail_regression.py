@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pytest
 
+from app.services.aliases import detect_language
 from app.services.kerala_aliases import KERALA_ALIAS_MAP
+from app.services.kerala_corpus_hints import is_romanized_malayalam_retail
 from app.services.kerala_seed import load_corpus, validate_and_normalize_corpus
 from app.services.retail_preprocess import preprocess_retail_query
 from app.services.search_thresholds import (
@@ -25,6 +27,10 @@ _ROMANIZED_EXPANSIONS = [
     ("thuvara parippu", "TOOR"),
     ("kadala mavu", "BESAN"),
     ("nendran chips", "BANANA"),
+    ("idiyappam podi", "IDIYAPPAM"),
+    ("gothambu podi", "WHEAT"),
+    ("mallipodi", "CORIANDER"),
+    ("puli inji", "PICKLE"),
 ]
 
 _JOINED_FORMS = [
@@ -45,7 +51,7 @@ class TestKeralaCorpus:
         raw = json.loads(_CORPUS.read_text(encoding="utf-8"))
         rows, errors = validate_and_normalize_corpus(raw)
         assert not errors, errors
-        assert len(rows) >= 100
+        assert len(rows) >= 280
         assert all(r.get("english_term") for r in rows if r["language"] == "ml")
 
     def test_key_romanized_terms_in_corpus(self):
@@ -71,7 +77,8 @@ class TestRetailPreprocess:
     def test_malayalam_script_passthrough(self, query: str):
         prep = preprocess_retail_query(query, for_classify=True)
         assert prep.detected_language == "ml"
-        assert prep.normalized == query
+        assert prep.normalized == query.strip()
+        assert prep.original == query.strip()
 
 
 class TestKeralaAliasMap:
@@ -106,3 +113,30 @@ class TestBrandEarlyExitGuards:
             detected_language="ml",
             has_direct_alias_hsn=False,
         )
+
+
+class TestRomanizedMalayalamDetection:
+    def test_romanized_retail_detected(self):
+        assert is_romanized_malayalam_retail("velichenna 1l")
+        assert detect_language("manjal podi 100g") == "ml-roman"
+
+    def test_classify_skips_brand_early_exit_for_ml_roman(self):
+        assert should_skip_brand_early_exit(
+            for_classify=True,
+            detected_language="ml-roman",
+            has_direct_alias_hsn=False,
+        )
+
+
+class TestAmbiguousCorpusTokens:
+    def test_ambiguous_standalone_low_priority(self):
+        raw = json.loads(_CORPUS.read_text(encoding="utf-8"))
+        by_term = {
+            (e["original_term"].upper(), e.get("language_code")): e
+            for e in raw
+            if e.get("language_code") == "ml-roman"
+        }
+        for tok in ("PULI", "THUVARA", "NADAN"):
+            row = by_term.get((tok, "ml-roman"))
+            assert row is not None
+            assert int(row.get("priority", 100)) < 50 or not row.get("hsn_code")

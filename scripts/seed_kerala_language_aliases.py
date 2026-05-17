@@ -123,12 +123,26 @@ async def run(corpus_path: Path, *, dry_run: bool = False) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Seed Kerala retail language_aliases")
+    parser = argparse.ArgumentParser(
+        description="Seed Kerala retail language_aliases (Neon/Postgres).",
+        epilog=(
+            "Workflow:\n"
+            "  1. python scripts/build_kerala_retail_corpus.py   # refresh JSON from vocabulary\n"
+            "  2. python scripts/seed_kerala_language_aliases.py # upsert into language_aliases\n"
+            "  3. python scripts/verify_neon_seed_counts.py      # confirm counts\n"
+            "  4. python scripts/diagnose_db_environment.py      # dialect + layer availability\n"
+            "  5. python scripts/test_client_excel.py --neon --require-kerala-corpus\n"
+            "\n"
+            "SQLite local dev does not receive these rows; in-memory JSON fallback applies when "
+            "language_aliases is empty (see diagnose_db_environment.py)."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument(
         "--corpus",
         type=Path,
         default=DEFAULT_CORPUS,
-        help="JSON file or directory of JSON files",
+        help="JSON file or directory of JSON files (default: data/kerala_retail_aliases.json)",
     )
     parser.add_argument("--dry-run", action="store_true", help="Validate only, no DB writes")
     args = parser.parse_args()

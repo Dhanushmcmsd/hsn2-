@@ -19,7 +19,7 @@ CORPUS = Path(__file__).resolve().parents[1] / "data" / "kerala_retail_aliases.j
 
 def test_corpus_file_loads():
     entries = load_corpus(CORPUS)
-    assert len(entries) >= 50
+    assert len(entries) >= 280
 
 
 def test_validate_corpus_no_errors():

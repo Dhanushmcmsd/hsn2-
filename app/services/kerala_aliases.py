@@ -261,6 +261,7 @@ KERALA_CATEGORY_RULES: list[dict[str, list[str]]] = [
 
 KERALA_BRANDS: dict[str, dict[str, str]] = {
     "EASTERN": {"category": "spice", "chapter": "09"},
+    "NIRAPARA": {"category": "flour rice puttu", "chapter": "11"},
     "BRAHMINS": {"category": "spice masala", "chapter": "09"},
     "KITCHEN TR": {"category": "spice masala", "chapter": "09"},
     "PAVITHRAM": {"category": "oil gingelly sesame", "chapter": "15"},
@@ -286,7 +287,8 @@ KERALA_BRAND_WORDS: set[str] = {
     "elite",
 }
 
-KERALA_ALIAS_MAP: dict[str, dict] = {
+# Curated GST-critical overrides; merged below with corpus-derived keys (curated wins).
+CURATED_KERALA_ALIAS_MAP: dict[str, dict] = {
     "PUTTU": {
         "search_terms": ["rice puttu flour", "steamed puttu"],
         "hsn_code": "11023000",
@@ -784,3 +786,9 @@ KERALA_ALIAS_MAP: dict[str, dict] = {
         "category": "kerala_food",
     },
 }
+
+# Corpus supplies vocabulary; curated map wins on same-key conflict (compliance policy).
+from app.services.kerala_corpus_maps import corpus_derived_alias_map  # noqa: E402
+from app.services.kerala_search_policy import merge_alias_maps  # noqa: E402
+
+KERALA_ALIAS_MAP = merge_alias_maps(CURATED_KERALA_ALIAS_MAP, corpus_derived_alias_map())

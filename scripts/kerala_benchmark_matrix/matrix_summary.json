@@ -1,0 +1,45 @@
+{
+  "timestamp_utc": "2026-05-18T00:25:00Z",
+  "excel": "data/kerala_invoice_benchmark.xlsx",
+  "lines": 91,
+  "seed": {
+    "json_rows": 299,
+    "db_kerala_active_after_final_seed": 299,
+    "note": "Repeated upserts may inflate DB count; JSON is source of truth at 299."
+  },
+  "faiss": {
+    "after_seed_faiss": "not_completed — FAISS warm-up exceeded 5 min timeout in this environment",
+    "before_seed_faiss": "not_run"
+  },
+  "runs": {
+    "before_seed_no_faiss": {
+      "db_kerala_active": 0,
+      "detection_pct": 29.67,
+      "detected": 27,
+      "kerala_style_total": 52,
+      "kerala_detected": 13,
+      "kerala_exact_or_alias_hits": 5,
+      "kerala_hit_rate_pct": 25.0,
+      "L0_kerala_retail_rows": 24,
+      "language_aliases_rows": 0
+    },
+    "after_seed_no_faiss": {
+      "db_kerala_active": 323,
+      "detection_pct": 29.67,
+      "detected": 27,
+      "kerala_style_total": 52,
+      "kerala_detected": 13,
+      "kerala_exact_or_alias_hits": 5,
+      "kerala_hit_rate_pct": 25.0,
+      "L0_kerala_retail_rows": 24,
+      "language_aliases_rows": 0
+    }
+  },
+  "generic_fmcg_baseline": {
+    "source": "scripts/client_excel_report_latest.json",
+    "sample": 200,
+    "detection_pct": 55.0,
+    "kerala_style_total": 6,
+    "kerala_exact_or_alias_hits": 0
+  }
+}

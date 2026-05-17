@@ -58,6 +58,12 @@ async def run() -> int:
     report["local_kerala_json_fallback"] = corpus_path.exists()
     if report["local_kerala_json_fallback"]:
         report["local_kerala_json_entries"] = report["expected_kerala_corpus_rows"]
+    try:
+        from app.services.kerala_corpus_hints import corpus_stats
+
+        report["kerala_corpus_hints"] = corpus_stats()
+    except Exception as exc:
+        report["kerala_corpus_hints_error"] = str(exc)[:120]
 
     await init_db()
 
@@ -136,8 +142,15 @@ async def run() -> int:
                 report["language_aliases_error"] = str(exc)[:200]
     else:
         from app.services.aliases import local_kerala_fallback_stats
+        from app.services.kerala_corpus_maps import corpus_maps_stats
 
         report["local_kerala_fallback_stats"] = local_kerala_fallback_stats()
+        report["corpus_derived_maps"] = corpus_maps_stats()
+        report["note"] = (
+            "SQLite: no pg_trgm, no production language_aliases fuzzy. "
+            "Kerala preprocess + in-memory alias map still run from JSON; "
+            "benchmark hit-rates are not comparable to Neon."
+        )
 
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0

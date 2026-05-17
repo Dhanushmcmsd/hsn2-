@@ -24,6 +24,15 @@ hsn_dev.db
 # Generated client Excel reports (large)
 scripts/client_excel_report*.json
 
+# Kerala corpus / DB scratch outputs (regenerate via scripts)
+data/corpus_*_audit.json
+data/corpus_audit_stdout.txt
+data/kerala_retail_aliases.json.pre_*
+scripts/diagnose_latest.json
+scripts/diagnose_output.json
+scripts/policy_latest.txt
+scripts/verify_latest.txt
+
 # Data files (large)
 data/hsn_codes.csv
 data/hsn_codes_full.csv
