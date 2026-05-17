@@ -27,7 +27,12 @@ def validate(csv_path: Path = CSV_PATH) -> int:
         print(f"ERROR: {csv_path} not found")
         return 1
 
-    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    lines = [
+        line
+        for line in csv_path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    rows = list(csv.DictReader(lines))
     invalid_codes: list[str] = []
     sac_violations: list[str] = []
     gst_anomalies: list[str] = []

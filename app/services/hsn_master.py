@@ -323,30 +323,34 @@ def _load_official_rows() -> list[dict[str, Any]]:
         return []
 
     deduped: dict[str, dict[str, Any]] = {}
-    with _DATA_PATH.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        for row in reader:
-            raw_code = re.sub(r"[^0-9]", "", str(row.get("hsn_code", "")).strip())
-            description = str(row.get("description", "")).strip()
-            if not raw_code or not description:
-                continue
-            # Parse gst_rate from CSV if present
-            gst_rate_raw = str(row.get("gst_rate", "")).strip()
-            gst_rate: float | None = None
-            try:
-                gst_rate = float(gst_rate_raw) if gst_rate_raw else None
-            except (ValueError, TypeError):
-                gst_rate = None
-            candidate = {
-                "raw_hsn_code": raw_code,
-                "hsn_code": canonicalize_hsn(raw_code),
-                "description": description,
-                "significance": len(raw_code),
-                "gst_rate": gst_rate,
-            }
-            current = deduped.get(raw_code)
-            if current is None or len(description) > len(str(current["description"])):
-                deduped[raw_code] = candidate
+    lines = [
+        line
+        for line in _DATA_PATH.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    reader = csv.DictReader(lines)
+    for row in reader:
+        raw_code = re.sub(r"[^0-9]", "", str(row.get("hsn_code", "")).strip())
+        description = str(row.get("description", "")).strip()
+        if not raw_code or not description:
+            continue
+        # Parse gst_rate from CSV if present
+        gst_rate_raw = str(row.get("gst_rate", "")).strip()
+        gst_rate: float | None = None
+        try:
+            gst_rate = float(gst_rate_raw) if gst_rate_raw else None
+        except (ValueError, TypeError):
+            gst_rate = None
+        candidate = {
+            "raw_hsn_code": raw_code,
+            "hsn_code": canonicalize_hsn(raw_code),
+            "description": description,
+            "significance": len(raw_code),
+            "gst_rate": gst_rate,
+        }
+        current = deduped.get(raw_code)
+        if current is None or len(description) > len(str(current["description"])):
+            deduped[raw_code] = candidate
     return list(deduped.values())
 
 
@@ -457,6 +461,7 @@ def build_hsn_master_records(
     batch_rows = _load_batch_rows() if batch_rows is None else batch_rows
 
     official_by_prefix: dict[str, list[str]] = defaultdict(list)
+    official_gst_by_code: dict[str, float] = {}
     significance_by_code: dict[str, int] = defaultdict(int)
 
     for row in official_rows:
@@ -467,6 +472,8 @@ def build_hsn_master_records(
             continue
         official_by_prefix[raw_code].append(description)
         significance_by_code[canonical] = max(significance_by_code[canonical], len(raw_code))
+        if row.get("gst_rate") is not None:
+            official_gst_by_code[canonical] = float(row["gst_rate"])
 
     evidence_rows = []
     evidence_rows.extend(verified_rows)
@@ -495,7 +502,9 @@ def build_hsn_master_records(
     for code in sorted(all_codes):
         significance = significance_by_code.get(code, 8)
         _voted_gst = _majority_gst_rate(gst_votes[code]) if gst_votes.get(code) else None
-        gst_rate = _voted_gst if _voted_gst is not None else _chapter_gst_fallback(code)
+        gst_rate = official_gst_by_code.get(code)
+        if gst_rate is None:
+            gst_rate = _voted_gst if _voted_gst is not None else _chapter_gst_fallback(code)
 
         official_candidates: list[tuple[int, str]] = []
         for length in (8, 6, 4, 2):

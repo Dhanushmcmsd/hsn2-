@@ -286,8 +286,8 @@ class TestMakeResult:
 @pytest.mark.asyncio
 async def test_classify_endpoint_returns_result(client, api_key):
     """POST /api/v1/classify should return a valid classification response."""
-    with patch("app.services.gst_classifier._tier1_exact_brand") as mock_t1, \
-         patch("app.services.gst_classifier._tier0_cache", return_value=None):
+    with patch("app.services.gst_classifier._tier1_exact_brand", new_callable=AsyncMock) as mock_t1, \
+         patch("app.services.gst_classifier._tier0_cache", new_callable=AsyncMock, return_value=None):
         mock_t1.return_value = {
             "hsn_code": "19019090",
             "description": "Malted milk food preparations",
