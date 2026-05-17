@@ -152,6 +152,21 @@ def _read_xlsx_rows(path: Path) -> list[dict[str, str]]:
 # These supplement the Excel verified data file with hard-coded high-confidence
 # product type mappings so common searches never fall back to TIER 6.
 _VERIFIED_PRODUCT_ALIASES: dict[str, str] = {
+    # FMCG brands (client Excel high-frequency undetected)
+    "horlicks": "190190",
+    "boost": "190190",
+    "bournvita": "190190",
+    "complan": "190190",
+    "britannia": "190531",
+    "sunfeast": "190531",
+    "yippee": "190230",
+    "vkc": "640199",
+    "himalaya": "330499",
+    "nivea": "330499",
+    "gillette": "821210",
+    "yardley": "330300",
+    "dabur": "300490",
+    "patanjali": "300490",
     # Biscuits / Bakery
     "good day": "190531",
     "good day biscuit": "190531",
@@ -411,19 +426,44 @@ def resolve_alias_gst(hsn_code: str) -> float | None:
     return lookup_tariff_gst(digits)
 
 
-def get_alias_hsn(query: str) -> str | None:
-    """Return verified HSN code for a known product query, or None."""
+_MIN_BOUNDARY_ALIAS_LEN = 4
+
+
+def _alias_matches_text(alias: str, text: str) -> bool:
+    """Match alias with word boundaries so short tokens (e.g. oil) do not hit coil/foil."""
+    if not alias or not text:
+        return False
+    if text == alias or text.startswith(alias + " "):
+        return True
+    if len(alias) < _MIN_BOUNDARY_ALIAS_LEN:
+        return False
+    if alias in text:
+        pattern = r"(?:^|\s)" + re.escape(alias) + r"(?:\s|$)"
+        return bool(re.search(pattern, text))
+    return False
+
+
+def _alias_match_texts(query: str) -> tuple[str, str]:
+    """Build lowercase match strings with punctuation collapsed to spaces."""
     from app.services.normalizer import normalize_product_name
 
-    q = query.lower().strip()
-    norm = normalize_product_name(query).lower().strip()
+    def _collapse(raw: str) -> str:
+        t = re.sub(r"[^a-z0-9\s]", " ", raw.lower())
+        return re.sub(r"\s+", " ", t).strip()
+
+    return _collapse(query), _collapse(normalize_product_name(query))
+
+
+def get_alias_hsn(query: str) -> str | None:
+    """Return verified HSN code for a known product query, or None."""
+    q, norm = _alias_match_texts(query)
     for candidate in (q, norm):
         if candidate in _VERIFIED_PRODUCT_ALIASES:
             return _VERIFIED_PRODUCT_ALIASES[candidate]
     # Longest alias first so "rubber chappal" beats "chappal"
     for alias, code in sorted(_VERIFIED_PRODUCT_ALIASES.items(), key=lambda x: len(x[0]), reverse=True):
         for text in (q, norm):
-            if text.startswith(alias) or alias in text:
+            if _alias_matches_text(alias, text):
                 return code
     return None
 

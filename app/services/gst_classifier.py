@@ -360,13 +360,32 @@ _PRODUCT_EXACT_SQL = text("""
     LIMIT 1
 """)
 
+_PRODUCT_EXACT_SIMPLE_SQL = text("""
+    SELECT vp.hsn_code, vp.description, vp.gst_rate,
+           hm.description AS hsn_description,
+           hm.gst_rate AS hsn_gst_rate,
+           hm.cess_applicable AS hm_cess
+    FROM verified_products vp
+    LEFT JOIN hsn_master hm ON hm.hsn_code = vp.hsn_code
+    WHERE vp.description_normalized = :q
+       OR vp.description_no_size = :q
+    ORDER BY
+        CASE WHEN vp.description_normalized = :q THEN 0 ELSE 1 END
+    LIMIT 1
+""")
+
 
 async def _tier2_exact_product(db: AsyncSession, query_norm: str) -> dict | None:
+    row = None
     try:
         row = (await db.execute(_PRODUCT_EXACT_SQL, {"q": query_norm})).mappings().first()
     except Exception as exc:
         log.debug("gst_classifier.tier2_failed", error=str(exc)[:80])
-        return None
+        try:
+            row = (await db.execute(_PRODUCT_EXACT_SIMPLE_SQL, {"q": query_norm})).mappings().first()
+        except Exception as exc2:
+            log.debug("gst_classifier.tier2_simple_failed", error=str(exc2)[:80])
+            return None
     if not row:
         return None
     raw_gst = row["gst_rate"]
@@ -716,31 +735,8 @@ async def classify(
 
     query_norm = _normalize_query(raw_q)
 
-    # ── L0 in-memory alias (no DB) ───────────────────────────────────────────
     from app.services.hsn_master import get_alias_hsn, resolve_alias_gst
     from app.services.classifier_layers import is_sac_code, normalize_display_code
-
-    alias_code = get_alias_hsn(raw_q) or get_alias_hsn(query_norm)
-    if alias_code:
-        display = normalize_display_code(
-            alias_code,
-            code_type="SAC" if is_sac_code(alias_code) else "HSN",
-        )
-        elapsed = (time.perf_counter() - started) * 1000
-        partial = {
-            "hsn_code": display,
-            "description": raw_q,
-            "gst_rate": resolve_alias_gst(display),
-            "cess_applicable": False,
-            "confidence": 98,
-            "tier_used": 1,
-            "source": "L0_alias_dict",
-            "verified": True,
-            "matched_layer": "L1_brand_alias",
-            "matched_source_table": "in_memory_alias",
-            "trust_level": "curated",
-        }
-        return await _finalize_layer_result(db, partial, elapsed)
 
     # ── TIER 0: DB Cache ─────────────────────────────────────────────────────
     if not bypass_cache:
@@ -773,13 +769,40 @@ async def classify(
             cache_ttl=_CACHE_TTL_EXACT,
         )
 
-    # ── L1: Exact Brand ───────────────────────────────────────────────────────
-    final = await _try_layer(await _tier1_exact_brand(db, query_norm))
+    # ── L0 client catalog: exact verified_products (client Excel / batches) ───
+    verified = await _tier2_exact_product(db, query_norm)
+    if verified:
+        verified["matched_layer"] = "L0_verified_product"
+        verified["source"] = verified.get("source") or "verified_product_exact"
+    final = await _try_layer(verified)
     if final:
         return final
 
-    # ── L2: Exact Verified Product ────────────────────────────────────────────
-    final = await _try_layer(await _tier2_exact_product(db, query_norm))
+    # ── L0 in-memory alias (generic retail staples) ─────────────────────────
+    alias_code = get_alias_hsn(raw_q) or get_alias_hsn(query_norm)
+    if alias_code:
+        display = normalize_display_code(
+            alias_code,
+            code_type="SAC" if is_sac_code(alias_code) else "HSN",
+        )
+        elapsed = (time.perf_counter() - started) * 1000
+        partial = {
+            "hsn_code": display,
+            "description": raw_q,
+            "gst_rate": resolve_alias_gst(display),
+            "cess_applicable": False,
+            "confidence": 98,
+            "tier_used": 1,
+            "source": "L0_alias_dict",
+            "verified": True,
+            "matched_layer": "L0_alias_dict",
+            "matched_source_table": "in_memory_alias",
+            "trust_level": "curated",
+        }
+        return await _finalize_layer_result(db, partial, elapsed)
+
+    # ── L1: Exact Brand ───────────────────────────────────────────────────────
+    final = await _try_layer(await _tier1_exact_brand(db, query_norm))
     if final:
         return final
 

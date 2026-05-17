@@ -1,0 +1,26 @@
+{
+  "excel_source": "c:\\Users\\Admin\\Pictures\\sample.xlsx",
+  "total_products": 13864,
+  "detected": 3680,
+  "undetected": 10184,
+  "detection_score_pct": 26.54,
+  "test_environment": "local SQLite (tier-5 FAISS skipped in bulk run; Neon has full stack)",
+  "layers_detected": {
+    "L0_verified_product": 2554,
+    "L0_alias_dict": 1126
+  },
+  "undetected_reasons": {
+    "no_match_all_layers": 10184
+  },
+  "why_undetected_summary": [
+    "Branded/regional SKU not in alias dict or verified_products (e.g. VKC footwear variants, local labels TOY/MANAK/LEMAM).",
+    "SQLite dev DB lacks Postgres layers: brand_aliases, language_aliases, pg_trgm, inverted-index FTS.",
+    "Bulk eval skipped tier-5 FAISS (production Neon CI uses full pipeline).",
+    "Product string has abbreviations (PDR, PCH, BIB) without token expansion to known aliases."
+  ],
+  "full_undetected_list": "scripts/client_excel_report.json (undetected_products, sorted A-Z by description)",
+  "next_steps": [
+    "Run: DATABASE_URL=<neon> python scripts/seed_verified_from_client.py --excel sample.xlsx",
+    "Re-run test on Neon for true production detection rate"
+  ]
+}

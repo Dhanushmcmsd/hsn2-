@@ -301,7 +301,7 @@ async def test_classify_endpoint_returns_result(client, api_key):
 
         resp = await client.post(
             "/api/v1/classify",
-            json={"query": "BOOST"},
+            json={"query": "ZEBRONICS WIRELESS KEYBOARD"},
             headers={"X-API-Key": api_key},
         )
         assert resp.status_code == 200

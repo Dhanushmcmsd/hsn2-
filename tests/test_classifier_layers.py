@@ -20,6 +20,20 @@ class TestCodeTypeHelpers:
         assert normalize_display_code("190190", code_type="HSN") == "19019000"
 
 
+class TestAliasWordBoundary:
+    def test_short_alias_does_not_match_inside_word(self):
+        from app.services.hsn_master import get_alias_hsn
+
+        assert get_alias_hsn("steak") is None
+        assert get_alias_hsn("mosquito coil") == "380891"
+        assert get_alias_hsn("aluminium foil") is None
+
+    def test_long_alias_still_matches_with_size_suffix(self):
+        from app.services.hsn_master import get_alias_hsn
+
+        assert get_alias_hsn("SHUDDHAKERA P.COCONUT OIL 1Ltr") == "151319"
+
+
 class TestEffectiveTotalTax:
     def test_igst_plus_cess(self):
         from app.services.classifier_layers import _effective_total_tax
