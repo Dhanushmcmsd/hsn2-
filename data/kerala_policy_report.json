@@ -1,0 +1,59 @@
+{
+  "conflicts": [
+    {
+      "key": "KAPPA",
+      "curated_hsn": "07141090",
+      "corpus_hsn": "20081940",
+      "policy": "curated_wins"
+    },
+    {
+      "key": "KARIMEEN",
+      "curated_hsn": "03028990",
+      "corpus_hsn": "03019990",
+      "policy": "curated_wins"
+    },
+    {
+      "key": "KOZHUVA",
+      "curated_hsn": "03083020",
+      "corpus_hsn": "03056900",
+      "policy": "curated_wins"
+    },
+    {
+      "key": "MULAKU PODI",
+      "curated_hsn": "09042210",
+      "corpus_hsn": "09042211",
+      "policy": "curated_wins"
+    },
+    {
+      "key": "NJANDU",
+      "curated_hsn": "03062900",
+      "corpus_hsn": "03063300",
+      "policy": "curated_wins"
+    },
+    {
+      "key": "PUZHUKKALARI",
+      "curated_hsn": "10063020",
+      "corpus_hsn": "10063090",
+      "policy": "curated_wins"
+    },
+    {
+      "key": "VELICHENNA",
+      "curated_hsn": "15131190",
+      "corpus_hsn": "15131100",
+      "policy": "curated_wins"
+    }
+  ],
+  "duplicate_analysis": {
+    "duplicate_token_groups": 0,
+    "strictly_ambiguous_terms": [
+      "achar",
+      "nadan",
+      "parippu",
+      "puli",
+      "thuvara",
+      "unakka"
+    ],
+    "mixed_priority_duplicates": []
+  },
+  "hint_only_standalone_count": 6
+}
