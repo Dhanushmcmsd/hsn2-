@@ -36,6 +36,12 @@ SHORT_AMBIGUOUS_NON_BRAND_TERMS: frozenset[str] = frozenset({
     "WATER", "SUGAR", "FLOUR", "BREAD", "EGG", "EGGS", "HONEY", "BUTTER",
 })
 
+# multi_layer_search L0b brand early-exit floors (separate from brand_lookup tier mins)
+MULTI_SEARCH_BRAND_EARLY_EXIT_PREDICT = 0.80
+MULTI_SEARCH_BRAND_EARLY_EXIT_CLASSIFY = 0.85
+MULTI_SEARCH_BRAND_EARLY_EXIT_CLASSIFY_SHORT = 0.92
+MULTI_SEARCH_BRAND_EARLY_EXIT_SHORT_MAX_LEN = 4
+
 
 def brand_fuzzy_min_sim(*, for_classify: bool = False) -> float:
     return CLASSIFY_BRAND_SIM_THRESHOLD if for_classify else PREDICT_BRAND_SIM_THRESHOLD
@@ -71,3 +77,30 @@ def effective_brand_trgm_min(brand_token: str, *, for_classify: bool = False) ->
     if for_classify and len((brand_token or "").strip()) <= CLASSIFY_SHORT_BRAND_MAX_LEN:
         return max(base, CLASSIFY_SHORT_BRAND_SIM_THRESHOLD)
     return base
+
+
+def brand_early_exit_min_score(brand_token: str, *, for_classify: bool = False) -> float:
+    """Minimum brand_lookup score before multi_layer_search L0b early-exits."""
+    tok = (brand_token or "").strip().upper()
+    if tok in SHORT_AMBIGUOUS_NON_BRAND_TERMS:
+        return 1.0
+    n = len(tok)
+    if for_classify:
+        if n <= MULTI_SEARCH_BRAND_EARLY_EXIT_SHORT_MAX_LEN:
+            return MULTI_SEARCH_BRAND_EARLY_EXIT_CLASSIFY_SHORT
+        return MULTI_SEARCH_BRAND_EARLY_EXIT_CLASSIFY
+    return MULTI_SEARCH_BRAND_EARLY_EXIT_PREDICT
+
+
+def should_skip_brand_early_exit(
+    *,
+    for_classify: bool,
+    detected_language: str,
+    has_direct_alias_hsn: bool,
+) -> bool:
+    """Prefer Kerala/alias resolution over brand early-exit on classify-critical paths."""
+    if not for_classify:
+        return False
+    if has_direct_alias_hsn:
+        return True
+    return detected_language in ("ml", "ml-roman")

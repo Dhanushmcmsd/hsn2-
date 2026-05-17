@@ -51,17 +51,28 @@ async def run() -> int:
         "local_kerala_json_fallback": False,
     }
 
-    corpus = ROOT / "data" / "kerala_retail_aliases.json"
-    if corpus.exists():
-        report["local_kerala_json_fallback"] = True
-        report["local_kerala_json_entries"] = len(
-            json.loads(corpus.read_text(encoding="utf-8"))
-        )
+    from app.services.benchmark_preflight import expected_kerala_corpus_rows
+
+    report["expected_kerala_corpus_rows"] = expected_kerala_corpus_rows()
+    corpus_path = ROOT / "data" / "kerala_retail_aliases.json"
+    report["local_kerala_json_fallback"] = corpus_path.exists()
+    if report["local_kerala_json_fallback"]:
+        report["local_kerala_json_entries"] = report["expected_kerala_corpus_rows"]
 
     await init_db()
 
     if is_postgres:
         async with async_session() as db:
+            from app.services.benchmark_preflight import collect_benchmark_metadata
+
+            meta = await collect_benchmark_metadata(db, url)
+            report.update(
+                {
+                    "kerala_corpus_seeded": meta.get("kerala_corpus_seeded"),
+                    "expected_kerala_corpus_rows": meta.get("expected_kerala_corpus_rows"),
+                    "warnings": meta.get("warnings", []),
+                }
+            )
             try:
                 ext = (
                     await db.execute(

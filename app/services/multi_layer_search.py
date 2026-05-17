@@ -36,7 +36,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.services import aliases as aliases_service
 from app.services import inverted_index
-from app.services.brand_search import brand_lookup, is_unclassified_hsn
+from app.services.brand_search import _extract_brand_token, brand_lookup, is_unclassified_hsn
+from app.services.search_thresholds import (
+    brand_early_exit_min_score,
+    should_skip_brand_early_exit,
+)
 from app.services.in_memory_cache import lru_get, lru_set
 from app.services.matcher import get_matcher
 from app.utils.cache import get_cache, set_cache
@@ -340,6 +344,7 @@ async def multi_search(
     filters: dict | None = None,
     bypass_cache: bool = False,
     explain: bool = False,
+    for_classify: bool = False,
 ) -> MultiSearchResult:
     started = time.perf_counter()
     layers: list[LayerTrace] = []
@@ -353,7 +358,7 @@ async def multi_search(
     # -- L0 alias expansion --------------------------------------------------
     t0 = time.perf_counter()
     try:
-        expanded = await aliases_service.expand_query(db, raw_q)
+        expanded = await aliases_service.expand_query(db, raw_q, for_classify=for_classify)
         layers.append(LayerTrace(name="L0_alias", ms=(time.perf_counter() - t0) * 1000,
                                  candidate_count=len(expanded.expansions)))
     except Exception as exc:
@@ -410,10 +415,25 @@ async def multi_search(
             )
 
     # -- L0b  Brand alias lookup (early-exit when confident) -----------------
-    try:
-        brand_hit = await brand_lookup(db, expanded.english_query or raw_q, min_score=0.80)
-    except Exception:
-        brand_hit = None
+    brand_hit = None
+    skip_brand = should_skip_brand_early_exit(
+        for_classify=for_classify,
+        detected_language=expanded.detected_language,
+        has_direct_alias_hsn=bool(expanded.direct_hsn_hints),
+    )
+    if not skip_brand:
+        brand_q = expanded.english_query or raw_q
+        brand_token = _extract_brand_token(brand_q)
+        min_brand_score = brand_early_exit_min_score(brand_token, for_classify=for_classify)
+        try:
+            brand_hit = await brand_lookup(
+                db,
+                brand_q,
+                min_score=min_brand_score,
+                for_classify=for_classify,
+            )
+        except Exception:
+            brand_hit = None
 
     if brand_hit and not is_unclassified_hsn(brand_hit.get("hsn_code")):
         result_list = [brand_hit]

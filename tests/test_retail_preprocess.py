@@ -28,6 +28,11 @@ def test_expand_kerala_query_matches_preprocess():
     assert expand_kerala_query(raw) == preprocess_retail_query(raw).malayalam_expanded
 
 
+def test_joined_manjalpodi_splits_before_expansion():
+    prep = preprocess_retail_query("manjalpodi 50g", for_classify=True)
+    assert "TURMERIC" in prep.malayalam_expanded
+
+
 def test_classify_and_predict_share_preprocess_shape():
     raw = "cherupayar 1kg"
     c = preprocess_retail_query(raw, for_classify=True)

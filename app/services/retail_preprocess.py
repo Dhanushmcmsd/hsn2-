@@ -95,7 +95,74 @@ MALAYALAM_TRANSLITERATIONS: dict[str, str] = {
     "pooja oil": "lamp oil sesame puja",
     "pathimukham": "sarsaparilla herbal",
     "nadan": "traditional local country",
+    "mulaku podi": "red chilli powder spice",
+    "kaapi podi": "coffee powder roasted instant",
+    "kaayam": "asafoetida hing powder",
+    "sarkara": "jaggery sugar gur",
+    "velichenna": "coconut oil edible",
+    "vellachenna": "coconut oil edible",
+    "thenga": "coconut fresh kernel",
+    "kaduku": "mustard seeds rai",
+    "uluva": "fenugreek methi seeds",
+    "perumjeerakam": "fennel seeds saunf",
+    "puzhukkalari": "parboiled rice kerala",
+    "matta ari": "matta rice rosematta red",
+    "pacha ari": "raw rice paddy grain",
+    "nadan ari": "traditional local country rice",
+    "puttu podi": "puttu rice flour steamed",
+    "ragi podi": "ragi finger millet flour",
+    "chemmeen achar": "prawn pickle seafood preserved",
+    "nendran chips": "banana chips plantain fried",
+    "ethakka chips": "banana chips ethakka plantain",
+    "sharkkara upperi": "jaggery banana chips sweet snack",
+    "thuvara parippu": "pigeon pea toor dal split",
+    "kadala mavu": "chickpea flour besan gram",
+    "vellari": "cucumber fresh vegetable",
+    "thakkali": "tomato fresh vegetable",
+    "vendakka": "okra ladyfinger vegetable",
+    "cheriyulli": "shallot small onion",
+    "ellu": "sesame seeds til",
+    "kodampuli": "gamboge kodampuli garcinia",
+    "unakka mulaku": "dry red chilli whole dried",
+    "puli": "tamarind pulp sour",
+    "uzhunu": "urad black gram dal",
+    "thuvara": "pigeon pea toor dal",
+    "unakka": "dried preserved",
 }
+
+# Bill/OCR joined spellings → spaced retail forms (longest first at runtime)
+_KERALA_JOINED_FORMS: tuple[tuple[str, str], ...] = (
+    ("manjalpodi", "manjal podi"),
+    ("chaayapodi", "chaya podi"),
+    ("chayapodi", "chaya podi"),
+    ("mulakupodi", "mulaku podi"),
+    ("kaapipodi", "kaapi podi"),
+    ("puttupodi", "puttu podi"),
+    ("appampodi", "appam podi"),
+    ("ragipodi", "ragi podi"),
+    ("vellachenna", "velichenna"),
+    ("nendranchips", "nendran chips"),
+    ("ethakkachips", "ethakka chips"),
+    ("sharkkaraupperi", "sharkkara upperi"),
+    ("kadalamavu", "kadala mavu"),
+    ("thuvaraparippu", "thuvara parippu"),
+    ("mattaari", "matta ari"),
+    ("pachari", "pacha ari"),
+    ("nadanari", "nadan ari"),
+    ("puzhukkalari", "puzhukkalari"),
+    ("chemmeenachar", "chemmeen achar"),
+    ("unakkamulaku", "unakka mulaku"),
+)
+
+
+def _split_joined_kerala_compounds(text_value: str) -> str:
+    """Insert spaces into common joined Kerala retail spellings before expansion."""
+    lower = text_value.lower()
+    for joined, spaced in sorted(_KERALA_JOINED_FORMS, key=lambda x: len(x[0]), reverse=True):
+        if joined in lower:
+            pattern = re.compile(re.escape(joined), re.IGNORECASE)
+            lower = pattern.sub(spaced, lower)
+    return lower
 
 
 def _normalize_ws(text_value: str) -> str:
@@ -104,6 +171,7 @@ def _normalize_ws(text_value: str) -> str:
 
 def apply_kerala_expansion(query: str) -> str:
     """Kerala invoice + romanized Malayalam expansion (in-memory, no DB)."""
+    query = _split_joined_kerala_compounds(query)
     normalized = _normalize_ws(query)
     expanded = normalized
 
@@ -174,7 +242,7 @@ def preprocess_retail_query(query: str, *, for_classify: bool = False) -> Retail
     from app.services.aliases import detect_language
 
     detected = detect_language(original)
-    typo_fixed = fix_retail_typos(original)
+    typo_fixed = fix_retail_typos(_split_joined_kerala_compounds(original))
     normalized_name = normalize_product_name(typo_fixed)
     normalized = _normalize_ws(normalized_name if normalized_name else typo_fixed)
 

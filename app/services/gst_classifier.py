@@ -604,7 +604,9 @@ async def _tier5_multi_layer(db: AsyncSession, query: str) -> dict | None:
         return None
 
     try:
-        result = await multi_search(db, query, top_k=1, bypass_cache=True)
+        result = await multi_search(
+            db, query, top_k=1, bypass_cache=True, for_classify=True,
+        )
     except Exception as exc:
         log.warning("gst_classifier.tier5_multi_layer_failed", error=str(exc)[:120])
         return None

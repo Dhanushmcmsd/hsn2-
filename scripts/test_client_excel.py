@@ -38,7 +38,8 @@ _TIER_BUCKETS = (
 _MALAYALAM_RE = __import__("re").compile(r"[\u0D00-\u0D7F]")
 _KERALA_ROMAN_HINTS = frozenset({
     "MANJAL", "CHERUPAYAR", "CHEMMEEN", "PUJA", "SAMBAR", "RASAM", "PUTTU", "AVAL",
-    "MATTA", "KAPPA", "CHAKKA", "VAZHAKKA", "KARIMEEN", "VELLAM", "CHAYA",
+    "MATTA", "KAPPA", "CHAKKA", "VAZHAKKA", "KARIMEEN", "VELLAM", "CHAYA", "VELICHENNA",
+    "MULAKU", "KAAYAM", "PUZHUKKALARI", "THUVARA", "KADALA", "NENDRAN", "UZHUNNU",
 })
 
 
@@ -283,6 +284,33 @@ async def _run_classify(
     return rows
 
 
+async def _print_preflight_warnings(database_url: str, require_kerala: bool) -> dict:
+    from datetime import datetime, timezone
+
+    from app.models.database import async_session, init_db
+    from app.services.benchmark_preflight import (
+        collect_benchmark_metadata,
+        enforce_kerala_corpus_preflight,
+    )
+
+    await init_db()
+    async with async_session() as db:
+        meta = await collect_benchmark_metadata(db, database_url)
+    meta["benchmark_started_utc"] = datetime.now(timezone.utc).isoformat()
+
+    for warning in meta.get("warnings") or []:
+        print(f"\n*** BENCHMARK WARNING: {warning}")
+
+    if meta.get("dialect") == "postgresql" and not meta.get("kerala_corpus_seeded"):
+        print(
+            "\n*** 'After' metrics may be misleading until you run:\n"
+            "    python scripts/seed_kerala_language_aliases.py\n"
+        )
+
+    enforce_kerala_corpus_preflight(meta, require=require_kerala)
+    return meta
+
+
 async def main_async(args: argparse.Namespace) -> int:
     if args.neon:
         _load_env_neon()
@@ -290,6 +318,10 @@ async def main_async(args: argparse.Namespace) -> int:
     database_url = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./hsn_dev.db")
     is_postgres = "postgresql" in database_url
     skip_faiss = not is_postgres
+
+    benchmark_meta = await _print_preflight_warnings(
+        database_url, require_kerala=args.require_kerala_corpus,
+    )
 
     if args.neon and is_postgres:
         skip_faiss = False
@@ -324,16 +356,30 @@ async def main_async(args: argparse.Namespace) -> int:
     _print_tier_table(rows, len(rows))
     _print_kerala_summary(rows)
 
+    kerala_rows = [r for r in rows if _is_kerala_style(r.get("description", ""))]
+    kerala_detected = [r for r in kerala_rows if r.get("detected")]
+    kerala_exact_alias = [
+        r for r in kerala_detected
+        if _kerala_layer_bucket(r.get("layer_matched"))
+        in ("L0_kerala_retail", "language_aliases")
+    ]
+
     report = {
         "excel": str(args.excel),
         "database": "neon" if is_postgres else "sqlite",
+        "benchmark_metadata": benchmark_meta,
         "total_products": len(rows),
         "detected": len(detected),
         "undetected": len(missed),
         "detection_score_pct": score_pct,
         "undetected_products": missed,
         "detected_products": detected,
-        "kerala_style_total": sum(1 for r in rows if _is_kerala_style(r.get("description", ""))),
+        "kerala_style_total": len(kerala_rows),
+        "kerala_detected": len(kerala_detected),
+        "kerala_exact_or_alias_hits": len(kerala_exact_alias),
+        "kerala_hit_rate_pct": round(
+            100.0 * len(kerala_detected) / len(kerala_rows), 2,
+        ) if kerala_rows else None,
     }
     args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     if not args.quick:
@@ -371,6 +417,11 @@ def main() -> int:
         help="Skip FAISS tier-5 warm-up (faster run to test L3/L4/L5 only)",
     )
     parser.add_argument("--concurrency", type=int, default=8)
+    parser.add_argument(
+        "--require-kerala-corpus",
+        action="store_true",
+        help="Exit if Postgres Kerala corpus (language_aliases) is not seeded",
+    )
     parser.add_argument("--output", type=Path, default=ROOT / "scripts" / "client_excel_report.json")
     args = parser.parse_args()
     if args.quick and not args.sample and not args.full:
