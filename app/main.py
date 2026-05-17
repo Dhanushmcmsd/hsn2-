@@ -69,6 +69,14 @@ async def lifespan(app: FastAPI):
 
     await init_cache()
     asyncio.create_task(keep_alive())
+
+    try:
+        from app.services.faiss_service import get_faiss_service
+
+        get_faiss_service().start_warmup()
+    except Exception as exc:
+        log.warning("faiss.warmup_schedule_failed", error=str(exc)[:120])
+
     log.info("app.accepting_predictions", env=settings.APP_ENV)
 
     async def warm_search_layer():

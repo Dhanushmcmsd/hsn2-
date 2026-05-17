@@ -21,7 +21,7 @@
 | `L0_kerala_retail` (all rows) | 24 | 24 | 0 |
 | `language_aliases` tier | 0 | 0 | 0 |
 
-**FAISS:** Not reported — matcher warm-up exceeded 5 minutes; use `--skip-faiss` for Kerala layer testing until FAISS load is fixed.
+**FAISS:** Kerala benchmarks above used `--skip-faiss` (L0–L3 only). Production Render loads FAISS in a **background singleton** at boot (`app/services/faiss_service.py`); cold requests skip tier-5 with `faiss_status=cold_skipped` instead of blocking.
 
 ## Interpretation
 

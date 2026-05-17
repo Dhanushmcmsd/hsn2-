@@ -42,7 +42,6 @@ from app.services.search_thresholds import (
     should_skip_brand_early_exit,
 )
 from app.services.in_memory_cache import lru_get, lru_set
-from app.services.matcher import get_matcher
 from app.utils.cache import get_cache, set_cache
 
 log = structlog.get_logger()
@@ -99,6 +98,7 @@ class MultiSearchResult:
     layers: list[LayerTrace] = field(default_factory=list)
     methods_used: list[str] = field(default_factory=list)
     direct_hsn_hints: list[dict[str, Any]] = field(default_factory=list)
+    faiss_status: str = "not_used"
 
 
 # ---------------------------------------------------------------------------
@@ -129,18 +129,33 @@ async def _layer_fuzzy(db: AsyncSession, queries: Sequence[str], limit: int) -> 
     return sorted(seen.values(), key=lambda r: r["score"], reverse=True)[:limit]
 
 
-async def _layer_faiss(query: str, limit: int) -> list[dict]:
+async def _layer_faiss(query: str, limit: int) -> tuple[list[dict], str]:
+    import asyncio
     import os
+
+    from app.services.faiss_service import get_faiss_service
 
     if os.getenv("FAISS_DISABLED") == "1":
         log.info("faiss.disabled_by_env")
-        return []
+        return [], "disabled"
+
+    svc = get_faiss_service()
+    if svc.failed:
+        log.info("faiss.cold_skip", reason="failed_skipped", error=(svc.last_error or "")[:80])
+        return [], "failed_skipped"
+    if not svc.is_ready():
+        log.info("faiss.cold_skip", reason="cold_skipped", loading=svc.loading)
+        return [], "cold_skipped"
+
     try:
-        matcher = get_matcher()
+        rows = await asyncio.to_thread(svc.search_text, query, limit)
     except Exception as exc:
         log.warning("multi.faiss_unavailable", error=str(exc))
-        return []
-    rows = await matcher.amatch(query, top_k=limit)
+        return [], "failed_skipped"
+
+    if not rows:
+        return [], "cold_skipped"
+
     out: list[dict] = []
     for r in rows:
         out.append({
@@ -152,7 +167,8 @@ async def _layer_faiss(query: str, limit: int) -> list[dict]:
             "category":    r.get("category"),
             "chapter":     r.get("chapter") or r.get("hsn_chapter"),
         })
-    return out
+    log.info("faiss.search_used", query_len=len(query), hits=len(out))
+    return out, "used"
 
 
 _PREFIX_SQL = text("""
@@ -515,12 +531,20 @@ async def multi_search(
             layers=layers,
             methods_used=methods_used,
             direct_hsn_hints=expanded.direct_hsn_hints,
+            faiss_status="not_used",
         )
 
     # -- L2..L5 fan-out (only when verified didn't early-exit) ---------------
+    faiss_status = "not_used"
+
+    async def _faiss_rows() -> list[dict]:
+        nonlocal faiss_status
+        rows, faiss_status = await _layer_faiss(eng_q, top_k * 2)
+        return rows
+
     inv_task    = _bounded("L2_inverted_index", _layer_inverted(db, variants, top_k * 2), LAYER_TIMEOUTS["inverted"], layers)
     fuzzy_task  = _bounded("L3_pg_trgm_fuzzy",  _layer_fuzzy(db, variants, top_k * 2),   LAYER_TIMEOUTS["fuzzy"],    layers)
-    faiss_task  = _bounded("L4_faiss_semantic",  _layer_faiss(eng_q, top_k * 2),          LAYER_TIMEOUTS["faiss"],    layers)
+    faiss_task  = _bounded("L4_faiss_semantic",  _faiss_rows(),                          LAYER_TIMEOUTS["faiss"],    layers)
     prefix_task = _bounded("L5_prefix_code",     _layer_prefix(db, raw_q, top_k * 3),    LAYER_TIMEOUTS["prefix"],   layers)
 
     inv_rows, fuzzy_rows, faiss_rows, prefix_rows = await asyncio.gather(
@@ -621,6 +645,7 @@ async def multi_search(
         layers=layers if explain else [l for l in layers if l.candidate_count or l.error],
         methods_used=methods_used,
         direct_hsn_hints=expanded.direct_hsn_hints,
+        faiss_status=faiss_status,
     )
 
 

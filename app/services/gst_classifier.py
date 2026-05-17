@@ -122,6 +122,7 @@ def _make_result(
     trust_level: str | None = None,
     alternates: list[dict[str, Any]] | None = None,
     confidence_score: int | None = None,
+    faiss_status: str | None = None,
 ) -> dict[str, Any]:
     review = review_required if review_required is not None else needs_manual_review
     conf = confidence_score if confidence_score is not None else confidence
@@ -148,6 +149,7 @@ def _make_result(
         "rate_conflict": rate_conflict,
         "trust_level": trust_level,
         "alternates": alternates or [],
+        "faiss_status": faiss_status or "not_used",
     }
 
 
@@ -212,6 +214,7 @@ async def _finalize_layer_result(
         rate_conflict=bool(enriched.get("rate_conflict")),
         trust_level=enriched.get("trust_level"),
         alternates=enriched.get("alternates"),
+        faiss_status=enriched.get("faiss_status"),
     )
     if cache_query_norm and cache_ttl and not final.get("needs_manual_review"):
         await _cache_store(db, cache_query_norm, final, cache_ttl)
@@ -614,6 +617,7 @@ async def _tier5_multi_layer(db: AsyncSession, query: str) -> dict | None:
     if not result.results:
         return None
 
+    faiss_status = getattr(result, "faiss_status", "not_used")
     best = result.results[0]
     hsn_code = (best.get("hsn_code") or "").strip()
     if not hsn_code or not _is_valid_hsn(hsn_code):
@@ -650,6 +654,7 @@ async def _tier5_multi_layer(db: AsyncSession, query: str) -> dict | None:
         "code_kind": "HSN",
         "trust_level": "fuzzy",
         "review_required": confidence < _MIN_AUTHORITATIVE_CONFIDENCE,
+        "faiss_status": faiss_status,
     }
 
 # ---------------------------------------------------------------------------

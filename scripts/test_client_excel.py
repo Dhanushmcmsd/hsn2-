@@ -229,10 +229,10 @@ async def _run_classify(
             )
     else:
         try:
-            from app.services.matcher import get_matcher
+            from app.services.faiss_service import get_faiss_service
 
-            get_matcher()
-            print("Matcher warmed (single FAISS load)")
+            get_faiss_service().start_warmup()
+            print("FAISS warm-up scheduled (background singleton)")
         except Exception as exc:
             print(f"Matcher warm-up skipped: {exc}")
 

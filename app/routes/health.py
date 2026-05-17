@@ -13,6 +13,28 @@ router = APIRouter(tags=["health"])
 _EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
 
+def _faiss_health() -> dict:
+    try:
+        from app.services.faiss_service import get_faiss_service
+
+        svc = get_faiss_service()
+        return {
+            "ready": svc.ready,
+            "loading": svc.loading,
+            "failed": svc.failed,
+            "load_time_ms": svc.load_time_ms,
+            "index_size_bytes": svc.index_size_bytes,
+        }
+    except Exception:
+        return {
+            "ready": False,
+            "loading": False,
+            "failed": True,
+            "load_time_ms": None,
+            "index_size_bytes": None,
+        }
+
+
 def _basic_health_payload(request: Request) -> dict:
     ready = getattr(request.app.state, "ready", False)
     cache_size = len(getattr(request.app.state, "product_name_cache", []))
@@ -21,6 +43,7 @@ def _basic_health_payload(request: Request) -> dict:
         "ready": ready,
         "product_name_cache_size": cache_size,
         "lru_cache": lru_stats(),
+        "faiss": _faiss_health(),
     }
 
 

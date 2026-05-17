@@ -523,7 +523,16 @@ class HybridMatcher:
         return self._phrase_match(text, top_k)
 
     def _semantic_match(self, text: str, top_k: int) -> list[dict]:
-        return []
+        try:
+            from app.services.faiss_service import get_faiss_service
+
+            svc = get_faiss_service()
+            if not svc.is_ready():
+                return []
+            return svc.search_text(text, top_k) or []
+        except Exception as exc:
+            log.warning("matcher.semantic_delegated_failed", error=str(exc)[:120])
+            return []
 
     def _match_once(self, text: str, top_k: int = 5) -> list[dict]:
         exact_code = self._exact_code_match(text)
