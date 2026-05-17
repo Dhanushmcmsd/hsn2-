@@ -168,6 +168,38 @@ class TestLayerPrecedence:
             mock_tariff.assert_not_called()
 
     @pytest.mark.asyncio
+    async def test_tier5_broad_returns_highest_confidence_partial(self):
+        from app.services.gst_classifier import _tier5_broad_resolution
+
+        low_tariff = {
+            "hsn_code": "11111111",
+            "confidence": 55,
+            "gst_rate": 18.0,
+            "tier_used": 4,
+        }
+        high_fuzzy = {
+            "hsn_code": "22222222",
+            "confidence": 65,
+            "gst_rate": 12.0,
+            "tier_used": 5,
+        }
+
+        with patch(
+            "app.services.classifier_layers.layer_tariff_fallback",
+            return_value=low_tariff,
+        ), patch(
+            "app.services.gst_classifier._tier3_fuzzy",
+            return_value=high_fuzzy,
+        ), patch(
+            "app.services.gst_classifier._tier5_multi_layer",
+            return_value=None,
+        ):
+            out = await _tier5_broad_resolution(AsyncMock(), "unknown sku", "UNKNOWN SKU")
+            assert out is not None
+            assert out["hsn_code"] == "22222222"
+            assert out["confidence"] == 65
+
+    @pytest.mark.asyncio
     async def test_low_confidence_fuzzy_goes_to_pending_path(self):
         from app.services.gst_classifier import classify
 

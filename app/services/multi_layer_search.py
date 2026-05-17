@@ -126,6 +126,11 @@ async def _layer_fuzzy(db: AsyncSession, queries: Sequence[str], limit: int) -> 
 
 
 async def _layer_faiss(query: str, limit: int) -> list[dict]:
+    import os
+
+    if os.getenv("FAISS_DISABLED") == "1":
+        log.info("faiss.disabled_by_env")
+        return []
     try:
         matcher = get_matcher()
     except Exception as exc:

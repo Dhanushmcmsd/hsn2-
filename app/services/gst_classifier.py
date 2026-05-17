@@ -696,25 +696,17 @@ async def _tier5_broad_resolution(
     raw_q: str,
     query_norm: str,
 ) -> dict[str, Any] | None:
-    """L4 tariff → L5 fuzzy → multi_layer; returns best candidate (may be low confidence)."""
+    """L4 tariff → L5 fuzzy → multi_layer; returns highest-confidence candidate."""
     from app.services.classifier_layers import layer_tariff_fallback
 
     result = await layer_tariff_fallback(db, raw_q)
-    if result and int(result.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
-        return result
-
     fuzzy = await _tier3_fuzzy(db, query_norm)
-    if fuzzy and int(fuzzy.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
-        return fuzzy
-
     multi = await _tier5_multi_layer(db, raw_q)
-    if multi and int(multi.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
-        return multi
 
-    for candidate in (fuzzy, result, multi):
-        if candidate:
-            return candidate
-    return None
+    candidates = [c for c in (result, fuzzy, multi) if c]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda c: int(c.get("confidence", 0)))
 
 
 async def classify(
@@ -743,7 +735,15 @@ async def classify(
 
     # ── TIER 0: DB Cache ─────────────────────────────────────────────────────
     if not bypass_cache:
+        log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_cache")
         cached = await _tier0_cache(db, query_norm)
+        log.debug(
+            "gst_classifier.tier_result",
+            query=raw_q[:60],
+            tier="L0_cache",
+            hit=cached is not None,
+            conf=cached.get("confidence") if cached else None,
+        )
         if cached:
             elapsed = (time.perf_counter() - started) * 1000
             partial = {
@@ -760,31 +760,54 @@ async def classify(
             }
             return await _finalize_layer_result(db, partial, elapsed)
 
-    async def _try_layer(partial: dict[str, Any] | None) -> dict[str, Any] | None:
+    best_guess: dict[str, Any] | None = None
+
+    async def _accept_or_accumulate(partial: dict[str, Any] | None) -> dict[str, Any] | None:
+        """Return finalized result if high-confidence; else save as best_guess."""
+        nonlocal best_guess
         if not partial:
             return None
-        if partial.get("review_required") and int(partial.get("confidence", 0)) < _MIN_AUTHORITATIVE_CONFIDENCE:
-            return None
-        elapsed = (time.perf_counter() - started) * 1000
-        return await _finalize_layer_result(
-            db, partial, elapsed,
-            cache_query_norm=query_norm,
-            cache_ttl=_CACHE_TTL_EXACT,
-        )
+        conf = int(partial.get("confidence", 0))
+        if conf >= _MIN_AUTHORITATIVE_CONFIDENCE and not partial.get("review_required"):
+            elapsed = (time.perf_counter() - started) * 1000
+            return await _finalize_layer_result(
+                db, partial, elapsed,
+                cache_query_norm=query_norm,
+                cache_ttl=_CACHE_TTL_EXACT,
+            )
+        if best_guess is None or conf > int(best_guess.get("confidence", 0)):
+            best_guess = partial
+        return None
 
     # ── L0 client catalog: exact verified_products (client Excel / batches) ───
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_verified_product")
     verified = await _tier2_exact_product(db, query_norm)
     if not verified and query_clean != query_norm:
         verified = await _tier2_exact_product(db, query_clean)
     if verified:
         verified["matched_layer"] = "L0_verified_product"
         verified["source"] = verified.get("source") or "verified_product_exact"
-    final = await _try_layer(verified)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L0_verified_product",
+        hit=verified is not None,
+        conf=verified.get("confidence") if verified else None,
+    )
+    final = await _accept_or_accumulate(verified)
     if final:
         return final
 
     # ── L0 in-memory alias (generic retail staples) ─────────────────────────
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_alias_dict")
     alias_code = get_alias_hsn(raw_q) or get_alias_hsn(query_norm)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L0_alias_dict",
+        hit=alias_code is not None,
+        conf=98 if alias_code else None,
+    )
     if alias_code:
         display = normalize_display_code(
             alias_code,
@@ -807,52 +830,84 @@ async def classify(
         return await _finalize_layer_result(db, partial, elapsed)
 
     # ── L1: Exact Brand ───────────────────────────────────────────────────────
-    final = await _try_layer(await _tier1_exact_brand(db, query_norm))
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L1_brand_alias")
+    brand_hit = await _tier1_exact_brand(db, query_norm)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L1_brand_alias",
+        hit=brand_hit is not None,
+        conf=brand_hit.get("confidence") if brand_hit else None,
+    )
+    final = await _accept_or_accumulate(brand_hit)
     if final:
         return final
 
     # ── L3: Curated Master ──────────────────────────────────────────────────────
     from app.services.classifier_layers import layer_curated_master
 
-    final = await _try_layer(await layer_curated_master(db, query_norm, raw_q or query_clean))
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L3_curated_master")
+    curated = await layer_curated_master(db, query_norm, raw_q or query_clean)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L3_curated_master",
+        hit=curated is not None,
+        conf=curated.get("confidence") if curated else None,
+    )
+    final = await _accept_or_accumulate(curated)
     if final:
         return final
 
     # ── L4 keyword map (preserved) ──────────────────────────────────────────────
-    final = await _try_layer(await _tier4_keyword(db, raw_q))
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L4_keyword_category")
+    keyword_hit = await _tier4_keyword(db, raw_q)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L4_keyword_category",
+        hit=keyword_hit is not None,
+        conf=keyword_hit.get("confidence") if keyword_hit else None,
+    )
+    final = await _accept_or_accumulate(keyword_hit)
     if final:
         return final
 
     # ── L4 tariff + L5 fuzzy + multi_layer ──────────────────────────────────────
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L5_broad_resolution")
     broad = await _tier5_broad_resolution(db, raw_q, query_norm)
-    if broad and not broad.get("review_required") and int(broad.get("confidence", 0)) >= _MIN_AUTHORITATIVE_CONFIDENCE:
-        elapsed = (time.perf_counter() - started) * 1000
-        return await _finalize_layer_result(
-            db, broad, elapsed,
-            cache_query_norm=query_norm,
-            cache_ttl=_CACHE_TTL_EXACT,
-        )
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L5_broad_resolution",
+        hit=broad is not None,
+        conf=broad.get("confidence") if broad else None,
+    )
+    final = await _accept_or_accumulate(broad)
+    if final:
+        return final
 
     # ── L5: Keyword extraction fallback (universal, zero-API) ─────────────────
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L5_keyword_fallback")
+    kw_result: dict[str, Any] | None = None
     try:
         from app.services.pg_search import keyword_hsn_search
 
         keywords = extract_product_keywords(raw_q)
         if keywords:
             kw_result = await keyword_hsn_search(db, keywords)
-            if kw_result and kw_result.get("hsn_code"):
-                conf = int(kw_result.get("confidence", 0))
-                if conf >= _MIN_AUTHORITATIVE_CONFIDENCE and not kw_result.get("review_required"):
-                    elapsed = (time.perf_counter() - started) * 1000
-                    return await _finalize_layer_result(
-                        db, kw_result, elapsed,
-                        cache_query_norm=query_norm,
-                        cache_ttl=_CACHE_TTL_EXACT,
-                    )
-                if not broad:
-                    broad = kw_result
     except Exception as exc:
         log.debug("gst_classifier.keyword_fallback_failed", error=str(exc)[:120])
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L5_keyword_fallback",
+        hit=bool(kw_result and kw_result.get("hsn_code")),
+        conf=kw_result.get("confidence") if kw_result else None,
+    )
+    final = await _accept_or_accumulate(kw_result)
+    if final:
+        return final
 
     # ── L6: Manual review (low confidence or no match) ──────────────────────────
     try:
@@ -871,7 +926,16 @@ async def classify(
     except Exception:
         pass
 
-    pending = await _tier6_pending_review(db, raw_q, query_norm, broad)
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L6_pending_review")
+    pending = await _tier6_pending_review(db, raw_q, query_norm, best_guess)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L6_pending_review",
+        hit=True,
+        conf=pending.get("confidence"),
+        best_guess_hsn=(best_guess or {}).get("hsn_code"),
+    )
     elapsed = (time.perf_counter() - started) * 1000
     code = pending.get("hsn_code") or "UNCLASSIFIED"
     partial = {
@@ -880,6 +944,6 @@ async def classify(
         "tier_used": 6,
         "matched_layer": "L6_pending_review",
         "review_required": True,
-        "alternates": (broad or {}).get("alternates", []),
+        "alternates": (best_guess or {}).get("alternates", []),
     }
     return await _finalize_layer_result(db, partial, elapsed)

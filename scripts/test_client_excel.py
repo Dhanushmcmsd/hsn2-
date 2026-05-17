@@ -119,27 +119,40 @@ def _print_tier_table(rows: list[dict], total: int) -> None:
     print("└────────────────────────┴──────────┴──────────┴─────────────┘")
 
 
-async def _run_classify(names: list[str], concurrency: int, skip_faiss: bool) -> list[dict]:
-    import app.services.gst_classifier as gst_mod
-    from app.models.database import async_session, init_db
-    from app.services.gst_classifier import classify
-
+async def _run_classify(
+    names: list[str],
+    concurrency: int,
+    skip_faiss: bool,
+    *,
+    skip_faiss_cli: bool = False,
+) -> list[dict]:
     os.environ.setdefault("SECRET_KEY", "excel-test-secret-key-32chars-min")
     os.environ.setdefault("API_KEY", "dev-api-key")
     os.environ.setdefault("ADMIN_API_KEY", "dev-admin-key")
 
     if skip_faiss:
-        async def _skip_tier5_multi(_db, _query: str):
-            return None
-        gst_mod._tier5_multi_layer = _skip_tier5_multi
-        print("Note: tier-5 FAISS skipped (SQLite bulk mode)")
+        os.environ["FAISS_DISABLED"] = "1"
+        if skip_faiss_cli:
+            print(
+                "FAISS tier-5 skipped (--skip-faiss). "
+                "L3/L4/L5 pg_trgm layers will still run."
+            )
+        else:
+            print(
+                "FAISS tier-5 skipped (SQLite bulk mode). "
+                "L3/L4/L5 pg_trgm layers will still run."
+            )
     else:
         try:
             from app.services.matcher import get_matcher
+
             get_matcher()
             print("Matcher warmed (single FAISS load)")
         except Exception as exc:
             print(f"Matcher warm-up skipped: {exc}")
+
+    from app.models.database import async_session, init_db
+    from app.services.gst_classifier import classify
 
     await init_db()
     sem = asyncio.Semaphore(concurrency)
@@ -198,6 +211,9 @@ async def main_async(args: argparse.Namespace) -> int:
         skip_faiss = False
         print("Running against Neon Postgres with full pipeline (trgm + fts + FAISS + keyword fallback)")
 
+    if args.skip_faiss:
+        skip_faiss = True
+
     names = _load_names(args.excel)
     if args.sample:
         random.seed(42)
@@ -208,7 +224,12 @@ async def main_async(args: argparse.Namespace) -> int:
 
     print(f"Testing {len(names)} products from {args.excel}")
 
-    rows = await _run_classify(names, args.concurrency, skip_faiss=skip_faiss)
+    rows = await _run_classify(
+        names,
+        args.concurrency,
+        skip_faiss=skip_faiss,
+        skip_faiss_cli=args.skip_faiss,
+    )
     detected = [r for r in rows if r["detected"]]
     missed = [r for r in rows if not r["detected"]]
     missed.sort(key=lambda r: r["description"].upper())
@@ -241,6 +262,11 @@ def main() -> int:
     parser.add_argument("--sample", type=int, default=None)
     parser.add_argument("--quick", action="store_true")
     parser.add_argument("--neon", action="store_true")
+    parser.add_argument(
+        "--skip-faiss",
+        action="store_true",
+        help="Skip FAISS tier-5 warm-up (faster run to test L3/L4/L5 only)",
+    )
     parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--output", type=Path, default=ROOT / "scripts" / "client_excel_report.json")
     args = parser.parse_args()
