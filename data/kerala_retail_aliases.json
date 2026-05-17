@@ -1,0 +1,680 @@
+[
+  {
+    "language_code": "ml",
+    "original_term": "ചായപ്പൊടി",
+    "normalized_term": "ചായപ്പൊടി",
+    "english_term": "tea powder black",
+    "canonical_query": "tea powder",
+    "hsn_code": "09024090",
+    "priority": 100,
+    "is_active": true,
+    "notes": "Kerala retail Malayalam term"
+  },
+  {
+    "language_code": "ml",
+    "original_term": "മഞ്ഞൾപൊടി",
+    "normalized_term": "മഞ്ഞൾപൊടി",
+    "english_term": "turmeric powder haldi",
+    "canonical_query": "turmeric powder",
+    "hsn_code": "09103010",
+    "priority": 100,
+    "is_active": true,
+    "notes": "Kerala retail Malayalam term"
+  },
+  {
+    "language_code": "ml",
+    "original_term": "അരി",
+    "normalized_term": "അരി",
+    "english_term": "rice paddy grain",
+    "hsn_code": "10063090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "പച്ചരി",
+    "normalized_term": "പച്ചരി",
+    "english_term": "raw rice paddy",
+    "hsn_code": "10061010",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "പഞ്ചസാര",
+    "normalized_term": "പഞ്ചസാര",
+    "english_term": "sugar refined",
+    "hsn_code": "17011200",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "എണ്ണ",
+    "normalized_term": "എണ്ണ",
+    "english_term": "edible oil",
+    "hsn_code": "15079000",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "ഉപ്പ്",
+    "normalized_term": "ഉപ്പ്",
+    "english_term": "salt iodised",
+    "hsn_code": "25010010",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "ചായ",
+    "normalized_term": "ചായ",
+    "english_term": "tea leaf black",
+    "hsn_code": "09024090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "കാപ്പി",
+    "normalized_term": "കാപ്പി",
+    "english_term": "coffee roasted bean",
+    "hsn_code": "09011100",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "പാൽ",
+    "normalized_term": "പാൽ",
+    "english_term": "milk fresh",
+    "hsn_code": "04011000",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "മുട്ട",
+    "normalized_term": "മുട്ട",
+    "english_term": "egg poultry fresh",
+    "hsn_code": "04070090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "തേങ്ങ",
+    "normalized_term": "തേങ്ങ",
+    "english_term": "coconut fresh",
+    "hsn_code": "08011200",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "ചക്ക",
+    "normalized_term": "ചക്ക",
+    "english_term": "jackfruit fresh tropical",
+    "hsn_code": "08109040",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "വാഴക്ക",
+    "normalized_term": "വാഴക്ക",
+    "english_term": "plantain banana raw cooking",
+    "hsn_code": "08030090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "ചെറുപയർ",
+    "normalized_term": "ചെറുപയർ",
+    "english_term": "green gram moong dal",
+    "hsn_code": "07133190",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "വൻപയർ",
+    "normalized_term": "വൻപയർ",
+    "english_term": "cowpea red lobiya beans",
+    "hsn_code": "07133390",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "ഉഴുന്ന്",
+    "normalized_term": "ഉഴുന്ന്",
+    "english_term": "urad dal black gram",
+    "hsn_code": "07133190",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "കടല",
+    "normalized_term": "കടല",
+    "english_term": "black chana chickpea whole",
+    "hsn_code": "07132090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "ചെമ്മീൻ",
+    "normalized_term": "ചെമ്മീൻ",
+    "english_term": "prawn shrimp frozen seafood",
+    "hsn_code": "03061700",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "കരിമീൻ",
+    "normalized_term": "കരിമീൻ",
+    "english_term": "pearl spot fish fresh water",
+    "hsn_code": "03019990",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "അയല",
+    "normalized_term": "അയല",
+    "english_term": "mackerel fish indian fresh",
+    "hsn_code": "03024200",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "മത്തി",
+    "normalized_term": "മത്തി",
+    "english_term": "sardine fish fresh indian",
+    "hsn_code": "03025200",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "പൂജാ എണ്ണ",
+    "normalized_term": "പൂജാ എണ്ണ",
+    "english_term": "lamp oil sesame puja pooja",
+    "hsn_code": "15180040",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "സാമ്പാർ പൊടി",
+    "normalized_term": "സാമ്പാർ പൊടി",
+    "english_term": "sambar masala powder spice",
+    "hsn_code": "09109100",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "റസം പൊടി",
+    "normalized_term": "റസം പൊടി",
+    "english_term": "rasam powder spice",
+    "hsn_code": "09109100",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "അപ്പം പൊടി",
+    "normalized_term": "അപ്പം പൊടി",
+    "english_term": "appam idiyappam rice flour batter",
+    "hsn_code": "11029090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "പുട്ട്",
+    "normalized_term": "പുട്ട്",
+    "english_term": "puttu rice flour steamed",
+    "hsn_code": "11023000",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "അവൽ",
+    "normalized_term": "അവൽ",
+    "english_term": "beaten rice poha flattened",
+    "hsn_code": "19041020",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "മട്ട അരി",
+    "normalized_term": "മട്ട അരി",
+    "english_term": "matta rice rosematta red rice",
+    "hsn_code": "10063090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml",
+    "original_term": "കപ്പ",
+    "normalized_term": "കപ്പ",
+    "english_term": "cassava tapioca kappa",
+    "hsn_code": "20081940",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHAYA PODI",
+    "normalized_term": "CHAYA PODI",
+    "english_term": "tea powder black",
+    "hsn_code": "09024090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "MANJAL PODI",
+    "normalized_term": "MANJAL PODI",
+    "english_term": "turmeric powder haldi",
+    "hsn_code": "09103010",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHERUPAYAR",
+    "normalized_term": "CHERUPAYAR",
+    "english_term": "green gram moong dal split",
+    "hsn_code": "07133190",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "VANPAYAR",
+    "normalized_term": "VANPAYAR",
+    "english_term": "cowpea red lobiya beans",
+    "hsn_code": "07133390",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHEMMEEN",
+    "normalized_term": "CHEMMEEN",
+    "english_term": "prawn shrimp frozen seafood",
+    "hsn_code": "03061700",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "KARIMEEN",
+    "normalized_term": "KARIMEEN",
+    "english_term": "pearl spot fish fresh water",
+    "hsn_code": "03019990",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PUJA OIL",
+    "normalized_term": "PUJA OIL",
+    "english_term": "lamp oil sesame puja pooja",
+    "hsn_code": "15180040",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "SAMBAR PODI",
+    "normalized_term": "SAMBAR PODI",
+    "english_term": "sambar masala powder spice",
+    "hsn_code": "09109100",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "RASAM PODI",
+    "normalized_term": "RASAM PODI",
+    "english_term": "rasam powder spice",
+    "hsn_code": "09109100",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "APPAM PODI",
+    "normalized_term": "APPAM PODI",
+    "english_term": "appam idiyappam rice flour batter",
+    "hsn_code": "11029090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PUTTU",
+    "normalized_term": "PUTTU",
+    "english_term": "puttu rice flour steamed",
+    "hsn_code": "11023000",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "AVAL",
+    "normalized_term": "AVAL",
+    "english_term": "beaten rice poha flattened",
+    "hsn_code": "19041020",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "MATTA",
+    "normalized_term": "MATTA",
+    "english_term": "matta rice rosematta red rice",
+    "hsn_code": "10063090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "KAPPA",
+    "normalized_term": "KAPPA",
+    "english_term": "cassava tapioca kappa",
+    "hsn_code": "20081940",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHAKKA",
+    "normalized_term": "CHAKKA",
+    "english_term": "jackfruit fresh tropical",
+    "hsn_code": "08109040",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "VAZHAKKA",
+    "normalized_term": "VAZHAKKA",
+    "english_term": "plantain banana raw cooking",
+    "hsn_code": "08030090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "NELLIKKA",
+    "normalized_term": "NELLIKKA",
+    "english_term": "amla gooseberry fruit fresh",
+    "hsn_code": "08109060",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "MURINGAKKA",
+    "normalized_term": "MURINGAKKA",
+    "english_term": "drumstick moringa pods fresh",
+    "hsn_code": "07099300",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PAVAKKA",
+    "normalized_term": "PAVAKKA",
+    "english_term": "bitter gourd karela vegetable",
+    "hsn_code": "07099910",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "VELLAM",
+    "normalized_term": "VELLAM",
+    "english_term": "jaggery gur",
+    "hsn_code": "17011410",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "SHARKARA",
+    "normalized_term": "SHARKARA",
+    "english_term": "jaggery sugar",
+    "hsn_code": "17011410",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "THENGA",
+    "normalized_term": "THENGA",
+    "english_term": "coconut fresh",
+    "hsn_code": "08011200",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "NADAN",
+    "normalized_term": "NADAN",
+    "english_term": "traditional local country style",
+    "priority": 90,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PATHIRI",
+    "normalized_term": "PATHIRI",
+    "english_term": "rice bread flat roti rice",
+    "hsn_code": "19052090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PAROTTA",
+    "normalized_term": "PAROTTA",
+    "english_term": "layered flatbread maida kerala",
+    "hsn_code": "19059090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "UNNIYAPPAM",
+    "normalized_term": "UNNIYAPPAM",
+    "english_term": "rice sweet appam ball fried",
+    "hsn_code": "19041090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "MURUKKU",
+    "normalized_term": "MURUKKU",
+    "english_term": "rice lentil snack fried",
+    "hsn_code": "19059030",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "BEEDI",
+    "normalized_term": "BEEDI",
+    "english_term": "beedi bidi tobacco rolled leaf",
+    "hsn_code": "24031910",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "VCO",
+    "normalized_term": "VCO",
+    "english_term": "virgin coconut oil cold pressed",
+    "hsn_code": "15131190",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "KUDAMPULI",
+    "normalized_term": "KUDAMPULI",
+    "english_term": "gamboge kokum fruit garcinia",
+    "hsn_code": "08109090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PALPAYASAM",
+    "normalized_term": "PALPAYASAM",
+    "english_term": "milk rice payasam kheer",
+    "hsn_code": "21069099",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PAYASAM",
+    "normalized_term": "PAYASAM",
+    "english_term": "payasam mix palada kheer",
+    "hsn_code": "19019090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "KOZHUVA",
+    "normalized_term": "KOZHUVA",
+    "english_term": "anchovy fish kozhuva sardine",
+    "hsn_code": "03083020",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "NJANDU",
+    "normalized_term": "NJANDU",
+    "english_term": "crab crustacean seafood frozen",
+    "hsn_code": "03061400",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHENA",
+    "normalized_term": "CHENA",
+    "english_term": "yam elephant foot vegetable",
+    "hsn_code": "07149020",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHEMBU",
+    "normalized_term": "CHEMBU",
+    "english_term": "taro colocasia root vegetable",
+    "hsn_code": "07149090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "CHEERA",
+    "normalized_term": "CHEERA",
+    "english_term": "amaranth spinach red leaves",
+    "hsn_code": "07099990",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "MANJAL",
+    "normalized_term": "MANJAL",
+    "english_term": "turmeric powder haldi",
+    "hsn_code": "09103010",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "INCHI",
+    "normalized_term": "INCHI",
+    "english_term": "ginger fresh dry root spice",
+    "hsn_code": "09101110",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "KURUMULAKU",
+    "normalized_term": "KURUMULAKU",
+    "english_term": "black pepper whole peppercorn",
+    "hsn_code": "09041110",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "MULAKU",
+    "normalized_term": "MULAKU",
+    "english_term": "dry chilli pepper red",
+    "hsn_code": "09042210",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "JEERAKAM",
+    "normalized_term": "JEERAKAM",
+    "english_term": "cumin seeds whole jeera",
+    "hsn_code": "09093100",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "THEAN",
+    "normalized_term": "THEAN",
+    "english_term": "honey bee natural product",
+    "hsn_code": "04090000",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "COIR",
+    "normalized_term": "COIR",
+    "english_term": "coir coconut fibre rope mat",
+    "hsn_code": "53050090",
+    "priority": 100,
+    "is_active": true
+  },
+  {
+    "language_code": "ml-roman",
+    "original_term": "PATHIMUGHAM",
+    "normalized_term": "PATHIMUGHAM",
+    "english_term": "sarsaparilla hemidesmus herbal",
+    "hsn_code": "12119099",
+    "priority": 100,
+    "is_active": true
+  }
+]

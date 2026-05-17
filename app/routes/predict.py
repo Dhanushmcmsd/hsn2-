@@ -12,7 +12,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.database import get_db, Prediction, VerifiedProduct
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.matcher import strip_sizes
-from app.services.kerala_search import expand_kerala_query, kerala_fallback_search
+from app.services.kerala_search import kerala_fallback_search
+from app.services.retail_preprocess import preprocess_retail_query
+from app.services.search_thresholds import (
+    PREDICT_BRAND_SIM_THRESHOLD,
+    PREDICT_INVERTED_SIM_THRESHOLD,
+    PREDICT_PRODUCT_SIM_THRESHOLD,
+    PREDICT_TRGM_SIM_THRESHOLD,
+)
 from app.services.db_matcher import match_query
 from app.services.confidence import score_result
 from app.services.normalizer import normalize_product_name
@@ -94,12 +101,8 @@ async def _fetch_verified_single_pass(db: AsyncSession, body_text: str):
     """One round-trip for exact / Kerala-expanded / no-size verified rows (priority preserved)."""
     normalized = body_text.upper().strip()
     no_size_val = strip_sizes(body_text)
-    try:
-        kerala_expanded = expand_kerala_query(body_text)
-    except Exception as exc:
-        log.info("predict.kerala_expand_unavailable", error=str(exc))
-        kerala_expanded = body_text
-    kerala_norm = kerala_expanded.upper().strip()
+    prep = preprocess_retail_query(body_text, for_classify=False)
+    kerala_norm = (prep.malayalam_expanded or body_text).upper().strip()
 
     priority = case(
         (VerifiedProduct.description_normalized == normalized, 1),
@@ -148,13 +151,14 @@ async def predict(
 
     request_id = str(uuid.uuid4())
 
-    normalized_query = normalize_product_name(body.text)
+    prep = preprocess_retail_query(body.text or "", for_classify=False)
+    normalized_query = prep.normalized or normalize_product_name(body.text)
     if not normalized_query:
         normalized_query = (body.text or "").strip()
     if not normalized_query:
         raise HTTPException(status_code=422, detail="Product description is empty")
 
-    cache_key = _match_cache_key(normalized_query)
+    cache_key = _match_cache_key(prep.canonical or normalized_query)
     cached = await get_cache(cache_key)
     if cached:
         log.info("predict.cache_hit", text=body.text[:50])
@@ -166,7 +170,7 @@ async def predict(
     try:
         from app.services import aliases as alias_svc
 
-        expanded = await alias_svc.expand_query(db, normalized_query)
+        expanded = await alias_svc.expand_query(db, normalized_query, for_classify=False)
         if expanded.english_query and expanded.english_query.strip():
             search_text = expanded.english_query.strip()
     except Exception as exc:
@@ -180,7 +184,12 @@ async def predict(
     # broom, toothbrush, etc.) and returns None for them immediately.
     brand_result: dict | None = None
     try:
-        brand_result = await brand_lookup(db, search_text, min_score=0.50)
+        brand_result = await brand_lookup(
+            db,
+            search_text,
+            min_score=PREDICT_BRAND_SIM_THRESHOLD,
+            for_classify=False,
+        )
     except Exception as exc:
         log.info("predict.brand_lookup_failed", error=str(exc))
 
@@ -260,7 +269,7 @@ async def predict(
         elapsed = (time.perf_counter() - start) * 1000
     else:
         inv_matches = await inverted_index.search(db, search_text, limit=5)
-        if inv_matches and inv_matches[0].get("score", 0) >= 0.50:
+        if inv_matches and inv_matches[0].get("score", 0) >= PREDICT_INVERTED_SIM_THRESHOLD:
             top = inv_matches[0]
             top.setdefault("source", "inverted_index")
             alternatives = inv_matches[1:]
@@ -270,7 +279,7 @@ async def predict(
             elapsed = (time.perf_counter() - start) * 1000
         else:
             trgm_matches = await inverted_index.fuzzy_trgm(db, search_text, limit=5)
-            if trgm_matches and trgm_matches[0].get("score", 0) >= 0.40:
+            if trgm_matches and trgm_matches[0].get("score", 0) >= PREDICT_TRGM_SIM_THRESHOLD:
                 top = trgm_matches[0]
                 top.setdefault("source", "trigram")
                 alternatives = trgm_matches[1:]
@@ -283,7 +292,7 @@ async def predict(
                 prod_result = await search_by_product_name(db, search_text)
                 if not prod_result:
                     prod_result = await search_by_brand_and_type(db, search_text)
-                if prod_result and prod_result.get("score", 0) >= 0.35:
+                if prod_result and prod_result.get("score", 0) >= PREDICT_PRODUCT_SIM_THRESHOLD:
                     matches = [prod_result]
                 else:
                     pg_results = await pg_search(db, search_text, top_k=5)

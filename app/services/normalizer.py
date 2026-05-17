@@ -142,6 +142,33 @@ _PURE_NUM_PAT = re.compile(r'\b\d+\b')
 _MODEL_CODE_PAT = re.compile(r'\b[A-Z]{0,3}\d{2,}[A-Z0-9]{0,4}\b')
 _MULT_PAT = re.compile(r'\*|\bX\d+\b|\d+X\b', re.IGNORECASE)
 
+# Bill/OCR typos common on Kerala retail invoices (applied before tokenization)
+_RETAIL_TYPO_FIXES: list[tuple[str, str]] = [
+    (r"\bCOCUNUT\b", "COCONUT"),
+    (r"\bP\s*\.?\s*COCONUT\b", "P COCONUT"),
+    (r"\bREFIL\b", "REFILL"),
+    (r"\bCOMPUND\b", "COMPOUND"),
+    (r"\bBIKIS\b", "BISCUIT"),
+    (r"\bHORLICKS\b", "HORLICKS"),
+    (r"\bSURF\s+EXCEL\b", "SURF EXCEL"),
+    (r"\bEASY\s+WASH\b", "EASY WASH"),
+    (r"\bAASHIRVAAD\b", "AASHIRVAAD"),
+    (r"\bAASHIRWAD\b", "AASHIRVAAD"),
+    (r"\bCLINIC\s*\+\b", "CLINIC PLUS"),
+    (r"\bMILK\s+BIKIS\b", "MILK BIKIS"),
+    (r"\bPARLE\s*G\b", "PARLE G"),
+    (r"\bUDHAYAM\b", "UDAYAM"),
+    (r"\bVELLAM\b", "JAGGERY"),
+    (r"\bSHARKARA\b", "JAGGERY"),
+    (r"\bMATTA\s+RICE\b", "MATTA RICE"),
+    (r"\bRICE\s+MATTA\b", "MATTA RICE"),
+    (r"\bTOOR\s+DAL\b", "TOOR DAL"),
+    (r"\bASAFOETIDA\b", "ASAFOETIDA"),
+    (r"\bAPPAM\s+PODI\b", "APPAM PODI"),
+    (r"\bCHEMMEEN\s+ACHAR\b", "PICKLED PRAWN"),
+    (r"\bBANANA\s+CHIPS\b", "BANANA CHIPS"),
+]
+
 _BRAND_FIRST_TOKENS = frozenset({
     'COLGATE', 'PEPSODENT', 'LUX', 'DOVE', 'DETTOL', 'LIFEBUOY', 'SURF', 'ARIEL',
     'TIDE', 'RIN', 'VIM', 'LIZOL', 'HARPIC', 'DOMEX', 'PARACHUTE', 'SAFFOLA', 'FORTUNE', 'AMUL',
@@ -167,11 +194,22 @@ def _has_script_chars(text: str) -> bool:
     return bool(_NON_ASCII_RE.search(text))
 
 
+def fix_retail_typos(text: str) -> str:
+    """Fix common OCR / invoice typos on ASCII retail product names."""
+    if not text or _has_script_chars(text):
+        return text
+    out = text.upper()
+    for pattern, replacement in _RETAIL_TYPO_FIXES:
+        out = re.sub(pattern, replacement, out, flags=re.IGNORECASE)
+    return out
+
+
 def expand_pos_abbreviations(text: str) -> str:
     """Expand Indian retail POS abbreviations before matching."""
     if not text:
         return ''
-    out = text.upper()
+    out = fix_retail_typos(text)
+    out = out.upper()
     for pattern, replacement in _POS_ABBR_PATTERNS:
         out = re.sub(pattern, replacement, out, flags=re.IGNORECASE)
     return out

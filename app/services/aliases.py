@@ -26,6 +26,7 @@ import time
 import unicodedata
 from collections import OrderedDict
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Iterable
 
 import structlog
@@ -39,10 +40,13 @@ MAX_EXPANSIONS_PER_QUERY = 12
 DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
 MALAYALAM_RE = re.compile(r"[\u0D00-\u0D7F]")
 
-# Token-level fuzzy lookup tuning: kept conservative so we don't pollute the
-# expansion with weak matches that would mis-direct the downstream search.
-FUZZY_MIN_TRGM_SIM = 0.50          # require at least 50% trigram similarity
-FUZZY_PHONETIC_MIN_TRGM = 0.40     # phonetic match still needs 40% lexical overlap
+# Token-level fuzzy lookup tuning (defaults for predict path; classify overrides per call)
+from app.services.search_thresholds import (
+    PREDICT_ALIAS_FUZZY_MIN_TRGM as FUZZY_MIN_TRGM_SIM,
+    PREDICT_ALIAS_PHONETIC_MIN_TRGM as FUZZY_PHONETIC_MIN_TRGM,
+    alias_fuzzy_min_trgm,
+    alias_phonetic_min_trgm,
+)
 FUZZY_MIN_TOKEN_LEN = 3            # don't fuzzy-match 1-2 char tokens (too noisy)
 FUZZY_LRU_CAPACITY = 1024          # ~50KB at most
 FUZZY_LOOKUP_TIMEOUT_S = 0.35      # never block longer than this on the resolver
@@ -72,6 +76,8 @@ _INDEX = AliasIndex()
 _LOCK = asyncio.Lock()
 _FUZZY_LRU: OrderedDict[str, list[dict]] = OrderedDict()
 _FUZZY_LRU_LOCK = asyncio.Lock()
+_LOCAL_KERALA_MERGED = False
+_KERALA_JSON = Path(__file__).resolve().parents[2] / "data" / "kerala_retail_aliases.json"
 
 
 def _fuzzy_cache_get(key: str) -> list[dict] | None:
@@ -308,7 +314,57 @@ def _ensure_loaded() -> bool:
     return not _INDEX.is_empty
 
 
-async def _fuzzy_resolve_token(db: AsyncSession, token: str) -> list[dict]:
+def _merge_local_kerala_fallback() -> None:
+    """Load Kerala JSON corpus into memory when Postgres language_aliases is unavailable."""
+    global _LOCAL_KERALA_MERGED
+    if _LOCAL_KERALA_MERGED or not _INDEX.is_empty:
+        return
+    if not _KERALA_JSON.exists():
+        _LOCAL_KERALA_MERGED = True
+        return
+    try:
+        from app.services.kerala_seed import dedupe_for_upsert, load_corpus, validate_and_normalize_corpus
+
+        raw = load_corpus(_KERALA_JSON)
+        rows, errors = validate_and_normalize_corpus(raw)
+        if errors:
+            log.warning("aliases.local_kerala_validation_errors", count=len(errors))
+        for row in dedupe_for_upsert(rows):
+            payload = {
+                "term": row["term"],
+                "term_normalized": row["term_normalized"],
+                "language": row["language"],
+                "hsn_code": row["hsn_code"],
+                "english_term": row["english_term"],
+                "weight": float(row["weight"]),
+            }
+            _INDEX.by_normalized.setdefault(row["term_normalized"], []).append(payload)
+            _INDEX.by_raw_term.setdefault((row["term"] or "").strip(), []).append(payload)
+            _INDEX.languages.add(row["language"])
+        _INDEX.loaded_at = time.monotonic()
+        _LOCAL_KERALA_MERGED = True
+        log.info("aliases.local_kerala_loaded", entries=len(rows))
+    except Exception as exc:
+        log.warning("aliases.local_kerala_failed", error=str(exc)[:120])
+        _LOCAL_KERALA_MERGED = True
+
+
+def local_kerala_fallback_stats() -> dict[str, int | bool]:
+    _merge_local_kerala_fallback()
+    ml = sum(1 for k, v in _INDEX.by_normalized.items() if v and v[0].get("language", "").startswith("ml"))
+    return {
+        "loaded": _LOCAL_KERALA_MERGED,
+        "malayalam_keys": ml,
+        "total_normalized_keys": len(_INDEX.by_normalized),
+    }
+
+
+async def _fuzzy_resolve_token(
+    db: AsyncSession,
+    token: str,
+    *,
+    for_classify: bool = False,
+) -> list[dict]:
     """Resolve a single Romanized token via trigram + phonetic match.
 
     Returns a list of alias-row dicts (term, language, hsn_code, english_term,
@@ -330,8 +386,10 @@ async def _fuzzy_resolve_token(db: AsyncSession, token: str) -> list[dict]:
         if cached is not None:
             return cached
 
+        min_trgm = alias_fuzzy_min_trgm(for_classify=for_classify)
+        phon_min = alias_phonetic_min_trgm(for_classify=for_classify)
         try:
-            await db.execute(text("SELECT set_limit(:s)"), {"s": float(FUZZY_PHONETIC_MIN_TRGM)})
+            await db.execute(text("SELECT set_limit(:s)"), {"s": float(phon_min)})
             rows = (
                 await asyncio.wait_for(
                     db.execute(_FUZZY_SQL, {"token": token}),
@@ -350,7 +408,7 @@ async def _fuzzy_resolve_token(db: AsyncSession, token: str) -> list[dict]:
             # Two acceptance paths:
             #   1) High lexical (trigram) similarity            \u2192 strong typo match
             #   2) Phonetic match + acceptable lexical similarity \u2192 catches paani/pani/panee
-            if sim >= FUZZY_MIN_TRGM_SIM or (is_phon and sim >= FUZZY_PHONETIC_MIN_TRGM):
+            if sim >= min_trgm or (is_phon and sim >= phon_min):
                 out.append(
                     {
                         "term": r["term"],
@@ -367,10 +425,17 @@ async def _fuzzy_resolve_token(db: AsyncSession, token: str) -> list[dict]:
         return out
 
 
-async def expand_query(db: AsyncSession, query: str) -> ExpansionResult:
+async def expand_query(
+    db: AsyncSession,
+    query: str,
+    *,
+    for_classify: bool = False,
+) -> ExpansionResult:
     """Public entry: refresh cache lazily then expand. Falls through to fuzzy
     + phonetic resolution for any token that the in-memory exact map misses."""
     await refresh(db)
+    if not _ensure_loaded():
+        _merge_local_kerala_fallback()
     base = (query or "").strip()
     detected = detect_language(base)
     if not base:
@@ -406,7 +471,7 @@ async def expand_query(db: AsyncSession, query: str) -> ExpansionResult:
     extra_hints: list[dict] = list(fast.direct_hsn_hints)
 
     fuzzy_results = await asyncio.gather(
-        *(_fuzzy_resolve_token(db, t) for t in unresolved),
+        *(_fuzzy_resolve_token(db, t, for_classify=for_classify) for t in unresolved),
         return_exceptions=True,
     )
 

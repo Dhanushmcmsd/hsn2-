@@ -545,7 +545,14 @@ async def multi_search(
             keywords = extract_product_keywords(raw_q)
             if keywords:
                 kw = await keyword_hsn_search(db, keywords)
-                if kw and kw.get("hsn_code") and not is_unclassified_hsn(kw.get("hsn_code")):
+                hsn_kw = (kw or {}).get("hsn_code") or ""
+                digits = re.sub(r"[^0-9]", "", str(hsn_kw))
+                valid_kw_hsn = len(digits) in (2, 4, 6, 8)
+                if (
+                    kw
+                    and valid_kw_hsn
+                    and not is_unclassified_hsn(hsn_kw)
+                ):
                     conf = int(kw.get("confidence", 0))
                     final = [{
                         "hsn_code": kw["hsn_code"],

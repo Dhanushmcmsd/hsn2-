@@ -32,9 +32,14 @@ import structlog
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.services.search_thresholds import (
+    SHORT_AMBIGUOUS_NON_BRAND_TERMS,
+    effective_brand_trgm_min,
+)
+
 log = structlog.get_logger()
 
-# Minimum similarity score to accept a brand match
+# Minimum similarity score to accept a brand match (predict / exploratory default)
 _BRAND_TRGM_MIN_SIM = 0.35
 _CATEGORY_TRGM_MIN_SIM = 0.25
 
@@ -190,14 +195,19 @@ _BRAND_FUZZY_SQL = text("""
 """)
 
 
-async def _tier2_fuzzy_brand(db: AsyncSession, brand: str) -> dict | None:
+async def _tier2_fuzzy_brand(
+    db: AsyncSession,
+    brand: str,
+    *,
+    min_trgm: float,
+) -> dict | None:
     """Trigram fuzzy brand match — catches partial names and minor typos."""
     try:
-        await db.execute(text("SELECT set_limit(:s)"), {"s": _BRAND_TRGM_MIN_SIM})
+        await db.execute(text("SELECT set_limit(:s)"), {"s": min_trgm})
         row = (
             await db.execute(
                 _BRAND_FUZZY_SQL,
-                {"brand": brand.strip(), "bad_hsn": _UNCLASSIFIED_HSN, "min_sim": _BRAND_TRGM_MIN_SIM},
+                {"brand": brand.strip(), "bad_hsn": _UNCLASSIFIED_HSN, "min_sim": min_trgm},
             )
         ).mappings().first()
     except Exception as exc:
@@ -288,6 +298,7 @@ async def brand_lookup(
     query: str,
     *,
     min_score: float = 0.30,
+    for_classify: bool = False,
 ) -> dict[str, Any] | None:
     """Multi-tier brand search. Returns the first confident result or None.
 
@@ -316,7 +327,8 @@ async def brand_lookup(
     # ── Early exit: skip brand pipeline for known non-brand commodity terms ──
     # This prevents Tier-3 category keyword matching from stealing generic
     # product names that should be classified by the HSN code search layers.
-    if brand_token.upper() in _NON_BRAND_TERMS and " " not in q.strip():
+    ambiguous = _NON_BRAND_TERMS | SHORT_AMBIGUOUS_NON_BRAND_TERMS
+    if brand_token.upper() in ambiguous and " " not in q.strip():
         log.debug("brand_search.non_brand_passthrough", term=brand_token)
         return None
 
@@ -339,9 +351,11 @@ async def brand_lookup(
         log.info("brand_search.tier1_hit", brand=brand_token, hsn=result["hsn_code"])
         return result
 
-    # Tier 2: fuzzy brand match (only for queries >= 4 chars to avoid false positives)
-    if len(brand_token) >= 4:
-        result = await _tier2_fuzzy_brand(db, brand_token)
+    # Tier 2: fuzzy brand match — stricter on classify; skip very short tokens unless exact hit
+    min_trgm = effective_brand_trgm_min(brand_token, for_classify=for_classify)
+    min_len_for_fuzzy = 5 if for_classify else 4
+    if len(brand_token) >= min_len_for_fuzzy:
+        result = await _tier2_fuzzy_brand(db, brand_token, min_trgm=min_trgm)
         if result and result["score"] >= min_score:
             log.info("brand_search.tier2_hit", brand=brand_token, hsn=result["hsn_code"])
             return result

@@ -24,13 +24,22 @@ _INVALID_HSN = frozenset({"", "UNKNOWN", "UNCLASSIFIED", "99999999", None})
 
 _TIER_BUCKETS = (
     ("L0 verified_products", ("L0_verified_product",)),
-    ("L0 alias_dict", ("L0_alias_dict", "L1_brand_alias", "in_memory_alias", "L0_alias_dict")),
+    ("L0 Kerala retail", ("L0_kerala_retail", "kerala_alias", "kerala_")),
+    ("L0 alias_dict", ("L0_alias_dict", "in_memory_alias")),
     ("L1 brand_aliases", ("brand_alias", "L1_brand_alias")),
+    ("language_aliases", ("language_alias", "alias_expand")),
     ("L3 curated_master", ("L3_curated_master", "curated_master")),
-    ("L4 tariff_fallback", ("L4_tariff_fallback", "tariff", "inverted", "multi_layer")),
+    ("L4 tariff_fallback", ("L4_tariff_fallback", "L4_keyword", "tariff")),
+    ("L5 broad_resolution", ("L5_fuzzy", "L5_broad", "multi_layer", "inverted", "trigram")),
     ("L5 keyword_fallback", ("L5_keyword_fallback", "keyword_hsn_search")),
     ("UNCLASSIFIED", ("L6_pending_review", "pending_review", "UNCLASSIFIED")),
 )
+
+_MALAYALAM_RE = __import__("re").compile(r"[\u0D00-\u0D7F]")
+_KERALA_ROMAN_HINTS = frozenset({
+    "MANJAL", "CHERUPAYAR", "CHEMMEEN", "PUJA", "SAMBAR", "RASAM", "PUTTU", "AVAL",
+    "MATTA", "KAPPA", "CHAKKA", "VAZHAKKA", "KARIMEEN", "VELLAM", "CHAYA",
+})
 
 
 def _load_env_neon() -> None:
@@ -75,6 +84,81 @@ def _is_detected(result: dict) -> bool:
     if result.get("needs_manual_review") or result.get("review_required"):
         return False
     return True
+
+
+def _is_kerala_style(description: str) -> bool:
+    if _MALAYALAM_RE.search(description or ""):
+        return True
+    upper = (description or "").upper()
+    return any(h in upper for h in _KERALA_ROMAN_HINTS)
+
+
+def _kerala_layer_bucket(layer: str | None) -> str:
+    layer_l = (layer or "").lower()
+    if "l0_kerala" in layer_l or layer_l.startswith("kerala_"):
+        return "L0_kerala_retail"
+    if "language_alias" in layer_l or "alias_expand" in layer_l:
+        return "language_aliases"
+    if "l5" in layer_l or "fuzzy" in layer_l or "multi_layer" in layer_l:
+        return "L5_broad_resolution"
+    if "l6" in layer_l or "pending" in layer_l or "unclassified" in layer_l:
+        return "L6_pending_review"
+    if layer_l.startswith("l0") or "verified" in layer_l:
+        return "L0_exact_other"
+    return "other"
+
+
+def _print_kerala_summary(rows: list[dict]) -> None:
+    kerala_rows = [r for r in rows if _is_kerala_style(r.get("description", ""))]
+    if not kerala_rows:
+        print("\n(No Kerala-style rows detected in this sample.)")
+        return
+
+    exact = authoritative = pending = 0
+    layer_counts: Counter[str] = Counter()
+    unresolved: Counter[str] = Counter()
+
+    for r in kerala_rows:
+        layer_counts[_kerala_layer_bucket(r.get("layer_matched"))] += 1
+        if r.get("detected"):
+            conf = int(r.get("confidence") or 0)
+            if conf >= 95:
+                exact += 1
+            elif conf >= 70:
+                authoritative += 1
+        elif _kerala_layer_bucket(r.get("layer_matched")) == "L6_pending_review":
+            pending += 1
+            unresolved[r.get("description", "")[:60]] += 1
+
+    total = len(kerala_rows)
+    print("\n┌─────────────────────────────────────────────────────────────┐")
+    print("│           KERALA / MALAYALAM HIT-RATE SUMMARY               │")
+    print("├─────────────────────────────────────────────────────────────┤")
+    print(f"│ Kerala-style rows in sample     │ {total:8d}              │")
+    print(f"│ Exact-tier hits (conf ≥95)        │ {exact:8d} ({100*exact/total:5.1f}%) │")
+    print(f"│ Authoritative (conf ≥70)        │ {authoritative:8d} ({100*authoritative/total:5.1f}%) │")
+    print(f"│ Pending / L6 review             │ {pending:8d} ({100*pending/total:5.1f}%) │")
+    print("├─────────────────────────────────────────────────────────────┤")
+    for label in ("L0_kerala_retail", "language_aliases", "L5_broad_resolution", "L6_pending_review", "other"):
+        n = layer_counts.get(label, 0)
+        if n:
+            print(f"│ {label:<30} │ {n:8d}              │")
+    print("└─────────────────────────────────────────────────────────────┘")
+    if unresolved:
+        print("\nTop unresolved Malayalam/Kerala terms:")
+        for term, cnt in unresolved.most_common(15):
+            print(f"  {cnt}x  {term}")
+
+
+def _compare_reports(before_path: Path, after_path: Path) -> None:
+    before = json.loads(before_path.read_text(encoding="utf-8"))
+    after = json.loads(after_path.read_text(encoding="utf-8"))
+    print("\n=== Before / After comparison ===")
+    print(
+        f"Detection: {before.get('detection_score_pct')}% -> {after.get('detection_score_pct')}% "
+        f"({before.get('detected')}/{before.get('total_products')} -> "
+        f"{after.get('detected')}/{after.get('total_products')})"
+    )
 
 
 def _tier_bucket(layer: str | None) -> str:
@@ -238,6 +322,7 @@ async def main_async(args: argparse.Namespace) -> int:
     if not args.quick:
         print(f"\nDetection score: {score_pct}% ({len(detected)}/{len(rows)})")
     _print_tier_table(rows, len(rows))
+    _print_kerala_summary(rows)
 
     report = {
         "excel": str(args.excel),
@@ -248,10 +333,13 @@ async def main_async(args: argparse.Namespace) -> int:
         "detection_score_pct": score_pct,
         "undetected_products": missed,
         "detected_products": detected,
+        "kerala_style_total": sum(1 for r in rows if _is_kerala_style(r.get("description", ""))),
     }
-    args.output.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     if not args.quick:
         print(f"Report: {args.output}")
+    if args.compare_before and args.compare_before.exists():
+        _compare_reports(args.compare_before, args.output)
     return 0
 
 
@@ -260,8 +348,23 @@ def main() -> int:
     parser.add_argument("--excel", type=Path, default=_DEFAULT_EXCEL)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--sample", type=int, default=None)
-    parser.add_argument("--quick", action="store_true")
+    parser.add_argument(
+        "--quick",
+        action="store_true",
+        help="Shorter run: default sample=200 and suppress verbose summary",
+    )
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Run full catalog (overrides --quick default sample)",
+    )
     parser.add_argument("--neon", action="store_true")
+    parser.add_argument(
+        "--compare-before",
+        type=Path,
+        default=None,
+        help="Previous client_excel_report.json for before/after metrics",
+    )
     parser.add_argument(
         "--skip-faiss",
         action="store_true",
@@ -270,7 +373,7 @@ def main() -> int:
     parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--output", type=Path, default=ROOT / "scripts" / "client_excel_report.json")
     args = parser.parse_args()
-    if args.quick and not args.sample:
+    if args.quick and not args.sample and not args.full:
         args.sample = 200
     if not args.excel.exists():
         sys.exit(f"Excel not found: {args.excel}")

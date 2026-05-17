@@ -13,6 +13,11 @@ from app.services.kerala_aliases import (
     KERALA_BRANDS,
 )
 from app.services.matcher import expand_fmcg_abbreviations, strip_sizes, tokenize
+from app.services.retail_preprocess import (
+    MALAYALAM_TRANSLITERATIONS,
+    apply_kerala_expansion,
+    expand_kerala_query,
+)
 
 KERALA_FOOD_MAP = {
     "PUTTU": {"search": "puttupodi rice flour", "hsn": "11023000"},
@@ -131,106 +136,7 @@ def _alias_to_match(alias: dict, query: str, *, method: str) -> dict:
     }
 
 
-_MALAYALAM_TRANSLITERATIONS: dict[str, str] = {
-    "payar": "cowpea beans legume",
-    "cheera": "spinach amaranth leafy",
-    "chena": "yam elephant foot",
-    "chembu": "taro colocasia",
-    "muringakka": "drumstick moringa pods",
-    "pavakka": "bitter gourd karela",
-    "kumbalanga": "ash gourd white pumpkin",
-    "mathanga": "pumpkin orange",
-    "vazhuthananga": "brinjal eggplant",
-    "tomato": "tomato fresh vegetable",
-    "beetroot": "beetroot red vegetable",
-    "chakka": "jackfruit tropical",
-    "vazhakka": "plantain banana raw",
-    "ethakka": "nendran banana cooking",
-    "manga": "mango raw green",
-    "naranga": "lime lemon citrus",
-    "nellikka": "amla gooseberry",
-    "kudampuli": "gamboge kokum",
-    "mathi": "sardine fish",
-    "ayala": "mackerel fish",
-    "karimeen": "pearl spot fish",
-    "vaval": "pomfret fish",
-    "chemmeen": "prawn shrimp",
-    "njandu": "crab crustacean",
-    "kozhuva": "anchovy fish",
-    "kalava": "grouper reef fish",
-    "konchu": "lobster prawn seafood",
-    "cherupayar": "green gram moong",
-    "vanpayar": "cowpea red beans",
-    "uzhunnu": "urad black gram",
-    "kadala": "chana chickpea black",
-    "kanji": "rice gruel porridge",
-    "ulli": "onion shallot",
-    "savola": "onion shallot",
-    "inchi": "ginger fresh",
-    "veluthulluli": "garlic cloves",
-    "kurumulaku": "black pepper whole",
-    "mulaku": "chilli pepper dry red",
-    "jeerakam": "cumin jeera seeds",
-    "dhania": "coriander seeds",
-    "manjal": "turmeric haldi",
-    "patta": "cinnamon stick bark",
-    "grambu": "cloves whole spice",
-    "jathikka": "nutmeg seed spice",
-    "thean": "honey natural bee",
-    "nallenna": "sesame gingelly oil",
-    "thenganna": "coconut oil edible",
-    "unniyappam": "rice sweet fried appam",
-    "aluva": "sweet halwa alwa",
-    "ada": "rice payasam ingredient",
-    "palpayasam": "milk rice kheer payasam",
-    "kalathappam": "rice cake steamed",
-    "unnakai": "banana sweet fritter",
-    "achappam": "rose cookie fried sweet",
-    "murukku": "rice lentil snack fried",
-    "avalose": "roasted rice powder mix",
-    "coir": "coconut fibre rope mat",
-    "cpra": "copra dried coconut",
-    "beedi": "bidi tobacco leaf rolled",
-    "parotta": "layered flatbread maida",
-    "pathiri": "rice flatbread roti",
-}
-
-
-def expand_kerala_query(query: str) -> str:
-    """
-    Expand a Kerala trade query:
-    1. Uppercase + normalize whitespace
-    2. Apply KERALA_ABBREVIATIONS (longest match first)
-    3. Apply FMCG abbreviations from matcher
-    4. Apply Malayalam transliterations (word-boundary aware)
-    5. Strip trailing size tokens
-    Returns expanded uppercase string.
-    """
-    normalized = _normalize_ws(query)
-    expanded = normalized
-
-    for raw, replacement in sorted(
-        KERALA_ABBREVIATIONS.items(), key=lambda x: len(x[0]), reverse=True
-    ):
-        pattern = re.compile(
-            rf"(?<![A-Z0-9]){re.escape(raw.upper())}(?![A-Z0-9])"
-        )
-        expanded = pattern.sub(replacement.upper(), expanded)
-
-    expanded = expand_fmcg_abbreviations(expanded).upper()
-
-    lower_expanded = expanded.lower()
-    for mal_word, english_equiv in sorted(
-        _MALAYALAM_TRANSLITERATIONS.items(), key=lambda x: len(x[0]), reverse=True
-    ):
-        pattern = re.compile(
-            rf"\b{re.escape(mal_word.lower())}\b"
-        )
-        if pattern.search(lower_expanded):
-            lower_expanded = pattern.sub(english_equiv.lower(), lower_expanded)
-
-    expanded = lower_expanded.upper()
-    return _normalize_ws(expanded)
+_MALAYALAM_TRANSLITERATIONS = MALAYALAM_TRANSLITERATIONS  # backward compat
 
 
 async def vkc_model_code_lookup(query: str, db: AsyncSession) -> list[dict] | None:

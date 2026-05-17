@@ -22,6 +22,13 @@ import structlog
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.services.search_thresholds import (
+    CLASSIFY_BRAND_HIGH_SIM_THRESHOLD as _BRAND_FUZZY_HIGH_SIM,
+    CLASSIFY_BRAND_SIM_THRESHOLD as _BRAND_FUZZY_MIN_SIM,
+    CLASSIFY_PRODUCT_HIGH_SIM_THRESHOLD as _PRODUCT_FUZZY_HIGH_SIM,
+    CLASSIFY_PRODUCT_SIM_THRESHOLD as _PRODUCT_FUZZY_MIN_SIM,
+)
+
 log = structlog.get_logger()
 
 # Valid Indian GST rates (reject anything not in this set)
@@ -38,7 +45,6 @@ _CACHE_TTL_EXACT = 30 * 24 * 3600   # 30 days for exact/brand matches
 
 # Minimum confidence to return without manual-review flag (tiers 5+)
 _MIN_AUTHORITATIVE_CONFIDENCE = 70
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -173,8 +179,10 @@ async def _finalize_layer_result(
     enriched = await enrich_tax_metadata(db, code, partial=partial)
     review = bool(
         enriched.get("review_required")
-        or enriched.get("confidence", 0) < _MIN_AUTHORITATIVE_CONFIDENCE
-        and enriched.get("tier_used", 0) >= 5
+        or (
+            enriched.get("confidence", 0) < _MIN_AUTHORITATIVE_CONFIDENCE
+            and enriched.get("tier_used", 0) >= 5
+        )
     )
     display = normalize_display_code(
         enriched.get("hsn_code") or code,
@@ -441,7 +449,7 @@ _BRAND_FUZZY_SQL = text("""
            CASE WHEN length(ba.hsn_code) = 4 THEN 'SAC' ELSE 'HSN' END
          ) = 'SAC'
     WHERE ba.is_active = TRUE
-      AND similarity(ba.brand_name_upper, :q) > 0.4
+      AND similarity(ba.brand_name_upper, :q) > :min_sim
     ORDER BY sim DESC
     LIMIT 1
 """)
@@ -453,7 +461,7 @@ _PRODUCT_FUZZY_SQL = text("""
            hm.gst_rate AS hsn_gst_rate
     FROM verified_products vp
     LEFT JOIN hsn_master hm ON hm.hsn_code = vp.hsn_code
-    WHERE similarity(vp.description_normalized, :q) > 0.4
+    WHERE similarity(vp.description_normalized, :q) > :min_sim
     ORDER BY sim DESC
     LIMIT 1
 """)
@@ -462,14 +470,19 @@ _PRODUCT_FUZZY_SQL = text("""
 async def _tier3_fuzzy(db: AsyncSession, query_norm: str) -> dict | None:
     # Try brand fuzzy first
     try:
-        row = (await db.execute(_BRAND_FUZZY_SQL, {"q": query_norm})).mappings().first()
+        row = (
+            await db.execute(
+                _BRAND_FUZZY_SQL,
+                {"q": query_norm, "min_sim": _BRAND_FUZZY_MIN_SIM},
+            )
+        ).mappings().first()
     except Exception as exc:
         log.debug("gst_classifier.tier3_brand_fuzzy_failed", error=str(exc)[:80])
         row = None
 
     if row:
         sim = float(row["sim"] or 0.0)
-        confidence = 85 if sim > 0.6 else 70
+        confidence = 85 if sim >= _BRAND_FUZZY_HIGH_SIM else 70
         log.info("gst_classifier.tier3_brand_fuzzy_hit", q=query_norm[:50], sim=sim)
         code_kind = row.get("code_kind") or "HSN"
         return {
@@ -490,7 +503,12 @@ async def _tier3_fuzzy(db: AsyncSession, query_norm: str) -> dict | None:
 
     # Try product fuzzy
     try:
-        row = (await db.execute(_PRODUCT_FUZZY_SQL, {"q": query_norm})).mappings().first()
+        row = (
+            await db.execute(
+                _PRODUCT_FUZZY_SQL,
+                {"q": query_norm, "min_sim": _PRODUCT_FUZZY_MIN_SIM},
+            )
+        ).mappings().first()
     except Exception as exc:
         log.debug("gst_classifier.tier3_product_fuzzy_failed", error=str(exc)[:80])
         return None
@@ -499,7 +517,7 @@ async def _tier3_fuzzy(db: AsyncSession, query_norm: str) -> dict | None:
         return None
 
     sim = float(row["sim"] or 0.0)
-    confidence = 85 if sim > 0.6 else 70
+    confidence = 85 if sim >= _PRODUCT_FUZZY_HIGH_SIM else 70
     raw_gst = row["gst_rate"]
     if isinstance(raw_gst, str):
         m = re.search(r"(\d+(?:\.\d+)?)", raw_gst)
@@ -691,6 +709,78 @@ async def _tier6_pending_review(
 # ---------------------------------------------------------------------------
 
 
+def _kerala_confidence(method: str, score: float) -> int:
+    """Map Kerala layer method + score to integer confidence for classify tiers."""
+    if method in ("kerala_alias_exact",):
+        return 96
+    if method in ("kerala_alias_prefix", "kerala_vkc_parser", "kerala_vkc_model_lookup"):
+        return 92
+    if method.startswith("kerala_food"):
+        return 90
+    if method.startswith("kerala_brand"):
+        return 88
+    scaled = int(min(90, max(55, score * 100))) if score <= 1.0 else int(score)
+    return scaled
+
+
+async def _tier_kerala_retail(db: AsyncSession, raw_q: str) -> dict[str, Any] | None:
+    """Kerala invoice shorthand + Malayalam transliteration fallback (in-memory first)."""
+    try:
+        from app.services.kerala_search import expand_kerala_query, kerala_fallback_search
+    except Exception as exc:
+        log.debug("gst_classifier.kerala_import_failed", error=str(exc)[:80])
+        return None
+
+    try:
+        results = await kerala_fallback_search(raw_q, db, top_k=1)
+    except Exception as exc:
+        log.debug("gst_classifier.kerala_failed", error=str(exc)[:120])
+        return None
+
+    if not results:
+        return None
+
+    top = results[0]
+    hsn_code = (top.get("hsn_code") or "").strip()
+    if not hsn_code or not _is_valid_hsn(hsn_code) or hsn_code == _UNCLASSIFIED_HSN:
+        return None
+
+    method = str(top.get("method") or "kerala_fallback")
+    score = float(top.get("score") or top.get("confidence") or 0.0)
+    confidence = _kerala_confidence(method, score)
+
+    # Abbrev-expanded DB matches stay below authoritative unless score is very high
+    if method.startswith("kerala_abbrev_") and score < 0.72:
+        confidence = min(confidence, 68)
+
+    review = confidence < _MIN_AUTHORITATIVE_CONFIDENCE
+    gst_val = top.get("gst_rate")
+    if gst_val is not None:
+        gst_val = float(gst_val)
+
+    log.info(
+        "gst_classifier.kerala_hit",
+        q=raw_q[:50],
+        hsn=hsn_code,
+        method=method,
+        confidence=confidence,
+    )
+    return {
+        "hsn_code": hsn_code,
+        "description": top.get("description") or raw_q,
+        "gst_rate": gst_val,
+        "cess_applicable": _cess_for_hsn(hsn_code),
+        "confidence": confidence,
+        "tier_used": 3,
+        "source": method,
+        "verified": not review,
+        "matched_layer": "L0_kerala_retail",
+        "matched_source_table": "kerala_aliases",
+        "trust_level": "curated" if not review else "fuzzy",
+        "review_required": review,
+    }
+
+
 async def _tier5_broad_resolution(
     db: AsyncSession,
     raw_q: str,
@@ -725,10 +815,13 @@ async def classify(
             matched_layer="L6_pending_review",
         )
 
-    query_norm = _normalize_query(raw_q)
-    from app.services.normalizer import normalize_product_name, extract_product_keywords
+    from app.services.normalizer import extract_product_keywords
+    from app.services.retail_preprocess import preprocess_retail_query
 
-    query_clean = normalize_product_name(raw_q).upper() if raw_q else query_norm
+    prep = preprocess_retail_query(raw_q, for_classify=True)
+    query_norm = _normalize_query(prep.normalized or raw_q)
+    query_clean = _normalize_query(prep.typo_fixed or query_norm)
+    kerala_expanded_norm = _normalize_query(prep.malayalam_expanded or query_norm)
 
     from app.services.hsn_master import get_alias_hsn, resolve_alias_gst
     from app.services.classifier_layers import is_sac_code, normalize_display_code
@@ -784,6 +877,8 @@ async def classify(
     verified = await _tier2_exact_product(db, query_norm)
     if not verified and query_clean != query_norm:
         verified = await _tier2_exact_product(db, query_clean)
+    if not verified and kerala_expanded_norm not in (query_norm, query_clean):
+        verified = await _tier2_exact_product(db, kerala_expanded_norm)
     if verified:
         verified["matched_layer"] = "L0_verified_product"
         verified["source"] = verified.get("source") or "verified_product_exact"
@@ -813,7 +908,6 @@ async def classify(
             alias_code,
             code_type="SAC" if is_sac_code(alias_code) else "HSN",
         )
-        elapsed = (time.perf_counter() - started) * 1000
         partial = {
             "hsn_code": display,
             "description": raw_q,
@@ -827,7 +921,23 @@ async def classify(
             "matched_source_table": "in_memory_alias",
             "trust_level": "curated",
         }
-        return await _finalize_layer_result(db, partial, elapsed)
+        final = await _accept_or_accumulate(partial)
+        if final:
+            return final
+
+    # ── L0 Kerala retail: Malayalam transliteration + invoice shorthand ─────────
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_kerala_retail")
+    kerala_hit = await _tier_kerala_retail(db, raw_q)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L0_kerala_retail",
+        hit=kerala_hit is not None,
+        conf=kerala_hit.get("confidence") if kerala_hit else None,
+    )
+    final = await _accept_or_accumulate(kerala_hit)
+    if final:
+        return final
 
     # ── L1: Exact Brand ───────────────────────────────────────────────────────
     log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L1_brand_alias")
@@ -898,6 +1008,13 @@ async def classify(
             kw_result = await keyword_hsn_search(db, keywords)
     except Exception as exc:
         log.debug("gst_classifier.keyword_fallback_failed", error=str(exc)[:120])
+    if kw_result and not _is_valid_hsn(str(kw_result.get("hsn_code", ""))):
+        log.debug(
+            "gst_classifier.keyword_fallback_invalid_hsn",
+            query=raw_q[:60],
+            hsn=kw_result.get("hsn_code"),
+        )
+        kw_result = None
     log.debug(
         "gst_classifier.tier_result",
         query=raw_q[:60],
