@@ -9,6 +9,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.venv-ci-test/
 venv/
 dist/
 build/
@@ -19,6 +20,9 @@ build/
 *.sqlite
 *.sqlite3
 hsn_dev.db
+
+# Generated client Excel reports (large)
+scripts/client_excel_report*.json
 
 # Data files (large)
 data/hsn_codes.csv

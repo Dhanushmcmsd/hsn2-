@@ -1,6 +1,6 @@
 from __future__ import annotations
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from typing import List
 from app.utils.auth import require_admin_key
 from app.services.important_products import get_important_products, save_important_products
@@ -195,3 +195,162 @@ async def batch_analyze_products(admin_key: str = Depends(require_admin_key)):
     
     save_important_products(products)
     return {"results": results, "total_processed": len(results)}
+
+
+# ── Miss log & pending review (active learning) ───────────────────────────────
+
+
+@router.get("/miss-log")
+async def list_miss_log(
+    limit: int = 50,
+    offset: int = 0,
+    min_count: int = 2,
+    admin_key: str = Depends(require_admin_key),
+):
+    from sqlalchemy import text
+    from app.models.database import async_session
+
+    async with async_session() as db:
+        rows = (
+            await db.execute(
+                text("""
+                    SELECT product_name, first_token, hit_count, updated_at
+                    FROM miss_log
+                    WHERE hit_count >= :min_count
+                    ORDER BY hit_count DESC, updated_at DESC
+                    LIMIT :limit OFFSET :offset
+                """),
+                {"min_count": min_count, "limit": limit, "offset": offset},
+            )
+        ).mappings().all()
+    return [dict(r) for r in rows]
+
+
+@router.delete("/miss-log/clear")
+async def clear_miss_log(admin_key: str = Depends(require_admin_key)):
+    from sqlalchemy import text
+    from app.models.database import async_session
+
+    async with async_session() as db:
+        await db.execute(text("DELETE FROM miss_log"))
+        await db.commit()
+    return {"status": "cleared"}
+
+
+@router.get("/pending-review")
+@router.get("/pending-review-queue")
+async def list_pending_review_queue(
+    limit: int = 50,
+    resolved: bool = False,
+    admin_key: str = Depends(require_admin_key),
+):
+    from sqlalchemy import text
+    from app.models.database import async_session
+
+    status = "resolved" if resolved else "pending"
+    async with async_session() as db:
+        rows = (
+            await db.execute(
+                text("""
+                    SELECT id, query AS product_name, best_guess_hsn AS suggested_hsn,
+                           best_guess_gst AS gst_rate, confidence, source AS matched_via,
+                           status, created_at
+                    FROM pending_review
+                    WHERE status = :status
+                    ORDER BY created_at DESC
+                    LIMIT :limit
+                """),
+                {"status": status, "limit": limit},
+            )
+        ).mappings().all()
+    return [dict(r) for r in rows]
+
+
+async def _approve_pending_review_impl(
+    review_id: int,
+    hsn_override: str | None = None,
+    gst_override: float | None = None,
+) -> dict:
+    from sqlalchemy import text
+    from app.models.database import async_session
+
+    async with async_session() as db:
+        row = (
+            await db.execute(
+                text("""
+                    SELECT id, query, best_guess_hsn, best_guess_gst
+                    FROM pending_review WHERE id = :id
+                """),
+                {"id": review_id},
+            )
+        ).mappings().first()
+        if not row:
+            raise HTTPException(status_code=404, detail="Review item not found")
+
+        hsn = hsn_override or row["best_guess_hsn"]
+        gst = gst_override if gst_override is not None else row["best_guess_gst"]
+        product_name = row["query"]
+
+        await db.execute(
+            text("""
+                UPDATE pending_review
+                SET status = 'resolved', resolved_hsn = :hsn, resolved_at = NOW()
+                WHERE id = :id
+            """),
+            {"id": review_id, "hsn": hsn},
+        )
+        await db.execute(
+            text("""
+                INSERT INTO verified_products
+                    (description, description_normalized, description_no_size,
+                     hsn_code, gst_rate, brand)
+                VALUES
+                    (:desc, :norm, :norm, :hsn, :gst, 'admin_approved')
+                ON CONFLICT (description_normalized) DO UPDATE SET
+                    hsn_code = EXCLUDED.hsn_code,
+                    gst_rate = EXCLUDED.gst_rate
+            """),
+            {
+                "desc": product_name,
+                "norm": product_name.upper().strip(),
+                "hsn": hsn,
+                "gst": f"{gst}%" if gst is not None and "%" not in str(gst) else gst,
+            },
+        )
+        await db.commit()
+    return {"status": "approved", "id": review_id, "hsn_code": hsn}
+
+
+@router.post("/approve/{review_id}")
+@router.post("/pending-review-queue/{review_id}/approve")
+async def approve_pending_review(
+    review_id: int,
+    body: dict = Body(default_factory=dict),
+    admin_key: str = Depends(require_admin_key),
+):
+    return await _approve_pending_review_impl(
+        review_id,
+        hsn_override=body.get("hsn_code"),
+        gst_override=body.get("gst_rate"),
+    )
+
+
+@router.post("/bulk-approve")
+@router.post("/pending-review-queue/bulk-approve")
+async def bulk_approve_pending(
+    body: dict = Body(...),
+    admin_key: str = Depends(require_admin_key),
+):
+    ids = body.get("ids") or []
+    hsn_override = body.get("hsn_override")
+    approved = 0
+    for rid in ids:
+        try:
+            await _approve_pending_review_impl(
+                int(rid),
+                hsn_override=hsn_override,
+            )
+            approved += 1
+        except HTTPException:
+            continue
+    return {"approved": approved, "requested": len(ids)}

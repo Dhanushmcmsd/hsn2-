@@ -215,8 +215,19 @@ def _upsert_rows(rows: list[dict], *, dry_run: bool) -> int:
     return count
 
 
+def _load_env_neon() -> None:
+    env_path = ROOT / ".env"
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, _, v = line.partition("=")
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Seed verified_products from client Excel")
+    parser.add_argument("--neon", action="store_true", help="Use Neon Postgres from .env")
     parser.add_argument("--excel", type=Path, default=_DEFAULT_EXCEL)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--concurrency", type=int, default=8)
@@ -232,6 +243,11 @@ def main() -> int:
         help="Upsert rows marked detected=true from scripts/test_client_excel.py output",
     )
     args = parser.parse_args()
+
+    if args.neon:
+        _load_env_neon()
+        if not os.environ.get("DATABASE_URL"):
+            sys.exit("ERROR: DATABASE_URL not found in .env")
 
     if args.from_report:
         os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///./hsn_dev.db")
@@ -277,6 +293,12 @@ def main() -> int:
         print(f"Upserted {n} rows into verified_products")
     elif hits:
         print(f"Dry-run: would upsert {len(hits)} rows")
+
+    if args.neon and not args.dry_run:
+        print("\n=== NEXT STEPS ===")
+        print("1. Run: python scripts/seed_brand_batch.py --report scripts/client_excel_report.json")
+        print("2. Run: python scripts/test_client_excel.py --excel sample.xlsx --neon --quick")
+        print("3. Check the tier breakdown table for L5_keyword_fallback detections")
 
     return 0
 

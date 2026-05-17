@@ -20,6 +20,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Run DB migrations on Neon
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: alembic upgrade head
+
       - name: Run live Postgres integration tests
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

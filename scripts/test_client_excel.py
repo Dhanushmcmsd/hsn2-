@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Score classify + search pipeline against the client Excel product catalog."""
+"""Score classify pipeline against the client Excel product catalog."""
 from __future__ import annotations
 
 import argparse
 import asyncio
 import json
 import os
+import random
 import sys
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +21,26 @@ if not _DEFAULT_EXCEL.exists():
     _DEFAULT_EXCEL = ROOT / "data" / "client_sample.xlsx"
 
 _INVALID_HSN = frozenset({"", "UNKNOWN", "UNCLASSIFIED", "99999999", None})
+
+_TIER_BUCKETS = (
+    ("L0 verified_products", ("L0_verified_product",)),
+    ("L0 alias_dict", ("L0_alias_dict", "L1_brand_alias", "in_memory_alias", "L0_alias_dict")),
+    ("L1 brand_aliases", ("brand_alias", "L1_brand_alias")),
+    ("L3 curated_master", ("L3_curated_master", "curated_master")),
+    ("L4 tariff_fallback", ("L4_tariff_fallback", "tariff", "inverted", "multi_layer")),
+    ("L5 keyword_fallback", ("L5_keyword_fallback", "keyword_hsn_search")),
+    ("UNCLASSIFIED", ("L6_pending_review", "pending_review", "UNCLASSIFIED")),
+)
+
+
+def _load_env_neon() -> None:
+    env_path = ROOT / ".env"
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, _, v = line.partition("=")
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
 def _load_names(path: Path) -> list[str]:
@@ -56,44 +77,83 @@ def _is_detected(result: dict) -> bool:
     return True
 
 
-def _failure_reason(result: dict) -> str:
-    hsn = (result.get("hsn_code") or "").strip()
-    if not hsn or hsn in _INVALID_HSN:
-        return "no_match_all_layers"
-    if result.get("gst_rate") is None:
-        return "hsn_without_gst"
-    conf = int(result.get("confidence") or 0)
-    if conf < 70:
-        return "low_confidence_fuzzy"
-    if result.get("needs_manual_review") or result.get("review_required"):
-        return "queued_manual_review"
-    return "unknown"
+def _tier_bucket(layer: str | None) -> str:
+    layer_l = (layer or "").lower()
+    for label, keys in _TIER_BUCKETS:
+        if any(k.lower() in layer_l for k in keys):
+            return label
+    return "UNCLASSIFIED"
 
 
-async def _run_classify(names: list[str], concurrency: int) -> list[dict]:
+def _print_tier_table(rows: list[dict], total: int) -> None:
+    bucket_conf: dict[str, list[int]] = defaultdict(list)
+    bucket_count: Counter[str] = Counter()
+    for r in rows:
+        if not r.get("detected"):
+            bucket_count["UNCLASSIFIED"] += 1
+            continue
+        b = _tier_bucket(r.get("layer_matched"))
+        bucket_count[b] += 1
+        if r.get("confidence") is not None:
+            bucket_conf[b].append(int(r["confidence"]))
+
+    print("\n┌─────────────────────────────────────────────────────────────┐")
+    print("│              DETECTION BREAKDOWN BY TIER                    │")
+    print("├────────────────────────┬──────────┬──────────┬─────────────┤")
+    print("│ Tier                   │ Detected │ % Total  │ Confidence  │")
+    print("├────────────────────────┼──────────┼──────────┼─────────────┤")
+    detected_total = 0
+    for label, _ in _TIER_BUCKETS:
+        n = bucket_count.get(label, 0)
+        if label == "UNCLASSIFIED":
+            continue
+        detected_total += n
+        pct = 100.0 * n / total if total else 0
+        confs = bucket_conf.get(label, [])
+        avg = f"avg: {sum(confs)/len(confs):.0f}" if confs else "-"
+        print(f"│ {label:<22} │ {n:8d} │ {pct:6.1f}% │ {avg:11} │")
+    uncl = bucket_count.get("UNCLASSIFIED", 0)
+    print(f"│ {'UNCLASSIFIED':<22} │ {uncl:8d} │ {100*uncl/total if total else 0:6.1f}% │ {'-':11} │")
+    print("├────────────────────────┼──────────┼──────────┼─────────────┤")
+    print(f"│ {'TOTAL DETECTED':<22} │ {detected_total:8d} │ {100*detected_total/total if total else 0:6.1f}% │             │")
+    print("└────────────────────────┴──────────┴──────────┴─────────────┘")
+
+
+async def _run_classify(names: list[str], concurrency: int, skip_faiss: bool) -> list[dict]:
     import app.services.gst_classifier as gst_mod
     from app.models.database import async_session, init_db
     from app.services.gst_classifier import classify
 
-    os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///./hsn_dev.db")
     os.environ.setdefault("SECRET_KEY", "excel-test-secret-key-32chars-min")
     os.environ.setdefault("API_KEY", "dev-api-key")
     os.environ.setdefault("ADMIN_API_KEY", "dev-admin-key")
 
-    # Bulk Excel eval: skip FAISS tier-5 (Neon CI / single-query API still uses full stack).
-    async def _skip_tier5_multi(_db, _query: str):
-        return None
-
-    gst_mod._tier5_multi_layer = _skip_tier5_multi
-    print("Note: tier-5 FAISS skipped for bulk Excel scoring (see Neon CI for full stack)")
+    if skip_faiss:
+        async def _skip_tier5_multi(_db, _query: str):
+            return None
+        gst_mod._tier5_multi_layer = _skip_tier5_multi
+        print("Note: tier-5 FAISS skipped (SQLite bulk mode)")
+    else:
+        try:
+            from app.services.matcher import get_matcher
+            get_matcher()
+            print("Matcher warmed (single FAISS load)")
+        except Exception as exc:
+            print(f"Matcher warm-up skipped: {exc}")
 
     await init_db()
     sem = asyncio.Semaphore(concurrency)
     rows: list[dict] = []
-
     done = 0
     total = len(names)
     lock = asyncio.Lock()
+
+    pbar = None
+    try:
+        from tqdm import tqdm
+        pbar = tqdm(total=total, desc="Classifying", unit="product")
+    except ImportError:
+        pass
 
     async def _one(desc: str) -> None:
         nonlocal done
@@ -109,76 +169,68 @@ async def _run_classify(names: list[str], concurrency: int) -> list[dict]:
                 "confidence": out.get("confidence"),
                 "layer_matched": out.get("matched_layer") or out.get("source"),
                 "tier_used": out.get("tier_used"),
-                "failure_reason": None if _is_detected(out) else _failure_reason(out),
+                "failure_reason": None if _is_detected(out) else "no_match_all_layers",
                 "time_ms": round((time.perf_counter() - t0) * 1000, 2),
             }
             async with lock:
                 rows.append(row)
                 done += 1
-                if done % 500 == 0 or done == total:
+                if pbar is not None:
+                    pbar.update(1)
+                elif done % 500 == 0 or done == total:
                     print(f"  classified {done}/{total}...")
 
     await asyncio.gather(*[_one(n) for n in names])
+    if pbar is not None:
+        pbar.close()
     return rows
 
 
-async def _run_search_sample(names: list[str], sample_size: int) -> dict:
-    """Spot-check /search/products (multi_layer) on a sample."""
-    from app.models.database import async_session, init_db
-    from app.services.search_service import search_products
-
-    await init_db()
-    sample = names[:sample_size]
-    ok = 0
-    async with async_session() as db:
-        for q in sample:
-            try:
-                resp = await search_products(db, q, top_k=1)
-                if resp.results and resp.results[0].hsn_code:
-                    ok += 1
-            except Exception:
-                pass
-    return {"sample_size": len(sample), "with_results": ok}
-
-
 async def main_async(args: argparse.Namespace) -> int:
+    if args.neon:
+        _load_env_neon()
+
+    database_url = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./hsn_dev.db")
+    is_postgres = "postgresql" in database_url
+    skip_faiss = not is_postgres
+
+    if args.neon and is_postgres:
+        skip_faiss = False
+        print("Running against Neon Postgres with full pipeline (trgm + fts + FAISS + keyword fallback)")
+
     names = _load_names(args.excel)
-    if args.limit:
+    if args.sample:
+        random.seed(42)
+        names = random.sample(names, min(args.sample, len(names)))
+        print(f"Testing on sample of {len(names)} rows")
+    elif args.limit:
         names = names[: args.limit]
+
     print(f"Testing {len(names)} products from {args.excel}")
 
-    rows = await _run_classify(names, args.concurrency)
+    rows = await _run_classify(names, args.concurrency, skip_faiss=skip_faiss)
     detected = [r for r in rows if r["detected"]]
     missed = [r for r in rows if not r["detected"]]
     missed.sort(key=lambda r: r["description"].upper())
 
-    layer_counts = Counter(r["layer_matched"] for r in detected)
-    reason_counts = Counter(r["failure_reason"] for r in missed)
-
-    search_check = {}
-    if args.check_search:
-        search_check = await _run_search_sample(names, min(50, len(names)))
-
     score_pct = round(100.0 * len(detected) / len(rows), 2) if rows else 0.0
+    if not args.quick:
+        print(f"\nDetection score: {score_pct}% ({len(detected)}/{len(rows)})")
+    _print_tier_table(rows, len(rows))
+
     report = {
         "excel": str(args.excel),
+        "database": "neon" if is_postgres else "sqlite",
         "total_products": len(rows),
         "detected": len(detected),
         "undetected": len(missed),
         "detection_score_pct": score_pct,
-        "layers_used_on_detected": dict(layer_counts),
-        "undetected_by_reason": dict(reason_counts),
-        "search_spot_check": search_check,
         "undetected_products": missed,
         "detected_products": detected,
     }
     args.output.write_text(json.dumps(report, indent=2), encoding="utf-8")
-    print(f"\nDetection score: {score_pct}% ({len(detected)}/{len(rows)})")
-    print("Layers (detected):", dict(layer_counts))
-    print("Failure reasons:", dict(reason_counts))
-    if search_check:
-        print("Search spot-check:", search_check)
-    print(f"Report: {args.output}")
+    if not args.quick:
+        print(f"Report: {args.output}")
     return 0
 
 
@@ -186,10 +238,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--excel", type=Path, default=_DEFAULT_EXCEL)
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--concurrency", type=int, default=6)
-    parser.add_argument("--check-search", action="store_true")
+    parser.add_argument("--sample", type=int, default=None)
+    parser.add_argument("--quick", action="store_true")
+    parser.add_argument("--neon", action="store_true")
+    parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--output", type=Path, default=ROOT / "scripts" / "client_excel_report.json")
     args = parser.parse_args()
+    if args.quick and not args.sample:
+        args.sample = 200
     if not args.excel.exists():
         sys.exit(f"Excel not found: {args.excel}")
     return asyncio.run(main_async(args))

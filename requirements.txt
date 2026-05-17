@@ -38,6 +38,7 @@ nltk>=3.8
 rapidfuzz>=3.6
 python-multipart==0.0.9
 tenacity==8.3.0
+tqdm>=4.66.0
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 passlib[bcrypt]==1.7.4

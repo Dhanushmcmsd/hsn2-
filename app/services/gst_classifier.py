@@ -734,6 +734,9 @@ async def classify(
         )
 
     query_norm = _normalize_query(raw_q)
+    from app.services.normalizer import normalize_product_name, extract_product_keywords
+
+    query_clean = normalize_product_name(raw_q).upper() if raw_q else query_norm
 
     from app.services.hsn_master import get_alias_hsn, resolve_alias_gst
     from app.services.classifier_layers import is_sac_code, normalize_display_code
@@ -771,6 +774,8 @@ async def classify(
 
     # ── L0 client catalog: exact verified_products (client Excel / batches) ───
     verified = await _tier2_exact_product(db, query_norm)
+    if not verified and query_clean != query_norm:
+        verified = await _tier2_exact_product(db, query_clean)
     if verified:
         verified["matched_layer"] = "L0_verified_product"
         verified["source"] = verified.get("source") or "verified_product_exact"
@@ -809,7 +814,7 @@ async def classify(
     # ── L3: Curated Master ──────────────────────────────────────────────────────
     from app.services.classifier_layers import layer_curated_master
 
-    final = await _try_layer(await layer_curated_master(db, query_norm, raw_q))
+    final = await _try_layer(await layer_curated_master(db, query_norm, raw_q or query_clean))
     if final:
         return final
 
@@ -828,7 +833,44 @@ async def classify(
             cache_ttl=_CACHE_TTL_EXACT,
         )
 
+    # ── L5: Keyword extraction fallback (universal, zero-API) ─────────────────
+    try:
+        from app.services.pg_search import keyword_hsn_search
+
+        keywords = extract_product_keywords(raw_q)
+        if keywords:
+            kw_result = await keyword_hsn_search(db, keywords)
+            if kw_result and kw_result.get("hsn_code"):
+                conf = int(kw_result.get("confidence", 0))
+                if conf >= _MIN_AUTHORITATIVE_CONFIDENCE and not kw_result.get("review_required"):
+                    elapsed = (time.perf_counter() - started) * 1000
+                    return await _finalize_layer_result(
+                        db, kw_result, elapsed,
+                        cache_query_norm=query_norm,
+                        cache_ttl=_CACHE_TTL_EXACT,
+                    )
+                if not broad:
+                    broad = kw_result
+    except Exception as exc:
+        log.debug("gst_classifier.keyword_fallback_failed", error=str(exc)[:120])
+
     # ── L6: Manual review (low confidence or no match) ──────────────────────────
+    try:
+        import asyncio as _asyncio
+        from app.services.miss_logger import log_miss as _log_miss
+
+        async def _bg_miss() -> None:
+            try:
+                from app.models.database import async_session
+                async with async_session() as miss_db:
+                    await _log_miss(miss_db, raw_q, query_clean)
+            except Exception:
+                pass
+
+        _asyncio.create_task(_bg_miss())
+    except Exception:
+        pass
+
     pending = await _tier6_pending_review(db, raw_q, query_norm, broad)
     elapsed = (time.perf_counter() - started) * 1000
     code = pending.get("hsn_code") or "UNCLASSIFIED"

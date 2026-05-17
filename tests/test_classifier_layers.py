@@ -20,6 +20,21 @@ class TestCodeTypeHelpers:
         assert normalize_display_code("190190", code_type="HSN") == "19019000"
 
 
+class TestNormalizerPosExpansion:
+    def test_pdr_expands_to_powder(self):
+        from app.services.normalizer import expand_pos_abbreviations, strip_noise_tokens
+
+        assert "POWDER" in expand_pos_abbreviations("MALABAR SAMBAR PDR 200g")
+        cleaned = strip_noise_tokens("12A CARTRIDGE TONER")
+        assert "CARTRIDGE" in cleaned and "TONER" in cleaned
+
+    def test_extract_keywords_strips_brand(self):
+        from app.services.normalizer import extract_product_keywords
+
+        kws = extract_product_keywords("COLGATE STRONG TEETH TOOTHPASTE 200G")
+        assert any("TOOTHPASTE" in k for k in kws)
+
+
 class TestAliasWordBoundary:
     def test_short_alias_does_not_match_inside_word(self):
         from app.services.hsn_master import get_alias_hsn

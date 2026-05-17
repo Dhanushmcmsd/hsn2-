@@ -282,7 +282,9 @@ async def layer_curated_master(
             log.debug("classifier.curated_exact_failed", error=str(exc)[:80])
 
     try:
-        rows = (await db.execute(_CURATED_FUZZY_SQL, {"q": raw_q.lower()})).mappings().all()
+        from app.services.normalizer import normalize_product_name
+        fuzzy_q = normalize_product_name(raw_q).lower() or raw_q.lower()
+        rows = (await db.execute(_CURATED_FUZZY_SQL, {"q": fuzzy_q})).mappings().all()
     except Exception as exc:
         log.debug("classifier.curated_fuzzy_failed", error=str(exc)[:80])
         return None
@@ -361,7 +363,9 @@ async def layer_tariff_fallback(
 
     if not hits:
         try:
-            rows = (await db.execute(_TARIFF_TRGM_SQL, {"q": raw_q.lower()})).mappings().all()
+            from app.services.normalizer import normalize_product_name
+            tariff_q = normalize_product_name(raw_q).lower() or raw_q.lower()
+            rows = (await db.execute(_TARIFF_TRGM_SQL, {"q": tariff_q})).mappings().all()
             for r in rows:
                 sim = float(r.get("sim") or 0.0)
                 hits.append({

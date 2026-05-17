@@ -13,11 +13,111 @@ Requires pg_trgm extension (enabled by the Alembic migration in Problem 6).
 from __future__ import annotations
 
 import re
+from typing import Any
+
 import structlog
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 log = structlog.get_logger()
+
+
+def _is_postgres_db(db: AsyncSession) -> bool:
+    try:
+        bind = db.get_bind()
+        if bind is not None and bind.dialect.name == "postgresql":
+            return True
+    except Exception:
+        pass
+    try:
+        from app.config import settings
+        return "postgresql" in (settings.DATABASE_URL or "").lower()
+    except Exception:
+        return False
+
+
+async def keyword_hsn_search(db: AsyncSession, keywords: list[str]) -> dict[str, Any] | None:
+    """
+    Search hsn_master.description using extracted product-type keywords.
+    Postgres + pg_trgm only; returns None on SQLite or when extension is missing.
+    """
+    if not keywords or not _is_postgres_db(db):
+        log.debug("keyword_hsn_search.skipped", reason="sqlite_or_empty")
+        return None
+
+    from app.services.classifier_layers import enrich_tax_metadata
+
+    query_str = " ".join(keywords)
+    sql = text("""
+        SELECT hm.hsn_code, hm.description, hm.gst_rate, hm.cess_applicable,
+               similarity(lower(hm.description), lower(:q)) AS sim
+        FROM hsn_master hm
+        WHERE hm.is_active IS NOT FALSE
+          AND length(hm.hsn_code) = 8
+          AND similarity(lower(hm.description), lower(:q)) > 0.25
+        ORDER BY sim DESC
+        LIMIT 5
+    """)
+
+    rows: list[Any] = []
+    try:
+        rows = (await db.execute(sql, {"q": query_str})).mappings().all()
+    except Exception as exc:
+        log.debug("keyword_hsn_search.failed", error=str(exc)[:120])
+        return None
+
+    if not rows and len(keywords) > 1:
+        for kw in keywords:
+            try:
+                rows = (await db.execute(sql, {"q": kw})).mappings().all()
+                if rows:
+                    break
+            except Exception:
+                continue
+
+    if not rows:
+        return None
+
+    best = rows[0]
+    sim = float(best.get("sim") or 0.0)
+    if sim >= 0.7:
+        confidence = 82
+    elif sim >= 0.5:
+        confidence = 75
+    elif sim >= 0.35:
+        confidence = 68
+    else:
+        confidence = 60
+
+    base: dict[str, Any] = {
+        "hsn_code": best["hsn_code"],
+        "description": best.get("description") or query_str,
+        "gst_rate": float(best["gst_rate"]) if best.get("gst_rate") is not None else None,
+        "cess_applicable": bool(best.get("cess_applicable")),
+        "confidence": confidence,
+        "tier_used": 5,
+        "source": "keyword_hsn_search",
+        "verified": confidence >= 70,
+        "matched_layer": "L5_keyword_fallback",
+        "matched_source_table": "hsn_master",
+        "code_kind": "HSN",
+        "trust_level": "keyword_inferred",
+        "alternates": [
+            {
+                "hsn_code": r["hsn_code"],
+                "description": r.get("description"),
+                "score": float(r.get("sim") or 0),
+            }
+            for r in rows[1:4]
+            if r.get("hsn_code")
+        ],
+        "review_required": confidence < 70,
+    }
+
+    try:
+        return await enrich_tax_metadata(db, best["hsn_code"], partial=base)
+    except Exception:
+        return base
 
 _SIZE_RE = re.compile(
     r'\b\d+(?:\.\d+)?\s*(?:G|GM|GMS|KG|KGS|ML|L|LTR|LITRE|LITER|'

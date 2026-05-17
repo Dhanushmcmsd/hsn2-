@@ -531,6 +531,48 @@ async def multi_search(
         except Exception:
             pass
 
+    # ── L5 keyword fallback when no authoritative hit ─────────────────────────
+    if not final:
+        try:
+            from app.services.normalizer import extract_product_keywords
+            from app.services.pg_search import keyword_hsn_search
+
+            keywords = extract_product_keywords(raw_q)
+            if keywords:
+                kw = await keyword_hsn_search(db, keywords)
+                if kw and kw.get("hsn_code") and not is_unclassified_hsn(kw.get("hsn_code")):
+                    conf = int(kw.get("confidence", 0))
+                    final = [{
+                        "hsn_code": kw["hsn_code"],
+                        "description": kw.get("description") or raw_q,
+                        "gst_rate": kw.get("gst_rate"),
+                        "score": conf / 100.0,
+                        "method": "keyword_hsn_search",
+                        "source": "keyword_hsn_search",
+                        "layer": "L5_keyword_fallback",
+                    }]
+                    methods_used = ["keyword_hsn_search"]
+        except Exception as exc:
+            log.debug("multi_layer.keyword_fallback_error", error=str(exc)[:120])
+
+    if not final:
+        try:
+            import asyncio as _asyncio
+            from app.services.miss_logger import log_miss as _log_miss
+            from app.services.normalizer import normalize_product_name as _norm_name
+
+            async def _bg_miss() -> None:
+                try:
+                    from app.models.database import async_session
+                    async with async_session() as miss_db:
+                        await _log_miss(miss_db, raw_q, _norm_name(raw_q))
+                except Exception:
+                    pass
+
+            _asyncio.create_task(_bg_miss())
+        except Exception:
+            pass
+
     return MultiSearchResult(
         query=raw_q,
         detected_language=expanded.detected_language,
