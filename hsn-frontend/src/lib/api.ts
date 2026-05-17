@@ -1,6 +1,8 @@
 /** Backend origin for API calls. See README_DEPLOYMENT.md (Vercel + Render). */
 function getApiBaseUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/$/, "");
+  const explicit =
+    process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/$/, "") ||
+    process.env.NEXT_PUBLIC_BACKEND_URL?.trim().replace(/\/$/, "");
   if (explicit) return explicit;
   if (process.env.NODE_ENV === "development") return "http://localhost:8000";
   // Production: same-origin proxy via next.config rewrites (/api → BACKEND_URL)
@@ -11,6 +13,15 @@ const BASE_URL = getApiBaseUrl();
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 const REMEMBER_ME_KEY = "remember_me";
+
+/** Per-request timeouts (ms) */
+const LOGIN_TIMEOUT_MS = 90_000;
+const AUTH_ME_TIMEOUT_MS = 45_000;
+const PREDICT_TIMEOUT_MS = 60_000;
+const BATCH_TIMEOUT_BASE_MS = 15_000;
+const BATCH_TIMEOUT_PER_QUERY_MS = 1_200;
+const BATCH_TIMEOUT_MAX_MS = 180_000;
+const HEALTH_TIMEOUT_MS = 25_000;
 
 function getAvailableStorages(): Storage[] {
   if (typeof window === "undefined") return [];
@@ -80,8 +91,28 @@ export interface AuthTokenResponse extends TokenResponse { expires_in?: number; 
 
 type Opts = RequestInit & { skipAuth?: boolean; timeout?: number };
 
-// Default timeout for API requests (30 seconds to handle Vercel cold starts)
-const DEFAULT_TIMEOUT = 30000;
+function batchTimeoutMs(queryCount: number): number {
+  return Math.min(
+    BATCH_TIMEOUT_MAX_MS,
+    BATCH_TIMEOUT_BASE_MS + queryCount * BATCH_TIMEOUT_PER_QUERY_MS,
+  );
+}
+
+function formatFetchError(error: unknown, timeoutMs: number): Error {
+  if (error instanceof Error && error.name === "AbortError") {
+    return new Error(
+      `Request timed out after ${Math.round(timeoutMs / 1000)}s. ` +
+        "The server may be waking up (Render free tier) — wait a moment and try again, " +
+        "or use a smaller Excel batch."
+    );
+  }
+  if (error instanceof TypeError) {
+    return new Error(
+      "Cannot reach the API server. On Vercel, set BACKEND_URL or NEXT_PUBLIC_API_URL to your Render URL, then redeploy."
+    );
+  }
+  return error instanceof Error ? error : new Error("Network request failed");
+}
 
 export const authStorage = {
   getAccessToken: () => getToken(ACCESS_TOKEN_KEY),
@@ -136,15 +167,12 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout: numb
     return response;
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new Error("Request timed out. The server may be starting up - please try again.");
-    }
-    throw error;
+    throw formatFetchError(error, timeout);
   }
 }
 
 async function request<T>(path: string, opts: Opts = {}): Promise<T> {
-  const { skipAuth, timeout = DEFAULT_TIMEOUT, ...init } = opts;
+  const { skipAuth, timeout = PREDICT_TIMEOUT_MS, ...init } = opts;
   const headers: Record<string, string> = { "Content-Type": "application/json", ...(init.headers as Record<string, string>) };
   if (!skipAuth && typeof window !== "undefined") {
     const token = authStorage.getAccessToken();
@@ -168,27 +196,54 @@ async function request<T>(path: string, opts: Opts = {}): Promise<T> {
   }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Unknown error" }));
-    throw new Error(err.detail ?? `HTTP ${res.status}`);
+    const detail = (err as { detail?: unknown }).detail;
+    throw new Error(
+      typeof detail === "string" ? detail : `HTTP ${res.status}`
+    );
   }
   return res.json();
 }
 
+/** Wake Render / verify API is reachable (call before login or bulk). */
+export async function warmupBackend(): Promise<boolean> {
+  try {
+    const res = await fetchWithTimeout(
+      `${BASE_URL}/health`,
+      { method: "GET", cache: "no-store" },
+      HEALTH_TIMEOUT_MS,
+    );
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export const authApi = {
   register: (email: string, password: string, full_name?: string) =>
-    request<UserOut>("/auth/register", { method: "POST", body: JSON.stringify({ email, password, full_name }), skipAuth: true }),
-  login: (email: string, password: string) => {
+    request<UserOut>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, password, full_name }),
+      skipAuth: true,
+      timeout: LOGIN_TIMEOUT_MS,
+    }),
+  login: async (email: string, password: string) => {
+    await warmupBackend();
     const form = new URLSearchParams({ username: email, password });
     return request<AuthTokenResponse>("/auth/login", {
-      method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: form.toString(), skipAuth: true,
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: form.toString(),
+      skipAuth: true,
+      timeout: LOGIN_TIMEOUT_MS,
     });
   },
-  me: () => request<UserOut>("/auth/me"),
+  me: (opts?: { timeout?: number }) =>
+    request<UserOut>("/auth/me", { timeout: opts?.timeout ?? AUTH_ME_TIMEOUT_MS }),
 };
 
 export const hsnApi = {
   predict: async (text: string, opts?: { timeout?: number }): Promise<PredictResponse> => {
-    const timeout = opts?.timeout ?? DEFAULT_TIMEOUT;
+    const timeout = opts?.timeout ?? PREDICT_TIMEOUT_MS;
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
@@ -238,10 +293,16 @@ export const hsnApi = {
     }
     return (await res.json()) as PredictResponse;
   },
-  batch: (queries: string[]) =>
-    request<BatchResponse>("/hsn/batch", { method: "POST", body: JSON.stringify({ queries }) }),
+  batch: async (queries: string[], opts?: { timeout?: number }) => {
+    const timeout = opts?.timeout ?? batchTimeoutMs(queries.length);
+    return request<BatchResponse>("/hsn/batch", {
+      method: "POST",
+      body: JSON.stringify({ queries }),
+      timeout,
+    });
+  },
   getByCode: (code: string) => request<HSNCodeRow>(`/hsn/${encodeURIComponent(code)}`),
   expandAbbreviations: (text: string) => request<{ original: string; expanded: string; changed: boolean }>("/expand-abbreviations", { method: "POST", body: JSON.stringify({ text }) }),
-  health: () => request<{ status: string }>("/health"),
+  health: () => request<{ status: string }>("/health", { timeout: HEALTH_TIMEOUT_MS, skipAuth: true }),
   reviewPending: () => request<unknown[]>("/review/pending"),
 };

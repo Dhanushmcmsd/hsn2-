@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [statusHint, setStatusHint] = useState("");
 
   useEffect(() => {
     setRememberMe(authStorage.getRememberPreference());
@@ -24,7 +25,9 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(""); setLoading(true);
+    setError("");
+    setLoading(true);
+    setStatusHint("Connecting to server…");
     try {
       const { access_token, refresh_token } = await authApi.login(email, password);
       authStorage.setRememberPreference(rememberMe);
@@ -32,7 +35,10 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Authentication failed");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+      setStatusHint("");
+    }
   }
 
   return (
@@ -211,6 +217,11 @@ export default function LoginPage() {
               </div>
             )}
 
+            {statusHint && (
+              <p style={{ fontSize: "0.75rem", color: "#CEDDFA88", margin: 0, textAlign: "center" }}>
+                {statusHint}
+              </p>
+            )}
             <button type="submit" disabled={loading} className="btn-submit">
               {loading ? "Signing in…" : (<>Sign in <ArrowRight size={14} /></>)}
             </button>

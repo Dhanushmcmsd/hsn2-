@@ -6,7 +6,7 @@ import useSWRMutation from "swr/mutation";
 import { useDebouncedCallback } from "use-debounce";
 import Papa from "papaparse";
 import readXlsxFile from "read-excel-file/browser";
-import { authApi, authStorage, hsnApi } from "@/lib/api";
+import { authApi, authStorage, hsnApi, warmupBackend } from "@/lib/api";
 import { LogOut } from "lucide-react";
 import { LogoAnimation } from "@/components/LogoAnimation";
 
@@ -172,7 +172,8 @@ function fromBatchRow(row) {
   };
 }
 
-const BULK_CHUNK_SIZE = 200;
+// Keep small: each chunk hits Render with concurrent DB classifies (~30–90s budget per chunk).
+const BULK_CHUNK_SIZE = 35;
 
 function escapeCsvValue(value: unknown) {
   const text = value == null ? "" : String(value);
@@ -705,40 +706,21 @@ export default function PremiumDashboard() {
       }
 
       try {
-        // Add timeout to prevent stuck loading on Vercel cold starts
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
-
-        const userPromise = authApi.me();
-        const user = await Promise.race([
-          userPromise,
-          new Promise<never>((_, reject) => {
-            controller.signal.addEventListener("abort", () => {
-              reject(new Error("Request timed out"));
-            });
-          }),
-        ]);
-
-        clearTimeout(timeoutId);
-
+        await warmupBackend();
+        const user = await authApi.me();
         if (cancelled) return;
         const source = (user.full_name || user.email || "U").trim();
         setUserInitial(source.charAt(0).toUpperCase() || "U");
         setAuthReady(true);
       } catch (err) {
         if (cancelled) return;
-
-        // Check if it's a timeout vs auth error
-        const isTimeout = err instanceof Error && err.message === "Request timed out";
+        const msg = err instanceof Error ? err.message : "";
+        const isTimeout = /timed out/i.test(msg);
         if (isTimeout) {
-          // On timeout, still try to proceed if we have a valid token
-          // This handles Vercel cold start delays
           console.warn("Auth check timed out, proceeding with cached session");
           setAuthReady(true);
           return;
         }
-
-        // Auth failed - clear tokens and redirect
         authStorage.clearTokens();
         router.replace("/login");
       }
@@ -849,6 +831,7 @@ export default function PremiumDashboard() {
     const steps = [false, false, false];
     setProcessSteps([...steps]);
 
+    await warmupBackend();
     await new Promise(r => setTimeout(r, 200));
     steps[0] = true; setProcessSteps([...steps]);
     await new Promise(r => setTimeout(r, 200));

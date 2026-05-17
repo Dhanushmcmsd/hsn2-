@@ -40,7 +40,7 @@ exec python -m gunicorn app.main:app \
   --worker-class uvicorn.workers.UvicornWorker \
   --workers 1 \
   --bind 0.0.0.0:${PORT:-8000} \
-  --timeout 120 \
+  --timeout 300 \
   --max-requests 1000 \
   --max-requests-jitter 50 \
   --access-logfile - \

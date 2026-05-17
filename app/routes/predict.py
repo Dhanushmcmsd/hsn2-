@@ -57,9 +57,10 @@ from app.utils.rate_limit import check_rate_limit
 router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
 
-BULK_CONCURRENCY = int(os.environ.get("BULK_CONCURRENCY", "8"))
-BULK_PER_QUERY_TIMEOUT_S = float(os.environ.get("BULK_PER_QUERY_TIMEOUT_S", "12"))
+BULK_CONCURRENCY = int(os.environ.get("BULK_CONCURRENCY", "12"))
+BULK_PER_QUERY_TIMEOUT_S = float(os.environ.get("BULK_PER_QUERY_TIMEOUT_S", "15"))
 BULK_RESULT_CACHE_TTL_S = int(os.environ.get("BULK_RESULT_CACHE_TTL_S", "21600"))
+BULK_MAX_QUERIES_PER_REQUEST = int(os.environ.get("BULK_MAX_QUERIES_PER_REQUEST", "50"))
 
 # ── Unified cache key format (same as main.py) ─────────────────────────────────────────────────────
 _QUERY_NORMALIZE_RE = re.compile(r"\s+")
@@ -550,7 +551,27 @@ async def batch_predict(
     raw_queries = [q.strip() for q in body.queries if q and q.strip()]
     if not raw_queries:
         return BatchResponse(results=[], total=0, matched=0, unmatched=0)
+    if len(raw_queries) > BULK_MAX_QUERIES_PER_REQUEST:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                f"Maximum {BULK_MAX_QUERIES_PER_REQUEST} products per batch request. "
+                "The app sends smaller chunks automatically after redeploy."
+            ),
+        )
 
+    prev_faiss = os.environ.get("FAISS_DISABLED")
+    os.environ["FAISS_DISABLED"] = "1"
+    try:
+        return await _batch_predict_inner(raw_queries)
+    finally:
+        if prev_faiss is None:
+            os.environ.pop("FAISS_DISABLED", None)
+        else:
+            os.environ["FAISS_DISABLED"] = prev_faiss
+
+
+async def _batch_predict_inner(raw_queries: list[str]) -> BatchResponse:
     groups: dict[str, list[int]] = {}
     keys_in_order: list[str] = []
     for idx, query in enumerate(raw_queries):
