@@ -717,7 +717,7 @@ async def classify(
     query_norm = _normalize_query(raw_q)
 
     # ── L0 in-memory alias (no DB) ───────────────────────────────────────────
-    from app.services.hsn_master import get_alias_hsn
+    from app.services.hsn_master import get_alias_hsn, resolve_alias_gst
     from app.services.classifier_layers import is_sac_code, normalize_display_code
 
     alias_code = get_alias_hsn(raw_q) or get_alias_hsn(query_norm)
@@ -730,7 +730,7 @@ async def classify(
         partial = {
             "hsn_code": display,
             "description": raw_q,
-            "gst_rate": None,
+            "gst_rate": resolve_alias_gst(display),
             "cess_applicable": False,
             "confidence": 98,
             "tier_used": 1,

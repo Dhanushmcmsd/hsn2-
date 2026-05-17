@@ -168,13 +168,58 @@ _VERIFIED_PRODUCT_ALIASES: dict[str, str] = {
     "cracker biscuit": "190531",
     "wafer biscuit": "190532",
     "waffle": "190532",
-    # Papad
-    "papad": "190530",
-    "pappad": "190530",
-    "pappadam": "190530",
-    "apalam": "190530",
-    "khakhra": "190530",
-    "lijjat papad": "190530",
+    # Papad (HSN 19059040 — CBIC nil-rated papad)
+    "papad": "19059040",
+    "pappad": "19059040",
+    "pappadam": "19059040",
+    "apalam": "19059040",
+    "khakhra": "19059040",
+    "lijjat papad": "19059040",
+    # Broom / household
+    "broom": "960310",
+    "jhadoo": "960310",
+    "jhadu": "960310",
+    "mosquito coil": "380891",
+    "mosquito repellent": "380891",
+    "good knight": "380891",
+    "incense stick": "330741",
+    "incense sticks": "330741",
+    "agarbatti": "330741",
+    "agarbathi": "330741",
+    "phenyl": "340220",
+    # South Indian staples / masala
+    "puttu podi": "110100",
+    "puttupodi": "110100",
+    "sambar powder": "091091",
+    "sambar pdr": "091091",
+    "sambhar powder": "091091",
+    "rava idli mix": "19059090",
+    "idli mix": "19059090",
+    "turmeric powder": "091030",
+    "haldi powder": "091030",
+    "chilly powder": "090422",
+    "chili powder": "090422",
+    "chilli powder": "090422",
+    "tea powder": "090230",
+    "salt": "250100",
+    "pink salt": "250100",
+    "himalayan salt": "250100",
+    "wheat": "100610",
+    "mandi rice": "100630",
+    "coconut water": "200990",
+    "mango juice": "200989",
+    "mixed fruit juice": "200989",
+    "maggi noodles": "19023090",
+    "maggi": "19023090",
+    "noodles": "19023090",
+    "tomato ketchup": "210320",
+    "ketchup": "210320",
+    "vada parippu": "071331",
+    "parippu": "071331",
+    "urad dal": "071331",
+    "hershey": "180690",
+    "hersheys": "180690",
+    "kisses": "180690",
     # Spices / Masala
     "cumin": "090921",
     "jeera": "090921",
@@ -208,10 +253,12 @@ _VERIFIED_PRODUCT_ALIASES: dict[str, str] = {
     "slipper": "640291",
     "chappal": "640291",
     "chappals": "640291",
-    "rubber slipper": "640219",
     "hawai chappal": "640219",
     "hawaii chappal": "640219",
-    "rubber chappal": "640219",
+    "rubber chappal": "640199",
+    "rubber slipper": "640199",
+    "gents slipper": "640199",
+    "ladies slipper": "640199",
     "sports shoe": "640219",
     "canvas shoe": "640411",
     "leather shoe": "640391",
@@ -245,8 +292,8 @@ _VERIFIED_PRODUCT_ALIASES: dict[str, str] = {
     "rava": "110311",
     # Sugar
     "sugar": "170199",
-    "jaggery": "170290",
-    "gur": "170290",
+    "jaggery": "170113",
+    "gur": "170113",
     # Oils
     "sunflower oil": "151219",
     "palm oil": "151190",
@@ -303,17 +350,81 @@ _VERIFIED_PRODUCT_ALIASES: dict[str, str] = {
     "vitamin": "300450",
 }
 
+# Retail GST hints where alias resolution should not rely on chapter fallback alone.
+_ALIAS_GST_HINTS: dict[str, float] = {
+    "640199": 5.0,
+    "330741": 12.0,
+    "380891": 18.0,
+    "340220": 18.0,
+    "190531": 18.0,
+    "091091": 5.0,
+    "091030": 5.0,
+    "200990": 12.0,
+    "190230": 12.0,
+    "170113": 0.0,
+}
+
+_OFFICIAL_GST_CACHE: dict[str, float] | None = None
+
+
+def _build_official_gst_cache() -> dict[str, float]:
+    cache: dict[str, float] = {}
+    for row in _load_official_rows():
+        code = str(row.get("hsn_code") or "")
+        gst = row.get("gst_rate")
+        if code and gst is not None:
+            cache[code] = float(gst)
+    return cache
+
+
+def lookup_tariff_gst(hsn_code: str) -> float | None:
+    """Resolve GST from data/hsn_codes.csv (in-memory), then chapter schedule."""
+    global _OFFICIAL_GST_CACHE
+    if _OFFICIAL_GST_CACHE is None:
+        _OFFICIAL_GST_CACHE = _build_official_gst_cache()
+    canonical = canonicalize_hsn(hsn_code)
+    if not canonical:
+        return None
+    if canonical in _OFFICIAL_GST_CACHE:
+        return _OFFICIAL_GST_CACHE[canonical]
+    # Prefer the most specific CSV row sharing the same 6-digit heading.
+    head6 = canonical[:6]
+    candidates = [
+        (code, rate)
+        for code, rate in _OFFICIAL_GST_CACHE.items()
+        if code.startswith(head6)
+    ]
+    if candidates:
+        candidates.sort(key=lambda item: len(item[0]), reverse=True)
+        return candidates[0][1]
+    return _chapter_gst_fallback(canonical)
+
+
+def resolve_alias_gst(hsn_code: str) -> float | None:
+    """GST for in-memory alias hits (product-specific hint, then CSV, then chapter)."""
+    digits = re.sub(r"[^0-9]", "", hsn_code or "")
+    for width in (6, 4):
+        if len(digits) >= width:
+            hint = _ALIAS_GST_HINTS.get(digits[:width])
+            if hint is not None:
+                return hint
+    return lookup_tariff_gst(digits)
+
 
 def get_alias_hsn(query: str) -> str | None:
     """Return verified HSN code for a known product query, or None."""
+    from app.services.normalizer import normalize_product_name
+
     q = query.lower().strip()
-    # Exact match
-    if q in _VERIFIED_PRODUCT_ALIASES:
-        return _VERIFIED_PRODUCT_ALIASES[q]
-    # Prefix match (e.g. "good day 200g" -> "good day")
-    for alias, code in _VERIFIED_PRODUCT_ALIASES.items():
-        if q.startswith(alias) or alias in q:
-            return code
+    norm = normalize_product_name(query).lower().strip()
+    for candidate in (q, norm):
+        if candidate in _VERIFIED_PRODUCT_ALIASES:
+            return _VERIFIED_PRODUCT_ALIASES[candidate]
+    # Longest alias first so "rubber chappal" beats "chappal"
+    for alias, code in sorted(_VERIFIED_PRODUCT_ALIASES.items(), key=lambda x: len(x[0]), reverse=True):
+        for text in (q, norm):
+            if text.startswith(alias) or alias in text:
+                return code
     return None
 
 

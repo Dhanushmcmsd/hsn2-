@@ -98,6 +98,13 @@ _ENRICH_TARIFF_SQL = text("""
     LIMIT 1
 """)
 
+_ENRICH_CODES_ONLY_SQL = text("""
+    SELECT hsn_code, description, gst_rate
+    FROM hsn_codes
+    WHERE hsn_code = :code
+    LIMIT 1
+""")
+
 
 def _effective_total_tax(
     gst_rate: float | None,
@@ -196,6 +203,27 @@ async def enrich_tax_metadata(
                 return out
     except Exception as exc:
         log.debug("classifier.enrich_failed", code=code, error=str(exc)[:80])
+
+    if len(d) == 8 and out.get("gst_rate") is None:
+        try:
+            row = (await db.execute(_ENRICH_CODES_ONLY_SQL, {"code": d})).mappings().first()
+            if row:
+                if row.get("gst_rate") is not None:
+                    out["gst_rate"] = float(row["gst_rate"])
+                out["description"] = out.get("description") or row.get("description")
+                out["matched_source_table"] = out.get("matched_source_table") or "hsn_codes"
+                out["tax_semantics"] = "combined"
+        except Exception as exc:
+            log.debug("classifier.enrich_codes_only_failed", code=code, error=str(exc)[:80])
+
+    if out.get("gst_rate") is None and len(d) >= 2:
+        from app.services.hsn_master import lookup_tariff_gst
+
+        csv_gst = lookup_tariff_gst(d)
+        if csv_gst is not None:
+            out["gst_rate"] = csv_gst
+            out["tax_semantics"] = "combined"
+            out["matched_source_table"] = out.get("matched_source_table") or "hsn_codes_csv"
 
     if out.get("gst_rate") is not None:
         out["effective_total_tax"] = out.get("effective_total_tax") or out["gst_rate"]
