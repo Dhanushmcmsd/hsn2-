@@ -29,6 +29,29 @@ class PredictResponse(BaseModel):
     processing_time_ms: float
 
 
+class BatchQuery(BaseModel):
+    queries: list[str] = Field(..., min_length=1, max_length=1000)
+
+
+class HSNBatchResult(BaseModel):
+    query: str
+    hsn_code: Optional[str] = None
+    description: Optional[str] = None
+    gst_rate: Optional[float] = None
+    confidence: float = 0.0
+    confidence_label: str = "low"
+    match_method: str = "none"
+    alternatives: list[dict] = Field(default_factory=list)
+    error: Optional[str] = None
+
+
+class BatchResponse(BaseModel):
+    results: list[HSNBatchResult]
+    total: int
+    matched: int
+    unmatched: int
+
+
 class HSNRow(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

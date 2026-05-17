@@ -81,6 +81,57 @@ def _normalize_query(q: str) -> str:
     return re.sub(r"\s+", " ", q.upper().strip())
 
 
+def _verified_lookup_keys(raw_q: str, prep: Any) -> list[str]:
+    """Keys for verified_products exact match (aligned with seed catalog)."""
+    from app.services.matcher import strip_sizes
+
+    raw_upper = _normalize_query(raw_q)
+    query_norm = _normalize_query(prep.normalized or raw_q)
+    query_clean = _normalize_query(prep.typo_fixed or query_norm)
+
+    candidates = [
+        raw_upper,
+        query_clean,
+        query_norm,
+        _normalize_query(strip_sizes(raw_q)),
+        _normalize_query(strip_sizes(prep.typo_fixed or raw_q)),
+        _normalize_query(strip_sizes(prep.normalized or raw_q)),
+    ]
+    seen: set[str] = set()
+    keys: list[str] = []
+    for key in candidates:
+        if key and key not in seen:
+            seen.add(key)
+            keys.append(key)
+    return keys
+
+
+def _partial_from_brand_lookup(hit: dict[str, Any]) -> dict[str, Any]:
+    """Map brand_search.brand_lookup() result to classify partial dict."""
+    score = float(hit.get("score") or 0)
+    conf = int(round(score * 100)) if score <= 1.0 else int(score)
+    if conf < _MIN_AUTHORITATIVE_CONFIDENCE:
+        conf = 99
+    method = str(hit.get("method") or "brand_lookup")
+    layer = "L1_brand_alias"
+    if method.startswith("L0"):
+        layer = "L0_brand_alias"
+    return {
+        "hsn_code": hit["hsn_code"],
+        "description": hit.get("description") or "",
+        "gst_rate": hit.get("gst_rate"),
+        "cess_applicable": False,
+        "confidence": conf,
+        "tier_used": 1,
+        "source": hit.get("source") or "brand_lookup",
+        "verified": True,
+        "matched_layer": layer,
+        "matched_source_table": hit.get("source") or "brand_aliases",
+        "code_kind": "HSN",
+        "trust_level": "curated",
+    }
+
+
 def _is_valid_hsn(hsn_code: str) -> bool:
     """Validate HSN code format: 2/4/6/8-digit or SAC 4-digit service code."""
     if not hsn_code:
@@ -434,6 +485,18 @@ async def _tier2_exact_product(db: AsyncSession, query_norm: str) -> dict | None
         "trust_level": "verified",
         "tax_semantics": row.get("rate_semantics") or "unknown",
     }
+
+
+async def _tier2_exact_product_multi(
+    db: AsyncSession,
+    lookup_keys: list[str],
+) -> dict | None:
+    """Try verified_products exact match under each normalized key."""
+    for key in lookup_keys:
+        hit = await _tier2_exact_product(db, key)
+        if hit:
+            return hit
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -837,7 +900,6 @@ async def classify(
     prep = preprocess_retail_query(raw_q, for_classify=True)
     query_norm = _normalize_query(prep.normalized or raw_q)
     query_clean = _normalize_query(prep.typo_fixed or query_norm)
-    kerala_expanded_norm = _normalize_query(prep.malayalam_expanded or query_norm)
 
     from app.services.hsn_master import get_alias_hsn, resolve_alias_gst
     from app.services.classifier_layers import is_sac_code, normalize_display_code
@@ -890,11 +952,8 @@ async def classify(
 
     # ── L0 client catalog: exact verified_products (client Excel / batches) ───
     log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_verified_product")
-    verified = await _tier2_exact_product(db, query_norm)
-    if not verified and query_clean != query_norm:
-        verified = await _tier2_exact_product(db, query_clean)
-    if not verified and kerala_expanded_norm not in (query_norm, query_clean):
-        verified = await _tier2_exact_product(db, kerala_expanded_norm)
+    verified_keys = _verified_lookup_keys(raw_q, prep)
+    verified = await _tier2_exact_product_multi(db, verified_keys)
     if verified:
         verified["matched_layer"] = "L0_verified_product"
         verified["source"] = verified.get("source") or "verified_product_exact"
@@ -940,6 +999,25 @@ async def classify(
         final = await _accept_or_accumulate(partial)
         if final:
             return final
+
+    # ── L1 brand_lookup (prefix brand token — predict parity for classify) ───
+    log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L1_brand_lookup")
+    from app.services.brand_search import brand_lookup, is_unclassified_hsn
+
+    brand_lookup_hit = await brand_lookup(db, raw_q, for_classify=True, min_score=0.65)
+    brand_partial = None
+    if brand_lookup_hit and not is_unclassified_hsn(brand_lookup_hit.get("hsn_code", "")):
+        brand_partial = _partial_from_brand_lookup(brand_lookup_hit)
+    log.debug(
+        "gst_classifier.tier_result",
+        query=raw_q[:60],
+        tier="L1_brand_lookup",
+        hit=brand_partial is not None,
+        conf=brand_partial.get("confidence") if brand_partial else None,
+    )
+    final = await _accept_or_accumulate(brand_partial)
+    if final:
+        return final
 
     # ── L0 Kerala retail: Malayalam transliteration + invoice shorthand ─────────
     log.debug("gst_classifier.tier_attempt", query=raw_q[:60], tier="L0_kerala_retail")

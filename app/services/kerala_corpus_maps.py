@@ -45,7 +45,8 @@ _MANUAL_JOINED_FORMS: tuple[tuple[str, str], ...] = (
     ("kadalamavu", "kadala mavu"),
     ("thuvaraparippu", "thuvara parippu"),
     ("mattaari", "matta ari"),
-    ("pachari", "pacha ari"),
+    # "pachari" omitted — PACHARI is a packaged rice brand in client catalogs;
+    # splitting to "pacha ari" breaks verified_products exact match.
     ("nadanari", "nadan ari"),
     ("chemmeenachar", "chemmeen achar"),
     ("unakkamulaku", "unakka mulaku"),

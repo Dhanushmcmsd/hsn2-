@@ -199,6 +199,25 @@ class TestKeralaRetailInClassify:
             assert mock_fin.called
 
 
+class TestVerifiedLookupKeys:
+    def test_raw_catalog_key_first(self):
+        from app.services.gst_classifier import _verified_lookup_keys
+        from app.services.retail_preprocess import preprocess_retail_query
+
+        desc = "PEDIASURE CHOCOLATE FLAVOUR 200G REFIL"
+        prep = preprocess_retail_query(desc, for_classify=True)
+        keys = _verified_lookup_keys(desc, prep)
+        assert keys[0] == desc.upper().strip()
+        assert "REFIL" in keys[0]
+
+    def test_pachari_brand_not_split_in_preprocess(self):
+        from app.services.retail_preprocess import preprocess_retail_query
+
+        prep = preprocess_retail_query("PACHARI REGULAR 2KG", for_classify=True)
+        assert "PACHA ARI" not in prep.normalized
+        assert "PACHARI" in prep.normalized
+
+
 class TestRetailNormalization:
     def test_cocunut_typo_expands(self):
         from app.services.normalizer import normalize_product_name

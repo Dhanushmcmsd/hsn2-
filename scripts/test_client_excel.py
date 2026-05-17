@@ -132,19 +132,25 @@ def _print_kerala_summary(rows: list[dict]) -> None:
             unresolved[r.get("description", "")[:60]] += 1
 
     total = len(kerala_rows)
-    print("\n┌─────────────────────────────────────────────────────────────┐")
-    print("│           KERALA / MALAYALAM HIT-RATE SUMMARY               │")
-    print("├─────────────────────────────────────────────────────────────┤")
-    print(f"│ Kerala-style rows in sample     │ {total:8d}              │")
-    print(f"│ Exact-tier hits (conf ≥95)        │ {exact:8d} ({100*exact/total:5.1f}%) │")
-    print(f"│ Authoritative (conf ≥70)        │ {authoritative:8d} ({100*authoritative/total:5.1f}%) │")
-    print(f"│ Pending / L6 review             │ {pending:8d} ({100*pending/total:5.1f}%) │")
-    print("├─────────────────────────────────────────────────────────────┤")
+    def _safe_print(line: str) -> None:
+        try:
+            print(line)
+        except UnicodeEncodeError:
+            print(line.encode("ascii", errors="replace").decode("ascii"))
+
+    _safe_print("\n+-------------------------------------------------------------+")
+    _safe_print("|           KERALA / MALAYALAM HIT-RATE SUMMARY               |")
+    _safe_print("+-------------------------------------------------------------+")
+    _safe_print(f"| Kerala-style rows in sample     | {total:8d}              |")
+    _safe_print(f"| Exact-tier hits (conf >=95)     | {exact:8d} ({100*exact/total:5.1f}%) |")
+    _safe_print(f"| Authoritative (conf >=70)       | {authoritative:8d} ({100*authoritative/total:5.1f}%) |")
+    _safe_print(f"| Pending / L6 review             | {pending:8d} ({100*pending/total:5.1f}%) |")
+    _safe_print("+-------------------------------------------------------------+")
     for label in ("L0_kerala_retail", "language_aliases", "L5_broad_resolution", "L6_pending_review", "other"):
         n = layer_counts.get(label, 0)
         if n:
-            print(f"│ {label:<30} │ {n:8d}              │")
-    print("└─────────────────────────────────────────────────────────────┘")
+            _safe_print(f"| {label:<30} | {n:8d}              |")
+    _safe_print("+-------------------------------------------------------------+")
     if unresolved:
         print("\nTop unresolved Malayalam/Kerala terms:")
         for term, cnt in unresolved.most_common(15):
@@ -182,11 +188,17 @@ def _print_tier_table(rows: list[dict], total: int) -> None:
         if r.get("confidence") is not None:
             bucket_conf[b].append(int(r["confidence"]))
 
-    print("\n┌─────────────────────────────────────────────────────────────┐")
-    print("│              DETECTION BREAKDOWN BY TIER                    │")
-    print("├────────────────────────┬──────────┬──────────┬─────────────┤")
-    print("│ Tier                   │ Detected │ % Total  │ Confidence  │")
-    print("├────────────────────────┼──────────┼──────────┼─────────────┤")
+    def _safe_print(line: str) -> None:
+        try:
+            print(line)
+        except UnicodeEncodeError:
+            print(line.encode("ascii", errors="replace").decode("ascii"))
+
+    _safe_print("\n+-------------------------------------------------------------+")
+    _safe_print("|              DETECTION BREAKDOWN BY TIER                    |")
+    _safe_print("+------------------------+----------+----------+-------------+")
+    _safe_print("| Tier                   | Detected | % Total  | Confidence  |")
+    _safe_print("+------------------------+----------+----------+-------------+")
     detected_total = 0
     for label, _ in _TIER_BUCKETS:
         n = bucket_count.get(label, 0)
@@ -196,12 +208,15 @@ def _print_tier_table(rows: list[dict], total: int) -> None:
         pct = 100.0 * n / total if total else 0
         confs = bucket_conf.get(label, [])
         avg = f"avg: {sum(confs)/len(confs):.0f}" if confs else "-"
-        print(f"│ {label:<22} │ {n:8d} │ {pct:6.1f}% │ {avg:11} │")
+        _safe_print(f"| {label:<22} | {n:8d} | {pct:6.1f}% | {avg:11} |")
     uncl = bucket_count.get("UNCLASSIFIED", 0)
-    print(f"│ {'UNCLASSIFIED':<22} │ {uncl:8d} │ {100*uncl/total if total else 0:6.1f}% │ {'-':11} │")
-    print("├────────────────────────┼──────────┼──────────┼─────────────┤")
-    print(f"│ {'TOTAL DETECTED':<22} │ {detected_total:8d} │ {100*detected_total/total if total else 0:6.1f}% │             │")
-    print("└────────────────────────┴──────────┴──────────┴─────────────┘")
+    _safe_print(f"| {'UNCLASSIFIED':<22} | {uncl:8d} | {100*uncl/total if total else 0:6.1f}% | {'-':11} |")
+    _safe_print("+------------------------+----------+----------+-------------+")
+    _safe_print(
+        f"| {'TOTAL DETECTED':<22} | {detected_total:8d} | "
+        f"{100*detected_total/total if total else 0:6.1f}% |             |"
+    )
+    _safe_print("+------------------------+----------+----------+-------------+")
 
 
 async def _run_classify(

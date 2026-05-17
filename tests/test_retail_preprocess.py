@@ -33,6 +33,12 @@ def test_joined_manjalpodi_splits_before_expansion():
     assert "TURMERIC" in prep.malayalam_expanded
 
 
+def test_pachari_rice_brand_not_split_to_pacha_ari():
+    prep = preprocess_retail_query("PACHARI REGULAR 2KG", for_classify=True)
+    assert "PACHARI" in prep.typo_fixed
+    assert "PACHA ARI" not in prep.normalized
+
+
 def test_classify_and_predict_share_preprocess_shape():
     raw = "cherupayar 1kg"
     c = preprocess_retail_query(raw, for_classify=True)

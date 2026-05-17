@@ -1,6 +1,8 @@
 from __future__ import annotations
+import asyncio
 import hashlib
 import inspect
+import os
 import re
 import time
 import uuid
@@ -9,8 +11,20 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import case, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.database import get_db, Prediction, VerifiedProduct
-from app.models.schemas import PredictRequest, PredictResponse
+from app.models.database import async_session, get_db, Prediction, VerifiedProduct
+from app.models.schemas import (
+    BatchQuery,
+    BatchResponse,
+    HSNBatchResult,
+    PredictRequest,
+    PredictResponse,
+)
+from app.services import gst_classifier
+from app.services.classify_adapter import (
+    is_authoritative_classify,
+    to_batch_result,
+    to_predict_response,
+)
 from app.services.matcher import strip_sizes
 from app.services.kerala_search import kerala_fallback_search
 from app.services.retail_preprocess import (
@@ -42,6 +56,10 @@ from app.utils.rate_limit import check_rate_limit
 
 router = APIRouter(tags=["predict"])
 log = structlog.get_logger()
+
+BULK_CONCURRENCY = int(os.environ.get("BULK_CONCURRENCY", "8"))
+BULK_PER_QUERY_TIMEOUT_S = float(os.environ.get("BULK_PER_QUERY_TIMEOUT_S", "12"))
+BULK_RESULT_CACHE_TTL_S = int(os.environ.get("BULK_RESULT_CACHE_TTL_S", "21600"))
 
 # ── Unified cache key format (same as main.py) ─────────────────────────────────────────────────────
 _QUERY_NORMALIZE_RE = re.compile(r"\s+")
@@ -169,6 +187,46 @@ async def predict(
         return PredictResponse(**cached)
 
     start = time.perf_counter()
+
+    # ── Unified 6-tier classifier (same pipeline as /api/v1/classify & bulk) ───
+    try:
+        classify_out = await gst_classifier.classify(db, body.text, bypass_cache=False)
+        if is_authoritative_classify(classify_out):
+            elapsed = (time.perf_counter() - start) * 1000
+            response = to_predict_response(
+                request_id,
+                body.text,
+                classify_out,
+                processing_time_ms=elapsed,
+            )
+            await set_cache(cache_key, response.model_dump(), ttl=BULK_RESULT_CACHE_TTL_S)
+            try:
+                record = Prediction(
+                    request_id=request_id,
+                    input_text=body.text,
+                    predicted_hsn=response.top_match.hsn_code,
+                    confidence=int(response.confidence * 100),
+                    needs_review=response.needs_review,
+                    api_key_hash=hashlib.sha256(api_key.encode()).hexdigest()[:16],
+                    source=response.top_match.method,
+                )
+                db.add(record)
+                await db.commit()
+            except Exception as exc:
+                log.warning("predict.classify_persist_failed", error=str(exc)[:80])
+                try:
+                    await db.rollback()
+                except Exception:
+                    pass
+            log.info(
+                "predict.classify_hit",
+                query=body.text[:60],
+                hsn=response.top_match.hsn_code,
+                layer=classify_out.get("matched_layer"),
+            )
+            return response
+    except Exception as exc:
+        log.warning("predict.classify_failed", error=str(exc)[:120])
 
     search_text = normalized_query
     try:
@@ -437,3 +495,120 @@ async def predict(
     )
     await set_cache(cache_key, result.model_dump(), ttl=None)
     return result
+
+
+def _bulk_normalize_query(q: str) -> str:
+    return _QUERY_NORMALIZE_RE.sub(" ", (q or "").strip()).upper()
+
+
+@router.post("/hsn/batch", response_model=BatchResponse)
+async def batch_predict(
+    body: BatchQuery,
+    api_key: str = Depends(require_api_key),
+) -> BatchResponse:
+    """Bulk classify product descriptions (same gst_classifier pipeline as /predict)."""
+    await check_rate_limit(api_key)
+
+    raw_queries = [q.strip() for q in body.queries if q and q.strip()]
+    if not raw_queries:
+        return BatchResponse(results=[], total=0, matched=0, unmatched=0)
+
+    groups: dict[str, list[int]] = {}
+    keys_in_order: list[str] = []
+    for idx, query in enumerate(raw_queries):
+        norm = _bulk_normalize_query(query)
+        if norm not in groups:
+            groups[norm] = []
+            keys_in_order.append(norm)
+        groups[norm].append(idx)
+
+    unique_queries = [(norm, raw_queries[groups[norm][0]]) for norm in keys_in_order]
+    cache_keys = [_match_cache_key(orig) for _norm, orig in unique_queries]
+    cached_payloads = await asyncio.gather(
+        *(get_cache(k) for k in cache_keys),
+        return_exceptions=True,
+    )
+
+    by_norm: dict[str, HSNBatchResult] = {}
+    misses: list[tuple[str, str, str]] = []
+
+    for (_norm, orig), payload, cache_key in zip(unique_queries, cached_payloads, cache_keys):
+        row_dict: dict | None = None
+        if isinstance(payload, dict):
+            if payload.get("hsn_code"):
+                row_dict = to_batch_result(orig, payload)
+            elif payload.get("top_match"):
+                tm = payload["top_match"] or {}
+                conf = float(payload.get("confidence") or tm.get("score") or 0)
+                row_dict = to_batch_result(orig, {
+                    "hsn_code": tm.get("hsn_code"),
+                    "description": tm.get("description"),
+                    "gst_rate": tm.get("gst_rate"),
+                    "confidence": int(conf * 100) if conf <= 1 else int(conf),
+                    "matched_layer": tm.get("method"),
+                    "alternates": payload.get("alternatives") or [],
+                })
+        if row_dict and row_dict.get("hsn_code"):
+            by_norm[_norm] = HSNBatchResult(**row_dict)
+        else:
+            misses.append((_norm, orig, cache_key))
+
+    if misses:
+        sem = asyncio.Semaphore(max(1, BULK_CONCURRENCY))
+
+        async def _resolve(orig_query: str, cache_key: str) -> HSNBatchResult:
+            async with sem:
+                try:
+                    async with async_session() as session:
+                        classify_out = await asyncio.wait_for(
+                            gst_classifier.classify(session, orig_query, bypass_cache=False),
+                            timeout=BULK_PER_QUERY_TIMEOUT_S,
+                        )
+                except asyncio.TimeoutError:
+                    log.warning("batch.timeout", query=orig_query[:60])
+                    return HSNBatchResult(
+                        query=orig_query,
+                        error="Classification timed out for this item.",
+                    )
+                except Exception as exc:
+                    log.error("batch.classify_failed", query=orig_query[:60], error=str(exc)[:80])
+                    return HSNBatchResult(
+                        query=orig_query,
+                        error="Classification failed. Please try again or contact support.",
+                    )
+
+                row_dict = to_batch_result(orig_query, classify_out)
+                result = HSNBatchResult(**row_dict)
+                if result.hsn_code:
+                    try:
+                        await set_cache(cache_key, row_dict, ttl=BULK_RESULT_CACHE_TTL_S)
+                    except Exception:
+                        pass
+                return result
+
+        resolved = await asyncio.gather(
+            *(_resolve(orig, key) for _norm, orig, key in misses),
+            return_exceptions=False,
+        )
+        for (_norm, orig, _key), row in zip(misses, resolved):
+            by_norm[_norm] = row
+
+    results: list[HSNBatchResult] = [HSNBatchResult(query="")] * len(raw_queries)
+    for norm, positions in groups.items():
+        base = by_norm.get(norm) or HSNBatchResult(
+            query=raw_queries[positions[0]],
+            error="Classification failed. Please try again or contact support.",
+        )
+        base_dump = base.model_dump()
+        for pos in positions:
+            cloned = dict(base_dump)
+            cloned["query"] = raw_queries[pos]
+            results[pos] = HSNBatchResult(**cloned)
+
+    matched = sum(1 for r in results if r.hsn_code)
+    return BatchResponse(
+        results=results,
+        total=len(results),
+        matched=matched,
+        unmatched=len(results) - matched,
+    )
