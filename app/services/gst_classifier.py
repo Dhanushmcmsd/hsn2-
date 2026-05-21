@@ -110,8 +110,10 @@ def _partial_from_brand_lookup(hit: dict[str, Any]) -> dict[str, Any]:
     """Map brand_search.brand_lookup() result to classify partial dict."""
     score = float(hit.get("score") or 0)
     conf = int(round(score * 100)) if score <= 1.0 else int(score)
-    if conf < _MIN_AUTHORITATIVE_CONFIDENCE:
-        conf = 99
+    # Do NOT override low scores — preserve the actual computed confidence so
+    # that weak brand matches correctly surface as needing manual review
+    # downstream. (Previously this forced conf = 99 when conf < 70, which
+    # inflated every fuzzy/partial brand hit to 99% in bulk Excel output.)
     method = str(hit.get("method") or "brand_lookup")
     layer = "L1_brand_alias"
     if method.startswith("L0"):
@@ -656,7 +658,6 @@ async def _tier4_keyword(db: AsyncSession, query_raw: str) -> dict | None:
         "code_kind": "HSN",
         "trust_level": "curated",
     }
-
 
 
 
