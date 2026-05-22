@@ -1327,13 +1327,14 @@ def _majority_hsn(rows, min_freq: int = 1):
     best_row = min(best_rows, key=lambda r: len(r.description))
     freq = len(best_rows)
     alts = []
-    for alt_hsn, alt_rows in ranked[1:4]:
+    alt_conf_steps = [0.35, 0.25, 0.18]  # decreasing fixed scores for alt 1, 2, 3
+    for rank_idx, (alt_hsn, alt_rows) in enumerate(ranked[1:4]):
         alt_row = min(alt_rows, key=lambda r: len(r.description))
         alts.append({
             "hsn_code": normalize_hsn(alt_hsn),
             "description": alt_row.description,
             "gst_rate": float(alt_row.gst_rate or 0),
-            "confidence": round(len(alt_rows) / max(freq, 1) * 0.7, 3),
+            "confidence": alt_conf_steps[rank_idx],
         })
     return best_hsn, best_row.gst_rate, best_row.description, freq, alts
 
@@ -1409,11 +1410,14 @@ def _calibrate_confidence(
     max_conf: float = 1.0,
 ) -> float:
     """
-    Layer 4: Boost confidence when query words are a subset of matched description.
-    'HORLICKS WOMENS' found in 'HORLICKS WOMENS CHOCO PET 400G' → +0.12
+    Layer 4: Small boost when query words are found in matched description.
+    Guards against inflating scores already near their ceiling.
     """
     if not query_words:
         return conf
+    # Do not boost if already within 0.05 of the ceiling
+    if (max_conf - conf) < 0.05:
+        return round(conf, 3)
     desc_upper = description.upper()
     sig_words = [w for w in query_words if len(w) >= 3]
     if not sig_words:
@@ -1421,9 +1425,9 @@ def _calibrate_confidence(
     matched = sum(1 for w in sig_words if w in desc_upper)
     ratio = matched / len(sig_words)
     if ratio >= 1.0:
-        conf = min(max_conf, conf + 0.12)
+        conf = min(max_conf, conf + 0.05)
     elif ratio >= 0.7:
-        conf = min(max_conf, conf + 0.06)
+        conf = min(max_conf, conf + 0.02)
     return round(conf, 3)
 
 
@@ -1554,7 +1558,9 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
         best_hsn, best_gst, best_desc, freq, alts = _majority_hsn(rows)
         if not best_hsn:
             return None
-        conf = round(min(max_conf, base_conf + freq * 0.04), 3)
+        # Cap freq bonus: each agreeing row adds 2%, max +8%
+        freq_bonus = min(freq * 0.02, 0.08)
+        conf = round(min(max_conf, base_conf + freq_bonus), 3)
         # Layer 4: boost when query words subset of matched description
         conf = _calibrate_confidence(conf, q_all_words, best_desc, max_conf=max_conf)
         gst_float = float(_re.sub(r'[^0-9.]', '', str(best_gst or 0)) or 0)
@@ -1729,7 +1735,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             rows = res.fetchall()
             rows = _filter_vp_rows(rows, "pass0D")
             if rows:
-                result = _build_vp_result("verified_prefix", rows, base_conf=0.62, max_conf=0.90)
+                result = _build_vp_result("verified_prefix", rows, base_conf=0.52, max_conf=0.78)
                 if result and result.confidence >= 0.52:
                     return result
         except Exception as e:
@@ -1773,16 +1779,16 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 rows = _filter_vp_rows(rows, "pass0E")
                 if rows:
                     result = _build_vp_result(
-                        "verified_allwords", rows, base_conf=0.55, max_conf=0.88
+                        "verified_allwords", rows, base_conf=0.42, max_conf=0.72
                     )
-                    if result and result.confidence >= 0.48:
+                    if result and result.confidence >= 0.40:
                         # Layer 3: apply intent bonus
                         tokens_for_intent = tokenize(q_expanded)
                         intent = _compute_intent_bonus(tokens_for_intent, result.description)
                         if intent < -0.12:
                             continue  # wrong category match, try next word set
                         result.confidence = round(
-                            min(0.88, result.confidence + max(0.0, intent)), 3
+                            min(0.72, result.confidence + max(0.0, intent)), 3
                         )
                         result.confidence_label = (
                             "high" if result.confidence >= 0.80 else
@@ -1812,9 +1818,9 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                 rows = _filter_vp_rows(rows, "pass0E_ns")
                 if rows:
                     result = _build_vp_result(
-                        "verified_allwords_ns", rows, base_conf=0.55, max_conf=0.88
+                        "verified_allwords_ns", rows, base_conf=0.42, max_conf=0.72
                     )
-                    if result and result.confidence >= 0.48:
+                    if result and result.confidence >= 0.40:
                         return result
             except Exception as e:
                 log.warning("pass0E_ns.error query=%s error=%s", q_stripped[:50], str(e))
@@ -1843,14 +1849,14 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
             rows = _filter_vp_rows(rows, "pass0E2")
             if rows:
                 result = _build_vp_result(
-                    "verified_partial", rows, base_conf=0.44, max_conf=0.78
+                    "verified_partial", rows, base_conf=0.32, max_conf=0.62
                 )
-                if result and result.confidence >= 0.42:
+                if result and result.confidence >= 0.32:
                     tokens_for_intent = tokenize(q_expanded)
                     intent = _compute_intent_bonus(tokens_for_intent, result.description)
                     if intent >= -0.08:
                         result.confidence = round(
-                            min(0.78, result.confidence + max(0.0, intent)), 3
+                            min(0.62, result.confidence + max(0.0, intent)), 3
                         )
                         result.confidence_label = (
                             "high" if result.confidence >= 0.80 else
@@ -1902,7 +1908,7 @@ async def _match_one(query: str, db: AsyncSession) -> HSNBatchResult:
                         tokens_for_intent = tokenize(q_expanded)
                         intent = _compute_intent_bonus(tokens_for_intent, result.description)
                         result.confidence = round(
-                            min(0.72, result.confidence + max(0.0, intent)), 3
+                            max(0.15, min(0.72, result.confidence + intent)), 3
                         )
                         result.confidence_label = (
                             "high" if result.confidence >= 0.80 else

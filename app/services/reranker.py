@@ -120,10 +120,10 @@ class LightweightReranker:
 
     def _chapter_match_score(self, hsn_code: str, entities) -> float:
         if entities is None:
-            return 0.5
+            return 0.0
         chapter_hints = getattr(entities, "chapter_hint", [])
         if not chapter_hints:
-            return 0.5
+            return 0.0
         code_digits = re.sub(r"[^0-9]", "", hsn_code)
         if any(code_digits.startswith(chapter) for chapter in chapter_hints):
             return 1.0
@@ -131,10 +131,10 @@ class LightweightReranker:
 
     def _brand_match_score(self, q_upper: str, desc_upper: str, entities) -> float:
         if entities is None:
-            return 0.5
+            return 0.0
         brand = getattr(entities, "brand", None)
         if not brand:
-            return 0.5
+            return 0.0
         brand_upper = str(brand).upper()
         q_has_brand = brand_upper in q_upper
         d_has_brand = brand_upper in desc_upper
